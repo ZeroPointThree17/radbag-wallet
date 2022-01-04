@@ -29,18 +29,79 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+// import AesGcmCrypto from 'react-native-aes-gcm-crypto';
+const { Entropy, charset16 } = require('entropy-string')
 
 // var scrypt = require("scrypt");
 
 const bip39 = require('bip39');
 
 const scrypt = require('scrypt-js');
+import * as ec from 'react-native-ecc'
+import { Buffer } from 'buffer'
 
-const mnemonic = bip39.entropyToMnemonic('974b41e522639c5230c3b44c3891faee');
 
+ec.setServiceID('be.excellent.to.each.other')
+// optional
+// ec.setAccessGroup('dsadjsakd.com.app.awesome.my')
+
+// this library allows you to sign 32 byte hashes (e.g. sha256 hashes)
+const msg = Buffer.from('hey ho')
+// check ec.curves for supported curves
+const curve = 'p256'
+ec.keyPair(curve, function (err, key) {
+  // pub tested for compatibility with npm library "elliptic"
+  const pub = key.pub
+  console.log('pub', key.pub.toString('hex'))
+
+  // look up the key later like this:
+  // const key = ec.keyFromPublic(pub)
+
+  key.sign({
+    data: msg,
+    algorithm: 'sha256'
+  }, function (err, sig) {
+    // signatures tested for compatibility with npm library "elliptic"
+    console.log('sig', sig.toString('hex'))
+    key.verify({
+      algorithm: 'sha256',
+      data: msg,
+      sig: sig
+    }, function (err, verified) {
+      console.log('verified:', verified)
+    })
+  })
+})
+// import * as secp from "noble-secp256k1";
+ 
+// (async () => {
+//   // You can also pass Uint8Array and BigInt.
+//   const privateKey = "6b911fd37cdf5c81d4c0adb1ab7fa822ed253ab0ad9aa18d77257c88b29b718e";
+//   const messageHash = "9c1185a5c5e9fc54612808977ee8f548b2258d31";
+//   // const publicKey = secp.getPublicKey(privateKey);
+//   // const signature = await secp.sign(messageHash, privateKey);
+//   // const isSigned = secp.verify(signature, messageHash, publicKey);
+//   // console.log("Sig: "+signature);
+// })();
+
+// var mnemonic = bip39.entropyToMnemonic('974b41e522639c5230c3b44c3891faee');
+var mnemonic = bip39.generateMnemonic();
 var mnemonic2 = bip39.mnemonicToSeedSync(mnemonic).toString('hex');
 
-console.log(mnemonic2);
+console.log("mnemonic seed: " + mnemonic2);
+
+// });
+
+
+
+const entropy = new Entropy({ total: 1e6, risk: 1e9, charset: charset16 })
+const string = bip39.mnemonicToEntropy(mnemonic);
+
+console.log(string);
+
+mnemonic = bip39.entropyToMnemonic(string);
+console.log(mnemonic);
+
 
 
 
@@ -89,6 +150,25 @@ function toHexString(byteArray) {
 
 const key = scrypt.syncScrypt(password, salt, costParameterN, blockSize, parallelizationParameter, lengthOfDerivedKey);
 console.log("Derived Key (sync): ", toHexString(key));
+
+// Crypto parameters from wallet.json
+ciphertext = "3d634906b073952364898a40cce456cc"
+nonce = "b7f042ea4266d6ae910ee332"
+mac = "f4000f968fa9e7403911937da74c7d12"
+
+
+// AesGcmCrypto.decrypt(
+//   ciphertext,
+//   key,
+//   nonce,
+//   [],
+//   false
+// ).then((decryptedData) => {
+//   console.log("Decrypted entrophy: ", decryptedData);
+// });
+
+
+
 
 // //Asynchronous with promise
 // scrypt.kdf("ascii encoded key", {N: 1, r:1, p:1}).then(function(result){

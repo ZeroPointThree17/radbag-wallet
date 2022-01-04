@@ -272,6 +272,10 @@ PODS:
   - React-jsinspector (0.66.4)
   - React-logger (0.66.4):
     - glog
+  - react-native-aes-gcm-crypto (0.2.0):
+    - React-Core
+  - react-native-ecc (2.3.1):
+    - React
   - react-native-quick-base64 (0.1.4):
     - React-Core
   - react-native-randombytes (3.6.1):
@@ -390,6 +394,8 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-aes-gcm-crypto (from `../node_modules/react-native-aes-gcm-crypto`)
+  - react-native-ecc (from `../node_modules/react-native-ecc`)
   - react-native-quick-base64 (from `../node_modules/react-native-quick-base64`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -460,6 +466,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-aes-gcm-crypto:
+    :path: "../node_modules/react-native-aes-gcm-crypto"
+  react-native-ecc:
+    :path: "../node_modules/react-native-ecc"
   react-native-quick-base64:
     :path: "../node_modules/react-native-quick-base64"
   react-native-randombytes:
@@ -526,6 +536,8 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 94ce921e1d8ce7023366873ec371f3441383b396
   React-jsinspector: d0374f7509d407d2264168b6d0fad0b54e300b85
   React-logger: 933f80c97c633ee8965d609876848148e3fef438
+  react-native-aes-gcm-crypto: 228d485585a9c95366a4d69b979c6544723bb798
+  react-native-ecc: 5a048a6df934aeae0ae46c0b009a79bcc8322f61
   react-native-quick-base64: 4b97fd2c01032b0d9305c4a0cd91c3fe69e7e4d8
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   React-perflogger: 93075d8931c32cd1fce8a98c15d2d5ccc4d891bd
@@ -545,6 +557,6 @@ SPEC CHECKSUMS:
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: dfd11910a35ebd5d63c2e4adfda5b119b16cc99d
+PODFILE CHECKSUM: 47135b20da568c3069e528663d235c71f686600e
 
 COCOAPODS: 1.11.2

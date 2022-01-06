@@ -8,7 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "./node_modules/.bin/rn-nodeify --install crypto,buffer,stream,assert,events --hack && npm i -S buffer@5"
+    "postinstall": "./node_modules/.bin/rn-nodeify --install vm,process,crypto,buffer,stream,assert,events --hack && npm i -S buffer@5"
   },
   "dependencies": {
     "@open-rpc/client-js": "^1.6.2",
@@ -18,16 +18,20 @@
     "@radixdlt/networking": "^2.1.10",
     "@radixdlt/primitives": "^3.0.6",
     "@radixdlt/util": "^2.1.4",
+    "@sotatek-ngocan/react-native-hdkey": "^1.0.8",
     "@types/node": "^14.14.37",
     "assert": "^1.5.0",
     "base64-arraybuffer": "^1.0.1",
     "base64-js": "^1.5.1",
     "bech32": "^2.0.0",
+    "bip32": "^3.0.1",
     "bip39": "^3.0.4",
     "browserify": "^17.0.0",
     "buffer": "^5.7.1",
     "entropy-string": "^4.2.0",
     "events": "^3.3.0",
+    "hdkey": "^2.0.1",
+    "hdwallet-accounts": "^0.0.1",
     "https-browserify": "^0.0.1",
     "is-buffer": "^1.1.6",
     "neverthrow": "^4.3.1",
@@ -40,6 +44,8 @@
     "react": "17.0.2",
     "react-native": "0.66.4",
     "react-native-aes-gcm-crypto": "^0.2.0",
+    "react-native-bip32-utils": "^0.9.3",
+    "react-native-bitcoinjs-lib": "^2.3.4",
     "react-native-crypto": "^2.2.0",
     "react-native-ecc": "^2.3.1",
     "react-native-level-fs": "^3.0.1",
@@ -53,7 +59,9 @@
     "safe-buffer": "^5.2.1",
     "scrypt-js": "^3.0.1",
     "stream-browserify": "^1.0.0",
-    "utf8": "^3.0.0"
+    "tiny-secp256k1": "^2.1.2",
+    "utf8": "^3.0.0",
+    "vm-browserify": "^0.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -79,7 +87,8 @@
     "_stream_duplex": "readable-stream/duplex",
     "_stream_passthrough": "readable-stream/passthrough",
     "stream": "stream-browserify",
-    "crypto": "react-native-crypto"
+    "crypto": "react-native-crypto",
+    "vm": "vm-browserify"
   },
   "browser": {
     "os": "react-native-os",
@@ -92,6 +101,7 @@
     "_stream_duplex": "readable-stream/duplex",
     "_stream_passthrough": "readable-stream/passthrough",
     "stream": "stream-browserify",
-    "crypto": "react-native-crypto"
+    "crypto": "react-native-crypto",
+    "vm": "vm-browserify"
   }
 }

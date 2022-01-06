@@ -11,16 +11,8 @@ import './shim';
 
 //import {Buffer} from 'buffer';
 import React from 'react';
-// import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { StyleSheet, Button, View,useColorScheme, SafeAreaView, Text, Alert } from 'react-native';
+
 
 import {
   Colors,
@@ -39,39 +31,37 @@ const bip39 = require('bip39');
 const scrypt = require('scrypt-js');
 import * as ec from 'react-native-ecc'
 import { Buffer } from 'buffer'
+// import bitcoin from 'react-native-bitcoinjs-lib'
+// import BIP32Factory from 'bip32';
+// import * as ecc from 'tiny-secp256k1';
+// var bip32utils = require('react-native-bip32-utils');
 
-
-ec.setServiceID('be.excellent.to.each.other')
+// ec.setServiceID('be.excellent.to.each.other')
 // optional
 // ec.setAccessGroup('dsadjsakd.com.app.awesome.my')
+
+const Separator = () => (
+  <View style={styles.separator} />
+);
 
 // this library allows you to sign 32 byte hashes (e.g. sha256 hashes)
 const msg = Buffer.from('hey ho')
 // check ec.curves for supported curves
 const curve = 'p256'
-ec.keyPair(curve, function (err, key) {
-  // pub tested for compatibility with npm library "elliptic"
-  const pub = key.pub
-  console.log('pub', key.pub.toString('hex'))
+var pub = 'a'
 
-  // look up the key later like this:
-  // const key = ec.keyFromPublic(pub)
+// ec.keyPair(curve, function (err, key) {
+//   // pub tested for compatibility with npm library "elliptic"
+//    pub = key.pub
+//   // console.log('pub', key.pub.toString('hex'))
 
-  key.sign({
-    data: msg,
-    algorithm: 'sha256'
-  }, function (err, sig) {
-    // signatures tested for compatibility with npm library "elliptic"
-    console.log('sig', sig.toString('hex'))
-    key.verify({
-      algorithm: 'sha256',
-      data: msg,
-      sig: sig
-    }, function (err, verified) {
-      console.log('verified:', verified)
-    })
-  })
-})
+//   // look up the key later like this:
+//   // const key = ec.keyFromPublic(pub)
+
+
+// })
+
+   
 // import * as secp from "noble-secp256k1";
  
 // (async () => {
@@ -102,8 +92,87 @@ console.log(string);
 mnemonic = bip39.entropyToMnemonic(string);
 console.log(mnemonic);
 
+var HDKey = require('hdkey')
+var seed = 'a0c42a9c3ac6abf2ba6a9946ae83af18f51bf1c9fa7dacc4c92513cc4dd015834341c775dcd4c0fac73547c5662d81a9e9361a0aac604a73a321bd9103bce8af'
+var hdkey = HDKey.fromMasterSeed(Buffer.from(mnemonic2, 'hex'))
+var childkey = hdkey.derive("m/44'/1022'/0'/0/0'")
+
+console.log(childkey.privateKey.toString('hex'))
+// -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
+console.log(childkey.publicKey.toString('hex'))
 
 
+
+ childkey = hdkey.derive("m/44'/1022'/0'/0/1'")
+
+console.log(childkey.privateExtendedKey)
+// -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
+console.log(childkey.publicExtendedKey)
+// => 'xpub661MyMwAqRbcEvPmRAmYndzERhyNux1GoHzHxgzVHMBFkCro3kbbCiDZZ5XabZDyXPj5mH3hktvkjhhUdCQxie5e1g4t2GuAWNbPmsSfDp2'
+// const keyPair = bitcoin.ECPair.makeRandom();
+// const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey });
+// console.log("BC: "+address);
+
+// const keypair = Bitcoin.ECPair.makeRandom()
+// console.log("BC: "+keypair.getAddress()) 
+
+// let hdNode = bitcoin.bip32.fromSeed(mnemonic2)
+
+// let childNode = hdNode.deriveHardened(0)
+// let external = childNode.derive(0)
+// let internal = childNode.derive(1)
+// let account = new bip32utils.Account([
+//   new bip32utils.Chain(external.neutered()),
+//   new bip32utils.Chain(internal.neutered())
+// ])
+
+// console.log(account.getChainAddress(0))
+// => 1QEj2WQD9vxTzsGEvnmLpvzeLVrpzyKkGt
+
+// const path = "m/0'/0/0";
+// const root = bip32.fromSeed(
+//   Buffer.from(
+//     'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
+//     'hex',
+//   ),
+// );
+
+// const child1 = root.derivePath(path);
+
+// // option 2, manually
+// const child1b = root
+//   .deriveHardened(0)
+//   .derive(0)
+//   .derive(0);
+
+
+// const master = HDNode.fromSeedHex(mnemonic2.toString('hex'));
+
+// const derived = master.derivePath("m/44'/0'/0'/0/0");
+// const address = derived.getAddress();
+// const privateKey = derived.keyPair.toWIF();
+
+// console.log("addr: "+address)
+// console.log("privKey: "+privateKey)
+
+// console.log('pub', pub)
+
+// var key2 = ec.keyFromPublic(pub)
+
+// key2.sign({
+//   data: msg,
+//   algorithm: 'sha256'
+// }, function (err, sig) {
+//   // signatures tested for compatibility with npm library "elliptic"
+//   console.log('sig', sig.toString('hex'))
+//   key2.verify({
+//     algorithm: 'sha256',
+//     data: msg,
+//     sig: sig
+//   }, function (err, verified) {
+//     console.log('verified:', verified)
+//   })
+// })
 
 // import { Mnemonic, StrengthT } from '@radixdlt/application'
 // var mnemonic = Mnemonic.generateNew({ strength: StrengthT.WORD_COUNT_12 });
@@ -259,53 +328,76 @@ const App: () => Node = () => {
 
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-           
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaView style={styles.container}>
+    <View>
+      <Text style={styles.title}>
+        The title and onPress handler are required. It is recommended to set accessibilityLabel to help make your app usable by everyone.
+      </Text>
+      <Button
+        title="Press me"
+        onPress={() => Alert.alert('Simple Button pressed')}
+      />
+    </View>
+    <Separator />
+    <View>
+      <Text style={styles.title}>
+        Adjust the color in a way that looks standard on each platform. On  iOS, the color prop controls the color of the text. On Android, the color adjusts the background color of the button.
+      </Text>
+      <Button
+        title="Press me"
+        color="#f194ff"
+        onPress={() => Alert.alert('Button with adjusted color pressed')}
+      />
+    </View>
+    <Separator />
+    <View>
+      <Text style={styles.title}>
+        All interaction for the component are disabled.
+      </Text>
+      <Button
+        title="Press me"
+        disabled
+        onPress={() => Alert.alert('Cannot press this one')}
+      />
+    </View>
+    <Separator />
+    <View>
+      <Text style={styles.title}>
+        This layout strategy lets the title define the width of the button.
+      </Text>
+      <View style={styles.fixToText}>
+        <Button
+          title="Left button"
+          onPress={() => Alert.alert('Left button pressed')}
+        />
+        <Button
+          title="Right button"
+          onPress={() => Alert.alert('Right button pressed')}
+        />
+      </View>
+    </View>
+  </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    marginHorizontal: 16,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  title: {
+    textAlign: 'center',
+    marginVertical: 8,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  fixToText: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  highlight: {
-    fontWeight: '700',
+  separator: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 });
 

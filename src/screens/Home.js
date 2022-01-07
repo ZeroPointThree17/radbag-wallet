@@ -2,11 +2,18 @@ import { Alert, Button, SectionList, SafeAreaView, View, Text, StyleSheet } from
 const bip39 = require('bip39');
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { shim } from 'react-native-quick-base64';
 var HDKey = require('hdkey')
 let { bech32, bech32m } = require('bech32')
 var bitcoinMessage = require('bitcoinjs-message')
+// var crypto = require('crypto');
+import './shim';
+import NodeRSA from 'node-rsa';
+// import * as secp from "@noble/secp256k1";
+const { randomBytes } = require('crypto')
+const secp256k1 = require('secp256k1')
 
-var seed = bip39.mnemonicToSeedSync("achieve awesome grow donor recall reject small under torch garbage lucky dizzy").toString('hex');
+var seed = "";
 console.log("SYNTH SEED: "+seed);
 function convertbits (data, frombits, tobits, pad) {
   var acc = 0;
@@ -71,22 +78,45 @@ const forceUpdate = React.useCallback(() => updateState({}), []);
   forceUpdate;
   // getData();
   var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
-  var childkey = hdkey.derive("m/44'/1022'/0'/0/1'")
+  var childkey = hdkey.derive("m/44'/1022'/0'/0/0'")
   
-  console.log(childkey.privateKey.toString('hex'))
+  console.log("Home PUB KEY: "+ childkey.publicKey.toString('hex'))
+  
+  console.log("Home PRIV KEY: "+ childkey.privateKey.toString('hex'))
   // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
-  console.log(childkey.publicKey.toString('hex'))
   
   readdr_bytes = Buffer.concat([Buffer.from([0x04]), childkey.publicKey]);
   var readdr_bytes5 = convertbits(Uint8Array.from(readdr_bytes), 8, 5, true);
   console.log(readdr_bytes5);
    var rdx_addr = bech32.encode("rdx", readdr_bytes5);
-    console.log(rdx_addr);
+    console.log("Home RDX KEY: "+ rdx_addr);
 
-    var message = 'This is an example of a signed message.'
+    var message = '9a25747cd03f9764de539934e1800edc8160a4978aa27b1a6fb8411a11543697'
+    var signature = "AA";
 
-var signature = bitcoinMessage.sign(message, childkey.privateKey, childkey.compressed)
-console.log(signature.toString('hex'))
+     signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(childkey.privateKey))
+    // var derPublicKey = keyEncoder.encodePublic(childkey.publicKey, 'raw', 'der');
+    // var derPrivateKey = keyEncoder.encodePublic(childkey.privateKey, 'raw', 'der');
+    // console.log("DER PUB K:"+ derPublicKey)
+    // console.log("DER PRIV K:"+ derPrivateKey)
+    
+    
+    //  signature = secp.signSync(message, .toString('hex'), { der: true });
+
+
+// console.log("SIG: " + signer.sign({data: Buffer.from(message,"hex"),encoding:"hex"}));
+//  var signature = bitcoinMessage.sign(message, childkey.privateKey, childkey.compressed)
+
+// console.log(childkey.sign(Buffer.from(message,'hex')).toString('hex'));
+
+ 
+// const signit = crypto.createSign("RSA-SHA256");
+// signit.update(Buffer.from(message, "hex"));
+// var signature = signit.sign(childkey.privateKey.toString("hex")).toString("hex");
+
+ var result=new Uint8Array(72);
+ secp256k1.signatureExport(signature.signature,result);
+   console.log("SIG: "+ Buffer.from(result).toString('hex'));
 
   return (
     <SafeAreaView>

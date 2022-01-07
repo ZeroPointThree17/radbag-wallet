@@ -18,7 +18,7 @@ const storeData = async (key, value) => {
 
 const CreateWallet = ({navigation}) => {
    mnemonic = bip39.generateMnemonic();
-   console.log(mnemonic);
+   console.log("CW MNEMONIC:" + mnemonic);
    var seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex');
 
 // Declare a new state variable, which we'll call "count"

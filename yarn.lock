@@ -1441,6 +1441,11 @@
   "resolved" "https://registry.npmjs.org/@json-schema-tools/traverse/-/traverse-1.8.1.tgz"
   "version" "1.8.1"
 
+"@noble/secp256k1@^1.4.0":
+  "integrity" "sha512-cYpUbQ2uitPgf5QuQnpi8Nu+ZmQjSDunFKw6vvxaOSkbMUhCf4K723WLUuuK1K/sf6H/dvqKbmEAeop5i3qTJg=="
+  "resolved" "https://registry.npmjs.org/@noble/secp256k1/-/secp256k1-1.4.0.tgz"
+  "version" "1.4.0"
+
 "@nodelib/fs.scandir@2.1.5":
   "integrity" "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="
   "resolved" "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -2473,6 +2478,13 @@
     "minimalistic-assert" "^1.0.0"
     "safer-buffer" "^2.1.0"
 
+"asn1@^0.2.4":
+  "integrity" "sha512-ix/FxPn0MDjeyJ7i/yoHGFt/EX6LyNbxSEhPPXODPL+KB0VPk86UYfL0lMdy+KCnv+fmvIzySwaK5COwqVbWTQ=="
+  "resolved" "https://registry.npmjs.org/asn1/-/asn1-0.2.6.tgz"
+  "version" "0.2.6"
+  dependencies:
+    "safer-buffer" "~2.1.0"
+
 "assert@^1.4.0", "assert@^1.5.0":
   "integrity" "sha512-EDsgawzwoun2CZkCgtxJbv392v4nbk9XDD06zI+kQYoBM/3RBWLlEyJARDOmhAAosBjWACEkKL6S+lIZtcAubA=="
   "resolved" "https://registry.npmjs.org/assert/-/assert-1.5.0.tgz"
@@ -2858,6 +2870,11 @@
   "integrity" "sha512-DRQrD6gJyy8FbiE4s+bDoXS9hiW3Vbx5uCdwvcCf3zLHL+Iv7LtGHLpr+GZV8rHG8tK766FGYBwRbu8pELTt+w=="
   "resolved" "https://registry.npmjs.org/blueimp-md5/-/blueimp-md5-2.19.0.tgz"
   "version" "2.19.0"
+
+"bn.js@^3.1.1", "bn.js@^3.1.2":
+  "integrity" "sha1-ETjld4if3Je72rUYRPIZDfwK49c="
+  "resolved" "https://registry.npmjs.org/bn.js/-/bn.js-3.3.0.tgz"
+  "version" "3.3.0"
 
 "bn.js@^4.0.0":
   "integrity" "sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA=="
@@ -3632,6 +3649,11 @@
   "resolved" "https://registry.npmjs.org/constants-browserify/-/constants-browserify-1.0.0.tgz"
   "version" "1.0.0"
 
+"constants@^0.0.2":
+  "integrity" "sha1-+XO887abZJOzs2RXIxJPurziUJQ="
+  "resolved" "https://registry.npmjs.org/constants/-/constants-0.0.2.tgz"
+  "version" "0.0.2"
+
 "content-type@~1.0.4":
   "integrity" "sha512-hIP3EEPs8tB9AT1L+NUqtwOAps4mk2Zob89MWXMHjHWg9milF/j4osnnQLXBCBFBk/tvIG/tUc9mOUJiPBhPXA=="
   "resolved" "https://registry.npmjs.org/content-type/-/content-type-1.0.4.tgz"
@@ -4068,6 +4090,16 @@
   "integrity" "sha512-cA1YwlRzO6TGp7yd3+KAqh9Tt6Z4CuuKqsAJP6uF/H5MQryjAGDhMhnY5cEXo8MaRCczpzSBhMPdqRIodkbZYw=="
   "resolved" "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.26.tgz"
   "version" "1.4.26"
+
+"elliptic@^5.1.0":
+  "integrity" "sha1-+ilLZWPG3bybo9yFlGh66ECFjxA="
+  "resolved" "https://registry.npmjs.org/elliptic/-/elliptic-5.2.1.tgz"
+  "version" "5.2.1"
+  dependencies:
+    "bn.js" "^3.1.1"
+    "brorand" "^1.0.1"
+    "hash.js" "^1.0.0"
+    "inherits" "^2.0.1"
 
 "elliptic@^6.5.2", "elliptic@^6.5.3":
   "integrity" "sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ=="
@@ -7614,6 +7646,13 @@
   "resolved" "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.1.tgz"
   "version" "2.0.1"
 
+"node-rsa@^1.1.1":
+  "integrity" "sha512-Jd4cvbJMryN21r5HgxQOpMEqv+ooke/korixNNK3mGqfGJmy0M77WDDzo/05969+OkMy3XW1UuZsSmW9KQm7Fw=="
+  "resolved" "https://registry.npmjs.org/node-rsa/-/node-rsa-1.1.1.tgz"
+  "version" "1.1.1"
+  dependencies:
+    "asn1" "^0.2.4"
+
 "node-stream-zip@^1.9.1":
   "integrity" "sha512-LN4fydt9TqhZhThkZIVQnF9cwjU3qmUH9h78Mx/K7d3VvfRqqwthLwJEUOEL0QPZ0XQmNN7be5Ggit5+4dq3Bw=="
   "resolved" "https://registry.yarnpkg.com/node-stream-zip/-/node-stream-zip-1.15.0.tgz"
@@ -8440,6 +8479,16 @@
   "resolved" "https://registry.npmjs.org/react-native-aes-gcm-crypto/-/react-native-aes-gcm-crypto-0.2.0.tgz"
   "version" "0.2.0"
 
+"react-native-asn1.js@^4.9.2":
+  "integrity" "sha1-dRIu1ImmHQyL7RFdjuKvMiFMg1U="
+  "resolved" "https://registry.npmjs.org/react-native-asn1.js/-/react-native-asn1.js-4.9.2.tgz"
+  "version" "4.9.2"
+  dependencies:
+    "bn.js" "^4.0.0"
+    "inherits" "^2.0.1"
+    "minimalistic-assert" "^1.0.0"
+    "vm-browserify" "0.0.4"
+
 "react-native-async-storage@^0.0.1":
   "integrity" "sha1-Xy71/zDq5ktCSOJltTTnLqQc3Gk="
   "resolved" "https://registry.npmjs.org/react-native-async-storage/-/react-native-async-storage-0.0.1.tgz"
@@ -8518,6 +8567,15 @@
   "version" "1.7.2"
   dependencies:
     "fast-base64-decode" "^1.0.0"
+
+"react-native-key-encoder@^1.1.6":
+  "integrity" "sha1-/6/Q5YxI3hdKR4MgLF/R4hdEwyc="
+  "resolved" "https://registry.npmjs.org/react-native-key-encoder/-/react-native-key-encoder-1.1.6.tgz"
+  "version" "1.1.6"
+  dependencies:
+    "bn.js" "^3.1.2"
+    "elliptic" "^5.1.0"
+    "react-native-asn1.js" "^4.9.2"
 
 "react-native-level-fs@^3.0.1":
   "integrity" "sha1-8wVGFMK8Gjedyz0+5RtqG2YSMoM="
@@ -9035,7 +9093,7 @@
   dependencies:
     "ret" "~0.1.10"
 
-"safer-buffer@^2.1.0", "safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0":
+"safer-buffer@^2.1.0", "safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0", "safer-buffer@~2.1.0":
   "integrity" "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="
   "resolved" "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz"
   "version" "2.1.2"
@@ -9094,7 +9152,7 @@
     "nan" "^2.14.0"
     "safe-buffer" "^5.1.2"
 
-"secp256k1@^4.0.0":
+"secp256k1@^4.0.0", "secp256k1@^4.0.2":
   "integrity" "sha512-UDar4sKvWAksIlfX3xIaQReADn+WFnHvbVujpcbr+9Sf/69odMwy2MUsz5CKLQgX9nsIyrjuxL2imVyoNHa3fg=="
   "resolved" "https://registry.npmjs.org/secp256k1/-/secp256k1-4.0.2.tgz"
   "version" "4.0.2"
@@ -10337,7 +10395,7 @@
   "resolved" "https://registry.yarnpkg.com/vlq/-/vlq-1.0.1.tgz"
   "version" "1.0.1"
 
-"vm-browserify@^0.0.4":
+"vm-browserify@^0.0.4", "vm-browserify@0.0.4":
   "integrity" "sha1-XX6kW7755Kb/ZflUOOCofDV9WnM="
   "resolved" "https://registry.npmjs.org/vm-browserify/-/vm-browserify-0.0.4.tgz"
   "version" "0.0.4"

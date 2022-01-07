@@ -1,15 +1,44 @@
-import React from 'react';
-import { Alert, Button, SectionList, View, Text, StyleSheet } from 'react-native';
+import { Alert, Button, SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+const bip39 = require('bip39');
+import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-var seedPhrase = "seedPhrase";
+const Separator = () => (
+  <View style={styles.separator} />
+);
 
+var mnemonic = "";
+const storeData = async (key, value) => {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (e) {
+    // saving error
+  }
+}
 
-const CreateWallet = () => {
+const CreateWallet = ({navigation}) => {
+   mnemonic = bip39.generateMnemonic();
+   console.log(mnemonic);
+   var seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex');
+
+// Declare a new state variable, which we'll call "count"
+// const [seed, setSeed] = useState(mnemonic);
+storeData("seed",seed);
+
   return (
+    <SafeAreaView>
      <View style={styles.text}> 
- <Text>{seedPhrase} jkjkj</Text>
-
+      <Text style={styles.title}>Below is your mnemonic phrase. Write it down and keep them in a safe place. DO NOT take a photo of the phrase or copy and paste it anywhere. This key holds ALL YOUR FUNDS!</Text>
+ <Separator/>
+ <Text style={styles.title}>{mnemonic}</Text>
+ <Separator/>
+ <Button
+        title="Understood - Continue"
+        enabled
+        onPress={() => navigation.navigate('Home')}
+      />
   </View> 
+  </SafeAreaView>
   )
   ;
 };
@@ -24,8 +53,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingTop: 22
-   },
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    paddingHorizontal: 20
+  },
    sectionHeader: {
      paddingTop: 2,
      paddingLeft: 10,
@@ -40,6 +72,16 @@ const styles = StyleSheet.create({
      fontSize: 18,
      height: 44,
    },
+   separator: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  title: {
+    textAlign: 'center',
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
 });
 
 export default CreateWallet;

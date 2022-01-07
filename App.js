@@ -8,10 +8,11 @@
 //  global.Buffer = global.Buffer || require('buffer/').Buffer
 
 import './shim';
-
 //import {Buffer} from 'buffer';
 import React from 'react';
 import { StyleSheet, Button, View,useColorScheme, SafeAreaView, Text, Alert } from 'react-native';
+import { NavigationContext, NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 
 import {
@@ -31,6 +32,10 @@ const bip39 = require('bip39');
 const scrypt = require('scrypt-js');
 import * as ec from 'react-native-ecc'
 import { Buffer } from 'buffer'
+import Welcome from './src/screens/Welcome';
+import CreateWallet from './src/screens/CreateWallet';
+import Home from './src/screens/Home';
+// import NFTs from './src/screens/NFTs';
 // import bitcoin from 'react-native-bitcoinjs-lib'
 // import BIP32Factory from 'bip32';
 // import * as ecc from 'tiny-secp256k1';
@@ -284,35 +289,12 @@ mac = "f4000f968fa9e7403911937da74c7d12"
 
 
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+const Stack = createStackNavigator();
+
 
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
-
+  const navigation = React.useContext(NavigationContext);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -328,55 +310,13 @@ const App: () => Node = () => {
 
 
   return (
-    <SafeAreaView style={styles.container}>
-    <View>
-      <Text style={styles.title}>
-        The title and onPress handler are required. It is recommended to set accessibilityLabel to help make your app usable by everyone.
-      </Text>
-      <Button
-        title="Press me"
-        onPress={() => Alert.alert('Simple Button pressed')}
-      />
-    </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        Adjust the color in a way that looks standard on each platform. On  iOS, the color prop controls the color of the text. On Android, the color adjusts the background color of the button.
-      </Text>
-      <Button
-        title="Press me"
-        color="#f194ff"
-        onPress={() => Alert.alert('Button with adjusted color pressed')}
-      />
-    </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        All interaction for the component are disabled.
-      </Text>
-      <Button
-        title="Press me"
-        disabled
-        onPress={() => Alert.alert('Cannot press this one')}
-      />
-    </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        This layout strategy lets the title define the width of the button.
-      </Text>
-      <View style={styles.fixToText}>
-        <Button
-          title="Left button"
-          onPress={() => Alert.alert('Left button pressed')}
-        />
-        <Button
-          title="Right button"
-          onPress={() => Alert.alert('Right button pressed')}
-        />
-      </View>
-    </View>
-  </SafeAreaView>
+<NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen name="Welcome" component={Welcome} />
+      <Stack.Screen name="Create Wallet" component={CreateWallet} />
+      <Stack.Screen name="Home" component={Home} />
+    </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

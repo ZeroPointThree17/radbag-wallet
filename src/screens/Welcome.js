@@ -1,25 +1,27 @@
+import { commentRegex } from 'convert-source-map';
 import React from 'react';
-import { Alert, Button, SectionList, View, Text, StyleSheet } from 'react-native';
-import CreateWallet from "./CreateWallet";
-import HomeScreen from "./HomeScreen";
-import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
+import {SafeAreaView, Alert, Button, SectionList, View, Text, StyleSheet } from 'react-native';
 
 const Welcome = ({ navigation }) => {
   return (
+
+    <SafeAreaView style={styles.container}>
      <View style={styles.text}> 
- <Text>Welcome to the Raddish Mobile Wallet!</Text>
+ <Text style={styles.title}>Welcome to the Raddish Mobile Wallet! Have you previously made a Raddish Wallet?</Text>
  <Button
-        title="Create New Wallet"
-        enabled
-        onPress={() => navigation.navigate('CreateWallet')}
-      />
-      <Button
-        title="Import a Wallet"
+        title="Yes - Import a Wallet"
         enabled
         onPress={() => Alert.alert('Import - Cannot press this one')}
       />
+ <Button
+        title="No - Create New Wallet"
+        color = 'red'
+        enabled
+        onPress={() => navigation.navigate('Create Wallet')}
+      />
+
   </View> 
+  </SafeAreaView>
   )
   ;
 };
@@ -29,13 +31,18 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     alignItems: 'center',
-    justifyContent: 'space-around',
-    marginVertical:35
+    justifyContent: 'center',
+    marginVertical:35,
+    paddingHorizontal: 20,
+    textAlign: 'center'
   },
   container: {
     flex: 1,
-    paddingTop: 22
-   },
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    paddingHorizontal: 20
+  },
    sectionHeader: {
      paddingTop: 2,
      paddingLeft: 10,
@@ -50,6 +57,10 @@ const styles = StyleSheet.create({
      fontSize: 18,
      height: 44,
    },
+   title: {
+    textAlign: 'center',
+    marginVertical: 8,
+  },
 });
 
 export default Welcome;

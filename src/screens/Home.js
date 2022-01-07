@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 var HDKey = require('hdkey')
 let { bech32, bech32m } = require('bech32')
+var bitcoinMessage = require('bitcoinjs-message')
 
 var seed = bip39.mnemonicToSeedSync("achieve awesome grow donor recall reject small under torch garbage lucky dizzy").toString('hex');
 console.log("SYNTH SEED: "+seed);
@@ -70,7 +71,7 @@ const forceUpdate = React.useCallback(() => updateState({}), []);
   forceUpdate;
   // getData();
   var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
-  var childkey = hdkey.derive("m/44'/1022'/0'/0/0'")
+  var childkey = hdkey.derive("m/44'/1022'/0'/0/1'")
   
   console.log(childkey.privateKey.toString('hex'))
   // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
@@ -81,6 +82,11 @@ const forceUpdate = React.useCallback(() => updateState({}), []);
   console.log(readdr_bytes5);
    var rdx_addr = bech32.encode("rdx", readdr_bytes5);
     console.log(rdx_addr);
+
+    var message = 'This is an example of a signed message.'
+
+var signature = bitcoinMessage.sign(message, childkey.privateKey, childkey.compressed)
+console.log(signature.toString('hex'))
 
   return (
     <SafeAreaView>

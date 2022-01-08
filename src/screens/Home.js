@@ -12,6 +12,14 @@ import NodeRSA from 'node-rsa';
 // import * as secp from "@noble/secp256k1";
 const { randomBytes } = require('crypto')
 const secp256k1 = require('secp256k1')
+import QRCode from 'react-native-qrcode-svg';
+// const PouchDB = require('pouchdb');
+// PouchDB.plugin(require('crypto-pouch'));
+// var sqlite3 = require('sqlite3');
+// var db = new sqlite3.Database(':memory:');
+var SQLite = require('react-native-sqlite-storage');
+// const path = require('path');
+// const fs = require('fs');
 
 var seed = "";
 console.log("SYNTH SEED: "+seed);
@@ -118,12 +126,98 @@ const forceUpdate = React.useCallback(() => updateState({}), []);
  secp256k1.signatureExport(signature.signature,result);
    console.log("SIG: "+ Buffer.from(result).toString('hex'));
 
+
+  //  const db = new PouchDB('my_db')
+ // init; after this, docs will be transparently en/decrypted
+// db.crypto("test").then(() => {
+//   // db will now transparently encrypt writes and decrypt reads
+//     db.put({
+//     _id: 'dave@gmail.com',
+//     name: 'David',
+//     age: 69
+//   });
+// })
+  
+// db.serialize(function() {
+//   db.run("CREATE TABLE lorem (info TEXT)");
+
+//   var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+//   for (var i = 0; i < 10; i++) {
+//       stmt.run("Ipsum " + i);
+//   }
+//   stmt.finalize();
+
+//   db.each("SELECT rowid AS id, info FROM lorem", function(err, row) {
+//       console.log(row.id + ": " + row.info);
+//   });
+// });
+
+// db.close();
+
+function errorCB(err) {
+  console.log("SQL Error: " + err.message);
+}
+
+function successCB() {
+  console.log("SQL executed fine");
+}
+
+function openCB() {
+  console.log("Database OPENED");
+}
+
+
+
+var db = SQLite.openDatabase("test.db", "1.0", "Test Database", 200000, openCB, errorCB);
+
+
+db.transaction((tx) => {
+  tx.executeSql('CREATE TABLE lorem (info TEXT)', [], (tx, results) => {
+    console.log("Query0 completed");
+  });
+});
+
+
+db.transaction((tx) => {
+  tx.executeSql("INSERT INTO lorem VALUES ('TEST1')", [], (tx, results) => {
+    console.log("Query0-2 completed");
+  });
+});
+
+db.transaction((tx) => {
+
+  tx.executeSql('SELECT * FROM lorem', [], (tx, results) => {
+    
+      console.log("Query completed");
+
+      // Get rows with Web SQL Database spec compliance.
+
+      var len = results.rows.length;
+      for (let i = 0; i < len; i++) {
+        let row = results.rows.item(i);
+        console.log(`Employee name: ${row.info}, Dept Name: ${row.info}`);
+      }
+
+      // Alternatively, you can use the non-standard raw method.
+
+      /*
+        let rows = results.rows.raw(); // shallow copy of rows Array
+
+        rows.map(row => console.log(`Employee name: ${row.name}, Dept Name: ${row.deptName}`));
+      */
+    }, errorCB);
+});
+ 
+  
   return (
     <SafeAreaView>
      <View style={styles.text}> 
+     <QRCode
+      value={rdx_addr}
+    />
       <Text >Below is the retrieved mnemonic phrase: </Text>
       <Separator/>
-      <Text >Public Key: {rdx_addr} </Text>
+      <Text >Radix Key: {rdx_addr} </Text>
         
       <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
 

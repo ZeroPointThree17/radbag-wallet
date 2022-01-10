@@ -227,7 +227,9 @@ const [appPwConfirm, setAppPwConfirm] = useState("");
   return (
     <SafeAreaView>
      <View > 
-   
+     <Separator/>
+
+<Separator/>
 
     <Text style={styles.title}>Enter a password to protect the data in this app.</Text>
  <PasswordInputText style={styles.title}
@@ -243,13 +245,10 @@ label='Confirm App Password' />
 
  <Separator/>
  <Button
-        title="Understood - Continue"
+        title="Continue"
         enabled
         onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word25)}
       />
-      <Text>{mnemonicStr}</Text> 
-      <Text>{word25Str}</Text> 
-     
   </View> 
   </SafeAreaView>
   )
@@ -288,7 +287,7 @@ const styles = StyleSheet.create({
    separator: {
     marginVertical: 8,
     borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 0,
   },
   title: {
     textAlign: 'center',

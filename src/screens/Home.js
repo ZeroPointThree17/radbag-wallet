@@ -4,10 +4,14 @@ const bip39 = require('bip39');
 var HDKey = require('hdkey')
 let { bech32, bech32m } = require('bech32')
 var bitcoinMessage = require('bitcoinjs-message')
-
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 import {encrypt, decrypt} from '../helpers/encrypt';
+import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import { Dropdown } from 'react-native-element-dropdown';
+//  import AntDesign from 'react-native-vector-icons/AntDesign';
+//  import  AntDesign  from 'antd';
+import FontAwesome, { SolidIcons, RegularIcons, BrandIcons } from 'react-native-fontawesome';
 
   function errorCB(err) {
     console.log("SQL Error: " + err.message);
@@ -53,7 +57,42 @@ function convertbits (data, frombits, tobits, pad) {
     new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
   
 
+    this.state = {
+        tableHead: ['Head', 'Head2', 'Head3', 'Head4'],
+        tableData: [
+          ['1', '2', '3', '4'],
+          ['a', 'b', 'c', 'd'],
+          ['1', '2', '3', '456\n789'],
+          ['a', 'b', 'c', 'd']
+        ]
+      }
+
+
+      const data = [
+        { label: 'Wallet 1', value: '1' },
+        
+      ];
+    
+
 const Home = ({route, navigation}) => {
+
+    const state = this.state;
+    const [currentWalletName, setCurrentWalletName] = useState("");
+    const [currentAddresses, setCurrentAddresses] = useState([]);
+
+    const [value, setValue] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
+
+    const renderLabel = () => {
+      if (value || isFocus) {
+        return (
+          <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+            Select Wallet
+          </Text>
+        );
+      }
+      return null;
+    };
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -177,11 +216,48 @@ const Home = ({route, navigation}) => {
        
 //        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
   return (
-    <SafeAreaView>
-     <View > 
+    <SafeAreaView style={styles.containerMain}>
+     <View  > 
      
         
-<Text>Hi</Text>
+<Text style={styles.title}>XRD Balance: </Text>
+
+
+<View style={styles.container}>
+        {renderLabel()}
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={data}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select item' : '...'}
+          searchPlaceholder="Search..."
+          value={value}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setValue(item.value);
+            setIsFocus(false);
+          }}
+          
+        />
+                <FontAwesome icon={SolidIcons.smile} />
+        <FontAwesome icon={RegularIcons.smileWink} />
+        <FontAwesome icon={BrandIcons.github} />
+      </View>
+
+
+
+<Table borderStyle={{borderWidth: 0, borderColor: '#808080'}}>
+          <Row data={state.tableHead} />
+          <Rows data={state.tableData} />
+        </Table>
   </View> 
   </SafeAreaView>
   )
@@ -196,12 +272,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginVertical:35
   },
-  container: {
+  containerMain: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 16,
-    paddingHorizontal: 20
+    backgroundColor: "#FFFFFF"
   },
    sectionHeader: {
      paddingTop: 2,
@@ -226,6 +299,43 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
+  },
+  container: {
+    backgroundColor: 'white',
+    padding: 16,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
   },
 
 });

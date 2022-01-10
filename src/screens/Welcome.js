@@ -1,8 +1,18 @@
 import { commentRegex } from 'convert-source-map';
 import React from 'react';
 import {SafeAreaView, Alert, Button, SectionList, View, Text, StyleSheet } from 'react-native';
+const bip39 = require('bip39');
+
+function navigateToCreateWallet(navigation){
+  var mnemonic = bip39.generateMnemonic();
+  navigation.navigate('Create Wallet', {
+    mnemonicStr: mnemonic
+  });
+}
 
 const Welcome = ({ navigation }) => {
+
+
   return (
 
     <SafeAreaView style={styles.container}>
@@ -17,7 +27,8 @@ const Welcome = ({ navigation }) => {
         title="No - Create New Wallet"
         color = 'red'
         enabled
-        onPress={() => navigation.navigate('Create Wallet')}
+        onPress={() => navigateToCreateWallet(navigation)
+          }
       />
 
   </View> 

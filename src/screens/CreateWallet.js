@@ -11,34 +11,36 @@ const Separator = () => (
   <View style={styles.separator} />
 );
 
-var mnemonic = "";
-const storeData = async (key, value) => {
-  try {
-    await AsyncStorage.setItem(key, value);
-  } catch (e) {
-    // saving error
-  }
+
+function navigateHome(navigation, mnemonic, word25){
+
+   var seed = bip39.mnemonicToSeedSync(mnemonic,word25).toString('hex');
+
+  // var seed="";
+  navigation.navigate('Home', {
+    mnemonicStr: mnemonic,
+    word25Str: word25,
+    seedStr: seed
+  });
 }
 
 
 
-const CreateWallet = ({navigation}) => {
+const CreateWallet = ({route, navigation}) => {
 
 
-  const [selectedFruits, setSelectedFruits] = useState([]);
+  const { mnemonicStr } = route.params;
+  
 
-
-   mnemonic = bip39.generateMnemonic();
+  var mnemonic = JSON.stringify(mnemonicStr).replaceAll('"','');
    console.log("CW MNEMONIC:" + mnemonic);
 
-   var word25='';
 
 
-   var seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex');
 
 // Declare a new state variable, which we'll call "count"
 // const [seed, setSeed] = useState(mnemonic);
-storeData("seed",seed);
+// storeData("seed",seed);
 // var saltArry = new Uint32Array(1);
 // crypto.getRandomValues(saltArry);
 
@@ -52,35 +54,48 @@ console.log(bcrypt.compareSync("not_bacon", hash)); // false
 
 
 
-
+const [word25flag, setWord25flag] = useState(false);
+const [word25, setWord25] = useState("");
 
   return (
 
     <SafeAreaView style={styles.container}>
+       <Separator/>
+       <Separator/>
+       <Separator/>
+       <Separator/>
      <View > 
       <Text style={styles.title}>Below is your mnemonic phrase. Write it down and keep them in a safe place. DO NOT take a photo of the phrase or copy and paste it anywhere. This key holds ALL YOUR FUNDS!</Text>
  <Separator/>
- <Text style={styles.title}>{mnemonic}</Text>
+ <Text style={styles.mnemonic}>{mnemonic}</Text>
  <Separator/>
  
- <View style={styles.title2}> 
+ <View style={styles.checkbox}> 
  <CheckBox 
     onClick={()=>{
-    
+      if(word25flag==false){
+      setWord25flag(true);
+      }
+      else setWord25flag(false);
     }}
-    isChecked={false}
+    isChecked={word25flag}
 /> 
-<Text style={styles.title}>Add 25th word?</Text>
+<Text style={styles.title2}>Add 25th word?</Text>
 </View > 
-<PasswordInputText
-      
-        />
+{ word25flag && 
+
+
+<PasswordInputText 
+onChangeText={(password) => setWord25( "password12" )}
+label='25th word' style={styles.title}/>
+ }
 <Separator/>
  <Button style={styles.title}
         title="Understood - Continue"
         enabled
-        onPress={() => navigation.navigate('Home')}
+        onPress={() => navigateHome(navigation, mnemonic, word25)}
       />
+
   </View> 
   </SafeAreaView>
   )
@@ -90,11 +105,8 @@ console.log(bcrypt.compareSync("not_bacon", hash)); // false
 
 const styles = StyleSheet.create({
   input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    marginHorizontal:50
+    width: 250,
+    marginHorizontal: 100
   },
   text: {
     fontSize: 20,
@@ -104,7 +116,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF'
   },
@@ -117,9 +128,6 @@ const styles = StyleSheet.create({
      fontWeight: 'bold',
      backgroundColor: 'rgba(247,247,247,1.0)',
    },
-   checkbox: {
-    alignSelf: "center",
-  },
   row: {
     flex: 1,
     flexDirection: "row",
@@ -138,9 +146,21 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     marginVertical: 8,
-    marginHorizontal: 5,
+    marginHorizontal: 50,
+  },
+  mnemonic: {
+    textAlign: 'center',
+    marginVertical: 8,
+    marginHorizontal: 50,
+    fontSize: 20,
+    fontWeight: "bold"
   },
   title2: {
+    textAlign: 'center',
+    marginVertical: 8,
+    marginHorizontal: 5,
+  },
+  checkbox: {
     flexDirection: "row",
     textAlign: 'center',
     alignItems: 'center',

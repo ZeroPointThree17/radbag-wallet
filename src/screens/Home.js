@@ -78,8 +78,10 @@ const Separator = () => (
   <View style={styles.separator} />
 );
 
-const Home = () => {
+const Home = ({route, navigation}) => {
 
+  const { mnemonicStr, word25Str, seedStr} = route.params;
+  
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -208,6 +210,8 @@ db.transaction((tx) => {
     }, errorCB);
 });
  
+
+
   
   return (
     <SafeAreaView>
@@ -227,6 +231,9 @@ db.transaction((tx) => {
         enabled
         onPress={() => Alert.alert('Import - Cannot press this one')}
       />
+      <Text>{mnemonicStr}</Text> 
+      <Text>{word25Str}</Text> 
+      <Text>{seedStr}</Text>
   </View> 
   </SafeAreaView>
   )

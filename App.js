@@ -34,7 +34,9 @@ import * as ec from 'react-native-ecc'
 import { Buffer } from 'buffer'
 import Welcome from './src/screens/Welcome';
 import CreateWallet from './src/screens/CreateWallet';
+import AppPassword from './src/screens/AppDataSave';
 import Home from './src/screens/Home';
+import AppDataSave from './src/screens/AppDataSave';
 // import NFTs from './src/screens/NFTs';
 // import bitcoin from 'react-native-bitcoinjs-lib'
 // import BIP32Factory from 'bip32';
@@ -314,7 +316,8 @@ const App: () => Node = () => {
     <Stack.Navigator>
       <Stack.Screen name="Welcome" component={Welcome} />
       <Stack.Screen name="Create Wallet" component={CreateWallet} />
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="App Password" component={AppDataSave} />
+      <Stack.Screen name="Home" component={Home} options={{headerLeft: () => null, gestureEnabled: false}} />
     </Stack.Navigator>
     </NavigationContainer>
   );

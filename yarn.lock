@@ -3987,6 +3987,11 @@
     "randombytes" "^2.0.0"
     "randomfill" "^1.0.3"
 
+"crypto-js@^4.1.1":
+  "integrity" "sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw=="
+  "resolved" "https://registry.npmjs.org/crypto-js/-/crypto-js-4.1.1.tgz"
+  "version" "4.1.1"
+
 "crypto-pouch@^4.0.1":
   "integrity" "sha512-PZx0NYhbNjVIIULd7ZofkQ95o0CaPLhrlchUlLdX8X05ceJa8PycOE4fcw9UWGhcTxUnKiIPlmEeMNetifxkLQ=="
   "resolved" "https://registry.npmjs.org/crypto-pouch/-/crypto-pouch-4.0.1.tgz"
@@ -9495,6 +9500,11 @@
   "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
   "resolved" "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
+
+"react-native-aes-crypto@^2.0.0":
+  "integrity" "sha512-ZsnvpUPaGQ7v7tI7StU40J8bplIQ6xGl7rwUUG+D31KOOIwjODRnUfMfF0hf/6+nrHxtfGd/aUV+nfVLCLI16Q=="
+  "resolved" "https://registry.npmjs.org/react-native-aes-crypto/-/react-native-aes-crypto-2.0.0.tgz"
+  "version" "2.0.0"
 
 "react-native-aes-gcm-crypto@^0.2.0":
   "integrity" "sha512-6vjBQ4AJpdE20fl+bJnMd4JDCjOA63YKvZ+6NQVSj/s66kz2bLWX1YRpgwc7+7/72UggR0byRs0z4t41RLr6gA=="

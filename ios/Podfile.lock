@@ -272,6 +272,8 @@ PODS:
   - React-jsinspector (0.66.4)
   - React-logger (0.66.4):
     - glog
+  - react-native-aes (2.0.0):
+    - React-Core
   - react-native-aes-gcm-crypto (0.2.0):
     - React-Core
   - react-native-ecc (2.3.1):
@@ -441,6 +443,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-aes (from `../node_modules/react-native-aes-crypto`)
   - react-native-aes-gcm-crypto (from `../node_modules/react-native-aes-gcm-crypto`)
   - react-native-ecc (from `../node_modules/react-native-ecc`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
@@ -523,6 +526,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-aes:
+    :path: "../node_modules/react-native-aes-crypto"
   react-native-aes-gcm-crypto:
     :path: "../node_modules/react-native-aes-gcm-crypto"
   react-native-ecc:
@@ -613,6 +618,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 94ce921e1d8ce7023366873ec371f3441383b396
   React-jsinspector: d0374f7509d407d2264168b6d0fad0b54e300b85
   React-logger: 933f80c97c633ee8965d609876848148e3fef438
+  react-native-aes: c75c46aa744bef7c2415fdf7f5b2dcb75ca4364d
   react-native-aes-gcm-crypto: 228d485585a9c95366a4d69b979c6544723bb798
   react-native-ecc: 5a048a6df934aeae0ae46c0b009a79bcc8322f61
   react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f

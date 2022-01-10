@@ -3,7 +3,7 @@ const bip39 = require('bip39');
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UInt256, U256 } from 'uint256';
-var bcrypt = require('react-native-bcrypt');
+
 import CheckBox from 'react-native-check-box';
 import PasswordInputText from 'react-native-hide-show-password-input';
 
@@ -12,15 +12,12 @@ const Separator = () => (
 );
 
 
-function navigateHome(navigation, mnemonic, word25){
-
-   var seed = bip39.mnemonicToSeedSync(mnemonic,word25).toString('hex');
+function navigateAppPassword(navigation, mnemonic, word25){
 
   // var seed="";
-  navigation.navigate('Home', {
+  navigation.navigate('App Password', {
     mnemonicStr: mnemonic,
-    word25Str: word25,
-    seedStr: seed
+    word25Str: word25
   });
 }
 
@@ -30,27 +27,10 @@ const CreateWallet = ({route, navigation}) => {
 
 
   const { mnemonicStr } = route.params;
-  
-
   var mnemonic = JSON.stringify(mnemonicStr).replaceAll('"','');
-   console.log("CW MNEMONIC:" + mnemonic);
 
 
 
-
-// Declare a new state variable, which we'll call "count"
-// const [seed, setSeed] = useState(mnemonic);
-// storeData("seed",seed);
-// var saltArry = new Uint32Array(1);
-// crypto.getRandomValues(saltArry);
-
-var salt = bcrypt.genSaltSync(10);
-var hash = bcrypt.hashSync("B4c02\/", salt);
-console.log("SALT: "+salt);
-console.log("HASH: "+hash);
-
-console.log(bcrypt.compareSync("B4c02\/", hash)); // true
-console.log(bcrypt.compareSync("not_bacon", hash)); // false
 
 
 
@@ -84,16 +64,15 @@ const [word25, setWord25] = useState("");
 </View > 
 { word25flag && 
 
-
 <PasswordInputText 
-onChangeText={(password) => setWord25( "password12" )}
+onChangeText={(password) => setWord25( password )}
 label='25th word' style={styles.title}/>
  }
 <Separator/>
  <Button style={styles.title}
         title="Understood - Continue"
         enabled
-        onPress={() => navigateHome(navigation, mnemonic, word25)}
+        onPress={() => navigateAppPassword(navigation, mnemonic, word25)}
       />
 
   </View> 
@@ -116,8 +95,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF'
+    alignItems: 'center'
   },
    sectionHeader: {
      paddingTop: 2,

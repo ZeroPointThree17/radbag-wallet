@@ -9,7 +9,7 @@ INSERT INTO application VALUES(0,10,'pwHash');
 
 DROP TABLE wallet;
 CREATE TABLE wallet (
-    id INTEGER,
+    id INTEGER PRIMARY KEY,
     name TEXT,
     mnemonic_enc TEXT,
     word25_enc TEXT
@@ -18,7 +18,7 @@ INSERT INTO wallet VALUES(1,'Wallet 1', mnemonic_enc, word25_enc);
 
 
 CREATE TABLE address (
-    wallet_id INTEGER,
+    wallet_id INTEGER PRIMARY KEY,
     id INTEGER,
     name TEXT,
 radix_address TEXT,
@@ -29,7 +29,7 @@ enabled_flag INTEGER
 
 DROP TABLE token;
 CREATE TABLE token (
-    id INTEGER,
+    id INTEGER PRIMARY KEY,
     RRI TEXT,
 name TEXT,
 symbol TEXT,
@@ -40,6 +40,7 @@ INSERT INTO token VALUES (1,'xrd_rr1qy5wfsfh','Radix','XRD',18,null);
 
 DROP table wallet_x_token;
 CREATE TABLE wallet_x_token (
+	id INTEGER PRIMARY KEY,
     walled_id INTEGER,
     token_id INTEGER,
 enabled_flag INTEGER

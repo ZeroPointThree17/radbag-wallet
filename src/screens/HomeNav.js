@@ -10,14 +10,16 @@ export default function HomeNav({route, navigation}) {
 
   const pwStr = route.params;
 
-  console.log("pwStr1:"+pwStr)
+  var password = pwStr.pwStr;
+
+  console.log("pwStr1:"+pwStr.pwStr)
   return (
     <Tab.Navigator >
       <Tab.Screen name="Home" component={Home} initialParams={{
-       pw: {pwStr}
+       pw: {password}
     }}/>
         <Tab.Screen name="Settings" component={Settings} initialParams={{
-       pw: {pwStr}
+       pw: {password}
     }}/>
     </Tab.Navigator>
   );

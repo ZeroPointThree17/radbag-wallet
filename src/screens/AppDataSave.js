@@ -1,7 +1,7 @@
 import { Alert, Button, SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState } from 'react';
-
+let { bech32, bech32m } = require('bech32')
 // import './shim';
 import NodeRSA from 'node-rsa';
 const { randomBytes } = require('crypto')
@@ -11,7 +11,36 @@ var bcrypt = require('react-native-bcrypt');
 const _crypto = require('crypto');
 var SQLite = require('react-native-sqlite-storage');
 import {encrypt, decrypt} from '../helpers/encrypt';
+var HDKey = require('hdkey')
 
+
+
+function convertbits (data, frombits, tobits, pad) {
+  var acc = 0;
+  var bits = 0;
+  var ret = [];
+  var maxv = (1 << tobits) - 1;
+  for (var p = 0; p < data.length; ++p) {
+    var value = data[p];
+    if (value < 0 || (value >> frombits) !== 0) {
+      return null;
+    }
+    acc = (acc << frombits) | value;
+    bits += frombits;
+    while (bits >= tobits) {
+      bits -= tobits;
+      ret.push((acc >> bits) & maxv);
+    }
+  }
+  if (pad) {
+    if (bits > 0) {
+      ret.push((acc << (tobits - bits)) & maxv);
+    }
+  } else if (bits >= frombits || ((acc << (tobits - bits)) & maxv)) {
+    return null;
+  }
+  return ret;
+}
 
 const Separator = () => (
   <View style={styles.separator} />
@@ -49,50 +78,74 @@ var word25_enc = encrypt(word25, Buffer.from(password));
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
 
-db.transaction((tx) => {
-  tx.executeSql('DROP TABLE application', [], (tx, results) => {
-    console.log("Drop application table completed");
-  }, errorCB);
-});
 
 
 db.transaction((tx) => {
+
+    tx.executeSql('DROP TABLE application', [], (tx, results) => {
+      console.log("Drop application table completed");
+
+      db.transaction((tx) => {
   tx.executeSql(`CREATE TABLE application (
     new_user_flag INTEGER,
-    version INTEGER
-)`, [], (tx, results) => {
+    version INTEGER)`, [], (tx, results) => {
     console.log("Create application table completed");
+
+    db.transaction((tx) => {
+      tx.executeSql("INSERT INTO application VALUES(1,10)", [], (tx, results) => {
+        console.log("Inserts into application table completed");
+      }, errorCB);});
+  }, errorCB);
+});
+}, errorCB);
+});
+
+
+
+
+db.transaction((tx) => {
+  tx.executeSql('DROP TABLE id', [], (tx, results) => {
+    console.log("Drop id table completed");
+    db.transaction((tx) => {
+      tx.executeSql(`CREATE TABLE id (
+        table_name TEXT,
+        next_id INTEGER
+    )`, [], (tx, results) => {
+        console.log("Create id table completed");
+        db.transaction((tx) => {
+          tx.executeSql("INSERT INTO id VALUES('wallet',1)", [], (tx, results) => {
+            console.log("Inserts into id table completed");
+          }, errorCB);
+        });
+      }, errorCB);
+    });
   }, errorCB);
 });
 
-db.transaction((tx) => {
-  tx.executeSql("INSERT INTO application VALUES(1,10)", [], (tx, results) => {
-    console.log("Inserts into application table completed");
-  }, errorCB);
-});
+
+
+
 
 
 db.transaction((tx) => {
   tx.executeSql('DROP TABLE wallet', [], (tx, results) => {
     console.log("Drop wallet table completed");
-  }, errorCB);
-});
+    db.transaction((tx) => {
+      tx.executeSql(`CREATE TABLE wallet (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        mnemonic_enc TEXT,
+        word25_enc TEXT
+    )`, [], (tx, results) => {
+        console.log("Create wallet table completed");
 
-
-db.transaction((tx) => {
-  tx.executeSql(`CREATE TABLE wallet (
-    id INTEGER,
-    name TEXT,
-    mnemonic_enc TEXT,
-    word25_enc TEXT
-)`, [], (tx, results) => {
-    console.log("Create wallet table completed");
-  }, errorCB);
-});
-
-db.transaction((tx) => {
-  tx.executeSql("INSERT INTO wallet VALUES(1,'Wallet 1', '" + mnemonic_enc + "', '" + word25_enc + "')", [], (tx, results) => {
-    console.log("Inserts into wallet table completed");
+          db.transaction((tx) => {
+            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word25_enc) VALUES (1, 'Wallet 1', '" + mnemonic_enc + "', '" + word25_enc + "')", [], (tx, results) => {
+              console.log("Inserts into wallet table completed");
+            }, errorCB);
+          });
+      }, errorCB);
+    });
   }, errorCB);
 });
 
@@ -101,75 +154,115 @@ db.transaction((tx) => {
 db.transaction((tx) => {
   tx.executeSql('DROP TABLE token', [], (tx, results) => {
     console.log("Drop token table completed");
+    db.transaction((tx) => {
+      tx.executeSql(`CREATE TABLE token (
+        id INTEGER PRIMARY KEY,
+        rri TEXT,
+    name TEXT,
+    symbol TEXT,
+    decimals INTGER,
+    logo BLOB
+    )`, [], (tx, results) => {
+        console.log("Create token table completed");
+        db.transaction((tx) => {
+          tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
+            console.log("Inserts into token table completed");
+          }, errorCB);
+        });
+      }, errorCB);
+    });
   }, errorCB);
 });
 
-db.transaction((tx) => {
-  tx.executeSql(`CREATE TABLE token (
-    id INTEGER,
-    RRI TEXT,
-name TEXT,
-symbol TEXT,
-decimals INTGER,
-logo BLOB
-)`, [], (tx, results) => {
-    console.log("Create token table completed");
-  }, errorCB);
-});
-
-db.transaction((tx) => {
-  tx.executeSql("INSERT INTO token VALUES (1,'xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
-    console.log("Inserts into token table completed");
-  }, errorCB);
-});
 
 
 
 db.transaction((tx) => {
   tx.executeSql('DROP TABLE wallet_x_token', [], (tx, results) => {
-    console.log("Drop wallet_x_token token completed");
+    console.log("Drop wallet_x_token table completed");
+    db.transaction((tx) => {
+      tx.executeSql(`CREATE TABLE wallet_x_token (
+        id INTEGER PRIMARY KEY,
+        wallet_id INTEGER,
+        token_id INTEGER,
+    enabled_flag INTEGER
+    )`, [], (tx, results) => {
+        console.log("Create wallet_x_token table completed");
+        db.transaction((tx) => {
+          tx.executeSql('INSERT INTO wallet_x_token (wallet_id, token_id, enabled_flag) select distinct a.id, b.id, 1 from wallet a, token b', [], (tx, results) => {
+            console.log("Inserts into wallet_x_token token completed");
+          }, errorCB);
+        });
+        
+      }, errorCB);
+    });
   }, errorCB);
 });
 
-db.transaction((tx) => {
-  tx.executeSql(`CREATE TABLE wallet_x_token (
-    walled_id INTEGER,
-    token_id INTEGER,
-enabled_flag INTEGER
-)`, [], (tx, results) => {
-    console.log("Create wallet_x_token table completed");
-  }, errorCB);
-});
 
-db.transaction((tx) => {
-  tx.executeSql('INSERT INTO wallet_x_token VALUES(1,1,1)', [], (tx, results) => {
-    console.log("Inserts into wallet_x_token token completed");
-  }, errorCB);
-});
 
-// db.transaction((tx) => {
-
-//   tx.executeSql('SELECT * FROM lorem', [], (tx, results) => {
+var seed = bip39.mnemonicToSeedSync(mnemonic,word25).toString('hex');
      
-//       console.log("Query completed");
+var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
 
-//       // Get rows with Web SQL Database spec compliance.
 
-//       var len = results.rows.length;
-//       for (let i = 0; i < len; i++) {
-//         let row = results.rows.item(i);
-//         console.log(`Employee name: ${row.info}, Dept Name: ${row.info}`);
-//       }
+  db.transaction((tx) => {
+    tx.executeSql('DROP TABLE address', [], (tx, results) => {
+      console.log("Drop address table completed");
+      db.transaction((tx) => {
+        tx.executeSql(`CREATE TABLE address (
+          id INTEGER PRIMARY KEY,
+          wallet_id INTEGER,
+          name TEXT,
+      radix_address TEXT,
+      publickey TEXT,
+      privatekey_enc TEXT,
+      enabled_flag INTEGER
+      )`, [], (tx, results) => {
+          console.log("Create address table completed");
+          var enabled_flag=1;
+          for (let i = 1; i < 11; i++) {
+        
+            db.transaction((tx) => {
+        
+              var childkey = hdkey.derive("m/44'/1022'/0'/0/"+(i-1).toString()+"'")
+              var privatekey_enc = encrypt(childkey.privateKey.toString('hex'), Buffer.from(password));
+              var publicKey = childkey.publicKey.toString('hex');
+              var readdr_bytes = Buffer.concat([Buffer.from([0x04]), childkey.publicKey]);
+              var readdr_bytes5 = convertbits(Uint8Array.from(readdr_bytes), 8, 5, true);
+              var rdx_addr = bech32.encode("rdx", readdr_bytes5);
+          
+              if(i==2){enabled_flag=0}
+              tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1,'Address "+i.toString()+"','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"',"+enabled_flag+")", [], (tx, results) => {
+                console.log("Inserts into address table completed");
 
-//       // Alternatively, you can use the non-standard raw method.
+                      db.transaction((tx) => {
 
-//       /*
-//         let rows = results.rows.raw(); // shallow copy of rows Array
+                        tx.executeSql('SELECT * FROM address', [], (tx, results) => {
 
-//         rows.map(row => console.log(`Employee name: ${row.name}, Dept Name: ${row.deptName}`));
-//       */
-//     }, errorCB);
-// });
+
+                          var len = results.rows.length;
+                          //  console.log(results.rows.item);
+                            for (let i = 0; i < len; i++) {
+                          let row = results.rows.item(i);
+                          console.log(row);
+                            }
+                          }, errorCB);
+                        });
+              }, errorCB);
+            });
+         } 
+        
+        }, errorCB);
+      });
+    }, errorCB);
+  });
+
+
+  
+
+
+
     navigation.navigate('Raddish Wallet', {
       pwStr: password
     });

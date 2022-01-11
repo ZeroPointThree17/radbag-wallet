@@ -108,83 +108,6 @@ const Home = ({route, navigation}) => {
       return null;
     };
 
-    var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
-
-    var create_first_address=0;
-    
-    var mnemonic_enc = "";
-    var word25_enc = "";
-
- 
-
-            db.transaction((tx) => {
-
-               tx.executeSql('SELECT new_user_flag FROM application', [], (tx, results) => {
-           
-       
-                  var len = results.rows.length;
-                   for (let i = 0; i < len; i++) {
-                  let row = results.rows.item(i);
-
-
-                      if(row.new_user_flag == 1){
-                      create_first_address=1;
-                     tx.executeSql('UPDATE application SET new_user_flag = 0 ', [], (tx, results) => {},errorCB);
-                     }
-             
-                   }
-      
-
-                   if(true){
-
-                     console.log("In true;")
-                //    if(create_first_address == 1){
-                     tx.executeSql('SELECT mnemonic_enc, word25_enc FROM wallet WHERE id=1', [], (tx, results) => {
-                        console.log("In true 2;")
-                        var len = results.rows.length;
-                        for (let i = 0; i < len; i++) {
-                            let row = results.rows.item(i);
-                            mnemonic_enc = row.mnemonic_enc;
-                            word25_enc = row.word25_enc;
-                        }
-                   
-                        var mnemonic = decrypt(mnemonic_enc, pw.pwStr.pwStr);
-                        console.log("In true 3;"+pw.pwStr.pwStr)
-                        console.log("HOME MNEMONIC: " +mnemonic);
-     
-                        var word25 = decrypt(word25_enc, pw.pwStr.pwStr);
-                        var seed = bip39.mnemonicToSeedSync(mnemonic,word25).toString('hex');
-     
-                        var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
-                        var childkey = hdkey.derive("m/44'/1022'/0'/0/0'")
-                        
-     
-                         console.log("Home PUB KEY: "+ childkey.publicKey.toString('hex'))
-         
-                         console.log("Home PRIV KEY: "+ childkey.privateKey.toString('hex'))
-                        var readdr_bytes = Buffer.concat([Buffer.from([0x04]), childkey.publicKey]);
-                        var readdr_bytes5 = convertbits(Uint8Array.from(readdr_bytes), 8, 5, true);
-                        console.log(readdr_bytes5);
-                         var rdx_addr = bech32.encode("rdx", readdr_bytes5);
-                          console.log("Home RDX KEY: "+ rdx_addr);
-                      
-                   
-                   
-                    }, errorCB);
-
- 
-    
-                }
-
-
-             }, errorCB);
-          });
-      
-
-
-
-
-
     
 
     // // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
@@ -229,7 +152,7 @@ const Home = ({route, navigation}) => {
           maxHeight={300}
           labelField="label"
           valueField="value"
-          placeholder={!isFocus ? 'Select item' : '...'}
+          placeholder={!isFocus ? 'Select Wallet' : '...'}
           searchPlaceholder="Search..."
           value={value}
           onFocus={() => setIsFocus(true)}

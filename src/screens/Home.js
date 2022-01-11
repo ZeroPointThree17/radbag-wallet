@@ -1,5 +1,5 @@
 import { Alert, Button, SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState,useRef, useEffect } from 'react';
 const bip39 = require('bip39');
 var HDKey = require('hdkey')
 let { bech32, bech32m } = require('bech32')
@@ -13,7 +13,28 @@ import { Dropdown } from 'react-native-element-dropdown';
 //  import  AntDesign  from 'antd';
 // import FontAwesome, { SolidIcons, RegularIcons, BrandIcons } from 'react-native-fontawesome';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {Picker} from '@react-native-picker/picker';
 
+
+function useInterval(callback, delay) {
+    const savedCallback = useRef();
+  
+    // Remember the latest callback.
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+  
+    // Set up the interval.
+    useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+      if (delay !== null) {
+        let id = setInterval(tick, delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+  }
 
 const Tab = createBottomTabNavigator();
 
@@ -78,12 +99,20 @@ function convertbits (data, frombits, tobits, pad) {
       const Separator = () => (
         <View style={styles.separator} />
       );
-     
-function getWallets(setWallets,setActiveWallet,setEnabledAddresses,db){
+
+    
+    //   var wallets = [];
+    //   var enabledAddresses = [];
+
+    var first = true;
+function getWallets(db, setWallets){
+
+    first = false;
+    console.log("inside get wallets0");
     db.transaction((tx) => {
 
-        tx.executeSql('SELECT * FROM wallet', [], (tx, results) => {
-
+        tx.executeSql("SELECT * FROM wallet", [], (tx, results) => {
+            console.log("inside get wallets0.1");
           var len = results.rows.length;
           var wallets = [];
             for (let i = 0; i < len; i++) {
@@ -91,58 +120,62 @@ function getWallets(setWallets,setActiveWallet,setEnabledAddresses,db){
                 var data = {label: row.name, value: row.id}
                  wallets.push(data);
             }
+
+            
             setWallets(wallets);
-            setActiveWallet(wallets[0].value);
-            getEnabledAddresses(setEnabledAddresses,wallets[0].value,db)
+       
+            //  activeWallet = wallets[0].value;
+             console.log("inside get wallets");
+             console.log("inside get wallets2");
+             // getEnabledAddresses(wallets[0].value,db)
           }, errorCB);
         });
+        
 }
 
-function getEnabledAddresses(setEnabledAddresses,wallet_id,db){
+function getEnabledAddresses(wallet_id,db){
     db.transaction((tx) => {
 
-        console.log("1 get en addrs");
-
-        tx.executeSql('SELECT * FROM address WHERE wallet_id='+wallet_id+' AND enabled_flag=1', [], (tx, results) => {
-            console.log("sel get en addrs");
+        tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag=1'", [], (tx, results) => {
 
           var table = {tableHead: ['Name', 'Address'], tableData: []};
-         
+          
           var len = results.rows.length;
       
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
                     // var data = [row.name, row.radix_address];
-                    table.tableData[i].push(row.name);
-                    table.tableData[i].push(row.radix_address);
+                    table.tableData.push([row.name, row.radix_address]);
             }
-            console.log(table);
-            setEnabledAddresses(table);
+            //  alert("table: "+JSON.stringify(table))
+            enabledAddresses = table;
           }, errorCB);
         });
 }
 
-function addAddress(setEnabledAddresses,wallet_id, db){
+function addAddress(wallet_id, db){
 
+    // alert("Updating addresses 0.1");
     db.transaction((tx) => {
 
-        tx.executeSql('SELECT MAX(id) AS id FROM address WHERE wallet_id='+wallet_id+' AND enabled_flag=1', [], (tx, results) => {
-
+        tx.executeSql("SELECT MAX(id) AS id FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag=1", [], (tx, results) => {
+            // alert("Updating addresses 0");
           var len = results.rows.length;
           var next_id = 0;
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
-                next_id = row.id + 1;
-            }
+                    next_id = row.id + 1;
+             }
 
             if(next_id > 100){
                 alert("You cannot have more than 100 addresses");
             } else{
             db.transaction((tx) => {
 
-                tx.executeSql('UPDATE address SET enabled_flag=1 WHERE wallet_id='+wallet_id+' AND id='+next_id, [], (tx, results) => {
-        
-                getEnabledAddresses(setEnabledAddresses,wallet_id,db)
+                // alert("Updating addresses");
+                tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
+                    // alert("Done Updating addresses");
+                getEnabledAddresses(wallet_id,db)
                   }, errorCB);
                 });
             }
@@ -151,7 +184,14 @@ function addAddress(setEnabledAddresses,wallet_id, db){
         });
 }
     
-    
+
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
 
 const Home = ({route, navigation}) => {
 
@@ -164,17 +204,33 @@ const Home = ({route, navigation}) => {
 
     const state = this.state;
     
+    const [wallets, setWallets] = useState([{label: "", value:""}]);
+    const [value, setValue] = useState(null);
+    const [label, setLabel] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
 
-    const [wallets, setWallets] = useState([]);
-    const [activeWallet, setActiveWallet] = useState(0);
+
+
+    useInterval(() => {
+        getWallets(db, setWallets);
+      }, 1000);
+
+    //  while(first == true){
+    //      console.log("in loop 1");
+    //      console.log("in loop 2");
+    //      console.log(first);
+    //      wait(100);
+    // }
+
+    console.log("WALLETS: "+JSON.stringify(wallets));
+    const [activeWallet, setActiveWallet] = useState();
     const [enabledAddresses, setEnabledAddresses] = useState([]);
    
-    getWallets(setWallets,setActiveWallet,setEnabledAddresses,db);
 
+    
  
  
-    const [value, setValue] = useState(null);
-    const [isFocus, setIsFocus] = useState(false);
+
 
     const renderLabel = () => {
       if (value || isFocus) {
@@ -208,6 +264,54 @@ const Home = ({route, navigation}) => {
 //          <Text >Radix Key: {rdx_addr} </Text>
        
 //        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
+
+         // setValue(item.value);
+
+        //  const forceUpdate = React.useCallback(() => updateState({}), []);
+        //  forceUpdate;
+
+        //<Dropdown
+        //  style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+        //   placeholderStyle={styles.placeholderStyle}
+        //   selectedTextStyle={styles.selectedTextStyle}
+        //   inputSearchStyle={styles.inputSearchStyle}
+        //   iconStyle={styles.iconStyle}
+        //   data={wallets}
+        //   search
+        //   maxHeight={300}
+        //   labelField="label"
+        //   valueField="value"
+        //   placeholder={!isFocus ? 'Select Wallet' : '...'}
+        //   searchPlaceholder="Search..."
+        //   label={label}
+        //   value={value}
+        //   onFocus={() => setIsFocus(true)}
+        //   onBlur={() => setIsFocus(false)}
+        //   onChange={item => {
+        //     setLabel(item.label);
+        //     setValue(item.value);
+        //     setIsFocus(false);
+        //   }}
+        // />
+
+
+    //     <Picker
+    //     selectedValue={wallets[0].label}
+       
+    //     onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+    //   >
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
+    //   </Picker>
+  
   return (
 
     
@@ -216,12 +320,10 @@ const Home = ({route, navigation}) => {
      
         
 <Text style={styles.title}>Total XRD Balance: </Text>
+{renderLabel()}
 
-
-<View style={styles.container}>
-        {renderLabel()}
-        <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+<Dropdown
+         style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
@@ -233,17 +335,24 @@ const Home = ({route, navigation}) => {
           valueField="value"
           placeholder={!isFocus ? 'Select Wallet' : '...'}
           searchPlaceholder="Search..."
-          value={value}
-          onFocus={() => setIsFocus(true)}
+          label={wallets[0].label}
+          value={wallets[0].value}
+          onFocus={() => {setIsFocus(true)}}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
+            
+            setLabel(item.label);
             setValue(item.value);
-            setIsFocus(false);
+            setIsFocus(true);
           }}
-          
         />
+
+
+
+      
+        
                 {/* <FontAwesome icon={SolidIcons.smile} /> */}
-      </View>
+     
 
       <Button style={styles.title}
         title="Select Tokens for Summary"
@@ -254,7 +363,7 @@ const Home = ({route, navigation}) => {
       <Button style={styles.title}
         title="Add Address"
         enabled
-        onPress={() => addAddress(setEnabledAddresses,activeWallet, db)}
+        onPress={() => addAddress(activeWallet, db)}
       />
 
       <Separator/>

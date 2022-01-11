@@ -77,8 +77,7 @@ var word25_enc = encrypt(word25, Buffer.from(password));
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
-
-
+console.log("ABOUT TO LOAD TABLES")
 
 db.transaction((tx) => {
 
@@ -94,6 +93,7 @@ db.transaction((tx) => {
     db.transaction((tx) => {
       tx.executeSql("INSERT INTO application VALUES(1,10)", [], (tx, results) => {
         console.log("Inserts into application table completed");
+        
       }, errorCB);});
   }, errorCB);
 });
@@ -115,6 +115,7 @@ db.transaction((tx) => {
         db.transaction((tx) => {
           tx.executeSql("INSERT INTO id VALUES('wallet',1)", [], (tx, results) => {
             console.log("Inserts into id table completed");
+            
           }, errorCB);
         });
       }, errorCB);
@@ -142,6 +143,7 @@ db.transaction((tx) => {
           db.transaction((tx) => {
             tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word25_enc) VALUES (1, 'Wallet 1', '" + mnemonic_enc + "', '" + word25_enc + "')", [], (tx, results) => {
               console.log("Inserts into wallet table completed");
+             
             }, errorCB);
           });
       }, errorCB);
@@ -167,6 +169,7 @@ db.transaction((tx) => {
         db.transaction((tx) => {
           tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
             console.log("Inserts into token table completed");
+           
           }, errorCB);
         });
       }, errorCB);
@@ -191,6 +194,7 @@ db.transaction((tx) => {
         db.transaction((tx) => {
           tx.executeSql('INSERT INTO wallet_x_token (wallet_id, token_id, enabled_flag) select distinct a.id, b.id, 1 from wallet a, token b', [], (tx, results) => {
             console.log("Inserts into wallet_x_token token completed");
+           
           }, errorCB);
         });
         
@@ -221,7 +225,7 @@ var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
       )`, [], (tx, results) => {
           console.log("Create address table completed");
           var enabled_flag=1;
-          for (let i = 1; i < 11; i++) {
+          for (let i = 1; i < 2; i++) {
         
             db.transaction((tx) => {
         
@@ -235,7 +239,7 @@ var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
               if(i==2){enabled_flag=0}
               tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1,'Address "+i.toString()+"','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"',"+enabled_flag+")", [], (tx, results) => {
                 console.log("Inserts into address table completed");
-
+                
                       // db.transaction((tx) => {
 
                       //   tx.executeSql('SELECT * FROM address', [], (tx, results) => {
@@ -259,9 +263,6 @@ var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
   });
 
 
-  
-
-
 
     navigation.navigate('Raddish Wallet', {
       pwStr: password
@@ -270,6 +271,14 @@ var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
   else{
     alert("The passwords entered do not match");
   }
+}
+
+function wait(ms){
+  var start = new Date().getTime();
+  var end = start;
+  while(end < start + ms) {
+    end = new Date().getTime();
+ }
 }
 
 const AppDataSave = ({route, navigation}) => {
@@ -281,7 +290,13 @@ const AppDataSave = ({route, navigation}) => {
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
 
-  
+// const [appDone, setappDone] = useState(false);
+// const [idDone, setidDone] = useState(false);
+// const [walletDone, setwalletDone] = useState(false);
+// const [walletXtokenDone, setwalletXtokenDone] = useState(false);
+// const [tokenDone, settokenDone] = useState(false);
+// const [addressDone, setaddressDone] = useState(false);
+
 
 
 
@@ -310,6 +325,9 @@ label='Confirm App Password' />
 
 
       <Separator/>
+
+
+
 
  <Separator/>
  <Button

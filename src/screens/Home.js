@@ -58,18 +58,16 @@ function convertbits (data, frombits, tobits, pad) {
   
 
     this.state = {
-        tableHead: ['Head', 'Head2', 'Head3', 'Head4'],
+        tableHead: ['Nickname', 'Address', 'XRD','Remove'],
         tableData: [
-          ['1', '2', '3', '4'],
-          ['a', 'b', 'c', 'd'],
-          ['1', '2', '3', '456\n789'],
-          ['a', 'b', 'c', 'd']
+          ['Small Address', 'rdx1qs...jnk65 [copy]', '1,234,432.24','-'],
+       
         ]
       }
 
 
       const data = [
-        { label: 'Wallet 1', value: '1' },
+        { label: 'Wallet 1 (1,234,432.24 XRD)', value: '1' },
         
       ];
     
@@ -78,7 +76,6 @@ const Home = ({route, navigation}) => {
 
     const {pwStr} = route.params;
 
-    alert(pwStr);
     const state = this.state;
     const [currentWalletName, setCurrentWalletName] = useState("");
     const [currentAddresses, setCurrentAddresses] = useState([]);
@@ -101,7 +98,6 @@ const Home = ({route, navigation}) => {
 
     var create_first_address=0;
     
-    var app_pw_enc = "";
     var mnemonic_enc = "";
     var word25_enc = "";
 
@@ -201,7 +197,7 @@ const Home = ({route, navigation}) => {
      <View  > 
      
         
-<Text style={styles.title}>XRD Balance: </Text>
+<Text style={styles.title}>Total XRD Balance: </Text>
 
 
 <View style={styles.container}>
@@ -229,11 +225,9 @@ const Home = ({route, navigation}) => {
           
         />
                 <FontAwesome icon={SolidIcons.smile} />
-        <FontAwesome icon={RegularIcons.smileWink} />
-        <FontAwesome icon={BrandIcons.github} />
       </View>
 
-
+      <Text style={styles.title}>Add Address</Text>
 
 <Table borderStyle={{borderWidth: 0, borderColor: '#808080'}}>
           <Row data={state.tableHead} />

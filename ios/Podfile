@@ -32,3 +32,4 @@ target 'RaddishWallet' do
 end
 
 pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
+pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'

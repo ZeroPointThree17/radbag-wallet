@@ -1,4 +1,6 @@
 rootProject.name = 'RaddishWallet'
+include ':react-native-vector-icons'
+project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':react-native-scrypt'
 project(':react-native-scrypt').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-scrypt/android')
 include ':react-native-os'

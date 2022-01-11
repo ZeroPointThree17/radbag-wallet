@@ -236,19 +236,19 @@ var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
               tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1,'Address "+i.toString()+"','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"',"+enabled_flag+")", [], (tx, results) => {
                 console.log("Inserts into address table completed");
 
-                      db.transaction((tx) => {
+                      // db.transaction((tx) => {
 
-                        tx.executeSql('SELECT * FROM address', [], (tx, results) => {
+                      //   tx.executeSql('SELECT * FROM address', [], (tx, results) => {
 
 
-                          var len = results.rows.length;
-                          //  console.log(results.rows.item);
-                            for (let i = 0; i < len; i++) {
-                          let row = results.rows.item(i);
-                          console.log(row);
-                            }
-                          }, errorCB);
-                        });
+                      //     var len = results.rows.length;
+                      //     //  console.log(results.rows.item);
+                      //       for (let i = 0; i < len; i++) {
+                      //     let row = results.rows.item(i);
+                      //     console.log(row);
+                      //       }
+                      //     }, errorCB);
+                      //   });
               }, errorCB);
             });
          } 

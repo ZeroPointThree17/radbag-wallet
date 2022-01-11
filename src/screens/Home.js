@@ -26,7 +26,7 @@ const Tab = createBottomTabNavigator();
   }
   
   function openCB() {
-    console.log("Database OPENED");
+    // console.log("Database OPENED");
   }
   
 
@@ -78,7 +78,79 @@ function convertbits (data, frombits, tobits, pad) {
       const Separator = () => (
         <View style={styles.separator} />
       );
+     
+function getWallets(setWallets,setActiveWallet,setEnabledAddresses,db){
+    db.transaction((tx) => {
+
+        tx.executeSql('SELECT * FROM wallet', [], (tx, results) => {
+
+          var len = results.rows.length;
+          var wallets = [];
+            for (let i = 0; i < len; i++) {
+                let row = results.rows.item(i);
+                var data = {label: row.name, value: row.id}
+                 wallets.push(data);
+            }
+            setWallets(wallets);
+            setActiveWallet(wallets[0].value);
+            getEnabledAddresses(setEnabledAddresses,wallets[0].value,db)
+          }, errorCB);
+        });
+}
+
+function getEnabledAddresses(setEnabledAddresses,wallet_id,db){
+    db.transaction((tx) => {
+
+        console.log("1 get en addrs");
+
+        tx.executeSql('SELECT * FROM address WHERE wallet_id='+wallet_id+' AND enabled_flag=1', [], (tx, results) => {
+            console.log("sel get en addrs");
+
+          var table = {tableHead: ['Name', 'Address'], tableData: []};
+         
+          var len = results.rows.length;
       
+            for (let i = 0; i < len; i++) {
+                let row = results.rows.item(i);
+                    // var data = [row.name, row.radix_address];
+                    table.tableData[i].push(row.name);
+                    table.tableData[i].push(row.radix_address);
+            }
+            console.log(table);
+            setEnabledAddresses(table);
+          }, errorCB);
+        });
+}
+
+function addAddress(setEnabledAddresses,wallet_id, db){
+
+    db.transaction((tx) => {
+
+        tx.executeSql('SELECT MAX(id) AS id FROM address WHERE wallet_id='+wallet_id+' AND enabled_flag=1', [], (tx, results) => {
+
+          var len = results.rows.length;
+          var next_id = 0;
+            for (let i = 0; i < len; i++) {
+                let row = results.rows.item(i);
+                next_id = row.id + 1;
+            }
+
+            if(next_id > 100){
+                alert("You cannot have more than 100 addresses");
+            } else{
+            db.transaction((tx) => {
+
+                tx.executeSql('UPDATE address SET enabled_flag=1 WHERE wallet_id='+wallet_id+' AND id='+next_id, [], (tx, results) => {
+        
+                getEnabledAddresses(setEnabledAddresses,wallet_id,db)
+                  }, errorCB);
+                });
+            }
+
+          }, errorCB);
+        });
+}
+    
     
 
 const Home = ({route, navigation}) => {
@@ -87,13 +159,20 @@ const Home = ({route, navigation}) => {
 
     var pwStr = JSON.stringify(pw).replaceAll('"','');
 
+    var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
-    // var pwStr = 'a';
 
     const state = this.state;
-    const [currentWalletName, setCurrentWalletName] = useState("");
-    const [currentAddresses, setCurrentAddresses] = useState([]);
+    
 
+    const [wallets, setWallets] = useState([]);
+    const [activeWallet, setActiveWallet] = useState(0);
+    const [enabledAddresses, setEnabledAddresses] = useState([]);
+   
+    getWallets(setWallets,setActiveWallet,setEnabledAddresses,db);
+
+ 
+ 
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
@@ -147,7 +226,7 @@ const Home = ({route, navigation}) => {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={data}
+          data={wallets}
           search
           maxHeight={300}
           labelField="label"
@@ -166,20 +245,25 @@ const Home = ({route, navigation}) => {
                 {/* <FontAwesome icon={SolidIcons.smile} /> */}
       </View>
 
-      <Text style={styles.title}>Add Address</Text>
-      <Text style={styles.title}>Select Tokens for Summary</Text>
+      <Button style={styles.title}
+        title="Select Tokens for Summary"
+        enabled
+        onPress={() => alert('hi')}
+      />
+
+      <Button style={styles.title}
+        title="Add Address"
+        enabled
+        onPress={() => addAddress(setEnabledAddresses,activeWallet, db)}
+      />
+
       <Separator/>
-<Table borderStyle={{borderWidth: 0, borderColor: '#808080'}}>
-          <Row data={state.tableHead} />
-          <Rows data={state.tableData} />
+<Table borderStyle={{borderWidth: 1, borderColor: '#808080'}}>
+          <Row data={enabledAddresses.tableHead} />
+          <Rows borderStyle={{borderWidth: 1, borderColor: '#808080'}} data={enabledAddresses.tableData} />
         </Table>
 
-        <Separator/>
-
-        <Table borderStyle={{borderWidth: 0, borderColor: '#808080'}}>
-          <Row data={state.tableHead} />
-          <Rows data={state.tableData} />
-        </Table>
+       
 
         <Separator/>
   </View> 

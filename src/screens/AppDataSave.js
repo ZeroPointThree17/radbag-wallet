@@ -10,31 +10,7 @@ import PasswordInputText from 'react-native-hide-show-password-input';
 var bcrypt = require('react-native-bcrypt');
 const _crypto = require('crypto');
 var SQLite = require('react-native-sqlite-storage');
-
-function encrypt (text, masterkey){
-  // random initialization vector
-  const iv = _crypto.randomBytes(16);
-
-  // random salt
-  const salt = _crypto.randomBytes(64);
-
-  // derive key: 32 byte key length - in assumption the masterkey is a cryptographic and NOT a password there is no need for
-  // a large number of iterations. It may can replaced by HKDF
-  const key = _crypto.pbkdf2Sync(masterkey, salt, 2145, 32, 'sha512');
-
-  // AES 256 GCM Mode
-  const cipher = _crypto.createCipheriv('aes-256-gcm', key, iv);
-
-  // encrypt the given text
-  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
-
-  // extract the auth tag
-  const tag = cipher.getAuthTag();
-
-  // generate output
-  return Buffer.concat([salt, iv, tag, encrypted]).toString('base64');
-}
-
+import {encrypt, decrypt} from '../helpers/encrypt';
 
 
 const Separator = () => (
@@ -61,13 +37,13 @@ function navigateHome(navigation, password, confirmPassword, mnemonic, word25){
     alert("Password is required");
   } 
   else if(password === confirmPassword){
-    var salt = bcrypt.genSaltSync(10);
-    var pwHash = bcrypt.hashSync(password, salt);
+    // var salt = bcrypt.genSaltSync(10);
+    // var pwHash = bcrypt.hashSync(password, salt);
 
   //  console.log(bcrypt.compareSync(password, pwHash)); // true
 
-var mnemonic_enc = encrypt(mnemonic, Buffer.from(pwHash));
-var word25_enc = encrypt(word25, Buffer.from(pwHash));
+var mnemonic_enc = encrypt(mnemonic, Buffer.from(password));
+var word25_enc = encrypt(word25, Buffer.from(password));
 
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
@@ -83,15 +59,14 @@ db.transaction((tx) => {
 db.transaction((tx) => {
   tx.executeSql(`CREATE TABLE application (
     new_user_flag INTEGER,
-    version INTEGER,
-    app_pw_enc TEXT
+    version INTEGER
 )`, [], (tx, results) => {
     console.log("Create application table completed");
   }, errorCB);
 });
 
 db.transaction((tx) => {
-  tx.executeSql("INSERT INTO application VALUES(1,10,'"+pwHash+"')", [], (tx, results) => {
+  tx.executeSql("INSERT INTO application VALUES(1,10)", [], (tx, results) => {
     console.log("Inserts into application table completed");
   }, errorCB);
 });
@@ -195,9 +170,9 @@ db.transaction((tx) => {
 //       */
 //     }, errorCB);
 // });
-
-
-    navigation.navigate('Home');
+    navigation.navigate('Home', {
+      pwStr: password
+    });
   }
   else{
     alert("The passwords entered do not match");

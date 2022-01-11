@@ -76,6 +76,9 @@ function convertbits (data, frombits, tobits, pad) {
 
 const Home = ({route, navigation}) => {
 
+    const {pwStr} = route.params;
+
+    alert(pwStr);
     const state = this.state;
     const [currentWalletName, setCurrentWalletName] = useState("");
     const [currentAddresses, setCurrentAddresses] = useState([]);
@@ -102,17 +105,7 @@ const Home = ({route, navigation}) => {
     var mnemonic_enc = "";
     var word25_enc = "";
 
-    db.transaction((tx) => {
-
-        
-
-        tx.executeSql('SELECT app_pw_enc FROM application', [], (tx, results) => {
-        
-            var len = results.rows.length;
-            for (let i = 0; i < len; i++) {
-              let row = results.rows.item(i);
-              app_pw_enc = row.app_pw_enc;
-            }
+ 
 
             db.transaction((tx) => {
 
@@ -124,7 +117,7 @@ const Home = ({route, navigation}) => {
                   let row = results.rows.item(i);
 
 
-                      if(row.new_user_flag = 1){
+                      if(row.new_user_flag == 1){
                       create_first_address=1;
                      tx.executeSql('UPDATE application SET new_user_flag = 0 ', [], (tx, results) => {},errorCB);
                      }
@@ -146,10 +139,10 @@ const Home = ({route, navigation}) => {
                         }
                    
                    
-                        var mnemonic = decrypt(mnemonic_enc, app_pw_enc);
+                        var mnemonic = decrypt(mnemonic_enc, pwStr);
                         console.log("HOME MNEMONIC: " +mnemonic);
      
-                        var word25 = decrypt(word25_enc, app_pw_enc);
+                        var word25 = decrypt(word25_enc, pwStr);
                         var seed = bip39.mnemonicToSeedSync(mnemonic,word25).toString('hex');
      
                         var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
@@ -182,19 +175,7 @@ const Home = ({route, navigation}) => {
 
 
 
-        
-              // Alternatively, you can use the non-standard raw method.
-        
-              /*
-                let rows = results.rows.raw(); // shallow copy of rows Array
-        
-                rows.map(row => console.log(`Employee name: ${row.name}, Dept Name: ${row.deptName}`));
-              */
-            }, errorCB);
-        });
-        
-
-
+    
 
     // // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
   

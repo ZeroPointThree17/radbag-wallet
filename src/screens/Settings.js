@@ -1,11 +1,27 @@
 import React from 'react';
 import { SectionList, View, Text, StyleSheet } from 'react-native';
+import { List } from 'react-native-paper';
 
+const Separator = () => (
+  <View style={styles.separator} />
+);
 
 const Settings = () => {
   return (
-     <View style={styles.text}> 
- <Text>Show seed phrase</Text>
+     <View > 
+ <List.Item
+    title="Show Mnemonic"
+    description="Show the mnemonic phrase that you set up when you created the wallet."
+    left={props => <List.Icon {...props} icon="settings" />}
+  />
+  <Separator/>
+
+  <List.Item
+    title="Delete Wallet"
+    description="Permanently delete this wallet."
+    left={props => <List.Icon {...props} icon="settings" />}
+  />
+  <Separator/>
   </View> 
   )
   ;
@@ -37,6 +53,11 @@ const styles = StyleSheet.create({
      fontSize: 18,
      height: 44,
    },
+   separator: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
 });
 
 export default Settings;

@@ -170,7 +170,7 @@ db.transaction((tx) => {
 //       */
 //     }, errorCB);
 // });
-    navigation.navigate('Home', {
+    navigation.navigate('Raddish Wallet', {
       pwStr: password
     });
   }

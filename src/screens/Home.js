@@ -11,7 +11,11 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 import { Dropdown } from 'react-native-element-dropdown';
 //  import AntDesign from 'react-native-vector-icons/AntDesign';
 //  import  AntDesign  from 'antd';
-import FontAwesome, { SolidIcons, RegularIcons, BrandIcons } from 'react-native-fontawesome';
+// import FontAwesome, { SolidIcons, RegularIcons, BrandIcons } from 'react-native-fontawesome';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+
+const Tab = createBottomTabNavigator();
 
   function errorCB(err) {
     console.log("SQL Error: " + err.message);
@@ -58,10 +62,10 @@ function convertbits (data, frombits, tobits, pad) {
   
 
     this.state = {
-        tableHead: ['Nickname', 'Address', 'XRD','Remove'],
+        tableHead: ['Address: rdx1qspp...jnk65 [Small Address]'],
         tableData: [
-          ['Small Address', 'rdx1qs...jnk65 [copy]', '1,234,432.24','-'],
-       
+          ['1,234,432.24 XRD','12121212 ABCDEFGHIJ','12121212 ABCDEFGHIJ','Remove'],
+     
         ]
       }
 
@@ -70,11 +74,21 @@ function convertbits (data, frombits, tobits, pad) {
         { label: 'Wallet 1 (1,234,432.24 XRD)', value: '1' },
         
       ];
+
+      const Separator = () => (
+        <View style={styles.separator} />
+      );
+      
     
 
 const Home = ({route, navigation}) => {
 
-    const {pwStr} = route.params;
+    const {pw} = route.params;
+
+    var pwStr = JSON.stringify(pw).replaceAll('"','');
+
+
+    // var pwStr = 'a';
 
     const state = this.state;
     const [currentWalletName, setCurrentWalletName] = useState("");
@@ -121,12 +135,12 @@ const Home = ({route, navigation}) => {
                    }
       
 
-                //    if(true){
+                   if(true){
 
-                    // console.log("In true;")
-                   if(create_first_address == 1){
+                     console.log("In true;")
+                //    if(create_first_address == 1){
                      tx.executeSql('SELECT mnemonic_enc, word25_enc FROM wallet WHERE id=1', [], (tx, results) => {
-        
+                        console.log("In true 2;")
                         var len = results.rows.length;
                         for (let i = 0; i < len; i++) {
                             let row = results.rows.item(i);
@@ -134,11 +148,11 @@ const Home = ({route, navigation}) => {
                             word25_enc = row.word25_enc;
                         }
                    
-                   
-                        var mnemonic = decrypt(mnemonic_enc, pwStr);
+                        var mnemonic = decrypt(mnemonic_enc, pw.pwStr.pwStr);
+                        console.log("In true 3;"+pw.pwStr.pwStr)
                         console.log("HOME MNEMONIC: " +mnemonic);
      
-                        var word25 = decrypt(word25_enc, pwStr);
+                        var word25 = decrypt(word25_enc, pw.pwStr.pwStr);
                         var seed = bip39.mnemonicToSeedSync(mnemonic,word25).toString('hex');
      
                         var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
@@ -193,6 +207,8 @@ const Home = ({route, navigation}) => {
        
 //        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
   return (
+
+    
     <SafeAreaView style={styles.containerMain}>
      <View  > 
      
@@ -224,17 +240,28 @@ const Home = ({route, navigation}) => {
           }}
           
         />
-                <FontAwesome icon={SolidIcons.smile} />
+                {/* <FontAwesome icon={SolidIcons.smile} /> */}
       </View>
 
       <Text style={styles.title}>Add Address</Text>
-
+      <Text style={styles.title}>Select Tokens for Summary</Text>
+      <Separator/>
 <Table borderStyle={{borderWidth: 0, borderColor: '#808080'}}>
           <Row data={state.tableHead} />
           <Rows data={state.tableData} />
         </Table>
+
+        <Separator/>
+
+        <Table borderStyle={{borderWidth: 0, borderColor: '#808080'}}>
+          <Row data={state.tableHead} />
+          <Rows data={state.tableData} />
+        </Table>
+
+        <Separator/>
   </View> 
   </SafeAreaView>
+
   )
   ;
 };

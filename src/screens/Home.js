@@ -105,7 +105,7 @@ function convertbits (data, frombits, tobits, pad) {
     //   var enabledAddresses = [];
 
     var first = true;
-function getWallets(db, setWallets){
+function getWallets(db, setWallets,setActiveWallet,setEnabledAddresses){
 
     first = false;
     console.log("inside get wallets0");
@@ -123,20 +123,20 @@ function getWallets(db, setWallets){
 
             
             setWallets(wallets);
-       
-            //  activeWallet = wallets[0].value;
+        
+            setActiveWallet(wallets[0].value);
              console.log("inside get wallets");
              console.log("inside get wallets2");
-             // getEnabledAddresses(wallets[0].value,db)
+             getEnabledAddresses(wallets[0].value,db,setEnabledAddresses)
           }, errorCB);
         });
         
 }
 
-function getEnabledAddresses(wallet_id,db){
+function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
     db.transaction((tx) => {
 
-        tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag=1'", [], (tx, results) => {
+        tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
 
           var table = {tableHead: ['Name', 'Address'], tableData: []};
           
@@ -148,7 +148,7 @@ function getEnabledAddresses(wallet_id,db){
                     table.tableData.push([row.name, row.radix_address]);
             }
             //  alert("table: "+JSON.stringify(table))
-            enabledAddresses = table;
+            setEnabledAddresses(table);
           }, errorCB);
         });
 }
@@ -158,7 +158,7 @@ function addAddress(wallet_id, db){
     // alert("Updating addresses 0.1");
     db.transaction((tx) => {
 
-        tx.executeSql("SELECT MAX(id) AS id FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag=1", [], (tx, results) => {
+        tx.executeSql("SELECT MAX(id) AS id FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
             // alert("Updating addresses 0");
           var len = results.rows.length;
           var next_id = 0;
@@ -208,11 +208,13 @@ const Home = ({route, navigation}) => {
     const [value, setValue] = useState(null);
     const [label, setLabel] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
-
+    const [activeWallet, setActiveWallet] = useState();
+    const [enabledAddresses, setEnabledAddresses] = useState([]);
+   
 
 
     useInterval(() => {
-        getWallets(db, setWallets);
+        getWallets(db, setWallets,setActiveWallet,setEnabledAddresses);
       }, 1000);
 
     //  while(first == true){
@@ -223,9 +225,7 @@ const Home = ({route, navigation}) => {
     // }
 
     console.log("WALLETS: "+JSON.stringify(wallets));
-    const [activeWallet, setActiveWallet] = useState();
-    const [enabledAddresses, setEnabledAddresses] = useState([]);
-   
+
 
     
  

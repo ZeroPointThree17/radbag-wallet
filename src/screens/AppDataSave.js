@@ -225,7 +225,7 @@ var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
       )`, [], (tx, results) => {
           console.log("Create address table completed");
           var enabled_flag=1;
-          for (let i = 1; i < 2; i++) {
+          for (let i = 1; i < 11; i++) {
         
             db.transaction((tx) => {
         

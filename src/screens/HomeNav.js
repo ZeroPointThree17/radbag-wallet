@@ -2,10 +2,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Alert, Button, SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import Home from './Home';
-import Settings from './Settings';
+import SettingsNav from './SettingsNav';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import  Ionicons  from 'react-native-vector-icons/Ionicons';
+import { StackActions } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +16,8 @@ export default function HomeNav({route, navigation}) {
 
   var password = pwStr.pwStr;
 
-  console.log("pwStr1:"+pwStr.pwStr)
+
+
   return (
     <Tab.Navigator >
       <Tab.Screen name="Home" component={Home} initialParams={{
@@ -26,8 +28,9 @@ export default function HomeNav({route, navigation}) {
         <IconMaterial name="home" color={color} size={size} />
       ),
     }}/>
-        <Tab.Screen name="Settings" component={Settings} initialParams={{
-       pw: {password}
+        <Tab.Screen name="Settings" component={SettingsNav} initialParams={{
+       pw: {password},
+       navigation: {navigation}
     }} options={{
       tabBarLabel: 'Settings',
       tabBarIcon: ({ color, size }) => (

@@ -81,7 +81,7 @@ console.log("ABOUT TO LOAD TABLES")
 
 db.transaction((tx) => {
 
-    tx.executeSql('DROP TABLE application', [], (tx, results) => {
+    tx.executeSql('DROP TABLE IF EXISTS application', [], (tx, results) => {
       console.log("Drop application table completed");
 
       db.transaction((tx) => {
@@ -104,7 +104,7 @@ db.transaction((tx) => {
 
 
 db.transaction((tx) => {
-  tx.executeSql('DROP TABLE id', [], (tx, results) => {
+  tx.executeSql('DROP TABLE IF EXISTS id', [], (tx, results) => {
     console.log("Drop id table completed");
     db.transaction((tx) => {
       tx.executeSql(`CREATE TABLE id (
@@ -129,7 +129,7 @@ db.transaction((tx) => {
 
 
 db.transaction((tx) => {
-  tx.executeSql('DROP TABLE wallet', [], (tx, results) => {
+  tx.executeSql('DROP TABLE IF EXISTS wallet', [], (tx, results) => {
     console.log("Drop wallet table completed");
     db.transaction((tx) => {
       tx.executeSql(`CREATE TABLE wallet (
@@ -154,7 +154,7 @@ db.transaction((tx) => {
 
 
 db.transaction((tx) => {
-  tx.executeSql('DROP TABLE token', [], (tx, results) => {
+  tx.executeSql('DROP TABLE IF EXISTS token', [], (tx, results) => {
     console.log("Drop token table completed");
     db.transaction((tx) => {
       tx.executeSql(`CREATE TABLE token (
@@ -181,7 +181,7 @@ db.transaction((tx) => {
 
 
 db.transaction((tx) => {
-  tx.executeSql('DROP TABLE wallet_x_token', [], (tx, results) => {
+  tx.executeSql('DROP TABLE IF EXISTS wallet_x_token', [], (tx, results) => {
     console.log("Drop wallet_x_token table completed");
     db.transaction((tx) => {
       tx.executeSql(`CREATE TABLE wallet_x_token (
@@ -211,7 +211,7 @@ var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
 
 
   db.transaction((tx) => {
-    tx.executeSql('DROP TABLE address', [], (tx, results) => {
+    tx.executeSql('DROP TABLE IF EXISTS address', [], (tx, results) => {
       console.log("Drop address table completed");
       db.transaction((tx) => {
         tx.executeSql(`CREATE TABLE address (

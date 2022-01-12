@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, FlatList, SectionList, View, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity,FlatList, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -24,13 +24,16 @@ const list = [
   },
 ];
 
- const Settings = () => {
+ const Settings = ({route, navigation}) => {
  return ( 
      <View > 
 
 
   <View>
-  <ListItem
+  <Separator/>
+
+ <ListItem
+  onPress={() => {navigation.navigate('MnemonicDisplay')}}
   Component={TouchableScale}
   friction={90} //
   tension={100} // These props are passed to the parent component (here TouchableScale)
@@ -42,21 +45,30 @@ const list = [
   }}
   ViewComponent={LinearGradient} // Only if no expo
 >
+
 <IconMaterial name="file-word-box-outline" size={30} color="#4F8EF7" />
-  <ListItem.Content>
-    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
-    
- <Text>Show Mnemonic</Text>
+
+  <ListItem.Content >
+  
+    <ListItem.Title >
+ <Text style={{ color: 'black', fontWeight: 'bold', flex:1  }}>Show Mnemonic</Text>
+
     </ListItem.Title>
-    <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Show the mnemonic phrase that you set up when you created the wallet</Text>
+
+    <ListItem.Subtitle  >
+      <Text style={{ color: 'black', flexWrap: 'wrap', flex:1 }}>Show the mnemonic phrase that you set up when you created the wallet</Text>
     </ListItem.Subtitle>
+
   </ListItem.Content>
   <ListItem.Chevron color="black" />
+  
+
 </ListItem>
+
 
 <Separator/>
 <ListItem
+ onPress={() => {navigation.navigate('MnemonicDisplay')}}
   Component={TouchableScale}
   friction={90} //
   tension={100} // These props are passed to the parent component (here TouchableScale)
@@ -80,7 +92,9 @@ const list = [
   <ListItem.Chevron color="black" />
 </ListItem>
 <Separator/>
+
 <ListItem
+ onPress={() => {alert("ASF")}}
   Component={TouchableScale}
   friction={90} //
   tension={100} // These props are passed to the parent component (here TouchableScale)

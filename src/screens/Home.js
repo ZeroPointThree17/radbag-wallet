@@ -35,8 +35,8 @@ function useInterval(callback, delay) {
     }, [delay]);
   }
 
-  function errorCB(err) {
-    console.log("SQL Error: " + err.message);
+  function errorCB(err, moreInfoStr) {
+    console.log("SQL Error: " + err.message + " More Info: "+moreInfoStr);
   }
   
   function successCB() {
@@ -185,6 +185,20 @@ function addAddress(wallet_id, db){
         });
 }
 
+const removeAddessWarning = (db, wallet_id, address_id) =>
+Alert.alert(
+  "Remove address",
+  "Are you sure you want to remove this address from this wallet?",
+  [
+    {
+      text: "Cancel",
+      onPress: () => console.log("Cancel Pressed"),
+      style: "cancel"
+    },
+    { text: "Yes", onPress: () => removeAddress(db, wallet_id, address_id) }
+  ]
+);
+
 function removeAddress(db, wallet_id, address_id){
 
     // alert("Updating addresses 0.1");
@@ -201,7 +215,7 @@ function removeAddress(db, wallet_id, address_id){
 
 function shortenAddress(address){
 
-    return address.substring(0, 10) +"..."+ address.substring(address.length-5, address.length) 
+    return address.substring(0, 7) +"..."+ address.substring(address.length-5, address.length) 
 
 }
     
@@ -222,13 +236,13 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
                 <SeparatorBorder/>
             <View style={styles.rowStyle}>
                 <View style={{flex: 0.8}}>
-        <Text>{shortenAddress(item[1])} ({item[0]})</Text> 
-        <Text>XRD: 01231  {item[2]} </Text>
+        <Text style={{fontWeight: 'normal', fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[0]} - {shortenAddress(item[1])} </Text> 
+        <Text style={{fontSize: 16, fontFamily: 'GillSans-Light' }}>XRD: 01231  {item[2]} </Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
         <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => removeAddress(db, wallet_id, item[2])}>
+        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
    <IconFoundation name="minus-circle" size={30} color="red" />
    </TouchableOpacity>
    </View>
@@ -250,6 +264,24 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
 //   <Icon name="copy-outline" size={30} color="#4F8EF7" />
 //   <IconFoundation name="minus-circle" size={30} color="red" />
 //   </View>)
+}
+
+function persistActiveWallet(db, wallet_id){
+
+     wallet_id=0;
+        db.transaction((tx) => {
+            tx.executeSql("DROP TABLE IF EXISTS active_wallet", [], (tx, results) => {
+                db.transaction((tx) => {
+                    tx.executeSql("CREATE TABLE active_wallet ( id INTEGER )", [], (tx, results) => {
+                        db.transaction((tx) => {
+                            tx.executeSql("UPDATE active_wallet SET id = "+wallet_id, [], (tx, results) => {
+                            // alert("persist3")
+                            }, errorCB('update active_wallet'));
+                        }); 
+            }, errorCB('Create active_wallet'));
+        });
+              }, errorCB("DROP active wallet"));
+            });
 }
 
 const Home = ({route, navigation}) => {
@@ -344,10 +376,12 @@ const Home = ({route, navigation}) => {
           <ScrollView style={styles.scrollView}>
      <View  > 
      
-   
-<Text style={styles.title}>Total XRD Balance: </Text>
+     <Separator/>
+     <Separator/>
+<Text style={styles.homeTitle}>Total XRD Balance: </Text>
+<Text style={styles.homeTitle}>0.000 XRD</Text>
 
-<Separator/>
+
 <Separator/>
 <View style={styles.rowStyle}>
 <Dropdown
@@ -368,7 +402,7 @@ const Home = ({route, navigation}) => {
           onFocus={() => {setIsFocus(true)}}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            
+            persistActiveWallet(db, wallets[0].value);
             setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);
@@ -457,6 +491,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  homeTitle: {
+    textAlign: 'center',
+    marginVertical: 8,
+    marginHorizontal: 50,
+    fontSize: 20
   },
   title: {
     textAlign: 'center',

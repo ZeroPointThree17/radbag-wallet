@@ -167,8 +167,8 @@ function addAddress(wallet_id, db){
                     next_id = row.id + 1;
              }
 
-            if(next_id > 100){
-                alert("You cannot have more than 100 addresses");
+            if(next_id > 15){
+                alert("You cannot have more than 15 addresses per wallet");
             } else{
             db.transaction((tx) => {
 
@@ -204,7 +204,7 @@ const Home = ({route, navigation}) => {
 
     const state = this.state;
     
-    const [wallets, setWallets] = useState([{label: "", value:""}]);
+    const [wallets, setWallets] = useState([{label: "Loading...", value:""}]);
     const [value, setValue] = useState(null);
     const [label, setLabel] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
@@ -267,50 +267,7 @@ const Home = ({route, navigation}) => {
 
          // setValue(item.value);
 
-        //  const forceUpdate = React.useCallback(() => updateState({}), []);
-        //  forceUpdate;
-
-        //<Dropdown
-        //  style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-        //   placeholderStyle={styles.placeholderStyle}
-        //   selectedTextStyle={styles.selectedTextStyle}
-        //   inputSearchStyle={styles.inputSearchStyle}
-        //   iconStyle={styles.iconStyle}
-        //   data={wallets}
-        //   search
-        //   maxHeight={300}
-        //   labelField="label"
-        //   valueField="value"
-        //   placeholder={!isFocus ? 'Select Wallet' : '...'}
-        //   searchPlaceholder="Search..."
-        //   label={label}
-        //   value={value}
-        //   onFocus={() => setIsFocus(true)}
-        //   onBlur={() => setIsFocus(false)}
-        //   onChange={item => {
-        //     setLabel(item.label);
-        //     setValue(item.value);
-        //     setIsFocus(false);
-        //   }}
-        // />
-
-
-    //     <Picker
-    //     selectedValue={wallets[0].label}
-       
-    //     onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-    //   >
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //     <Picker.Item label={wallets[0].label} value={wallets[0].value} />
-    //   </Picker>
+ 
   
   return (
 
@@ -320,7 +277,9 @@ const Home = ({route, navigation}) => {
      
         
 <Text style={styles.title}>Total XRD Balance: </Text>
-{renderLabel()}
+
+<Separator/>
+<Separator/>
 
 <Dropdown
          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -352,21 +311,24 @@ const Home = ({route, navigation}) => {
       
         
                 {/* <FontAwesome icon={SolidIcons.smile} /> */}
-     
-
-      <Button style={styles.title}
-        title="Select Tokens for Summary"
+     <View style={styles.rowStyle}>
+                <Button style={styles.title}
+        title="Add Wallet"
         enabled
         onPress={() => alert('hi')}
       />
-
       <Button style={styles.title}
         title="Add Address"
         enabled
         onPress={() => addAddress(activeWallet, db)}
       />
-
-      <Separator/>
+      <Button style={styles.title}
+        title="Token Display"
+        enabled
+        onPress={() => alert('hi')}
+      />
+</View>
+<Separator/>
 <Table borderStyle={{borderWidth: 1, borderColor: '#808080'}}>
           <Row data={enabledAddresses.tableHead} />
           <Rows borderStyle={{borderWidth: 1, borderColor: '#808080'}} data={enabledAddresses.tableData} />
@@ -384,6 +346,13 @@ const Home = ({route, navigation}) => {
 
 
 const styles = StyleSheet.create({
+    rowStyle: {
+        flexDirection: 'row',
+        fontSize: 4,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        marginVertical:10
+      },
   text: {
     fontSize: 20,
     alignItems: 'center',

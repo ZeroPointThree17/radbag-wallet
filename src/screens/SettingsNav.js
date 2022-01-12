@@ -22,7 +22,7 @@ const Separator = () => (
  return (
   <Stack.Navigator>
     <Stack.Screen name="Settings" component={Settings} options={{ tabBarLabel: 'Settings', headerShown: false }}/>
-    <Stack.Screen name="MnemonicDisplay" component={MnemonicDisplay} />
+    <Stack.Screen name="Mnemonic Display" component={MnemonicDisplay}/>
   </Stack.Navigator>
 );
 };

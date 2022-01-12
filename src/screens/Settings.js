@@ -33,7 +33,7 @@ const list = [
   <Separator/>
 
  <ListItem
-  onPress={() => {navigation.navigate('MnemonicDisplay')}}
+  onPress={() => {navigation.navigate('Mnemonic Display')}}
   Component={TouchableScale}
   friction={90} //
   tension={100} // These props are passed to the parent component (here TouchableScale)

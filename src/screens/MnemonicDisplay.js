@@ -8,6 +8,7 @@ import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { decrypt } from '../helpers/encrypt';
 var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
+import { catchError } from 'rxjs/operators';
 
 const Separator = () => (
   <View style={styles.separator} />
@@ -27,10 +28,17 @@ function openCB() {
 }
 
 
-function showMnemonic(mnemonic_enc, password, setShow, setMnemonic){
+function showMnemonic(mnemonic_enc, word25_enc, password, setShow, setMnemonic, setWord25){
+  
+  try{
   var mnemonic = decrypt(mnemonic_enc, Buffer.from(password));
+  var word25 = decrypt(word25_enc, Buffer.from(password));
   setMnemonic(mnemonic);
+  setWord25(word25);
   setShow(true);
+  } catch(err){
+    alert("Password was incorrect")
+  }
 }
 
 
@@ -43,26 +51,40 @@ function showMnemonic(mnemonic_enc, password, setShow, setMnemonic){
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
   db.transaction((tx) => {
-    console.log("PRE-WALLET MNE GET")
-    tx.executeSql("SELECT w.mnemonic_enc FROM wallet w, active_wallet aw WHERE w.id=aw.id", [], (tx, results) => {
-      console.log("POST-WALLET MNE GET")
+    tx.executeSql("SELECT wallet.mnemonic_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
       var len = results.rows.length;
-      var tempMnemonic = "";
+      var tempMnemonic = "default_val";
         for (let i = 0; i < len; i++) {
             let row = results.rows.item(i);
             tempMnemonic = row.mnemonic_enc
         }
 
         setMnemonic_enc(tempMnemonic);
-        console.log("Temp mne: "+tempMnemonic);
+
+        db.transaction((tx) => {
+          tx.executeSql("SELECT wallet.word25_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
+            var len = results.rows.length;
+            var tempWord25_enc = "default_val";
+              for (let i = 0; i < len; i++) {
+                  let row = results.rows.item(i);
+                  tempWord25_enc = row.word25_enc
+              }
+      
+              setWord25_enc(tempWord25_enc);
+            });
+          }, errorCB);
       });
     }, errorCB);
+
+
   
   
-    const {password, setPassword} = useState();
-  const {mnemonic_enc, setMnemonic_enc} = useState();
-  const {show, setShow} = useState(false);
-  const {mnemonic, setMnemonic} = useState();
+    const [password, setPassword] = useState();
+  const [mnemonic_enc, setMnemonic_enc] = useState();
+  const [show, setShow] = useState(false);
+  const [mnemonic, setMnemonic] = useState();
+  const [word25_enc, setWord25_enc] = useState();
+  const [word25, setWord25] = useState();
 
   
 
@@ -76,10 +98,10 @@ label='App Password' />
 <Button
         title="Show Mnemonic"
         enabled
-        onPress={() => showMnemonic(mnemonic_enc, password, setShow, setMnemonic)}
+        onPress={() => showMnemonic(mnemonic_enc, word25_enc, password, setShow, setMnemonic,setWord25)}
       />
 { show && 
-<Text>{mnemonic}</Text>
+<Text>{mnemonic} {word25}</Text>
  }
   
   </View>)

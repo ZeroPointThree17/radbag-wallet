@@ -106,7 +106,7 @@ function convertbits (data, frombits, tobits, pad) {
     //   var enabledAddresses = [];
 
     var first = true;
-function getWallets(db, setWallets,setActiveWallet,setEnabledAddresses){
+function getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses){
 
     first = false;
     console.log("inside get wallets0");
@@ -125,7 +125,14 @@ function getWallets(db, setWallets,setActiveWallet,setEnabledAddresses){
             
             setWallets(wallets);
         
-            setActiveWallet(wallets[0].value);
+            if(activeWallet === undefined){
+                // alert("first timer");
+                setActiveWallet(wallets[0].value);
+                persistActiveWallet(db, wallets[0].value);
+            } else{
+                setActiveWallet(activeWallet);
+            }
+             
              console.log("inside get wallets");
              console.log("inside get wallets2");
              getEnabledAddresses(wallets[0].value,db,setEnabledAddresses)
@@ -268,14 +275,14 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
 
 function persistActiveWallet(db, wallet_id){
 
-     wallet_id=0;
+    //  alert("inside persist: "+wallet_id);
         db.transaction((tx) => {
             tx.executeSql("DROP TABLE IF EXISTS active_wallet", [], (tx, results) => {
                 db.transaction((tx) => {
                     tx.executeSql("CREATE TABLE active_wallet ( id INTEGER )", [], (tx, results) => {
                         db.transaction((tx) => {
-                            tx.executeSql("UPDATE active_wallet SET id = "+wallet_id, [], (tx, results) => {
-                            // alert("persist3")
+                            tx.executeSql("INSERT INTO active_wallet (id) VALUES('"+wallet_id+"')", [], (tx, results) => {
+                            //   alert("persist3")
                             }, errorCB('update active_wallet'));
                         }); 
             }, errorCB('Create active_wallet'));
@@ -323,8 +330,8 @@ const Home = ({route, navigation}) => {
 
 
     useInterval(() => {
-        getWallets(db, setWallets,setActiveWallet,setEnabledAddresses);
-      }, 1000);
+        getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses);
+      }, 2000);
 
     //  while(first == true){
     //      console.log("in loop 1");
@@ -335,14 +342,6 @@ const Home = ({route, navigation}) => {
 
     console.log("WALLETS: "+JSON.stringify(wallets));
 
-
-    
- 
- 
-
-
-   
-    
 
     // // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
   
@@ -366,8 +365,8 @@ const Home = ({route, navigation}) => {
 
          // setValue(item.value);
 
- 
-  
+        //  persistActiveWallet(db, activeWallet);
+        
   return (
 
     
@@ -402,7 +401,8 @@ const Home = ({route, navigation}) => {
           onFocus={() => {setIsFocus(true)}}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            persistActiveWallet(db, wallets[0].value);
+              setActiveWallet(item.value)
+            persistActiveWallet(db, item.value);
             setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);

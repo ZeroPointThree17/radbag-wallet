@@ -1,4 +1,4 @@
-import { Alert, Button, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Alert, Button, ScrollView, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState,useRef, useEffect } from 'react';
 const bip39 = require('bip39');
 var HDKey = require('hdkey')
@@ -11,11 +11,8 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
 import  IconFoundation  from 'react-native-vector-icons/Foundation';
-//  import  AntDesign  from 'antd';
-// import FontAwesome, { SolidIcons, RegularIcons, BrandIcons } from 'react-native-fontawesome';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {Picker} from '@react-native-picker/picker';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import Clipboard from '@react-native-clipboard/clipboard';
+import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
 
 
 function useInterval(callback, delay) {
@@ -37,8 +34,6 @@ function useInterval(callback, delay) {
       }
     }, [delay]);
   }
-
-const Tab = createMaterialBottomTabNavigator();
 
   function errorCB(err) {
     console.log("SQL Error: " + err.message);
@@ -102,6 +97,10 @@ function convertbits (data, frombits, tobits, pad) {
         <View style={styles.separator} />
       );
 
+      const SeparatorBorder = () => (
+        <View style={styles.separatorBorder} />
+      );
+
     
     //   var wallets = [];
     //   var enabledAddresses = [];
@@ -147,7 +146,7 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
                     // var data = [row.name, row.radix_address];
-                    table.tableData.push([row.name, row.radix_address]);
+                    table.tableData.push([row.name, row.radix_address, row.id]);
             }
             //  alert("table: "+JSON.stringify(table))
             setEnabledAddresses(table);
@@ -160,16 +159,16 @@ function addAddress(wallet_id, db){
     // alert("Updating addresses 0.1");
     db.transaction((tx) => {
 
-        tx.executeSql("SELECT MAX(id) AS id FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
+        tx.executeSql("SELECT MIN(id) AS id FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='0'", [], (tx, results) => {
             // alert("Updating addresses 0");
           var len = results.rows.length;
           var next_id = 0;
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
-                    next_id = row.id + 1;
+                    next_id = row.id;
              }
 
-            if(next_id > 15){
+            if(next_id === null){
                 alert("You cannot have more than 15 addresses per wallet");
             } else{
             db.transaction((tx) => {
@@ -185,18 +184,94 @@ function addAddress(wallet_id, db){
           }, errorCB);
         });
 }
+
+function removeAddress(db, wallet_id, address_id){
+
+    // alert("Updating addresses 0.1");
+    db.transaction((tx) => {
+
+        tx.executeSql("UPDATE address SET enabled_flag='0' WHERE wallet_id='"+wallet_id+"' AND id='"+address_id+"' AND enabled_flag='1'", [], (tx, results) => {
+
+            getEnabledAddresses(wallet_id,db)
+
+          }, errorCB);
+        });
+}
+
+
+function shortenAddress(address){
+
+    return address.substring(0, 10) +"..."+ address.substring(address.length-5, address.length) 
+
+}
     
 
-function wait(ms){
-    var start = new Date().getTime();
-    var end = start;
-    while(end < start + ms) {
-      end = new Date().getTime();
-   }
- }
+function renderAddressRows(data, db, wallet_id, copyToClipboard){
+
+    
+    if(data === undefined){
+    }
+    else{
+    //enabledAddresses.tableData
+    var rows = []
+  // CERBY: 01231  DOG3: 01231
+    // let items=['Item 1','Item 2','Item 3','Item 4','Item 5'];
+    {data.map((item,index)=>{
+        rows.push(
+            <View>
+                <SeparatorBorder/>
+            <View style={styles.rowStyle}>
+                <View style={{flex: 0.8}}>
+        <Text>{shortenAddress(item[1])} ({item[0]})</Text> 
+        <Text>XRD: 01231  {item[2]} </Text>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
+        <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => removeAddress(db, wallet_id, item[2])}>
+   <IconFoundation name="minus-circle" size={30} color="red" />
+   </TouchableOpacity>
+   </View>
+      </View>
+
+        )
+    })}
+
+
+    return (rows)
+
+    }
+//     return(
+//     <View style={styles.rowStyle}>
+// <View>
+// <Text>rdxsdfdsfasa....sdfdfddfdfsff (Address 1)</Text>
+// <Text>XRD: 01231  CERBY: 01231  DOG3: 01231  </Text>
+//   </View>
+//   <Icon name="copy-outline" size={30} color="#4F8EF7" />
+//   <IconFoundation name="minus-circle" size={30} color="red" />
+//   </View>)
+}
 
 const Home = ({route, navigation}) => {
 
+    const [copiedText, setCopiedText] = useState('');
+
+    const copyToClipboard = (string) => {
+
+      Clipboard.setString(string);
+
+      showMessage({
+        message: "Address copied to clipboard",
+        type: "info",
+      });
+    };
+  
+    const fetchCopiedText = async () => {
+      const text = await Clipboard.getString();
+      setCopiedText(text);
+    };
+
+    
     const {pw} = route.params;
 
     var pwStr = JSON.stringify(pw).replaceAll('"','');
@@ -234,17 +309,7 @@ const Home = ({route, navigation}) => {
  
 
 
-    const renderLabel = () => {
-      if (value || isFocus) {
-        return (
-          <Text style={[styles.label, isFocus && { color: 'blue' }]}>
-            Select Wallet
-          </Text>
-        );
-      }
-      return null;
-    };
-
+   
     
 
     // // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
@@ -275,9 +340,11 @@ const Home = ({route, navigation}) => {
 
     
     <SafeAreaView style={styles.containerMain}>
+          <FlashMessage position="bottom" />
+          <ScrollView style={styles.scrollView}>
      <View  > 
      
-        
+   
 <Text style={styles.title}>Total XRD Balance: </Text>
 
 <Separator/>
@@ -309,7 +376,6 @@ const Home = ({route, navigation}) => {
         />
        <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
 <Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity>
-<IconFoundation name="minus-circle" size={30} color="red" />
 
 </View>
       
@@ -324,20 +390,19 @@ const Home = ({route, navigation}) => {
 
 </View>
 
-<Table borderStyle={{borderWidth: 1, borderColor: '#808080'}}>
-          <Row data={enabledAddresses.tableHead} />
-          <Rows borderStyle={{borderWidth: 1, borderColor: '#808080'}} data={enabledAddresses.tableData} />
-        </Table>
 
-       
+{renderAddressRows(enabledAddresses.tableData, db, activeWallet, copyToClipboard)}
 
         <Separator/>
+        <Text>{copiedText}</Text>
   </View> 
+  </ScrollView>
   </SafeAreaView>
 
   )
   ;
 };
+
 
 
 const styles = StyleSheet.create({
@@ -386,6 +451,11 @@ const styles = StyleSheet.create({
    separator: {
     marginVertical: 8,
     borderBottomColor: '#737373',
+    borderBottomWidth: 0,
+  },
+  separatorBorder: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   title: {
@@ -432,7 +502,10 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
   },
-
+  scrollView: {
+    backgroundColor: 'white',
+    marginHorizontal: 10,
+  },
 });
 
 

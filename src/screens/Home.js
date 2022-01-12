@@ -1,4 +1,4 @@
-import { Alert, Button, SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Alert, Button, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState,useRef, useEffect } from 'react';
 const bip39 = require('bip39');
 var HDKey = require('hdkey')
@@ -9,11 +9,13 @@ var SQLite = require('react-native-sqlite-storage');
 import {encrypt, decrypt} from '../helpers/encrypt';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import { Dropdown } from 'react-native-element-dropdown';
-//  import AntDesign from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/Ionicons';
+import  IconFoundation  from 'react-native-vector-icons/Foundation';
 //  import  AntDesign  from 'antd';
 // import FontAwesome, { SolidIcons, RegularIcons, BrandIcons } from 'react-native-fontawesome';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {Picker} from '@react-native-picker/picker';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 
 function useInterval(callback, delay) {
@@ -36,7 +38,7 @@ function useInterval(callback, delay) {
     }, [delay]);
   }
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
   function errorCB(err) {
     console.log("SQL Error: " + err.message);
@@ -280,7 +282,7 @@ const Home = ({route, navigation}) => {
 
 <Separator/>
 <Separator/>
-
+<View style={styles.rowStyle}>
 <Dropdown
          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
@@ -305,30 +307,23 @@ const Home = ({route, navigation}) => {
             setIsFocus(true);
           }}
         />
+       <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
+<Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity>
+<IconFoundation name="minus-circle" size={30} color="red" />
 
-
-
+</View>
       
         
-                {/* <FontAwesome icon={SolidIcons.smile} /> */}
+                 {/* <FontAwesome icon={SolidIcons.smile} />  */}
      <View style={styles.rowStyle}>
-                <Button style={styles.title}
-        title="Add Wallet"
-        enabled
-        onPress={() => alert('hi')}
-      />
-      <Button style={styles.title}
-        title="Add Address"
-        enabled
-        onPress={() => addAddress(activeWallet, db)}
-      />
-      <Button style={styles.title}
-        title="Token Display"
-        enabled
-        onPress={() => alert('hi')}
-      />
+       
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db)}>
+     <View style={styles.rowStyle}><Icon name="add-circle-outline" size={30} color="#4F8EF7" />
+<Text style={styles.buttonText} >Add Address</Text></View>
+</TouchableOpacity>
+
 </View>
-<Separator/>
+
 <Table borderStyle={{borderWidth: 1, borderColor: '#808080'}}>
           <Row data={enabledAddresses.tableHead} />
           <Rows borderStyle={{borderWidth: 1, borderColor: '#808080'}} data={enabledAddresses.tableData} />
@@ -350,8 +345,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         fontSize: 4,
         alignItems: 'center',
-        justifyContent: 'space-around',
-        marginVertical:10
+        justifyContent: 'center',
+        marginVertical:5
+      },
+      rowStyleLeft: {
+        flexDirection: 'row',
+        fontSize: 4,
+        alignItems: 'left',
+        // justifyContent: 'left',
+        marginVertical:5
+      },
+      buttonText: {
+        fontSize: 18,
+        color:"#4F8EF7"
       },
   text: {
     fontSize: 20,
@@ -392,11 +398,13 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   dropdown: {
+    flex: 0.8,
     height: 50,
     borderColor: 'gray',
     borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,
+    marginHorizontal: 12,
   },
   icon: {
     marginRight: 5,

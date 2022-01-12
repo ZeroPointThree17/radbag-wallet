@@ -1,4 +1,4 @@
-import { Alert, Button, SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Alert, Button, SectionList, SafeAreaView, View, Text, TextInput, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState } from 'react';
 let { bech32, bech32m } = require('bech32')
@@ -305,6 +305,18 @@ const forceUpdate = React.useCallback(() => updateState({}), []);
 
 const [appPw, setAppPw] = useState("");
 const [appPwConfirm, setAppPwConfirm] = useState("");
+// const [walletName, setWalletName] = useState("");
+{/* <Separator/>
+<Separator/>
+
+<Text style={styles.title}>Enter a nickname for your wallet.</Text>
+
+<TextInput
+        style={styles.input}
+        onChangeText={(name) => setWalletName( name )}
+        placeholder="Wallet nickname"
+      />
+      <Separator/> */}
 
   
   return (
@@ -324,11 +336,9 @@ onChangeText={(password) => setAppPwConfirm( password )}
 label='Confirm App Password' />
 
 
-      <Separator/>
 
 
-
-
+<Separator/>
  <Separator/>
  <Button
         title="Continue"
@@ -343,6 +353,12 @@ label='Confirm App Password' />
 
 
 const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    marginHorizontal: 75,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 10,
+  },
   text: {
     fontSize: 20,
     alignItems: 'center',

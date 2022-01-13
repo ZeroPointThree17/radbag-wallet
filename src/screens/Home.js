@@ -13,7 +13,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import  IconFoundation  from 'react-native-vector-icons/Foundation';
 import Clipboard from '@react-native-clipboard/clipboard';
 import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
-
+import { List } from 'react-native-paper';
+import IconFontisto from 'react-native-vector-icons/Fontisto';
 
 function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -227,9 +228,14 @@ function shortenAddress(address){
 }
     
 
+
 function renderAddressRows(data, db, wallet_id, copyToClipboard){
 
     
+    const [expanded, setExpanded] = React.useState(true);
+
+    const handlePress = () => setExpanded(!expanded);
+
     if(data === undefined){
     }
     else{
@@ -240,11 +246,40 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
     {data.map((item,index)=>{
         rows.push(
             <View>
+
+{/* <List.Section title="Addresses"> */}
+
+<List.Accordion
+expanded={expanded}    
+title={"# " + item[0]}
+onPress={handlePress}>
+
+<View style={styles.rowStyle}>
+<View style={{flex: 1}}>
+<Text style={{fontWeight: 'normal', fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[1]} </Text> 
+</View>
+<TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
+        <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
+   <IconFoundation name="minus-circle" size={30} color="red" />
+   </TouchableOpacity>
+</View>
+<List.Item title="Second item" />
+</List.Accordion>
+{/* <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
+        <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
+   <IconFoundation name="minus-circle" size={30} color="red" />
+   </TouchableOpacity> */}
+
+{/* </List.Section> */}
                 <SeparatorBorder/>
             <View style={styles.rowStyle}>
                 <View style={{flex: 0.8}}>
         <Text style={{fontWeight: 'normal', fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[0]} - {shortenAddress(item[1])} </Text> 
-        <Text style={{fontSize: 16, fontFamily: 'GillSans-Light' }}>XRD: 01231  {item[2]} </Text>
+        <Text style={{fontSize: 16, fontFamily: 'GillSans-Light' }}>XRD: 01231  {/*item[2]*/} </Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
         <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
@@ -254,6 +289,9 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
    </TouchableOpacity>
    </View>
       </View>
+
+
+
 
         )
     })}
@@ -375,13 +413,8 @@ const Home = ({route, navigation}) => {
           <ScrollView style={styles.scrollView}>
      <View  > 
      
-     <Separator/>
-     <Separator/>
-<Text style={styles.homeTitle}>Total XRD Balance: </Text>
-<Text style={styles.homeTitle}>0.000 XRD</Text>
+    
 
-
-<Separator/>
 <View style={styles.rowStyle}>
 <Dropdown
          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -412,7 +445,10 @@ const Home = ({route, navigation}) => {
 <Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity>
 
 </View>
-      
+<Separator/>
+     
+<Text style={styles.homeTitle}>0.000 XRD</Text>
+
         
                  {/* <FontAwesome icon={SolidIcons.smile} />  */}
      <View style={styles.rowStyle}>
@@ -428,7 +464,7 @@ const Home = ({route, navigation}) => {
 {renderAddressRows(enabledAddresses.tableData, db, activeWallet, copyToClipboard)}
 
         <Separator/>
-        <Text>{copiedText}</Text>
+
   </View> 
   </ScrollView>
   </SafeAreaView>
@@ -496,7 +532,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
-    fontSize: 20
+    fontSize: 28
   },
   title: {
     textAlign: 'center',
@@ -508,8 +544,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   dropdown: {
-    flex: 0.8,
-    height: 50,
+    flex: 0.75,
+    height: 24,
     borderColor: 'gray',
     borderWidth: 0.5,
     borderRadius: 8,

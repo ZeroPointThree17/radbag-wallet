@@ -231,10 +231,13 @@ function shortenAddress(address){
 
 function renderAddressRows(data, db, wallet_id, copyToClipboard){
 
-    
-    const [expanded, setExpanded] = React.useState(true);
+    // [1,true],[2,false]
+    // var myHashmap = new Map([]);
+    const [expanded, setExpanded] = React.useState(new Map([]));
 
-    const handlePress = () => setExpanded(!expanded);
+    // expanded.set(index, !expanded.get(index));
+    // var ex
+    const handlePress = () => setExpanded();
 
     if(data === undefined){
     }
@@ -248,9 +251,9 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
             <View>
 
 {/* <List.Section title="Addresses"> */}
-
+{/* myHashmap.get(2) */}
 <List.Accordion
-expanded={expanded}    
+expanded={true}    
 title={"# " + item[0]}
 onPress={handlePress}>
 
@@ -441,12 +444,11 @@ const Home = ({route, navigation}) => {
             setIsFocus(true);
           }}
         />
-       <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
-<Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity>
+       {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
+<Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity> */}
 
 </View>
-<Separator/>
-     
+
 <Text style={styles.homeTitle}>0.000 XRD</Text>
 
         
@@ -454,9 +456,16 @@ const Home = ({route, navigation}) => {
      <View style={styles.rowStyle}>
        
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db)}>
-     <View style={styles.rowStyle}><Icon name="add-circle-outline" size={30} color="#4F8EF7" />
+     <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
+<Text style={styles.buttonText} >Add Wallet     </Text></View>
+</TouchableOpacity>
+
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db)}>
+     <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity>
+
+    
 
 </View>
 
@@ -547,7 +556,7 @@ const styles = StyleSheet.create({
     flex: 0.75,
     height: 24,
     borderColor: 'gray',
-    borderWidth: 0.5,
+    borderWidth: 0,
     borderRadius: 8,
     paddingHorizontal: 8,
     marginHorizontal: 12,
@@ -561,18 +570,25 @@ const styles = StyleSheet.create({
     left: 22,
     top: 8,
     zIndex: 999,
-    paddingHorizontal: 8,
+    paddingHorizontal: 28,
     fontSize: 14,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   placeholderStyle: {
     fontSize: 16,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   selectedTextStyle: {
     fontSize: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center'
   },
   iconStyle: {
-    width: 20,
-    height: 20,
+    width: 0,
+    height: 0,
   },
   inputSearchStyle: {
     height: 40,

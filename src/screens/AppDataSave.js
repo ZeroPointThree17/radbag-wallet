@@ -143,7 +143,9 @@ db.transaction((tx) => {
           db.transaction((tx) => {
             tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word25_enc) VALUES (1, 'Wallet 1', '" + mnemonic_enc + "', '" + word25_enc + "')", [], (tx, results) => {
               console.log("Inserts into wallet table completed");
-             
+              navigation.navigate('Raddish Wallet', {
+                pwStr: password
+              });
             }, errorCB);
           });
       }, errorCB);
@@ -264,9 +266,7 @@ var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
 
 
 
-    navigation.navigate('Raddish Wallet', {
-      pwStr: password
-    });
+ 
   }
   else{
     alert("The passwords entered do not match");
@@ -320,11 +320,9 @@ const [appPwConfirm, setAppPwConfirm] = useState("");
 
   
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
      <View > 
-     <Separator/>
 
-<Separator/>
 
     <Text style={styles.title}>Enter a password to protect the data in this app.</Text>
  <PasswordInputText style={styles.title}
@@ -368,8 +366,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 16,
-    paddingHorizontal: 20
+    marginHorizontal: 0,
+    paddingHorizontal: 20,
+    backgroundColor: 'white',
   },
    sectionHeader: {
      paddingTop: 2,

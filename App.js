@@ -314,9 +314,17 @@ const App: () => Node = () => {
 
   return (
 <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen name="Welcome" component={Welcome} />
-      <Stack.Screen name="Create Wallet" component={CreateWallet} />
+    <Stack.Navigator       screenOptions={{
+        headerStyle: {
+          backgroundColor: '#102F54',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}>
+      <Stack.Screen name="Welcome to Raddish Wallet!" component={Welcome} />
+      <Stack.Screen name="Mnemonic" component={CreateWallet} />
       <Stack.Screen name="App Password" component={AppDataSave} />
       {/* <Stack.Screen name="Home" component={Home} options={{headerLeft: () => null, gestureEnabled: false}} /> */}
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />

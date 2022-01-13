@@ -286,7 +286,7 @@ PODS:
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
-  - react-native-safe-area-context (3.3.2):
+  - react-native-safe-area-context (3.1.9):
     - React-Core
   - react-native-sqlite-storage (6.0.1):
     - React-Core
@@ -400,7 +400,7 @@ PODS:
     - React-RCTImage
   - RNScrypt (1.2.1):
     - React
-  - RNSVG (12.1.1):
+  - RNSVG (12.1.0):
     - React
   - RNVectorIcons (9.0.0):
     - React-Core
@@ -640,7 +640,7 @@ SPEC CHECKSUMS:
   react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f
   react-native-quick-base64: 4b97fd2c01032b0d9305c4a0cd91c3fe69e7e4d8
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
-  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
   react-native-sqlite-storage: f6d515e1c446d1e6d026aa5352908a25d4de3261
   React-perflogger: 93075d8931c32cd1fce8a98c15d2d5ccc4d891bd
   React-RCTActionSheet: 7d3041e6761b4f3044a37079ddcb156575fb6d89
@@ -663,7 +663,7 @@ SPEC CHECKSUMS:
   RNReanimated: da3860204e5660c0dd66739936732197d359d753
   RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
-  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
+  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: 4143ba35feebab8fdbe6bc43d1e776b393d47ac8
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a

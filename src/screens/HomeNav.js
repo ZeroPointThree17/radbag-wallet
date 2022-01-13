@@ -19,8 +19,36 @@ export default function HomeNav({route, navigation}) {
 
 
   return (
-    <Tab.Navigator >
-      <Tab.Screen name="Home" component={Home} initialParams={{
+    <Tab.Navigator  
+
+ 
+    screenOptions={{
+     
+      tabBarActiveTintColor: "white",
+      headerStyle: {
+        backgroundColor: '#031163',
+        borderWidth:0,
+        shadowRadius: 0,
+        shadowOffset: {
+            height: 0,
+        },
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+      tabBarStyle: {
+        height: 90,
+        paddingHorizontal: 5,
+        paddingTop: 0,
+        backgroundColor: '#031163',
+        position: 'absolute',
+        borderTopWidth: 0,
+        
+    },
+    
+    }}>
+      <Tab.Screen name="Summary" component={Home} initialParams={{
        pw: {password}
     }} options={{
       tabBarLabel: 'Home',

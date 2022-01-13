@@ -15,6 +15,9 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
 import { Surface, List } from 'react-native-paper';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
+// import { NativeBaseProvider,Content, Card, CardItem, Body } from "native-base";
+import ReactNativeSwipeableViewStack from 'react-native-swipeable-view-stack';
+
 
 function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -223,7 +226,7 @@ function removeAddress(db, wallet_id, address_id){
 
 function shortenAddress(address){
 
-    return address.substring(0, 15) +"..."+ address.substring(address.length-15, address.length) 
+    return address.substring(0, 7) +"..."+ address.substring(address.length-4, address.length) 
 
 }
     
@@ -235,54 +238,27 @@ function shortenAddress(address){
 // };
 
 
-function renderAddressRows(data, db, wallet_id, copyToClipboard){
 
-    // [1,true],[2,false]
-    var myHashmap = new Map([]);
-    const [expanded, setExpanded] = React.useState(new Map([[0,true]]));
 
-    
-
-    const handlePress = (index) =>{ 
-         expanded.set(index, !expanded.get(index));
-    };
-
-    
-
-    if(data === undefined){
-    }
-    else{
-    //enabledAddresses.tableData
-    var rows = []
-  // CERBY: 01231  DOG3: 01231
-    // let items=['Item 1','Item 2','Item 3','Item 4','Item 5'];
-    {data.map((item,index)=>{
-        rows.push(
-            <View>
-
-{/* <List.Section title="Addresses"> */}
-{/* myHashmap.get(2) */}
-<List.Accordion
-expanded={expanded.get(index)} 
-descriptionStyle={{color:"white"}} 
-titleStyle={{color:"black"}}
-style={{paddingVertical:0,height:40, backgroundColor: "white", borderWidth:StyleSheet.hairlineWidth, color:"white"}}  
-title={"" + item[0]}
-onPress={() =>  handlePress(index)}>
+function renderRow(element){
+    // var item=JSON.parse(element);
+     alert(element)
+    return (
+      
 <Surface style={styles.surface}>
 <View style={styles.addrRowStyle}>
 
 <View style={{flex: 1}}>
 
-<Text style={{fontWeight: 'normal', marginBottom:0,fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[1]} </Text> 
+<Text style={{fontWeight: 'normal', marginBottom:0,fontSize: 16, fontFamily: 'GillSans-Light'}}>{item.address} </Text> 
 
 
 </View>
 
-<TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
+<TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item.address)}>
         <Icon style={{marginHorizontal: 3}} name="copy-outline" size={30} color="#4F8EF7" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
+        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item.id)}>
    <IconFoundation style={{marginHorizontal: 3}}name="minus-circle" size={30} color="red" />
    </TouchableOpacity>
 </View>
@@ -301,10 +277,95 @@ onPress={() =>  handlePress(index)}>
 
 </View>
 </Surface>
+        
+        
+        )
+}
+
+function renderAddressRows(data, db, wallet_id, copyToClipboard){
+
+    // [1,true],[2,false]
+    var myHashmap = new Map([]);
+    const [expanded, setExpanded] = React.useState(new Map([[0,true]]));
+
+    
+
+    const handlePress = (index) =>{ 
+         expanded.set(index, !expanded.get(index));
+    };
+
+    
+
+    if(data === undefined){
+    }
+    else{
+
+        console.log(data[0])
+
+        var rows = []
+var tempDater = [[ shortenAddress("rdx1qspjzej2czqkrg3x6375f2pfa4hvw7447mfvkfaxhctsg787ttpsrqcr3qtmw"),"address1","1"],["rdx2", "address2", "2"],["rdx2", "address2", "3"],["rdx2", "address2", "4"],["rdx2", "address2", "5"]];
+//         rows.push(
+// //         <ReactNativeSwipeableViewStack
+// //   onSwipe={ ( swipedIndex ) => console.log( swipedIndex ) }
+// //   initialSelectedIndex={ 0 }
+// //   data={ tempDater }
+// //   renderItem={ ( element ) => renderRow2(element)}
+// //   onItemClicked={ ( element ) => alert( "hi2" ) }
+// //    stackSpacing={ 10 }
+// // />
+
+
+// );
+
+
+
+
+    //enabledAddresses.tableData
+
+  // CERBY: 01231  DOG3: 01231
+    // let items=['Item 1','Item 2','Item 3','Item 4','Item 5'];
+    {data.map((item,index)=>{
+        rows.push(
+            <View>
+
+{/* <List.Section title="Addresses"> */}
+{/* myHashmap.get(2) */}
+{/* <List.Accordion
+expanded={expanded.get(index)} 
+descriptionStyle={{color:"white"}} 
+titleStyle={{color:"black"}}
+style={{paddingVertical:0,height:40, backgroundColor: "white", borderWidth:StyleSheet.hairlineWidth, color:"white"}}  
+title={"" + item[0]}
+onPress={() =>  handlePress(index)}> */}
+<Surface style={styles.surface}>
+<View style={styles.addrRowStyle}>
+{/* 
+<View style={{flex: 1}}>
+
+<Text style={{fontWeight: 'normal', marginBottom:0,fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[1]} </Text> 
+
+
+</View>
+
+<TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
+        <Icon style={{marginHorizontal: 3}} name="copy-outline" size={30} color="#4F8EF7" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
+   <IconFoundation style={{marginHorizontal: 3}}name="minus-circle" size={30} color="red" />
+   </TouchableOpacity> */}
+</View>
+
+<View style={styles.addrRowStyle}>
+
+<Text style={{flex:0.9,marginTop:5,fontSize:20,justifyContent:'flex-start' }}>(    ) XRD Radix</Text>
+<Text style={{flex:0.5,marginTop:5,fontSize:20, justifyContent:'flex-end' }}>3443.943 RDX</Text>
+</View>
+
+</Surface>
 {/* <Surface style={styles.surface}>
      <Text>Surface</Text>
   </Surface> */}
-</List.Accordion>
+{/* </List.Accordion> */}
 <Separator/>
                 {/* <SeparatorBorder/>
             <View style={styles.rowStyle}>
@@ -440,13 +501,31 @@ const Home = ({route, navigation}) => {
 
     
     <SafeAreaView style={styles.containerMain}>
+
+
+
+
+
+
           <FlashMessage position="bottom" />
           <ScrollView style={styles.scrollView}>
      <View  > 
-     
-    
-
+   
+     {/* <NativeBaseProvider>
+     <Content padder style={{ marginTop: 0 }}>
+        <Card style={{ flex: 0 }}>
+          <CardItem>
+            <Body>
+      
+            </Body>
+          </CardItem>
+        </Card>
+      </Content>
+      </NativeBaseProvider> */}
+      <Separator/>
 <View style={styles.rowStyle}>
+    
+    <Surface style={styles.surface}>
 <Dropdown
          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
@@ -472,14 +551,22 @@ const Home = ({route, navigation}) => {
             setIsFocus(true);
           }}
         />
-       {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
+        <Text style ={{ color:"#031163"}}>My Address</Text>
+        <Text style={{color:"#031163"}}>{[shortenAddress("rdx1qspjzej2czqkrg3x6375f2pfa4hvw7447mfvkfaxhctsg787ttpsrqcr3qtmw")]}</Text>
+        <Text style={{fontSize: 30, color:"#031163"}}>0.000 XRD</Text>
+        <Text >0.00 USD</Text>
+        <View style={styles.rowStyle}>
+        <TouchableOpacity style={styles.button} onPress={() =>  alert("hi")}>
+        <Text>Recieve - Send </Text>
+        </TouchableOpacity>
+        </View>
+        </Surface>
+      {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
 <Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity> */}
 
 </View>
 
-<Text style={styles.homeTitle}>0.000 XRD</Text>
-
-        
+    
                  {/* <FontAwesome icon={SolidIcons.smile} />  */}
      <View style={styles.rowStyle}>
        
@@ -497,6 +584,9 @@ const Home = ({route, navigation}) => {
 
 </View>
 
+<Text>Tokens                                                                   +</Text>
+ 
+    
 
 {renderAddressRows(enabledAddresses.tableData, db, activeWallet, copyToClipboard)}
 
@@ -516,11 +606,14 @@ const styles = StyleSheet.create({
     surface: {
         padding: 8,
         height: 'auto',
-        width: 'auto',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        elevation: 4,
-        borderWidth: StyleSheet.hairlineWidth
+        width: 325,
+        // alignItems: 'flex-start',
+        // justifyContent: 'center',
+        // elevation: 4,
+        borderWidth: 0,
+        borderRadius: 10,
+        backgroundColor: 'white',
+     
       },
     rowStyle: {
         flexDirection: 'row',
@@ -555,7 +648,7 @@ const styles = StyleSheet.create({
   },
   containerMain: {
     flex: 1,
-    backgroundColor: "#f1f1f1"
+    backgroundColor: "#031163"
   },
    sectionHeader: {
      paddingTop: 2,
@@ -598,13 +691,16 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   dropdown: {
-    flex: 0.75,
+    flex: 1,
+    alignContent:"flex-start",
+    justifyContent:"flex-start",
+    textAlign:"left",
     height: 24,
     borderColor: 'gray',
     borderWidth: 0,
     borderRadius: 8,
-    paddingHorizontal: 8,
-    marginHorizontal: 12,
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
   },
   icon: {
     marginRight: 5,
@@ -627,9 +723,9 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center'
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    textAlign: 'left'
   },
   iconStyle: {
     width: 0,

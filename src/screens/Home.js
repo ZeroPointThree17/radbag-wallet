@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import  IconFoundation  from 'react-native-vector-icons/Foundation';
 import Clipboard from '@react-native-clipboard/clipboard';
 import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
-import { List } from 'react-native-paper';
+import { Surface, List } from 'react-native-paper';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
 
 function useInterval(callback, delay) {
@@ -223,21 +223,31 @@ function removeAddress(db, wallet_id, address_id){
 
 function shortenAddress(address){
 
-    return address.substring(0, 7) +"..."+ address.substring(address.length-5, address.length) 
+    return address.substring(0, 15) +"..."+ address.substring(address.length-15, address.length) 
 
 }
     
+
+// function handlePress (expanded, setExpanded, index) { 
+//     var expandedCopy = expanded;
+//     expandedCopy.set(index, !expandedCopy.get(index));
+//      setExpanded(expandedCopy)
+// };
 
 
 function renderAddressRows(data, db, wallet_id, copyToClipboard){
 
     // [1,true],[2,false]
-    // var myHashmap = new Map([]);
-    const [expanded, setExpanded] = React.useState(new Map([]));
+    var myHashmap = new Map([]);
+    const [expanded, setExpanded] = React.useState(new Map([[0,true]]));
 
-    // expanded.set(index, !expanded.get(index));
-    // var ex
-    const handlePress = () => setExpanded();
+    
+
+    const handlePress = (index) =>{ 
+         expanded.set(index, !expanded.get(index));
+    };
+
+    
 
     if(data === undefined){
     }
@@ -253,36 +263,48 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
 {/* <List.Section title="Addresses"> */}
 {/* myHashmap.get(2) */}
 <List.Accordion
-expanded={true}    
-title={"# " + item[0]}
-onPress={handlePress}>
+expanded={expanded.get(index)} 
+descriptionStyle={{color:"white"}} 
+titleStyle={{color:"black"}}
+style={{paddingVertical:0,height:40, backgroundColor: "white", borderWidth:StyleSheet.hairlineWidth, color:"white"}}  
+title={"" + item[0]}
+onPress={() =>  handlePress(index)}>
+<Surface style={styles.surface}>
+<View style={styles.addrRowStyle}>
 
-<View style={styles.rowStyle}>
 <View style={{flex: 1}}>
-<Text style={{fontWeight: 'normal', fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[1]} </Text> 
+
+<Text style={{fontWeight: 'normal', marginBottom:0,fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[1]} </Text> 
+
+
 </View>
+
 <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
-        <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
+        <Icon style={{marginHorizontal: 2}} name="copy-outline" size={30} color="#4F8EF7" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
-   <IconFoundation name="minus-circle" size={30} color="red" />
+   <IconFoundation style={{marginHorizontal: 6}}name="minus-circle" size={30} color="red" />
    </TouchableOpacity>
 </View>
-<List.Item title="Second item" />
-</List.Accordion>
-{/* <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
-        <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
-   <IconFoundation name="minus-circle" size={30} color="red" />
-   </TouchableOpacity> */}
 
-{/* </List.Section> */}
-                <SeparatorBorder/>
+<SeparatorBorder/>
+<View style={styles.addrRowStyle}>
+
+<Text style={{flex:0.9,marginTop:5,fontSize:20,justifyContent:'flex-start' }}>(    ) XRD Radix</Text>
+<Text style={{flex:0.5,marginTop:5,fontSize:20, justifyContent:'flex-end' }}>34.943 RDX</Text>
+
+</View>
+</Surface>
+{/* <Surface style={styles.surface}>
+     <Text>Surface</Text>
+  </Surface> */}
+</List.Accordion>
+<Separator/>
+                {/* <SeparatorBorder/>
             <View style={styles.rowStyle}>
                 <View style={{flex: 0.8}}>
         <Text style={{fontWeight: 'normal', fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[0]} - {shortenAddress(item[1])} </Text> 
-        <Text style={{fontSize: 16, fontFamily: 'GillSans-Light' }}>XRD: 01231  {/*item[2]*/} </Text>
+        <Text style={{fontSize: 16, fontFamily: 'GillSans-Light' }}>XRD: 01231 </Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
         <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
@@ -290,7 +312,7 @@ onPress={handlePress}>
         <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
    <IconFoundation name="minus-circle" size={30} color="red" />
    </TouchableOpacity>
-   </View>
+   </View> */}
       </View>
 
 
@@ -372,7 +394,7 @@ const Home = ({route, navigation}) => {
 
     useInterval(() => {
         getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses);
-      }, 2000);
+      }, 500);
 
     //  while(first == true){
     //      console.log("in loop 1");
@@ -485,12 +507,28 @@ const Home = ({route, navigation}) => {
 
 
 const styles = StyleSheet.create({
+    surface: {
+        padding: 8,
+        height: 'auto',
+        width: 'auto',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        elevation: 4,
+        borderWidth: StyleSheet.hairlineWidth
+      },
     rowStyle: {
         flexDirection: 'row',
         fontSize: 4,
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical:5
+      },
+      addrRowStyle: {
+        flexDirection: 'row',
+        fontSize: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical:0
       },
       rowStyleLeft: {
         flexDirection: 'row',
@@ -511,7 +549,7 @@ const styles = StyleSheet.create({
   },
   containerMain: {
     flex: 1,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#f1f1f1"
   },
    sectionHeader: {
      paddingTop: 2,
@@ -534,6 +572,7 @@ const styles = StyleSheet.create({
   },
   separatorBorder: {
     marginVertical: 8,
+    borderTopColor: '#737373',
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
@@ -595,7 +634,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   scrollView: {
-    backgroundColor: 'white',
+   
     marginHorizontal: 10,
   },
 });

@@ -280,10 +280,10 @@ onPress={() =>  handlePress(index)}>
 </View>
 
 <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
-        <Icon style={{marginHorizontal: 2}} name="copy-outline" size={30} color="#4F8EF7" />
+        <Icon style={{marginHorizontal: 3}} name="copy-outline" size={30} color="#4F8EF7" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
-   <IconFoundation style={{marginHorizontal: 6}}name="minus-circle" size={30} color="red" />
+   <IconFoundation style={{marginHorizontal: 3}}name="minus-circle" size={30} color="red" />
    </TouchableOpacity>
 </View>
 
@@ -292,6 +292,12 @@ onPress={() =>  handlePress(index)}>
 
 <Text style={{flex:0.9,marginTop:5,fontSize:20,justifyContent:'flex-start' }}>(    ) XRD Radix</Text>
 <Text style={{flex:0.5,marginTop:5,fontSize:20, justifyContent:'flex-end' }}>34.943 RDX</Text>
+
+</View>
+<View style={styles.addrRowStyle}>
+
+<Text style={{flex:0.9,marginTop:5,fontSize:20,justifyContent:'flex-start' }}>(    ) CRBY Cerby</Text>
+<Text style={{flex:0.5,marginTop:5,fontSize:20, justifyContent:'flex-end' }}>3443.943 CRBY</Text>
 
 </View>
 </Surface>

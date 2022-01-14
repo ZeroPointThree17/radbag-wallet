@@ -56,7 +56,7 @@ function openCB() {
 
 
 
-function navigateHome(navigation, password, confirmPassword, mnemonic, word25){
+function navigateHome(navigation, password, confirmPassword, mnemonic, word13){
 
   if(password.length == 0 || confirmPassword.length == 0 ){
     alert("Password is required");
@@ -68,7 +68,7 @@ function navigateHome(navigation, password, confirmPassword, mnemonic, word25){
   //  console.log(bcrypt.compareSync(password, pwHash)); // true
 
 var mnemonic_enc = encrypt(mnemonic, Buffer.from(password));
-var word25_enc = encrypt(word25, Buffer.from(password));
+var word13_enc = encrypt(word13, Buffer.from(password));
 
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
@@ -132,12 +132,12 @@ db.transaction((tx) => {
         id INTEGER PRIMARY KEY,
         name TEXT,
         mnemonic_enc TEXT,
-        word25_enc TEXT
+        word13_enc TEXT
     )`, [], (tx, results) => {
         console.log("Create wallet table completed");
 
           db.transaction((tx) => {
-            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word25_enc) VALUES (1, 'My Wallet', '" + mnemonic_enc + "', '" + word25_enc + "')", [], (tx, results) => {
+            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet', '" + mnemonic_enc + "', '" + word13_enc + "')", [], (tx, results) => {
               console.log("Inserts into wallet table completed");
 
 
@@ -206,7 +206,7 @@ db.transaction((tx) => {
               });
 
 
-              var seed = bip39.mnemonicToSeedSync(mnemonic,word25).toString('hex');
+              var seed = bip39.mnemonicToSeedSync(mnemonic,word13).toString('hex');
      
               var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
               
@@ -298,9 +298,9 @@ function wait(ms){
 
 const AppDataSave = ({route, navigation}) => {
 
-  const { mnemonicStr, word25Str} = route.params;
+  const { mnemonicStr, word13Str} = route.params;
   var mnemonic = JSON.stringify(mnemonicStr).replaceAll('"','');
-  var word25 = JSON.stringify(word25Str).replaceAll('"','');
+  var word13 = JSON.stringify(word13Str).replaceAll('"','');
 
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -355,7 +355,7 @@ label='Confirm App Password' />
  <Button
         title="Continue"
         enabled
-        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word25)}
+        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13)}
       />
   </View> 
   </SafeAreaView>

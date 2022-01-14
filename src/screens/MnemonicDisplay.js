@@ -28,13 +28,13 @@ function openCB() {
 }
 
 
-function showMnemonic(mnemonic_enc, word25_enc, password, setShow, setMnemonic, setWord25){
+function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, setword13){
   
   try{
   var mnemonic = decrypt(mnemonic_enc, Buffer.from(password));
-  var word25 = decrypt(word25_enc, Buffer.from(password));
+  var word13 = decrypt(word13_enc, Buffer.from(password));
   setMnemonic(mnemonic);
-  setWord25(word25);
+  setword13(word13);
   setShow(true);
   } catch(err){
     alert("Password was incorrect")
@@ -62,15 +62,15 @@ function showMnemonic(mnemonic_enc, word25_enc, password, setShow, setMnemonic, 
         setMnemonic_enc(tempMnemonic);
 
         db.transaction((tx) => {
-          tx.executeSql("SELECT wallet.word25_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
+          tx.executeSql("SELECT wallet.word13_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
             var len = results.rows.length;
-            var tempWord25_enc = "default_val";
+            var tempword13_enc = "default_val";
               for (let i = 0; i < len; i++) {
                   let row = results.rows.item(i);
-                  tempWord25_enc = row.word25_enc
+                  tempword13_enc = row.word13_enc
               }
       
-              setWord25_enc(tempWord25_enc);
+              setword13_enc(tempword13_enc);
             });
           }, errorCB);
       });
@@ -83,8 +83,8 @@ function showMnemonic(mnemonic_enc, word25_enc, password, setShow, setMnemonic, 
   const [mnemonic_enc, setMnemonic_enc] = useState();
   const [show, setShow] = useState(false);
   const [mnemonic, setMnemonic] = useState();
-  const [word25_enc, setWord25_enc] = useState();
-  const [word25, setWord25] = useState();
+  const [word13_enc, setword13_enc] = useState();
+  const [word13, setword13] = useState();
 
   
 
@@ -98,10 +98,10 @@ label='App Password' />
 <Button
         title="Show Mnemonic"
         enabled
-        onPress={() => showMnemonic(mnemonic_enc, word25_enc, password, setShow, setMnemonic,setWord25)}
+        onPress={() => showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13)}
       />
 { show && 
-<Text>{mnemonic} {word25}</Text>
+<Text>{mnemonic} {word13}</Text>
  }
   
   </View>)

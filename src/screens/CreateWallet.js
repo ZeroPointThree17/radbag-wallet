@@ -14,12 +14,12 @@ const Separator = () => (
 );
 
 
-function navigateAppPassword(navigation, mnemonic, word25){
+function navigateAppPassword(navigation, mnemonic, word13){
 
   // var seed="";
   navigation.navigate('App Password', {
     mnemonicStr: mnemonic,
-    word25Str: word25
+    word13Str: word13
   });
 }
 
@@ -36,8 +36,8 @@ const CreateWallet = ({route, navigation}) => {
 
 
 
-const [word25flag, setWord25flag] = useState(false);
-const [word25, setWord25] = useState("");
+const [word13flag, setword13flag] = useState(false);
+const [word13, setword13] = useState("");
 // const [ state, dispatch ] = React.useContext(UserContext)
 
   return (
@@ -53,26 +53,26 @@ const [word25, setWord25] = useState("");
  <View style={styles.checkbox}> 
  <CheckBox 
     onClick={()=>{
-      if(word25flag==false){
-      setWord25flag(true);
+      if(word13flag==false){
+      setword13flag(true);
       }
-      else setWord25flag(false);
+      else setword13flag(false);
     }}
-    isChecked={word25flag}
+    isChecked={word13flag}
 /> 
 <Text style={styles.title2}>Add 25th word?</Text>
 </View > 
-{ word25flag && 
+{ word13flag && 
 
 <PasswordInputText 
-onChangeText={(password) => setWord25( password )}
+onChangeText={(password) => setword13( password )}
 label='25th word' style={styles.title}/>
  }
 <Separator/>
  <Button style={styles.title}
         title="Understood - Continue"
         enabled
-        onPress={() => navigateAppPassword(navigation, mnemonic, word25)}
+        onPress={() => navigateAppPassword(navigation, mnemonic, word13)}
       />
 
 

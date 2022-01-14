@@ -9,98 +9,69 @@ import { decrypt } from '../helpers/encrypt';
 var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { catchError } from 'rxjs/operators';
+const bip39 = require('bip39');
 
 const Separator = () => (
   <View style={styles.separator} />
 );
 
 
-function errorCB(err) {
-  alert("SQL Error: " + err.message);
-}
+function navigateAppPassword(navigation, mnemonic){
 
-function successCB() {
-  console.log("SQL executed fine");
-}
+    mnemonic = mnemonic.replace(/\s\s+/g, ' ');
 
-function openCB() {
-  // console.log("Database OPENED");
-}
+    mnemonicArr = mnemonic.split(" ");
 
+    const words12sub = mnemonicArr.slice(0, 12);
+    const word13sub = mnemonicArr.slice(12);
 
-function showMnemonic(mnemonic_enc, word25_enc, password, setShow, setMnemonic, setWord25){
-  
-  try{
-  var mnemonic = decrypt(mnemonic_enc, Buffer.from(password));
-  var word25 = decrypt(word25_enc, Buffer.from(password));
-  setMnemonic(mnemonic);
-  setWord25(word25);
-  setShow(true);
-  } catch(err){
-    alert("Password was incorrect")
+ 
+    var words12 = words12sub.join(' '); 
+    var word13 = word13sub[0];
+    if(word13 === undefined){
+        word13="";
+    }
+
+    // alert(words12);
+    // alert(word13);
+   
+
+    if(bip39.validateMnemonic(words12)){
+    navigation.navigate('App Password', {
+      mnemonicStr: mnemonic,
+      word13Str: word13
+    });
+    } else{
+        alert("Mnemonic is not valid")
+    }
+
   }
-}
-
-
-
-
- const MnemonicInput = ({route}) => {
-
-
-
-  var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
-
-  db.transaction((tx) => {
-    tx.executeSql("SELECT wallet.mnemonic_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
-      var len = results.rows.length;
-      var tempMnemonic = "default_val";
-        for (let i = 0; i < len; i++) {
-            let row = results.rows.item(i);
-            tempMnemonic = row.mnemonic_enc
-        }
-
-        setMnemonic_enc(tempMnemonic);
-
-        db.transaction((tx) => {
-          tx.executeSql("SELECT wallet.word25_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
-            var len = results.rows.length;
-            var tempWord25_enc = "default_val";
-              for (let i = 0; i < len; i++) {
-                  let row = results.rows.item(i);
-                  tempWord25_enc = row.word25_enc
-              }
-      
-              setWord25_enc(tempWord25_enc);
-            });
-          }, errorCB);
-      });
-    }, errorCB);
-
-
   
-  
-    const [password, setPassword] = useState();
-  const [mnemonic_enc, setMnemonic_enc] = useState();
-  const [show, setShow] = useState(false);
+
+ const MnemonicInput = ({route, navigation}) => {
+
   const [mnemonic, setMnemonic] = useState();
-  const [word25_enc, setWord25_enc] = useState();
-  const [word25, setWord25] = useState();
-
   
-
  return ( 
      <View > 
-<Text style={styles.title}>Enter your wallet password to display the mnemonic</Text>
+<Text style={styles.title}>Enter your mnemonic below with words separated by a single space. Include 25th word if any</Text>
  
 <TextInput
     editable
- 
+    onChangeText={(input) => setMnemonic( input )}
       multiline={true}
       numberOfLines={4}
-      onChangeText={text => console.log(text)}
+      autoCapitalize='none'
       style={{height: 150, padding: 10, borderWidth:StyleSheet.hairlineWidth}}
     />
   
+
+ <Button style={styles.title}
+        title="Submit"
+        enabled
+        onPress={() => navigateAppPassword(navigation, mnemonic)}
+      />
+
   </View>)
 };
 

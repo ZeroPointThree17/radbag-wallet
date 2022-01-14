@@ -9,7 +9,6 @@ const Separator = () => (
   <View style={styles.separator} />
 );
 
-
 function navigateToCreateWallet(navigation){
   var mnemonic = bip39.generateMnemonic();
   navigation.navigate('Mnemonic', {

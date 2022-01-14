@@ -142,6 +142,18 @@ db.transaction((tx) => {
 
 
 
+              db.transaction((tx) => {
+                tx.executeSql("DROP TABLE IF EXISTS active_wallet", [], (tx, results) => {
+                    db.transaction((tx) => {
+                        tx.executeSql("CREATE TABLE active_wallet ( id INTEGER )", [], (tx, results) => {
+                            db.transaction((tx) => {
+                                tx.executeSql("INSERT INTO active_wallet (id) VALUES('1')", [], (tx, results) => {
+                                }, errorCB());
+                            }); 
+                }, errorCB());
+            });
+                  }, errorCB());
+                });
 
 
               db.transaction((tx) => {

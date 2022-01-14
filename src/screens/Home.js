@@ -113,11 +113,10 @@ function convertbits (data, frombits, tobits, pad) {
 function getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses){
 
     first = false;
-    console.log("inside get wallets0");
+    // console.log("inside get wallets");
     db.transaction((tx) => {
 
         tx.executeSql("SELECT * FROM wallet", [], (tx, results) => {
-            console.log("inside get wallets0.1");
           var len = results.rows.length;
           var wallets = [];
             for (let i = 0; i < len; i++) {
@@ -125,17 +124,10 @@ function getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddr
                 var data = {label: row.name, value: row.id}
                  wallets.push(data);
             }
-
             
              setWallets(wallets);
         
-            if(activeWallet === undefined){
-                // alert("first timer");
-                setActiveWallet(wallets[0].value);
-                persistActiveWallet(db, wallets[0].value);
-            } else{
-                setActiveWallet(activeWallet);
-            }
+             getActiveWallet(db, setActiveWallet);
              
              console.log("inside get wallets");
              console.log("inside get wallets2");
@@ -293,23 +285,33 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
 
 }
 
-function persistActiveWallet(db, wallet_id){
-
-    //  alert("inside persist: "+wallet_id);
-        db.transaction((tx) => {
-            tx.executeSql("DROP TABLE IF EXISTS active_wallet", [], (tx, results) => {
-                db.transaction((tx) => {
-                    tx.executeSql("CREATE TABLE active_wallet ( id INTEGER )", [], (tx, results) => {
-                        db.transaction((tx) => {
-                            tx.executeSql("INSERT INTO active_wallet (id) VALUES('"+wallet_id+"')", [], (tx, results) => {
-                            //   alert("persist3")
-                            }, errorCB('update active_wallet'));
-                        }); 
-            }, errorCB('Create active_wallet'));
-        });
-              }, errorCB("DROP active wallet"));
-            });
+function updateActiveWallet(db, wallet_id, setActiveWallet){
+    db.transaction((tx) => {
+        tx.executeSql("UPDATE active_wallet set id = '"+wallet_id+"'", [], (tx, results) => {
+        //    alert("persist3")
+           setActiveWallet(wallet_id);
+        }, errorCB('update active_wallet'));
+    }); 
 }
+
+function getActiveWallet(db,setActiveWallet){
+    db.transaction((tx) => {
+        tx.executeSql("SELECT id FROM active_wallet", [], (tx, results) => {
+        
+                var len = results.rows.length;
+                      
+                var id = 0;
+                for (let i = 0; i < len; i++) {
+                    let row = results.rows.item(i);
+                    id = row.id;
+                }
+
+                setActiveWallet(id);
+
+        }, errorCB('update active_wallet'));
+    }); 
+}
+
 
 const Home = ({route, navigation}) => {
 
@@ -440,8 +442,8 @@ const Home = ({route, navigation}) => {
           onFocus={() => {setIsFocus(true)}}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-              setActiveWallet(item.value)
-            persistActiveWallet(db, item.value);
+            //   setActiveWallet(item.value)
+            updateActiveWallet(db, item.value, setActiveWallet);
             setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);

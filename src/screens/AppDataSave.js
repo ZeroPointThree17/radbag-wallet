@@ -1,4 +1,4 @@
-import { Button, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Button, ActivityIndicator, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState } from 'react';
 let { bech32, bech32m } = require('bech32')
@@ -42,12 +42,8 @@ const Separator = () => (
   <View style={styles.separator} />
 );
 
-function errorCB(err, details) {
-  console.log("SQL Error: " + err.message + " details: "+details);
-}
-
-function successCB() {
-  console.log("SQL executed fine");
+function errorCB(err) {
+  console.log("SQL Error: " + err.message );
 }
 
 function openCB() {
@@ -56,7 +52,9 @@ function openCB() {
 
 
 
-function navigateHome(navigation, password, confirmPassword, mnemonic, word13){
+function navigateHome(navigation, password, confirmPassword, mnemonic, word13, setIsActive){
+
+  setIsActive(true);
 
   if(password.length == 0 || confirmPassword.length == 0 ){
     alert("Password is required");
@@ -147,7 +145,7 @@ db.transaction((tx) => {
 db.transaction((tx) => {
  
   tx.executeSql('DROP TABLE IF EXISTS active_wallet', [], (tx, results) => {
-    console.log("active_wallet2 tab DROP completed.")
+    console.log("active_wallet DROP attempt completed.")
       db.transaction((tx) => {
           tx.executeSql(`CREATE TABLE active_wallet ( id INTEGER )`, [], (tx, results) => {
               db.transaction((tx) => {
@@ -330,6 +328,7 @@ const AppDataSave = ({route, navigation}) => {
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
 
+const [isActive, setIsActive] = useState(false);
 const [appPw, setAppPw] = useState("");
 const [appPwConfirm, setAppPwConfirm] = useState("");
 // const [walletName, setWalletName] = useState("");
@@ -360,15 +359,19 @@ label='App Password' />
 onChangeText={(password) => setAppPwConfirm( password )}
 label='Confirm App Password' />
 
-
-
-
  <Separator/>
  <Button
         title="Continue"
         enabled
-        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13)}
+        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, setIsActive)}
       />
+<Separator/>
+<Separator/>
+  { isActive
+  &&
+  <ActivityIndicator />
+  }
+
   </View> 
   </SafeAreaView>
   )

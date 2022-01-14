@@ -39,16 +39,12 @@ function useInterval(callback, delay) {
     }, [delay]);
   }
 
-  function errorCB(err, moreInfoStr) {
-    console.log("SQL Error: " + err.message + " More Info: "+moreInfoStr);
-  }
-  
-  function successCB() {
-    console.log("SQL executed fine");
+  function errorCB(err) {
+    console.log("SQL Error: " + err.message);
   }
   
   function openCB() {
-    // console.log("Database OPENED");
+    console.log("Database OPENED");
   }
   
 
@@ -229,14 +225,10 @@ function updateActiveWallet(wallet_id, setActiveWallet){
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
-    alert("0 About toUpdated to "+wallet_id)
     db.transaction((tx) => {
-        alert("about to run sql: "+"UPDATE active_wallet SET id = "+wallet_id)
-        tx.executeSql("UPDATE active_wallet SET id = "+wallet_id, [], (tx, results) => {
-            alert("About toUpdated to "+wallet_id)
+        tx.executeSql("UPDATE active_wallet SET id = "+wallet_id, [], (tx, results) => {       
            setActiveWallet(wallet_id);
-           alert("Updated to "+wallet_id)
-        }, errorCB('update active_wallet'));
+        }, errorCB);
     }); 
 }
 
@@ -244,7 +236,7 @@ function updateActiveAddress(db, address_id, setActiveAddress){
     db.transaction((tx) => {
         tx.executeSql("UPDATE active_address set id = '"+address_id+"'", [], (tx, results) => {
            setActiveAddress(address_id);
-        }, errorCB('update active_address'));
+        }, errorCB);
     }); 
 }
 

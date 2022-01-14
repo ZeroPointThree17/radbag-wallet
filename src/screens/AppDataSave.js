@@ -1,14 +1,10 @@
-import { Alert, Button, SectionList, SafeAreaView, View, Text, TextInput, StyleSheet } from 'react-native';
+import { Button, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState } from 'react';
 let { bech32, bech32m } = require('bech32')
-// import './shim';
-import NodeRSA from 'node-rsa';
-const { randomBytes } = require('crypto')
 import QRCode from 'react-native-qrcode-svg';
 import PasswordInputText from 'react-native-hide-show-password-input';
-var bcrypt = require('react-native-bcrypt');
-const _crypto = require('crypto');
+var bcrypt = require('react-native-bcrypt');;
 var SQLite = require('react-native-sqlite-storage');
 import {encrypt, decrypt} from '../helpers/encrypt';
 var HDKey = require('hdkey')

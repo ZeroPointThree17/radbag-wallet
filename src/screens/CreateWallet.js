@@ -6,6 +6,8 @@ import { UInt256, U256 } from 'uint256';
 
 import CheckBox from 'react-native-check-box';
 import PasswordInputText from 'react-native-hide-show-password-input';
+// import { UserContext } from "./UserProvider";
+
 
 const Separator = () => (
   <View style={styles.separator} />
@@ -36,6 +38,7 @@ const CreateWallet = ({route, navigation}) => {
 
 const [word25flag, setWord25flag] = useState(false);
 const [word25, setWord25] = useState("");
+// const [ state, dispatch ] = React.useContext(UserContext)
 
   return (
 
@@ -72,6 +75,12 @@ label='25th word' style={styles.title}/>
         onPress={() => navigateAppPassword(navigation, mnemonic, word25)}
       />
 
+
+
+{/* <TouchableOpacity style={styles.button} onPress={() => dispatch({ type: "toggle_button" })}>
+     { state.active ? <Text>On</Text> : <Text>Off</Text> }  
+        </TouchableOpacity> */}
+        
   </View> 
   </SafeAreaView>
   )

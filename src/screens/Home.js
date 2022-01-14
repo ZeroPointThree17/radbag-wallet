@@ -127,7 +127,7 @@ function getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddr
             }
 
             
-            setWallets(wallets);
+             setWallets(wallets);
         
             if(activeWallet === undefined){
                 // alert("first timer");
@@ -351,7 +351,6 @@ onPress={() =>  handlePress(index)}> */}
      <Text>Surface</Text>
   </Surface> */}
 {/* </List.Accordion> */}
-<Separator/>
                 {/* <SeparatorBorder/>
             <View style={styles.rowStyle}>
                 <View style={{flex: 0.8}}>
@@ -444,9 +443,15 @@ const Home = ({route, navigation}) => {
    
 
 
-    useInterval(() => {
+    // useInterval(() => {
+    //     getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses);
+    //   }, 500);
+
+
+    useEffect(() => {
         getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses);
-      }, 500);
+    }, []);
+
 
     //  while(first == true){
     //      console.log("in loop 1");

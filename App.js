@@ -13,6 +13,7 @@ import React from 'react';
 import { StyleSheet, Button, View,useColorScheme, SafeAreaView, Text, Alert } from 'react-native';
 import { NavigationContext, NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+// import { UserProvider } from "./screens/UserProvider"
 
 
 import {
@@ -313,6 +314,7 @@ const App: () => Node = () => {
 
 
   return (
+    // <UserProvider>
 <NavigationContainer>
     <Stack.Navigator       screenOptions={{
         headerStyle: {
@@ -331,6 +333,7 @@ const App: () => Node = () => {
      
     </Stack.Navigator>
     </NavigationContainer>
+    // </UserProvider>
   );
 };
 

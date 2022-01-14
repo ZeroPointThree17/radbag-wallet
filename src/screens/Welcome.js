@@ -3,6 +3,7 @@ import React from 'react';
 import {Image,SafeAreaView, Alert, Button, SectionList, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import Svg, { Path } from "react-native-svg"
+// import { UserContext } from "./UserProvider";
 
 
 
@@ -28,6 +29,7 @@ function navigateToCreateWallet(navigation){
 
 const Welcome = ({ navigation }) => {
 
+  // const [ state, dispatch ] = React.useContext(UserContext)
 
   return (
 
@@ -76,6 +78,12 @@ const Welcome = ({ navigation }) => {
       d="M10.428 20.906a1.425 1.425 0 0 1-1.148-.583l-5.617-7.708H0V9.809h4.388a1.423 1.423 0 0 1 1.148.582l4.59 6.296L17.128.84c.11-.25.292-.463.522-.612.23-.149.5-.228.775-.228h8.763v2.806h-7.836l-7.625 17.259a1.422 1.422 0 0 1-1.154.832c-.05.003-.1.003-.151 0"
     />
   </Svg>
+
+
+  {/* <TouchableOpacity style={styles.button} onPress={() => dispatch({ type: "toggle_button" })}>
+  { state.active ? <Text>On</Text> : <Text>Off</Text> }   
+        </TouchableOpacity> */}
+
   </SafeAreaView>
   )
   ;

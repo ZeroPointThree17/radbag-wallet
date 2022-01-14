@@ -1,5 +1,5 @@
 import { Alert, Button, ScrollView, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
-import React, { useState,useRef, useEffect } from 'react';
+import React, { useState,useRef, useEffect, useReducer } from 'react';
 const bip39 = require('bip39');
 var HDKey = require('hdkey')
 let { bech32, bech32m } = require('bech32')
@@ -83,19 +83,19 @@ function convertbits (data, frombits, tobits, pad) {
     new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
   
 
-    this.state = {
-        tableHead: ['Address: rdx1qspp...jnk65 [Small Address]'],
-        tableData: [
-          ['1,234,432.24 XRD','12121212 ABCDEFGHIJ','12121212 ABCDEFGHIJ','Remove'],
+    // this.state = {
+    //     tableHead: ['Address: rdx1qspp...jnk65 [Small Address]'],
+    //     tableData: [
+    //       ['1,234,432.24 XRD','12121212 ABCDEFGHIJ','12121212 ABCDEFGHIJ','Remove'],
      
-        ]
-      }
+    //     ]
+    //   }
 
 
-      const data = [
-        { label: 'Wallet 1 (1,234,432.24 XRD)', value: '1' },
+    //   const data = [
+    //     { label: 'Wallet 1 (1,234,432.24 XRD)', value: '1' },
         
-      ];
+    //   ];
 
       const Separator = () => (
         <View style={styles.separator} />
@@ -150,28 +150,31 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
 
         tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
 
-          var table = {tableHead: ['Name', 'Address'], tableData: []};
-          
+          var addresses = [];
           var len = results.rows.length;
       
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
                     // var data = [row.name, row.radix_address];
-                    table.tableData.push([row.name, row.radix_address, row.id]);
+                    addresses.push([row.name, row.radix_address, row.id]);
             }
-            //  alert("table: "+JSON.stringify(table))
-            setEnabledAddresses(table);
-          }, errorCB);
+            console.log("table: "+addresses)
+            setEnabledAddresses(addresses);
+            console.log("Set enabled addresses")
+            // const forceUpdate = React.useReducer(() => ({}))[1]
+
+            // navigation.navigate('Summary');
+          }, errorCB); 
         });
 }
 
-function addAddress(wallet_id, db){
+function addAddress(wallet_id, db, setEnabledAddresses){
 
-    // alert("Updating addresses 0.1");
+    console.log("Updating addresses 0.1");
     db.transaction((tx) => {
 
         tx.executeSql("SELECT MIN(id) AS id FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='0'", [], (tx, results) => {
-            // alert("Updating addresses 0");
+            console.log("Updating addresses 0");
           var len = results.rows.length;
           var next_id = 0;
             for (let i = 0; i < len; i++) {
@@ -184,10 +187,12 @@ function addAddress(wallet_id, db){
             } else{
             db.transaction((tx) => {
 
-                // alert("Updating addresses");
+                console.log("Updating addresses");
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
-                    // alert("Done Updating addresses");
-                getEnabledAddresses(wallet_id,db)
+                console.log("Done Updating addresses");
+                getEnabledAddresses(wallet_id,db,setEnabledAddresses); 
+                // const forceUpdate = React.useReducer(() => ({}))[1]
+                //     forceUpdate();
                   }, errorCB);
                 });
             }
@@ -229,70 +234,20 @@ function shortenAddress(address){
     return address.substring(0, 7) +"..."+ address.substring(address.length-4, address.length) 
 
 }
-    
-
-// function handlePress (expanded, setExpanded, index) { 
-//     var expandedCopy = expanded;
-//     expandedCopy.set(index, !expandedCopy.get(index));
-//      setExpanded(expandedCopy)
-// };
 
 
-
-
-function renderRow(element){
-    // var item=JSON.parse(element);
-     alert(element)
-    return (
-      
-<Surface style={styles.surface}>
-<View style={styles.addrRowStyle}>
-
-<View style={{flex: 1}}>
-
-<Text style={{fontWeight: 'normal', marginBottom:0,fontSize: 16, fontFamily: 'GillSans-Light'}}>{item.address} </Text> 
-
-
-</View>
-
-<TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item.address)}>
-        <Icon style={{marginHorizontal: 3}} name="copy-outline" size={30} color="#4F8EF7" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item.id)}>
-   <IconFoundation style={{marginHorizontal: 3}}name="minus-circle" size={30} color="red" />
-   </TouchableOpacity>
-</View>
-
-<SeparatorBorder/>
-<View style={styles.addrRowStyle}>
-
-<Text style={{flex:0.9,marginTop:5,fontSize:20,justifyContent:'flex-start' }}>(    ) XRD Radix</Text>
-<Text style={{flex:0.5,marginTop:5,fontSize:20, justifyContent:'flex-end' }}>34.943 RDX</Text>
-
-</View>
-<View style={styles.addrRowStyle}>
-
-<Text style={{flex:0.9,marginTop:5,fontSize:20,justifyContent:'flex-start' }}>(    ) CRBY Cerby</Text>
-<Text style={{flex:0.5,marginTop:5,fontSize:20, justifyContent:'flex-end' }}>3443.943 CRBY</Text>
-
-</View>
-</Surface>
-        
-        
-        )
-}
 
 function renderAddressRows(data, db, wallet_id, copyToClipboard){
 
     // [1,true],[2,false]
-    var myHashmap = new Map([]);
-    const [expanded, setExpanded] = React.useState(new Map([[0,true]]));
+    // var myHashmap = new Map([]);
+    // const [expanded, setExpanded] = React.useState(new Map([[0,true]]));
 
     
 
-    const handlePress = (index) =>{ 
-         expanded.set(index, !expanded.get(index));
-    };
+    // const handlePress = (index) =>{ 
+    //      expanded.set(index, !expanded.get(index));
+    // };
 
     
 
@@ -300,50 +255,20 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
     }
     else{
 
-        console.log(data[0])
+        console.log("ADDRESSES: "+data) 
 
         var rows = []
-var tempDater = [[ shortenAddress("rdx1qspjzej2czqkrg3x6375f2pfa4hvw7447mfvkfaxhctsg787ttpsrqcr3qtmw"),"address1","1"],["rdx2", "address2", "2"],["rdx2", "address2", "3"],["rdx2", "address2", "4"],["rdx2", "address2", "5"]];
-//         rows.push(
-// //         <ReactNativeSwipeableViewStack
-// //   onSwipe={ ( swipedIndex ) => console.log( swipedIndex ) }
-// //   initialSelectedIndex={ 0 }
-// //   data={ tempDater }
-// //   renderItem={ ( element ) => renderRow2(element)}
-// //   onItemClicked={ ( element ) => alert( "hi2" ) }
-// //    stackSpacing={ 10 }
-// // />
 
-
-// );
-
-
-
-
-    //enabledAddresses.tableData
-
-  // CERBY: 01231  DOG3: 01231
-    // let items=['Item 1','Item 2','Item 3','Item 4','Item 5'];
     {data.map((item,index)=>{
         rows.push(
-            <View>
+            <View key={index}>
 
-{/* <List.Section title="Addresses"> */}
-{/* myHashmap.get(2) */}
-{/* <List.Accordion
-expanded={expanded.get(index)} 
-descriptionStyle={{color:"white"}} 
-titleStyle={{color:"black"}}
-style={{paddingVertical:0,height:40, backgroundColor: "white", borderWidth:StyleSheet.hairlineWidth, color:"white"}}  
-title={"" + item[0]}
-onPress={() =>  handlePress(index)}> */}
-{/* <Surface style={styles.surface2}> */}
 
 <SeparatorBorder/>
 <View style={styles.addrRowStyle}>
 
-<Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>(    ) XRD Radix</Text>
-<Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>3443.943 RDX</Text>
+<Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>( {index}  ) XRD Radix</Text>
+<Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{index} - 3443.943 RDX</Text>
 </View>
 
 {/* </Surface> */}
@@ -376,15 +301,7 @@ onPress={() =>  handlePress(index)}> */}
     return (rows)
 
     }
-//     return(
-//     <View style={styles.rowStyle}>
-// <View>
-// <Text>rdxsdfdsfasa....sdfdfddfdfsff (Address 1)</Text>
-// <Text>XRD: 01231  CERBY: 01231  DOG3: 01231  </Text>
-//   </View>
-//   <Icon name="copy-outline" size={30} color="#4F8EF7" />
-//   <IconFoundation name="minus-circle" size={30} color="red" />
-//   </View>)
+
 }
 
 function persistActiveWallet(db, wallet_id){
@@ -439,7 +356,7 @@ const Home = ({route, navigation}) => {
     const [label, setLabel] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
     const [activeWallet, setActiveWallet] = useState();
-    const [enabledAddresses, setEnabledAddresses] = useState([]);
+    const [enabledAddresses, setEnabledAddresses] = useState();
    
 
 
@@ -557,28 +474,28 @@ const Home = ({route, navigation}) => {
 </View>
 
     
-                 {/* <FontAwesome icon={SolidIcons.smile} />  */}
+                
      <View style={styles.rowStyle}>
        
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db,setEnabledAddresses)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Wallet     </Text></View>
 </TouchableOpacity>
 
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Address</Text></View>
-</TouchableOpacity>
+</TouchableOpacity> 
 
-    
 
 </View>
+
 <Separator/>
 <Text>Tokens                                                                   +</Text>
  
     
 
-{renderAddressRows(enabledAddresses.tableData, db, activeWallet, copyToClipboard)}
+{renderAddressRows(enabledAddresses, db, activeWallet, copyToClipboard)}
 
         <Separator/>
 

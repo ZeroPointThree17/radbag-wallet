@@ -107,7 +107,7 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
 
               
               { show && 
-       <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Mnemonic:</Text> 
+       <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Mnemonic Phrase:</Text> 
         
         }
 

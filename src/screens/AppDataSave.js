@@ -103,25 +103,25 @@ db.transaction((tx) => {
 
 
 
-db.transaction((tx) => {
-  tx.executeSql('DROP TABLE IF EXISTS id', [], (tx, results) => {
-    console.log("Drop id table completed");
-    db.transaction((tx) => {
-      tx.executeSql(`CREATE TABLE id (
-        table_name TEXT,
-        next_id INTEGER
-    )`, [], (tx, results) => {
-        console.log("Create id table completed");
-        db.transaction((tx) => {
-          tx.executeSql("INSERT INTO id VALUES('wallet',1)", [], (tx, results) => {
-            console.log("Inserts into id table completed");
+// db.transaction((tx) => {
+//   tx.executeSql('DROP TABLE IF EXISTS id', [], (tx, results) => {
+//     console.log("Drop id table completed");
+//     db.transaction((tx) => {
+//       tx.executeSql(`CREATE TABLE id (
+//         table_name TEXT,
+//         next_id INTEGER
+//     )`, [], (tx, results) => {
+//         console.log("Create id table completed");
+//         db.transaction((tx) => {
+//           tx.executeSql("INSERT INTO id VALUES('wallet',1)", [], (tx, results) => {
+//             console.log("Inserts into id table completed");
             
-          }, errorCB);
-        });
-      }, errorCB);
-    });
-  }, errorCB);
-});
+//           }, errorCB);
+//         });
+//       }, errorCB);
+//     });
+//   }, errorCB);
+// });
 
 
 
@@ -141,8 +141,61 @@ db.transaction((tx) => {
         console.log("Create wallet table completed");
 
           db.transaction((tx) => {
-            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word25_enc) VALUES (1, 'Wallet 1', '" + mnemonic_enc + "', '" + word25_enc + "')", [], (tx, results) => {
+            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word25_enc) VALUES (1, 'My Wallet', '" + mnemonic_enc + "', '" + word25_enc + "')", [], (tx, results) => {
               console.log("Inserts into wallet table completed");
+
+
+
+
+
+              db.transaction((tx) => {
+                tx.executeSql('DROP TABLE IF EXISTS token', [], (tx, results) => {
+                  console.log("Drop token table completed");
+                  db.transaction((tx) => {
+                    tx.executeSql(`CREATE TABLE token (
+                      id INTEGER PRIMARY KEY,
+                      rri TEXT,
+                  name TEXT,
+                  symbol TEXT,
+                  decimals INTGER,
+                  logo BLOB
+                  )`, [], (tx, results) => {
+                      console.log("Create token table completed");
+                      db.transaction((tx) => {
+                        tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
+                          console.log("Inserts into token table completed");
+                        
+
+                          db.transaction((tx) => {
+                            tx.executeSql('DROP TABLE IF EXISTS wallet_x_token', [], (tx, results) => {
+                              console.log("Drop wallet_x_token table completed");
+                              db.transaction((tx) => {
+                                tx.executeSql(`CREATE TABLE wallet_x_token (
+                                  id INTEGER PRIMARY KEY,
+                                  wallet_id INTEGER,
+                                  token_id INTEGER,
+                              enabled_flag INTEGER
+                              )`, [], (tx, results) => {
+                                  console.log("Create wallet_x_token table completed");
+                                  db.transaction((tx) => {
+                                    tx.executeSql('INSERT INTO wallet_x_token (wallet_id, token_id, enabled_flag) select distinct a.id, b.id, 1 from wallet a, token b', [], (tx, results) => {
+                                      console.log("Inserts into wallet_x_token token completed");
+                                    
+                                    }, errorCB);
+                                  });
+                                  
+                                }, errorCB);
+                              });
+                            }, errorCB);
+                          });
+                          
+                          
+                        }, errorCB);
+                      });
+                    }, errorCB);
+                  });
+                }, errorCB);
+              });
 
 
               var seed = bip39.mnemonicToSeedSync(mnemonic,word25).toString('hex');
@@ -214,60 +267,6 @@ db.transaction((tx) => {
     });
   }, errorCB);
 });
-
-
-
-db.transaction((tx) => {
-  tx.executeSql('DROP TABLE IF EXISTS token', [], (tx, results) => {
-    console.log("Drop token table completed");
-    db.transaction((tx) => {
-      tx.executeSql(`CREATE TABLE token (
-        id INTEGER PRIMARY KEY,
-        rri TEXT,
-    name TEXT,
-    symbol TEXT,
-    decimals INTGER,
-    logo BLOB
-    )`, [], (tx, results) => {
-        console.log("Create token table completed");
-        db.transaction((tx) => {
-          tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
-            console.log("Inserts into token table completed");
-           
-          }, errorCB);
-        });
-      }, errorCB);
-    });
-  }, errorCB);
-});
-
-
-
-
-db.transaction((tx) => {
-  tx.executeSql('DROP TABLE IF EXISTS wallet_x_token', [], (tx, results) => {
-    console.log("Drop wallet_x_token table completed");
-    db.transaction((tx) => {
-      tx.executeSql(`CREATE TABLE wallet_x_token (
-        id INTEGER PRIMARY KEY,
-        wallet_id INTEGER,
-        token_id INTEGER,
-    enabled_flag INTEGER
-    )`, [], (tx, results) => {
-        console.log("Create wallet_x_token table completed");
-        db.transaction((tx) => {
-          tx.executeSql('INSERT INTO wallet_x_token (wallet_id, token_id, enabled_flag) select distinct a.id, b.id, 1 from wallet a, token b', [], (tx, results) => {
-            console.log("Inserts into wallet_x_token token completed");
-           
-          }, errorCB);
-        });
-        
-      }, errorCB);
-    });
-  }, errorCB);
-});
-
-
 
 
 

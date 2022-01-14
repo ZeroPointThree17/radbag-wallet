@@ -155,26 +155,20 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
       
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
-                    // var data = [row.name, row.radix_address];
                     addresses.push([row.name, row.radix_address, row.id]);
             }
-            console.log("table: "+addresses)
-            setEnabledAddresses(addresses);
-            console.log("Set enabled addresses")
-            // const forceUpdate = React.useReducer(() => ({}))[1]
 
-            // navigation.navigate('Summary');
+            setEnabledAddresses(addresses);
+
           }, errorCB); 
         });
 }
 
 function addAddress(wallet_id, db, setEnabledAddresses){
 
-    console.log("Updating addresses 0.1");
     db.transaction((tx) => {
 
         tx.executeSql("SELECT MIN(id) AS id FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='0'", [], (tx, results) => {
-            console.log("Updating addresses 0");
           var len = results.rows.length;
           var next_id = 0;
             for (let i = 0; i < len; i++) {
@@ -186,13 +180,8 @@ function addAddress(wallet_id, db, setEnabledAddresses){
                 alert("You cannot have more than 15 addresses per wallet");
             } else{
             db.transaction((tx) => {
-
-                console.log("Updating addresses");
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
-                console.log("Done Updating addresses");
                 getEnabledAddresses(wallet_id,db,setEnabledAddresses); 
-                // const forceUpdate = React.useReducer(() => ({}))[1]
-                //     forceUpdate();
                   }, errorCB);
                 });
             }

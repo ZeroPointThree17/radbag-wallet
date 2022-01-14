@@ -53,8 +53,8 @@ function navigateAppPassword(navigation, mnemonic){
   const [mnemonic, setMnemonic] = useState();
   
  return ( 
-     <View > 
-<Text style={styles.title}>Enter your mnemonic below with words separated by a single space. Include 25th word if any</Text>
+     <View style={styles.container}> 
+<Text style={styles.title, {margin: 20}}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
  
 <TextInput
     editable
@@ -62,7 +62,7 @@ function navigateAppPassword(navigation, mnemonic){
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
-      style={{height: 150, padding: 10, borderWidth:StyleSheet.hairlineWidth}}
+      style={{height: 150, padding: 10, margin:20, marginTop:10, borderWidth:StyleSheet.hairlineWidth}}
     />
   
 
@@ -85,7 +85,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingTop: 22
+    paddingTop: 0,
+    backgroundColor: "white",
+    justifyContent: 'center'
    },
    sectionHeader: {
      paddingTop: 2,

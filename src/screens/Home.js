@@ -52,68 +52,16 @@ function useInterval(callback, delay) {
   }
   
 
-function convertbits (data, frombits, tobits, pad) {
-    var acc = 0;
-    var bits = 0;
-    var ret = [];
-    var maxv = (1 << tobits) - 1;
-    for (var p = 0; p < data.length; ++p) {
-      var value = data[p];
-      if (value < 0 || (value >> frombits) !== 0) {
-        return null;
-      }
-      acc = (acc << frombits) | value;
-      bits += frombits;
-      while (bits >= tobits) {
-        bits -= tobits;
-        ret.push((acc >> bits) & maxv);
-      }
-    }
-    if (pad) {
-      if (bits > 0) {
-        ret.push((acc << (tobits - bits)) & maxv);
-      }
-    } else if (bits >= frombits || ((acc << (tobits - bits)) & maxv)) {
-      return null;
-    }
-    return ret;
-  }
-  
-  const fromHexString = hexString =>
-    new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-  
+    const Separator = () => (
+    <View style={styles.separator} />
+    );
 
-    // this.state = {
-    //     tableHead: ['Address: rdx1qspp...jnk65 [Small Address]'],
-    //     tableData: [
-    //       ['1,234,432.24 XRD','12121212 ABCDEFGHIJ','12121212 ABCDEFGHIJ','Remove'],
-     
-    //     ]
-    //   }
+    const SeparatorBorder = () => (
+    <View style={styles.separatorBorder} />
+    );
 
+function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses){
 
-    //   const data = [
-    //     { label: 'Wallet 1 (1,234,432.24 XRD)', value: '1' },
-        
-    //   ];
-
-      const Separator = () => (
-        <View style={styles.separator} />
-      );
-
-      const SeparatorBorder = () => (
-        <View style={styles.separatorBorder} />
-      );
-
-    
-    //   var wallets = [];
-    //   var enabledAddresses = [];
-
-    var first = true;
-function getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses){
-
-    first = false;
-    // console.log("inside get wallets");
     db.transaction((tx) => {
 
         tx.executeSql("SELECT * FROM wallet", [], (tx, results) => {
@@ -131,13 +79,13 @@ function getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddr
              
              console.log("inside get wallets");
              console.log("inside get wallets2");
-             getEnabledAddresses(wallets[0].value,db,setEnabledAddresses)
+             getEnabledAddresses(wallets[0].value,db, setActiveAddress,setEnabledAddresses, true)
           }, errorCB);
         });
         
 }
 
-function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
+function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive){
     db.transaction((tx) => {
 
         tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
@@ -147,16 +95,22 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
       
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
-                    addresses.push([row.name, row.radix_address, row.id]);
+                    var addrLabel = row.name + " - " + shortenAddress(row.radix_address);
+                    var data = {label: addrLabel, value: row.id}
+                    addresses.push(data);
             }
 
             setEnabledAddresses(addresses);
+
+            if(pickFirstAsActive==true){
+                setActiveAddress(addresses[0].value);
+            }
 
           }, errorCB); 
         });
 }
 
-function addAddress(wallet_id, db, setEnabledAddresses){
+function addAddress(wallet_id, db, setEnabledAddresses, pickFirstAsActive){
 
     db.transaction((tx) => {
 
@@ -173,7 +127,7 @@ function addAddress(wallet_id, db, setEnabledAddresses){
             } else{
             db.transaction((tx) => {
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
-                getEnabledAddresses(wallet_id,db,setEnabledAddresses); 
+                getEnabledAddresses(wallet_id,db,setEnabledAddresses, pickFirstAsActive); 
                   }, errorCB);
                 });
             }
@@ -216,21 +170,7 @@ function shortenAddress(address){
 
 }
 
-
-
 function renderAddressRows(data, db, wallet_id, copyToClipboard){
-
-    // [1,true],[2,false]
-    // var myHashmap = new Map([]);
-    // const [expanded, setExpanded] = React.useState(new Map([[0,true]]));
-
-    
-
-    // const handlePress = (index) =>{ 
-    //      expanded.set(index, !expanded.get(index));
-    // };
-
-    
 
     if(data === undefined){
     }
@@ -245,12 +185,12 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
             <View key={index}>
 
 
-<SeparatorBorder/>
-<View style={styles.addrRowStyle}>
+    <SeparatorBorder/>
+    <View style={styles.addrRowStyle}>
 
-<Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>( {index}  ) XRD Radix</Text>
-<Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{index} - 3443.943 RDX</Text>
-</View>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>( {index}  ) XRD Radix</Text>
+    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{index} - 3443.943 RDX</Text>
+    </View>
 
 {/* </Surface> */}
 {/* <Surface style={styles.surface}>
@@ -285,12 +225,26 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
 
 }
 
-function updateActiveWallet(db, wallet_id, setActiveWallet){
+function updateActiveWallet(wallet_id, setActiveWallet){
+
+    var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+
+    alert("0 About toUpdated to "+wallet_id)
     db.transaction((tx) => {
-        tx.executeSql("UPDATE active_wallet set id = '"+wallet_id+"'", [], (tx, results) => {
-        //    alert("persist3")
+        alert("about to run sql: "+"UPDATE active_wallet SET id = "+wallet_id)
+        tx.executeSql("UPDATE active_wallet SET id = "+wallet_id, [], (tx, results) => {
+            alert("About toUpdated to "+wallet_id)
            setActiveWallet(wallet_id);
+           alert("Updated to "+wallet_id)
         }, errorCB('update active_wallet'));
+    }); 
+}
+
+function updateActiveAddress(db, address_id, setActiveAddress){
+    db.transaction((tx) => {
+        tx.executeSql("UPDATE active_address set id = '"+address_id+"'", [], (tx, results) => {
+           setActiveAddress(address_id);
+        }, errorCB('update active_address'));
     }); 
 }
 
@@ -344,8 +298,14 @@ const Home = ({route, navigation}) => {
     
     const [wallets, setWallets] = useState([{label: "Setting up for first time...", value:""}]);
     const [isFocus, setIsFocus] = useState(false);
-    const [activeWallet, setActiveWallet] = useState();
-    const [enabledAddresses, setEnabledAddresses] = useState();
+    const [label, setLabel] = useState();
+    const [value, setValue] = useState();
+    const [isFocusAddr, setIsFocusAddr] = useState(false);
+    const [labelAddr, setLabelAddr] = useState();
+    const [valueAddr, setValueAddr] = useState();
+    const [activeWallet, setActiveWallet] = useState(1);
+    const [activeAddress, setActiveAddress] = useState(1);
+    const [enabledAddresses, setEnabledAddresses] = useState([{label: "Setting up for first time...", value:""}]);
    
 
 
@@ -355,7 +315,7 @@ const Home = ({route, navigation}) => {
 
 
     useEffect(() => {
-        getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses);
+        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses);
     }, []);
 
 
@@ -435,21 +395,42 @@ const Home = ({route, navigation}) => {
           valueField="value"
           placeholder={!isFocus ? 'Select Wallet' : '...'}
           searchPlaceholder="Search..."
-          label={wallets[0].label}
-          value={wallets[0].value}
+          label={wallets[parseInt(activeWallet)-1].label}
+          value={wallets[parseInt(activeWallet)-1].value}
           onFocus={() => {setIsFocus(true)}}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            //   setActiveWallet(item.value)
-            updateActiveWallet(db, item.value, setActiveWallet);
+            updateActiveWallet(item.value, setActiveWallet);
             setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);
           }}
         />
-        <Text style ={{ color:"white"}}>My Address</Text>
-        <Text style={{color:"white"}}>{[shortenAddress("rdx1qspjzej2czqkrg3x6375f2pfa4hvw7447mfvkfaxhctsg787ttpsrqcr3qtmw")]}</Text>
-        <Text style={{fontSize: 30, color:"white"}}>0.000 XRD</Text>
+<Dropdown
+         style={[styles.dropdown, isFocusAddr && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={enabledAddresses}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocusAddr ? 'Select Address' : '...'}
+          searchPlaceholder="Search..."
+          label={enabledAddresses[parseInt(activeAddress)-1].label}
+          value={enabledAddresses[parseInt(activeAddress)-1].value}
+          onFocus={() => {setIsFocusAddr(true)}}
+          onBlur={() => setIsFocusAddr(false)}
+          onChange={item => {
+            updateActiveAddress(db, item.value, setActiveAddress);
+            setLabelAddr(item.label);
+            setValueAddr(item.value);
+            setIsFocusAddr(true);
+          }}
+        />
+       <Text style={{fontSize: 30, color:"white"}}>0.000 XRD</Text>
         <Text >0.00 USD</Text>
         <View style={styles.rowStyle}>
         <TouchableOpacity style={styles.button} onPress={() =>  alert("hi")}>
@@ -466,12 +447,12 @@ const Home = ({route, navigation}) => {
                 
      <View style={styles.rowStyle}>
        
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db,setEnabledAddresses)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db,setEnabledAddresses, false)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Wallet     </Text></View>
 </TouchableOpacity>
 
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses, false)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity> 

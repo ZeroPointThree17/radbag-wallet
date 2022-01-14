@@ -42,8 +42,8 @@ const Separator = () => (
   <View style={styles.separator} />
 );
 
-function errorCB(err) {
-  console.log("SQL Error: " + err.message);
+function errorCB(err, details) {
+  console.log("SQL Error: " + err.message + " details: "+details);
 }
 
 function successCB() {
@@ -137,17 +137,40 @@ db.transaction((tx) => {
         console.log("Create wallet table completed");
 
           db.transaction((tx) => {
-            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet', '" + mnemonic_enc + "', '" + word13_enc + "')", [], (tx, results) => {
-              console.log("Inserts into wallet table completed");
-
-
+            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet (#1)', '" + mnemonic_enc + "', '" + word13_enc + "')", [], (tx, results) => {
+              console.log("Insert into wallet table completed");
 
               db.transaction((tx) => {
-                tx.executeSql("DROP TABLE IF EXISTS active_wallet", [], (tx, results) => {
+                tx.executeSql('DROP TABLE IF EXISTS active_wallet', [], (tx, results) => {
                     db.transaction((tx) => {
-                        tx.executeSql("CREATE TABLE active_wallet ( id INTEGER )", [], (tx, results) => {
+                        tx.executeSql(`CREATE TABLE active_wallet ( id INTEGER )`, [], (tx, results) => {
                             db.transaction((tx) => {
-                                tx.executeSql("INSERT INTO active_wallet (id) VALUES('1')", [], (tx, results) => {
+                                tx.executeSql("INSERT INTO active_wallet VALUES(1)", [], (tx, results) => {
+                                console.log("insert into selected_wallet completed");
+
+
+
+
+                                console.log("pre active address table completed"); 
+                                db.transaction((tx) => {
+                                  console.log("pre active address 0.1 table completed"); 
+                                  tx.executeSql('DROP TABLE IF EXISTS active_address', [], (tx, results) => {
+                                    console.log("pre active address 0 table completed"); 
+                                      db.transaction((tx) => {
+                                          tx.executeSql("CREATE TABLE active_address ( id INTEGER )", [], (tx, results) => {
+                                              db.transaction((tx) => {
+                                                  tx.executeSql("INSERT INTO active_address (id) VALUES('1')", [], (tx, results) => {
+                                                    console.log("Insert into active address table completed");   
+                                                    navigation.navigate('Raddish Wallet');
+                                                  }, errorCB("active addr failed"));
+                                              }); 
+                                  }, errorCB("active addr failed"));
+                              });
+                                    }, errorCB("active addr failed"));
+                                  });
+
+
+
                                 }, errorCB());
                             }); 
                 }, errorCB());
@@ -206,6 +229,7 @@ db.transaction((tx) => {
               });
 
 
+
               var seed = bip39.mnemonicToSeedSync(mnemonic,word13).toString('hex');
      
               var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
@@ -239,12 +263,11 @@ db.transaction((tx) => {
                           var rdx_addr = bech32.encode("rdx", readdr_bytes5);
                       
                           if(i==2){enabled_flag=0}
-                          tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1,'Address "+i.toString()+"','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"',"+enabled_flag+")", [], (tx, results) => {
-                            console.log("Inserts into address table completed");
+                          
+                          tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1,'My Address (#"+i.toString()+")','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"',"+enabled_flag+")", [], (tx, results) => {
+                            console.log("Insert into address table completed");
                             
-                            navigation.navigate('Raddish Wallet', {
-                              pwStr: password
-                            });
+
                                   // db.transaction((tx) => {
             
                                   //   tx.executeSql('SELECT * FROM address', [], (tx, results) => {
@@ -261,7 +284,7 @@ db.transaction((tx) => {
                           }, errorCB);
                         });
                      } 
-                    
+
                     }, errorCB);
                   });
                 }, errorCB);

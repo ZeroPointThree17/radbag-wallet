@@ -345,7 +345,7 @@ LogBox.ignoreAllLogs();
           fontWeight: 'bold',
         },
       }}>
-        { firstTimer == true
+        { firstTimer == false
   ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} />
   :     <Stack.Screen name="Raddish  Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
 

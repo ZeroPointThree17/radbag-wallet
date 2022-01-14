@@ -551,9 +551,9 @@ const Home = ({route, navigation}) => {
             setIsFocus(true);
           }}
         />
-        <Text style ={{ color:"#031163"}}>My Address</Text>
-        <Text style={{color:"#031163"}}>{[shortenAddress("rdx1qspjzej2czqkrg3x6375f2pfa4hvw7447mfvkfaxhctsg787ttpsrqcr3qtmw")]}</Text>
-        <Text style={{fontSize: 30, color:"#031163"}}>0.000 XRD</Text>
+        <Text style ={{ color:"white"}}>My Address</Text>
+        <Text style={{color:"white"}}>{[shortenAddress("rdx1qspjzej2czqkrg3x6375f2pfa4hvw7447mfvkfaxhctsg787ttpsrqcr3qtmw")]}</Text>
+        <Text style={{fontSize: 30, color:"white"}}>0.000 XRD</Text>
         <Text >0.00 USD</Text>
         <View style={styles.rowStyle}>
         <TouchableOpacity style={styles.button} onPress={() =>  alert("hi")}>
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
         // elevation: 4,
         borderWidth: 0,
         borderRadius: 10,
-        backgroundColor: 'white',
+        backgroundColor: '#4DA892',
      
       },
     rowStyle: {
@@ -648,7 +648,7 @@ const styles = StyleSheet.create({
   },
   containerMain: {
     flex: 1,
-    backgroundColor: "#031163"
+    backgroundColor: "white"
   },
    sectionHeader: {
      paddingTop: 2,

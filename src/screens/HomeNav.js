@@ -26,7 +26,7 @@ export default function HomeNav({route, navigation}) {
      
       tabBarActiveTintColor: "white",
       headerStyle: {
-        backgroundColor: '#031163',
+        backgroundColor: '#183A81',
         borderWidth:0,
         shadowRadius: 0,
         shadowOffset: {
@@ -41,7 +41,7 @@ export default function HomeNav({route, navigation}) {
         height: 90,
         paddingHorizontal: 5,
         paddingTop: 0,
-        backgroundColor: '#031163',
+        backgroundColor: '#183A81',
         position: 'absolute',
         borderTopWidth: 0,
         

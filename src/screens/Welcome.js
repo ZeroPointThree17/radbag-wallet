@@ -4,6 +4,13 @@ import {Image,SafeAreaView, Alert, Button, SectionList, View, Text, StyleSheet }
 const bip39 = require('bip39');
 import Svg, { Path } from "react-native-svg"
 
+
+
+const Separator = () => (
+  <View style={styles.separator} />
+);
+
+
 function navigateToCreateWallet(navigation){
   var mnemonic = bip39.generateMnemonic();
   navigation.navigate('Mnemonic', {
@@ -27,6 +34,32 @@ const Welcome = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
      <View style={styles.text}> 
 
+ <Text style={styles.title}>Welcome to the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
+ <Button
+        title="Yes - Import a Wallet"
+        enabled
+        onPress={() => Alert.alert('Import - Cannot press this one')}
+      />
+ <Button
+        title="No - Create New Wallet"
+        color = 'red'
+        enabled
+        onPress={() => navigateToCreateWallet(navigation)
+          }
+      />
+
+  </View> 
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+
+
+<Text>Powered by:</Text>
      <Svg
     xmlns="http://www.w3.org/2000/svg"
     width={94}
@@ -43,21 +76,6 @@ const Welcome = ({ navigation }) => {
       d="M10.428 20.906a1.425 1.425 0 0 1-1.148-.583l-5.617-7.708H0V9.809h4.388a1.423 1.423 0 0 1 1.148.582l4.59 6.296L17.128.84c.11-.25.292-.463.522-.612.23-.149.5-.228.775-.228h8.763v2.806h-7.836l-7.625 17.259a1.422 1.422 0 0 1-1.154.832c-.05.003-.1.003-.151 0"
     />
   </Svg>
- <Text style={styles.title}>Welcome to the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
- <Button
-        title="Yes - Import a Wallet"
-        enabled
-        onPress={() => Alert.alert('Import - Cannot press this one')}
-      />
- <Button
-        title="No - Create New Wallet"
-        color = 'red'
-        enabled
-        onPress={() => navigateToCreateWallet(navigation)
-          }
-      />
-
-  </View> 
   </SafeAreaView>
   )
   ;
@@ -102,6 +120,11 @@ const styles = StyleSheet.create({
   logo: {
     width: 66,
     height: 58,
+  },
+  separator: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: 0,
   },
 });
 

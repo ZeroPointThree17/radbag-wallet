@@ -337,31 +337,16 @@ titleStyle={{color:"black"}}
 style={{paddingVertical:0,height:40, backgroundColor: "white", borderWidth:StyleSheet.hairlineWidth, color:"white"}}  
 title={"" + item[0]}
 onPress={() =>  handlePress(index)}> */}
-<Surface style={styles.surface}>
-<View style={styles.addrRowStyle}>
-{/* 
-<View style={{flex: 1}}>
+{/* <Surface style={styles.surface2}> */}
 
-<Text style={{fontWeight: 'normal', marginBottom:0,fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[1]} </Text> 
-
-
-</View>
-
-<TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
-        <Icon style={{marginHorizontal: 3}} name="copy-outline" size={30} color="#4F8EF7" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
-   <IconFoundation style={{marginHorizontal: 3}}name="minus-circle" size={30} color="red" />
-   </TouchableOpacity> */}
-</View>
-
+<SeparatorBorder/>
 <View style={styles.addrRowStyle}>
 
-<Text style={{flex:0.9,marginTop:5,fontSize:20,justifyContent:'flex-start' }}>(    ) XRD Radix</Text>
-<Text style={{flex:0.5,marginTop:5,fontSize:20, justifyContent:'flex-end' }}>3443.943 RDX</Text>
+<Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>(    ) XRD Radix</Text>
+<Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>3443.943 RDX</Text>
 </View>
 
-</Surface>
+{/* </Surface> */}
 {/* <Surface style={styles.surface}>
      <Text>Surface</Text>
   </Surface> */}
@@ -613,6 +598,18 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 10,
         backgroundColor: '#4DA892',
+     
+      },
+      surface2: {
+        padding: 8,
+        height: 'auto',
+        width: 325,
+        // alignItems: 'flex-start',
+        // justifyContent: 'center',
+        // elevation: 4,
+        borderWidth: 0,
+        borderRadius: 10,
+        backgroundColor: '#006261',
      
       },
     rowStyle: {

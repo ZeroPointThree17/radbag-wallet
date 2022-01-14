@@ -12,9 +12,9 @@ const Tab = createBottomTabNavigator();
 
 export default function HomeNav({route, navigation}) {
 
-  const pwStr = route.params;
+  // const pwStr = route.params;
 
-  var password = pwStr.pwStr;
+  // var password = pwStr.pwStr;
 
 
 
@@ -48,18 +48,13 @@ export default function HomeNav({route, navigation}) {
     },
     
     }}>
-      <Tab.Screen name="Summary" component={Home} initialParams={{
-       pw: {password}
-    }} options={{
+      <Tab.Screen name="Summary" component={Home} options={{
       tabBarLabel: 'Home',
       tabBarIcon: ({ color, size }) => (
         <IconMaterial name="home" color={color} size={size} />
       ),
     }}/>
-        <Tab.Screen name="Settings" component={SettingsNav} initialParams={{
-       pw: {password},
-       navigation: {navigation}
-    }} options={{
+        <Tab.Screen name="Settings" component={SettingsNav} options={{
       tabBarLabel: 'Settings',
       tabBarIcon: ({ color, size }) => (
         <Ionicons name="settings-outline" color={color} size={size} />

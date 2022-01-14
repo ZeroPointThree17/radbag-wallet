@@ -87,7 +87,7 @@ db.transaction((tx) => {
     console.log("Create application table completed");
 
     db.transaction((tx) => {
-      tx.executeSql("INSERT INTO application VALUES(1,10)", [], (tx, results) => {
+      tx.executeSql("INSERT INTO application VALUES(0,10)", [], (tx, results) => {
         console.log("Inserts into application table completed");
         
       }, errorCB);});
@@ -304,19 +304,6 @@ const AppDataSave = ({route, navigation}) => {
 
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
-
-// const [appDone, setappDone] = useState(false);
-// const [idDone, setidDone] = useState(false);
-// const [walletDone, setwalletDone] = useState(false);
-// const [walletXtokenDone, setwalletXtokenDone] = useState(false);
-// const [tokenDone, settokenDone] = useState(false);
-// const [addressDone, setaddressDone] = useState(false);
-
-
-
-
-
- 
 
 const [appPw, setAppPw] = useState("");
 const [appPwConfirm, setAppPwConfirm] = useState("");

@@ -9,12 +9,12 @@
 
 import './shim';
 //import {Buffer} from 'buffer';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Button, View,useColorScheme, SafeAreaView, Text, Alert } from 'react-native';
 import { NavigationContext, NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 // import { UserProvider } from "./screens/UserProvider"
-
+var SQLite = require('react-native-sqlite-storage');
 
 import {
   Colors,
@@ -53,6 +53,9 @@ import MnemonicInput from './src/screens/MnemonicInput';
 const Separator = () => (
   <View style={styles.separator} />
 );
+
+var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+
 
 // this library allows you to sign 32 byte hashes (e.g. sha256 hashes)
 const msg = Buffer.from('hey ho')
@@ -193,6 +196,19 @@ function hexToBytes(hex) {
   return bytes;
 }
 
+function errorCB(err, moreInfoStr) {
+  console.log("SQL Error: " + err.message + " More Info: "+moreInfoStr);
+}
+
+function successCB() {
+  console.log("SQL executed fine");
+}
+
+function openCB() {
+  // console.log("Database OPENED");
+}
+
+
 // Convert a byte array to a hex string
 // function bytesToHex(bytes) {
 //   for (var hex = [], i = 0; i < bytes.length; i++) {
@@ -283,16 +299,6 @@ mac = "f4000f968fa9e7403911937da74c7d12"
 
 
 
-// var salt = CryptoJS.lib.WordArray.random(128/8); 
-// var key128Bits = CryptoJS.PBKDF2("Secret Passphrase", salt, { keySize: 128/32 }); 
-// var key256Bits = CryptoJS.PBKDF2("Secret Passphrase", salt, { keySize: 256/32 }); 
-// var key512Bits = CryptoJS.PBKDF2("Secret Passphrase", salt, { keySize: 512/32 }); 
-// var key512Bits1000Iterations = CryptoJS.PBKDF2("Secret Passphrase", salt, { keySize: 512/32, iterations: 1000 });
-
-// console.log(key512Bits1000Iterations);
-
-
-
 
 const Stack = createStackNavigator();
 
@@ -304,18 +310,31 @@ const App: () => Node = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-//   const result = scrypt(password, [salt, N=costParameterN, r=blockSize, p=parallelizationParameter, dkLen=lengthOfDerivedKey, encoding='legacy']).then((value) => {
 
-//   hex2a('32343630'); // returns '2460'
-   
-//     console.log(value.toString('hex'));
-//     // expected output: "Success!"
-//   });
-// // var mnemonic = Mnemonic.generateNew({ strength: StrengthT.WORD_COUNT_12 })
+const [firstTimer, setFirstTimer] = useState(true);
+
+db.transaction((tx) => {
+  tx.executeSql("SELECT new_user_flag FROM application", [], (tx, results) => {
+  
+          var len = results.rows.length;
+                
+          var new_user_flag = 0;
+          for (let i = 0; i < len; i++) {
+              let row = results.rows.item(i);
+              new_user_flag = row.new_user_flag;
+          }
+
+          if(new_user_flag == 0)
+            setFirstTimer(false);
+
+  }, errorCB('update active_wallet'));
+}); 
+
+
 
 
   return (
-    // <UserProvider>
+
 <NavigationContainer>
     <Stack.Navigator       screenOptions={{
         headerStyle: {
@@ -326,13 +345,19 @@ const App: () => Node = () => {
           fontWeight: 'bold',
         },
       }}>
-      <Stack.Screen name="Welcome to Raddish Wallet!" component={Welcome} />
+        { firstTimer == true
+  ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} />
+  :     <Stack.Screen name="Raddish  Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
+
+}
+     
       <Stack.Screen name="Mnemonic" component={CreateWallet} />
       <Stack.Screen name="Mnemonic Input" component={MnemonicInput} />
       <Stack.Screen name="App Password" component={AppDataSave} />
-      {/* <Stack.Screen name="Home" component={Home} options={{headerLeft: () => null, gestureEnabled: false}} /> */}
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
-     
+
+      {/* <Stack.Screen name="Home" component={Home} options={{headerLeft: () => null, gestureEnabled: false}} /> */}
+  
     </Stack.Navigator>
     </NavigationContainer>
     // </UserProvider>

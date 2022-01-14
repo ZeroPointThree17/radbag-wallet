@@ -1,6 +1,5 @@
-import { commentRegex } from 'convert-source-map';
 import React from 'react';
-import {Image,SafeAreaView, Alert, Button, SectionList, View, Text, StyleSheet } from 'react-native';
+import {Image,SafeAreaView, Button, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import Svg, { Path } from "react-native-svg"
 
@@ -15,14 +14,6 @@ function navigateToCreateWallet(navigation){
     mnemonicStr: mnemonic
   });
 }
-
-
-// function radixLogo() {
-//   return (
-  
-//   );
-// }
-
 
 const Welcome = ({ navigation }) => {
 
@@ -74,10 +65,6 @@ const Welcome = ({ navigation }) => {
     />
   </Svg>
 
-
-  {/* <TouchableOpacity style={styles.button} onPress={() => dispatch({ type: "toggle_button" })}>
-  { state.active ? <Text>On</Text> : <Text>Off</Text> }   
-        </TouchableOpacity> */}
 
   </SafeAreaView>
   )

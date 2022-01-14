@@ -333,18 +333,16 @@ const Home = ({route, navigation}) => {
     };
 
     
-    const {pw} = route.params;
+    // const {pw} = route.params;
 
-    var pwStr = JSON.stringify(pw).replaceAll('"','');
+    // var pwStr = JSON.stringify(pw).replaceAll('"','');
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
 
     const state = this.state;
     
-    const [wallets, setWallets] = useState([{label: "Loading...", value:""}]);
-    const [value, setValue] = useState(null);
-    const [label, setLabel] = useState(null);
+    const [wallets, setWallets] = useState([{label: "Setting up for first time...", value:""}]);
     const [isFocus, setIsFocus] = useState(false);
     const [activeWallet, setActiveWallet] = useState();
     const [enabledAddresses, setEnabledAddresses] = useState();

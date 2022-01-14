@@ -77,9 +77,7 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
     }, errorCB);
 
 
-  
-  
-    const [password, setPassword] = useState();
+  const [password, setPassword] = useState();
   const [mnemonic_enc, setMnemonic_enc] = useState();
   const [show, setShow] = useState(false);
   const [mnemonic, setMnemonic] = useState();
@@ -89,54 +87,55 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
   
 
  return ( 
-     <View > 
-<Text style={styles.title}>Enter your wallet password to display the mnemonic</Text>
- <PasswordInputText style={styles.title}
-onChangeText={(password) => setPassword( password )}
-label='App Password' />
+     <View style={styles.container}> 
+      <Separator/>
+      <Separator/>
+        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Enter your wallet password to display the mnemonic</Text>
+        <Separator/>
+        <PasswordInputText  style={{marginHorizontal: 25}}
+        onChangeText={(password) => setPassword( password )}
+        label='App Password' />
 
-<Button
-        title="Show Mnemonic"
-        enabled
-        onPress={() => showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13)}
-      />
-{ show && 
-<Text>{mnemonic} {word13}</Text>
- }
+        <Button  style={{marginHorizontal: 25}}
+                title="Show Mnemonic"
+                enabled
+                onPress={() => showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13)}
+              />
+              <Separator/>
+              <Separator/>
+              <Separator/>
+
+              
+              { show && 
+       <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Mnemonic:</Text> 
+        
+        }
+
+<Separator/>
+
+        { show && 
+       
+        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>{mnemonic} {word13}</Text>
+        }
   
   </View>)
 };
 
 
 const styles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    marginVertical:35
-  },
+
   container: {
     flex: 1,
-    paddingTop: 22
+    padding: 0,
+    margin: 0,
+    backgroundColor: "white",
+    justifyContent: "flex-start"
    },
-   sectionHeader: {
-     paddingTop: 2,
-     paddingLeft: 10,
-     paddingRight: 10,
-     paddingBottom: 2,
-     fontSize: 14,
-     fontWeight: 'bold',
-     backgroundColor: 'rgba(247,247,247,1.0)',
-   },
-   item: {
-     padding: 10,
-     fontSize: 18,
-     height: 44,
-   },
+
    separator: {
-    marginVertical: 0,
+    marginVertical: 10,
     borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 0,
   },
 });
 

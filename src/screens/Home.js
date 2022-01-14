@@ -568,7 +568,7 @@ const Home = ({route, navigation}) => {
     
 
 </View>
-
+<Separator/>
 <Text>Tokens                                                                   +</Text>
  
     

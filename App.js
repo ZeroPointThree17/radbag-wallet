@@ -38,6 +38,7 @@ import CreateWallet from './src/screens/CreateWallet';
 import Home from './src/screens/Home';
 import HomeNav from './src/screens/HomeNav';
 import AppDataSave from './src/screens/AppDataSave';
+import MnemonicInput from './src/screens/MnemonicInput';
 
 // import NFTs from './src/screens/NFTs';
 // import bitcoin from 'react-native-bitcoinjs-lib'
@@ -327,6 +328,7 @@ const App: () => Node = () => {
       }}>
       <Stack.Screen name="Welcome to Raddish Wallet!" component={Welcome} />
       <Stack.Screen name="Mnemonic" component={CreateWallet} />
+      <Stack.Screen name="Mnemonic Input" component={MnemonicInput} />
       <Stack.Screen name="App Password" component={AppDataSave} />
       {/* <Stack.Screen name="Home" component={Home} options={{headerLeft: () => null, gestureEnabled: false}} /> */}
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />

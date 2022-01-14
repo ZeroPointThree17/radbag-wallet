@@ -3,8 +3,6 @@ import React from 'react';
 import {Image,SafeAreaView, Alert, Button, SectionList, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import Svg, { Path } from "react-native-svg"
-// import { UserContext } from "./UserProvider";
-
 
 
 const Separator = () => (
@@ -29,8 +27,6 @@ function navigateToCreateWallet(navigation){
 
 const Welcome = ({ navigation }) => {
 
-  // const [ state, dispatch ] = React.useContext(UserContext)
-
   return (
 
     <SafeAreaView style={styles.container}>
@@ -40,7 +36,7 @@ const Welcome = ({ navigation }) => {
  <Button
         title="Yes - Import a Wallet"
         enabled
-        onPress={() => Alert.alert('Import - Cannot press this one')}
+        onPress={() => navigation.navigate('Mnemonic Input')}
       />
  <Button
         title="No - Create New Wallet"

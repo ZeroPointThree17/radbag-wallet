@@ -316,7 +316,7 @@ const App: () => Node = () => {
 <NavigationContainer>
     <Stack.Navigator       screenOptions={{
         headerStyle: {
-          backgroundColor: '#102F54',
+          backgroundColor: '#183A81',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {

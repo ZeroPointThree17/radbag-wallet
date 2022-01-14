@@ -10,7 +10,7 @@
 import './shim';
 //import {Buffer} from 'buffer';
 import React, { useState } from 'react';
-import { StyleSheet, Button, View,useColorScheme, SafeAreaView, Text, Alert } from 'react-native';
+import { StyleSheet, Button, View,useColorScheme, SafeAreaView, Text, Alert, LogBox } from 'react-native';
 import { NavigationContext, NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 // import { UserProvider } from "./screens/UserProvider"
@@ -331,7 +331,7 @@ db.transaction((tx) => {
 }); 
 
 
-
+LogBox.ignoreAllLogs();
 
   return (
 
@@ -355,12 +355,10 @@ db.transaction((tx) => {
       <Stack.Screen name="Mnemonic Input" component={MnemonicInput} />
       <Stack.Screen name="App Password" component={AppDataSave} />
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
-
-      {/* <Stack.Screen name="Home" component={Home} options={{headerLeft: () => null, gestureEnabled: false}} /> */}
-  
+ 
     </Stack.Navigator>
     </NavigationContainer>
-    // </UserProvider>
+  
   );
 };
 

@@ -12,9 +12,9 @@ CREATE TABLE wallet (
     id INTEGER PRIMARY KEY,
     name TEXT,
     mnemonic_enc TEXT,
-    word25_enc TEXT
+    word13_enc TEXT
 );
-INSERT INTO wallet VALUES(1,'Wallet 1', mnemonic_enc, word25_enc);
+INSERT INTO wallet VALUES(1,'Wallet 1', mnemonic_enc, word13_enc);
 
 
 CREATE TABLE address (

@@ -124,6 +124,7 @@ db.transaction((tx) => {
 
 
 
+
 db.transaction((tx) => {
   tx.executeSql('DROP TABLE IF EXISTS wallet', [], (tx, results) => {
     console.log("Drop wallet table completed");
@@ -140,43 +141,44 @@ db.transaction((tx) => {
             tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet (#1)', '" + mnemonic_enc + "', '" + word13_enc + "')", [], (tx, results) => {
               console.log("Insert into wallet table completed");
 
+
+
+
+db.transaction((tx) => {
+ 
+  tx.executeSql('DROP TABLE IF EXISTS active_wallet', [], (tx, results) => {
+    console.log("active_wallet2 tab DROP completed.")
+      db.transaction((tx) => {
+          tx.executeSql(`CREATE TABLE active_wallet ( id INTEGER )`, [], (tx, results) => {
               db.transaction((tx) => {
-                tx.executeSql('DROP TABLE IF EXISTS active_wallet', [], (tx, results) => {
-                    db.transaction((tx) => {
-                        tx.executeSql(`CREATE TABLE active_wallet ( id INTEGER )`, [], (tx, results) => {
-                            db.transaction((tx) => {
-                                tx.executeSql("INSERT INTO active_wallet VALUES(1)", [], (tx, results) => {
-                                console.log("insert into selected_wallet completed");
+                  tx.executeSql("INSERT INTO active_wallet VALUES(1)", [], (tx, results) => {
+                  console.log("insert into active_wallet completed");
 
 
-
-
-                                console.log("pre active address table completed"); 
+                  db.transaction((tx) => {
+                    console.log("pre active address 0.1 table completed"); 
+                    tx.executeSql('DROP TABLE IF EXISTS active_address', [], (tx, results) => {
+                      console.log("pre active address 0 table completed"); 
+                        db.transaction((tx) => {
+                            tx.executeSql("CREATE TABLE active_address ( id INTEGER )", [], (tx, results) => {
                                 db.transaction((tx) => {
-                                  console.log("pre active address 0.1 table completed"); 
-                                  tx.executeSql('DROP TABLE IF EXISTS active_address', [], (tx, results) => {
-                                    console.log("pre active address 0 table completed"); 
-                                      db.transaction((tx) => {
-                                          tx.executeSql("CREATE TABLE active_address ( id INTEGER )", [], (tx, results) => {
-                                              db.transaction((tx) => {
-                                                  tx.executeSql("INSERT INTO active_address (id) VALUES('1')", [], (tx, results) => {
-                                                    console.log("Insert into active address table completed");   
-                                                    navigation.navigate('Raddish Wallet');
-                                                  }, errorCB("active addr failed"));
-                                              }); 
-                                  }, errorCB("active addr failed"));
-                              });
+                                    tx.executeSql("INSERT INTO active_address (id) VALUES('1')", [], (tx, results) => {
+                                      console.log("Insert into active address table completed");   
+                                      navigation.navigate('Raddish Wallet');
                                     }, errorCB("active addr failed"));
-                                  });
-
-
-
-                                }, errorCB());
-                            }); 
-                }, errorCB());
-            });
-                  }, errorCB());
+                                }); 
+                    }, errorCB("active addr failed"));
                 });
+                      }, errorCB("active addr failed"));
+                    });
+                
+
+                  }, errorCB("wallet active failed"));
+              }); 
+  }, errorCB("wall active failed"));
+});
+    }, errorCB("wall active failed"));
+  });
 
 
               db.transaction((tx) => {

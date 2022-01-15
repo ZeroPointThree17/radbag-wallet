@@ -189,11 +189,11 @@ db.transaction((tx) => {
                   name TEXT,
                   symbol TEXT,
                   decimals INTGER,
-                  logo BLOB
+                  logo_url TEXT
                   )`, [], (tx, results) => {
                       console.log("Create token table completed");
                       db.transaction((tx) => {
-                        tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
+                        tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo_url) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
                           console.log("Inserts into token table completed");
                         
 

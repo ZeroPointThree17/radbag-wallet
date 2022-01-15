@@ -92,7 +92,7 @@ function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, 
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
                     var addrLabel = row.name + " - " + shortenAddress(row.radix_address);
-                    var data = {label: addrLabel, value: row.id}
+                    var data = {label: addrLabel, value: row.id, radix_address:row.radix_address}
                     addresses.push(data);
             }
 
@@ -168,7 +168,7 @@ function shortenAddress(address){
 
 }
 
-function renderAddressRows(data, db, wallet_id, copyToClipboard){
+function renderAddressRows(data, db, activeAddress, activeAddressBalances,wallet_id, copyToClipboard){
 
     if(data === undefined){
     }
@@ -186,7 +186,7 @@ function renderAddressRows(data, db, wallet_id, copyToClipboard){
     <SeparatorBorder/>
     <View style={styles.addrRowStyle}>
 
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>( {index}  ) XRD Radix</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(activeAddressBalances.get(index+1)) }</Text>
     <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{index} - 3443.943 RDX</Text>
     </View>
 
@@ -277,6 +277,7 @@ const Home = ({route, navigation}) => {
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
+    const [activeAddressBalances, setActiveAddressBalances] = useState(new Map())
     const [wallets, setWallets] = useState([{label: "Setting up for first time...", value:""}]);
     const [isFocus, setIsFocus] = useState(false);
     const [label, setLabel] = useState();
@@ -288,6 +289,41 @@ const Home = ({route, navigation}) => {
     const [activeAddress, setActiveAddress] = useState(1);
     const [enabledAddresses, setEnabledAddresses] = useState([{label: "Setting up for first time...", value:""}]);
    
+
+
+    // alert(enabledAddresses[parseInt(activeAddress)-1].radix_address);
+
+    fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
+  method: 'POST',
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(
+
+    {
+        "network_identifier": {
+          "network": "mainnet"
+        },
+        "account_identifier": {
+          "address": enabledAddresses[parseInt(activeAddress)-1].radix_address
+        }
+      }      
+
+  )
+}).then((response) => response.json()).then((json) => {
+
+    // activeAddressBalances
+    if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
+
+    // alert(JSON.stringify(json.account_balances))
+            // alert(JSON.stringify(json.account_balances))
+        activeAddressBalances.set(activeAddress,json.account_balances);
+    }
+}).catch((error) => {
+    console.error(error);
+});
+
     // useInterval(() => {
     //     getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses);
     //   }, 500);
@@ -386,7 +422,7 @@ const Home = ({route, navigation}) => {
             setIsFocusAddr(true);
           }}
         />
-       <Text style={{fontSize: 30, color:"white"}}>0.000 XRD</Text>
+       <Text style={{fontSize: 30, color:"white"}}>Liquid 0.000 XRD{"\n"}Staked 0.000 XRD</Text>
         <Text >0.00 USD</Text>
         <View style={styles.rowStyle}>
         <TouchableOpacity style={styles.button} onPress={() =>  alert("hi")}>
@@ -417,7 +453,7 @@ const Home = ({route, navigation}) => {
 <Separator/>
 <Text>Tokens                                                                   +</Text>
  
-{renderAddressRows(enabledAddresses, db, activeWallet, copyToClipboard)}
+{renderAddressRows(enabledAddresses, db, activeAddress, activeAddressBalances,activeWallet, copyToClipboard)}
 
         <Separator/>
 

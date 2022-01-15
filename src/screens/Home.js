@@ -56,7 +56,7 @@ function useInterval(callback, delay) {
     <View style={styles.separatorBorder} />
     );
 
-function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses){
+function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
 
     db.transaction((tx) => {
 
@@ -75,13 +75,13 @@ function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnable
              
              console.log("inside get wallets");
              console.log("inside get wallets2");
-             getEnabledAddresses(wallets[0].value,db, setActiveAddress,setEnabledAddresses, true)
+             getEnabledAddresses(wallets[0].value,db, setActiveAddress,setEnabledAddresses, true,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)
           }, errorCB);
         });
         
 }
 
-function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive){
+function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
     db.transaction((tx) => {
   
         tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
@@ -106,7 +106,7 @@ function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, 
         });
 }
 
-function addAddress(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive){
+function addAddress(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
 
     db.transaction((tx) => {
 
@@ -123,7 +123,7 @@ function addAddress(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirst
             } else{
             db.transaction((tx) => {
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
-                getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive);  
+                getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);  
                 alert("New address is now in your address dropdown")
                   }, errorCB);
                 });
@@ -168,7 +168,7 @@ function shortenAddress(address){
 
 }
 
-function renderAddressRows(data, db, activeAddress, activeAddressBalances,wallet_id, copyToClipboard){
+function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, copyToClipboard){
 
     if(data === undefined){
     }
@@ -186,7 +186,7 @@ function renderAddressRows(data, db, activeAddress, activeAddressBalances,wallet
     <SeparatorBorder/>
     <View style={styles.addrRowStyle}>
 
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(activeAddressBalances.get(index+1)) }</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(addressBalances.get(index+1)) }</Text>
     <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{index} - 3443.943 RDX</Text>
     </View>
 
@@ -260,6 +260,66 @@ function getActiveWallet(db,setActiveWallet){
     }); 
 }
 
+function getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
+    fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+      
+          {
+              "network_identifier": {
+                "network": "mainnet"
+              },
+              "account_identifier": {
+                "address": enabledAddresses[parseInt(activeAddress)-1].radix_address
+              }
+            }      
+      
+        )
+      }).then((response) => response.json()).then((json) => {
+      
+        // alert(JSON.stringify(json));
+          // activeAddressBalances
+          if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
+            
+          // alert(JSON.stringify(json.account_balances))
+                  // alert(JSON.stringify(json.account_balances))
+            //   addressBalances.set(activeAddress,json.account_balances);
+              var newAddrBalances = new Map();
+              newAddrBalances.set(activeAddress,json.account_balances);
+       
+              setAddressBalances(newAddrBalances);
+            //    alert("ACTIVE 2 "+JSON.stringify(addressBalances.get(activeAddress)));
+              
+            // //   alert(addressBalances);
+            //   var rris = [];
+            //   rris.push(json.account_balances.staked_and_unstaking_balance.token_identifier.rri);
+      
+            //   var liquid_balances = json.account_balances.liquid_balances
+      
+            //   for(var key in liquid_balances.jsonData) {
+            //       rris.push(liquid_balances.jsonData[key].token_identifier.rri)
+            //    }
+      
+            //    var uniqueRRIs = [...new Set(rris)]
+      
+            //    addressRRIs.set(activeAddress,uniqueRRIs);
+            //     setAddressRRIs(addressRRIs);
+            //    alert(addressRRIs);
+              //  alert(uniqueRRIs);
+      
+              // actAddressRRIs.set(activeAddress,json.account_balances.liquid_balances)
+
+            //   setTimeout(getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs), 5000);
+          }
+      }).catch((error) => {
+          console.error(error);
+      });
+}
+
 
 const Home = ({route, navigation}) => {
 
@@ -277,7 +337,7 @@ const Home = ({route, navigation}) => {
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
-    const [activeAddressBalances, setActiveAddressBalances] = useState(new Map())
+    const [addressBalances, setAddressBalances] = useState(new Map())
     const [wallets, setWallets] = useState([{label: "Setting up for first time...", value:""}]);
     const [isFocus, setIsFocus] = useState(false);
     const [label, setLabel] = useState();
@@ -288,49 +348,26 @@ const Home = ({route, navigation}) => {
     const [activeWallet, setActiveWallet] = useState(1);
     const [activeAddress, setActiveAddress] = useState(1);
     const [enabledAddresses, setEnabledAddresses] = useState([{label: "Setting up for first time...", value:""}]);
-   
+    const [addressRRIs, setAddressRRIs] = useState(new Map())
 
+    // alert("ACTIVE "+JSON.stringify(addressBalances));
 
     // alert(enabledAddresses[parseInt(activeAddress)-1].radix_address);
 
-    fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
-  method: 'POST',
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(
-
-    {
-        "network_identifier": {
-          "network": "mainnet"
-        },
-        "account_identifier": {
-          "address": enabledAddresses[parseInt(activeAddress)-1].radix_address
-        }
-      }      
-
-  )
-}).then((response) => response.json()).then((json) => {
-
-    // activeAddressBalances
-    if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
-
-    // alert(JSON.stringify(json.account_balances))
-            // alert(JSON.stringify(json.account_balances))
-        activeAddressBalances.set(activeAddress,json.account_balances);
-    }
-}).catch((error) => {
-    console.error(error);
-});
-
-    // useInterval(() => {
-    //     getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses);
-    //   }, 500);
 
     useEffect(() => {
-        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses);
+        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+}, [activeAddress, enabledAddresses]);
+
+    // useInterval(() => {
+    //     getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+    //   }, 20000);
+
+    useEffect(() => {
+        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+        // getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
     }, []);
+
 
     //  while(first == true){
     //      console.log("in loop 1");
@@ -437,12 +474,12 @@ const Home = ({route, navigation}) => {
 
      <View style={styles.rowStyle}>
        
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Wallet     </Text></View>
 </TouchableOpacity>
 
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity> 
@@ -453,7 +490,7 @@ const Home = ({route, navigation}) => {
 <Separator/>
 <Text>Tokens                                                                   +</Text>
  
-{renderAddressRows(enabledAddresses, db, activeAddress, activeAddressBalances,activeWallet, copyToClipboard)}
+{renderAddressRows(enabledAddresses, db, activeAddress, addressBalances,activeWallet, copyToClipboard)}
 
         <Separator/>
 

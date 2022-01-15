@@ -4,7 +4,8 @@ import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
-import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconFA  from 'react-native-vector-icons/FontAwesome5';
 
 
 const Separator = () => (
@@ -165,6 +166,33 @@ const list = [
     </ListItem.Title>
     <ListItem.Subtitle style={{ color: 'black' }}>
       <Text>Remove the currently selected wallet{"\n"}{"\n"}(NOTE: This will also remove all addresses associated to the currently selected wallet)</Text>
+    </ListItem.Subtitle>
+  </ListItem.Content>
+  <ListItem.Chevron color="black" />
+</ListItem>
+
+<Separator/>
+
+<ListItem
+ onPress={() => {alert("ASF")}}
+  Component={TouchableScale}
+  friction={90} //
+  tension={100} // These props are passed to the parent component (here TouchableScale)
+  activeScale={0.95} //
+  linearGradientProps={{
+    colors: ['#ffffff', '#ffffff'],
+    start: { x: 1, y: 0 },
+    end: { x: 0.2, y: 0 },
+  }}
+  ViewComponent={LinearGradient} // Only if no expo
+>
+<IconFA name="network-wired" size={25} color="#4F8EF7" />
+  <ListItem.Content>
+    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
+      <Text>Select Network</Text>
+    </ListItem.Title>
+    <ListItem.Subtitle style={{ color: 'black' }}>
+      <Text>Select the Radix network that this app should connect to</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />

@@ -324,8 +324,10 @@ db.transaction((tx) => {
               new_user_flag = row.new_user_flag;
           }
 
-          if(new_user_flag == 0)
-            setFirstTimer(false);
+          if(new_user_flag == 0){
+            setFirstTimer(false); 
+          }
+
 
   }, errorCB('update active_wallet'));
 }); 
@@ -344,8 +346,7 @@ LogBox.ignoreAllLogs();
         headerTitleStyle: {
           fontWeight: 'bold',
         },
-      }}>
-        { firstTimer == true
+      }}>{ firstTimer == true
   ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} />
   :     <Stack.Screen name="Raddish  Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
 

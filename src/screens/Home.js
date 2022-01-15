@@ -169,15 +169,15 @@ function shortenAddress(address){
 
 }
 
-function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, copyToClipboard){
+function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, addressRRIs, tokenMetadata,copyToClipboard){
 
-    if(data === undefined){
-    }
-    else{
+    if(data != undefined && activeAddress != undefined && addressRRIs.size > 0 && tokenMetadata.size != {}){
 
         console.log("ADDRESSES: "+data) 
 
         var rows = []
+
+        alert(JSON.stringify(tokenMetadata));
 
     {data.map((item,index)=>{
         rows.push(
@@ -188,8 +188,8 @@ function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, c
     <View style={styles.addrRowStyle}>
 
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(addressBalances.get(index+1)) }</Text>
-    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{index} - 3443.943 RDX</Text>
-    </View>
+    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{index} - {tokenMetadata.get(addressRRIs.get(activeAddress)[0])}</Text>
+    </View> 
 
 {/* </Surface> */}
 {/* <Surface style={styles.surface}>
@@ -266,8 +266,59 @@ export class NetworkUtils {
       const response = await NetInfo.fetch();
       return response.isConnected;
   }}
+
+  async function getTokenMetadata(addressRRIs, setTokenMetadata){
+    // const isConnected = await NetworkUtils.isNetworkAvailable();
+ 
+    addressRRIs.forEach(rri => {
+        
+
+    // if(isConnected){
+     fetch('https://mainnet-gateway.radixdlt.com/token', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+      
+            {
+                "network_identifier": {
+                  "network": "mainnet"
+                },
+                "token_identifier": {
+                  "rri": "xrd_rr1qy5wfsfh"
+                }
+              }    
+      
+        )
+      }).then((response) => response.json()).then((json) => {
+
+        alert(JSON.stringify(json));
+          // activeAddressBalances
+          if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
+            
+          // alert(JSON.stringify(json.account_balances))
+                  // alert(JSON.stringify(json.account_balances))
+            //   addressBalances.set(activeAddress,json.account_balances);
+              var newTokenMetadata = new Map(addressRRIs);
+
+              newTokenMetadata.set(rri,json.token.token_properties);
+       
+              setTokenMetadata(newTokenMetadata);
+          }
+      }).catch((error) => {
+          console.error(error);
+      });
+    // } else{
+    //     alert("No internet connection available. Please connect to the internet.");
+    // }
+
+});
+
+  }
   
-  async function  getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
+  async function getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
    
     const isConnected = await NetworkUtils.isNetworkAvailable();
  
@@ -306,23 +357,22 @@ export class NetworkUtils {
             //    alert("ACTIVE 2 "+JSON.stringify(addressBalances.get(activeAddress)));
               
             // //   alert(addressBalances);
-            //   var rris = [];
-            //   rris.push(json.account_balances.staked_and_unstaking_balance.token_identifier.rri);
+              var rris = [];
+              rris.push(json.account_balances.staked_and_unstaking_balance.token_identifier.rri);
       
-            //   var liquid_balances = json.account_balances.liquid_balances
+              var liquid_balances = json.account_balances.liquid_balances
       
-            //   for(var key in liquid_balances.jsonData) {
-            //       rris.push(liquid_balances.jsonData[key].token_identifier.rri)
-            //    }
+              for(var key in liquid_balances.jsonData) {
+                  rris.push(liquid_balances.jsonData[key].token_identifier.rri)
+               }
       
-            //    var uniqueRRIs = [...new Set(rris)]
+               var uniqueRRIs = [...new Set(rris)]
       
-            //    addressRRIs.set(activeAddress,uniqueRRIs);
-            //     setAddressRRIs(addressRRIs);
-            //    alert(addressRRIs);
-              //  alert(uniqueRRIs);
-      
-              // actAddressRRIs.set(activeAddress,json.account_balances.liquid_balances)
+               var newAddrRRIs = new Map();
+
+
+               newAddrRRIs.set(activeAddress,uniqueRRIs);
+               setAddressRRIs(newAddrRRIs);
 
             //   setTimeout(getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs), 5000);
           }
@@ -363,6 +413,7 @@ const Home = ({route, navigation}) => {
     const [activeAddress, setActiveAddress] = useState(1);
     const [enabledAddresses, setEnabledAddresses] = useState([{label: "Setting up for first time...", value:""}]);
     const [addressRRIs, setAddressRRIs] = useState(new Map())
+    const [tokenMetadata, setTokenMetadata] = useState(new Map())
 
     // alert("ACTIVE "+JSON.stringify(addressBalances));
 
@@ -377,6 +428,10 @@ const Home = ({route, navigation}) => {
     useEffect(() => {
         getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
 }, [activeAddress, enabledAddresses]);
+
+useEffect(() => {
+    getTokenMetadata(addressRRIs, setTokenMetadata);
+}, [addressRRIs]);
 
     useInterval(() => {
         getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
@@ -414,7 +469,6 @@ const Home = ({route, navigation}) => {
        
 //        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
 
-        
   return (
 
     <SafeAreaView style={styles.containerMain}>
@@ -491,7 +545,7 @@ const Home = ({route, navigation}) => {
        
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
-<Text style={styles.buttonText} >Add Wallet     </Text></View>
+<Text style={styles.buttonText} >Add Wallet</Text></View>
 </TouchableOpacity>
 
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)}>
@@ -505,7 +559,8 @@ const Home = ({route, navigation}) => {
 <Separator/>
 <Text>Tokens                                                                   +</Text>
  
-{renderAddressRows(enabledAddresses, db, activeAddress, addressBalances,activeWallet, copyToClipboard)}
+
+{renderAddressRows(enabledAddresses, db, activeAddress, addressBalances,activeWallet, addressRRIs,tokenMetadata,copyToClipboard)}
 
         <Separator/>
 

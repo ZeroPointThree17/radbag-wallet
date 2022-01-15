@@ -82,7 +82,7 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
                   wallet_name = row.name
               }
       
-              setWalletName("Wallet Name: " + wallet_name);
+              setWalletName("Selected Wallet Name: \n" + wallet_name);
 
             });
           }, errorCB);

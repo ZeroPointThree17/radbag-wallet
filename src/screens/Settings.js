@@ -68,6 +68,34 @@ const list = [
 
 
 <Separator/>
+
+<ListItem
+ onPress={() => {alert("ASF")}}
+  Component={TouchableScale}
+  friction={90} //
+  tension={100} // These props are passed to the parent component (here TouchableScale)
+  activeScale={0.95} //
+  linearGradientProps={{
+    colors: ['#ffffff', '#ffffff'],
+    start: { x: 1, y: 0 },
+    end: { x: 0.2, y: 0 },
+  }}
+  ViewComponent={LinearGradient} // Only if no expo
+>
+<IconFA name="network-wired" size={25} color="#4F8EF7" />
+  <ListItem.Content>
+    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
+      <Text>Select Network</Text>
+    </ListItem.Title>
+    <ListItem.Subtitle style={{ color: 'black' }}>
+      <Text>Select the Radix network that this app should connect to</Text>
+    </ListItem.Subtitle>
+  </ListItem.Content>
+  <ListItem.Chevron color="black" />
+</ListItem>
+
+<Separator/>
+
 <ListItem
  onPress={() => {navigation.navigate('MnemonicDisplay')}}
   Component={TouchableScale}
@@ -173,30 +201,7 @@ const list = [
 
 <Separator/>
 
-<ListItem
- onPress={() => {alert("ASF")}}
-  Component={TouchableScale}
-  friction={90} //
-  tension={100} // These props are passed to the parent component (here TouchableScale)
-  activeScale={0.95} //
-  linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
-    start: { x: 1, y: 0 },
-    end: { x: 0.2, y: 0 },
-  }}
-  ViewComponent={LinearGradient} // Only if no expo
->
-<IconFA name="network-wired" size={25} color="#4F8EF7" />
-  <ListItem.Content>
-    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
-      <Text>Select Network</Text>
-    </ListItem.Title>
-    <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Select the Radix network that this app should connect to</Text>
-    </ListItem.Subtitle>
-  </ListItem.Content>
-  <ListItem.Chevron color="black" />
-</ListItem>
+
   </View>  
   
   </View>)

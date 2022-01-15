@@ -71,6 +71,22 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
               }
       
               setword13_enc(tempword13_enc);
+
+              
+        db.transaction((tx) => {
+          tx.executeSql("SELECT wallet.name FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
+            var len = results.rows.length;
+            var wallet_name = "default_val";
+              for (let i = 0; i < len; i++) {
+                  let row = results.rows.item(i);
+                  wallet_name = row.name
+              }
+      
+              setWalletName("Wallet Name: " + wallet_name);
+
+            });
+          }, errorCB);
+              
             });
           }, errorCB);
       });
@@ -84,13 +100,17 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
   const [word13_enc, setword13_enc] = useState();
   const [word13, setword13] = useState();
 
+  const [walletName, setWalletName] = useState();
+
   
 
  return ( 
      <View style={styles.container}> 
       <Separator/>
       <Separator/>
-        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Enter your wallet password to display the mnemonic</Text>
+      <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontSize:20}}>{walletName}</Text>
+      <Separator/>
+        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Enter your wallet password to display the mnemonic for this wallet</Text>
         <Separator/>
         <PasswordInputText  style={{marginHorizontal: 25}}
         onChangeText={(password) => setPassword( password )}

@@ -56,7 +56,7 @@ const list = [
     </ListItem.Title>
 
     <ListItem.Subtitle  >
-      <Text style={{ color: 'black', flexWrap: 'wrap', flex:1 }}>Show the mnemonic phrase that you set up when you created the wallet</Text>
+      <Text style={{ color: 'black', flexWrap: 'wrap', flex:1 }}>Show the mnemonic phrase that you set up when you created this wallet</Text>
     </ListItem.Subtitle>
 
   </ListItem.Content>
@@ -83,10 +83,36 @@ const list = [
 <IconMaterial name="rename-box" size={30} color="#4F8EF7"/>
   <ListItem.Content>
     <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
+      <Text>Change Address Nickname</Text>
+    </ListItem.Title>
+    <ListItem.Subtitle style={{ color: 'black' }}>
+      <Text>Change the nickname of the currently select Address</Text>
+    </ListItem.Subtitle>
+  </ListItem.Content>
+  <ListItem.Chevron color="black" />
+</ListItem>
+<Separator/>
+
+<ListItem
+ onPress={() => {navigation.navigate('MnemonicDisplay')}}
+  Component={TouchableScale}
+  friction={90} //
+  tension={100} // These props are passed to the parent component (here TouchableScale)
+  activeScale={0.95} //
+  linearGradientProps={{
+    colors: ['#ffffff', '#ffffff'],
+    start: { x: 1, y: 0 },
+    end: { x: 0.2, y: 0 },
+  }}
+  ViewComponent={LinearGradient} // Only if no expo
+>
+<IconMaterial name="rename-box" size={30} color="#4F8EF7"/>
+  <ListItem.Content>
+    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
       <Text>Change Wallet Nickname</Text>
     </ListItem.Title>
     <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Change the nickname of this wallet</Text>
+      <Text>Change the nickname of the currently selectd wallet</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
@@ -109,10 +135,36 @@ const list = [
 <IconMaterial name="delete-forever-outline" size={30} color="#4F8EF7" />
   <ListItem.Content>
     <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
-      <Text>Delete Wallet</Text>
+      <Text>Remove Address</Text>
     </ListItem.Title>
     <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Permanently delete this wallet</Text>
+      <Text>Remove the currently selected address</Text>
+    </ListItem.Subtitle>
+  </ListItem.Content>
+  <ListItem.Chevron color="black" />
+</ListItem>
+<Separator/>
+
+<ListItem
+ onPress={() => {alert("ASF")}}
+  Component={TouchableScale}
+  friction={90} //
+  tension={100} // These props are passed to the parent component (here TouchableScale)
+  activeScale={0.95} //
+  linearGradientProps={{
+    colors: ['#ffffff', '#ffffff'],
+    start: { x: 1, y: 0 },
+    end: { x: 0.2, y: 0 },
+  }}
+  ViewComponent={LinearGradient} // Only if no expo
+>
+<IconMaterial name="delete-forever-outline" size={30} color="#4F8EF7" />
+  <ListItem.Content>
+    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
+      <Text>Remove Wallet</Text>
+    </ListItem.Title>
+    <ListItem.Subtitle style={{ color: 'black' }}>
+      <Text>Remove the currently selected wallet{"\n"}{"\n"}(NOTE: This will also remove all address associated to the currently selected wallet)</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />

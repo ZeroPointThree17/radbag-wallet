@@ -164,7 +164,7 @@ const list = [
       <Text>Remove Wallet</Text>
     </ListItem.Title>
     <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Remove the currently selected wallet{"\n"}{"\n"}(NOTE: This will also remove all address associated to the currently selected wallet)</Text>
+      <Text>Remove the currently selected wallet{"\n"}{"\n"}(NOTE: This will also remove all addresses associated to the currently selected wallet)</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />

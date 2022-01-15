@@ -115,7 +115,7 @@ const list = [
       <Text>Change Address Nickname</Text>
     </ListItem.Title>
     <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Change the nickname of the currently select Address</Text>
+      <Text>Change the nickname of the currently selected address</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
@@ -141,7 +141,7 @@ const list = [
       <Text>Change Wallet Nickname</Text>
     </ListItem.Title>
     <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Change the nickname of the currently selectd wallet</Text>
+      <Text>Change the nickname of the currently selected wallet</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />

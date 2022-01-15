@@ -83,7 +83,7 @@ function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnable
 
 function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive){
     db.transaction((tx) => {
-
+  
         tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
 
           var addresses = [];
@@ -106,7 +106,7 @@ function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, 
         });
 }
 
-function addAddress(wallet_id, db, setEnabledAddresses, pickFirstAsActive){
+function addAddress(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive){
 
     db.transaction((tx) => {
 
@@ -123,13 +123,15 @@ function addAddress(wallet_id, db, setEnabledAddresses, pickFirstAsActive){
             } else{
             db.transaction((tx) => {
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
-                getEnabledAddresses(wallet_id,db,setEnabledAddresses, pickFirstAsActive); 
+                getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive);  
+                alert("New address is now in your address dropdown")
                   }, errorCB);
                 });
             }
 
           }, errorCB);
         });
+
 }
 
 const removeAddessWarning = (db, wallet_id, address_id) =>
@@ -272,22 +274,9 @@ const Home = ({route, navigation}) => {
         type: "info",
       });
     };
-  
-    const fetchCopiedText = async () => {
-      const text = await Clipboard.getString();
-      setCopiedText(text);
-    };
-
-    
-    // const {pw} = route.params;
-
-    // var pwStr = JSON.stringify(pw).replaceAll('"','');
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
-
-    const state = this.state;
-    
     const [wallets, setWallets] = useState([{label: "Setting up for first time...", value:""}]);
     const [isFocus, setIsFocus] = useState(false);
     const [label, setLabel] = useState();
@@ -299,17 +288,13 @@ const Home = ({route, navigation}) => {
     const [activeAddress, setActiveAddress] = useState(1);
     const [enabledAddresses, setEnabledAddresses] = useState([{label: "Setting up for first time...", value:""}]);
    
-
-
     // useInterval(() => {
     //     getWallets(db, setWallets, activeWallet, setActiveWallet,setEnabledAddresses);
     //   }, 500);
 
-
     useEffect(() => {
         getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses);
     }, []);
-
 
     //  while(first == true){
     //      console.log("in loop 1");
@@ -341,39 +326,18 @@ const Home = ({route, navigation}) => {
        
 //        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
 
-         // setValue(item.value);
-
-        //  persistActiveWallet(db, activeWallet);
         
   return (
 
-    
     <SafeAreaView style={styles.containerMain}>
 
-
-
-
-
-
-          <FlashMessage position="bottom" />
-          <ScrollView style={styles.scrollView}>
-     <View  > 
-   
-     {/* <NativeBaseProvider>
-     <Content padder style={{ marginTop: 0 }}>
-        <Card style={{ flex: 0 }}>
-          <CardItem>
-            <Body>
-      
-            </Body>
-          </CardItem>
-        </Card>
-      </Content>
-      </NativeBaseProvider> */}
-      <Separator/>
-<View style={styles.rowStyle}>
+        <FlashMessage position="bottom" />
+        <ScrollView style={styles.scrollView}>
+            <View  > 
+            <Separator/>
+                <View style={styles.rowStyle}>
     
-    <Surface style={styles.surface}>
+            <Surface style={styles.surface}>
 <Dropdown
          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
@@ -435,16 +399,14 @@ const Home = ({route, navigation}) => {
 
 </View>
 
-    
-                
      <View style={styles.rowStyle}>
        
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db,setEnabledAddresses, false)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Wallet     </Text></View>
 </TouchableOpacity>
 
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses, false)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity> 
@@ -455,8 +417,6 @@ const Home = ({route, navigation}) => {
 <Separator/>
 <Text>Tokens                                                                   +</Text>
  
-    
-
 {renderAddressRows(enabledAddresses, db, activeWallet, copyToClipboard)}
 
         <Separator/>
@@ -468,7 +428,6 @@ const Home = ({route, navigation}) => {
   )
   ;
 };
-
 
 
 const styles = StyleSheet.create({

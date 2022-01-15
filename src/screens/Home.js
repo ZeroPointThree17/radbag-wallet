@@ -17,6 +17,7 @@ import { Surface, List } from 'react-native-paper';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
 // import { NativeBaseProvider,Content, Card, CardItem, Body } from "native-base";
 import ReactNativeSwipeableViewStack from 'react-native-swipeable-view-stack';
+import NetInfo from "@react-native-community/netinfo";
 
 
 function useInterval(callback, delay) {
@@ -260,8 +261,18 @@ function getActiveWallet(db,setActiveWallet){
     }); 
 }
 
-function getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
-    fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
+export class NetworkUtils {
+    static async isNetworkAvailable() {
+      const response = await NetInfo.fetch();
+      return response.isConnected;
+  }}
+  
+  async function  getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
+   
+    const isConnected = await NetworkUtils.isNetworkAvailable();
+ 
+    if(isConnected){
+    await fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -280,7 +291,7 @@ function getBalances(enabledAddresses, activeAddress, addressBalances, setAddres
       
         )
       }).then((response) => response.json()).then((json) => {
-      
+
         // alert(JSON.stringify(json));
           // activeAddressBalances
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
@@ -318,6 +329,9 @@ function getBalances(enabledAddresses, activeAddress, addressBalances, setAddres
       }).catch((error) => {
           console.error(error);
       });
+    } else{
+        alert("No internet connection available. Please connect to the internet.");
+    }
 }
 
 
@@ -355,19 +369,20 @@ const Home = ({route, navigation}) => {
     // alert(enabledAddresses[parseInt(activeAddress)-1].radix_address);
 
 
-    useEffect(() => {
-        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-}, [activeAddress, enabledAddresses]);
-
-    // useInterval(() => {
-    //     getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-    //   }, 20000);
-
-    useEffect(() => {
+       useEffect(() => {
         getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
         // getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
     }, []);
 
+    useEffect(() => {
+        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+}, [activeAddress, enabledAddresses]);
+
+    useInterval(() => {
+        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+      }, 20000);
+
+ 
 
     //  while(first == true){
     //      console.log("in loop 1");

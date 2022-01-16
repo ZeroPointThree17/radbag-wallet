@@ -18,6 +18,7 @@ import IconFontisto from 'react-native-vector-icons/Fontisto';
 // import { NativeBaseProvider,Content, Card, CardItem, Body } from "native-base";
 import ReactNativeSwipeableViewStack from 'react-native-swipeable-view-stack';
 import NetInfo from "@react-native-community/netinfo";
+import { assertNullLiteralTypeAnnotation } from '@babel/types';
 
 
 function useInterval(callback, delay) {
@@ -171,24 +172,36 @@ function shortenAddress(address){
 
 function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, addressRRIs, tokenMetadata,copyToClipboard){
 
-    if(data != undefined && activeAddress != undefined && addressRRIs.size > 0 && tokenMetadata.size != {}){
+
+    if( addressBalances.size > 0 && activeAddress != undefined && tokenMetadata.size > 0  ){
+
+        // alert(JSON.stringify("in render " + JSON.stringify(tokenMetadata.get(addressRRIs.get(activeAddress)[0]))));
 
         console.log("ADDRESSES: "+data) 
 
         var rows = []
 
-        alert(JSON.stringify(tokenMetadata));
+        //  tokenMetadata.forEach((value, key) => { alert("IN RENDER "+JSON.stringify(value))})
+         addressBalances.forEach((value, key) => { 
 
-    {data.map((item,index)=>{
-        rows.push(
-            <View key={index}>
+             tokenMetadata.forEach((value, key) => { alert("IN RENDER ("+key+") "+JSON.stringify(value))})
+
+            // alert("RRI:: "+ JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, ""))
+        
+            var rri = JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
+
+            alert(rri);
+            // alert(JSON.stringify(tokenMetadata.get(rri)))
+        alert(JSON.stringify(tokenMetadata.get(rri)))
+            rows.push(
+            <View key={key}>
 
 
     <SeparatorBorder/>
     <View style={styles.addrRowStyle}>
 
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(addressBalances.get(index+1)) }</Text>
-    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{index} - {tokenMetadata.get(addressRRIs.get(activeAddress)[0])}</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(value) }</Text>
+    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{JSON.stringify(tokenMetadata.get(JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "")))}</Text>
     </View> 
 
 {/* </Surface> */}
@@ -215,7 +228,9 @@ function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, a
 
 
         )
-    })}
+
+    })
+
 
 
     return (rows)
@@ -267,7 +282,7 @@ export class NetworkUtils {
       return response.isConnected;
   }}
 
-  async function getTokenMetadata(addressRRIs, setTokenMetadata){
+   function getTokenMetadata(addressRRIs, setTokenMetadata,tokenMetadata){
     // const isConnected = await NetworkUtils.isNetworkAvailable();
  
     addressRRIs.forEach(rri => {
@@ -294,18 +309,19 @@ export class NetworkUtils {
         )
       }).then((response) => response.json()).then((json) => {
 
-        alert(JSON.stringify(json));
+        //  alert(JSON.stringify(json));
           // activeAddressBalances
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
             
           // alert(JSON.stringify(json.account_balances))
                   // alert(JSON.stringify(json.account_balances))
             //   addressBalances.set(activeAddress,json.account_balances);
-              var newTokenMetadata = new Map(addressRRIs);
+              var newTokenMetadata = new Map(tokenMetadata);
 
               newTokenMetadata.set(rri,json.token.token_properties);
        
               setTokenMetadata(newTokenMetadata);
+             
           }
       }).catch((error) => {
           console.error(error);
@@ -318,7 +334,7 @@ export class NetworkUtils {
 
   }
   
-  async function getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
+  async function getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata){
    
     const isConnected = await NetworkUtils.isNetworkAvailable();
  
@@ -358,12 +374,12 @@ export class NetworkUtils {
               
             // //   alert(addressBalances);
               var rris = [];
-              rris.push(json.account_balances.staked_and_unstaking_balance.token_identifier.rri);
+              rris.push(JSON.stringify(json.account_balances.staked_and_unstaking_balance.token_identifier.rri));
       
               var liquid_balances = json.account_balances.liquid_balances
       
               for(var key in liquid_balances.jsonData) {
-                  rris.push(liquid_balances.jsonData[key].token_identifier.rri)
+                  rris.push(JSON.stringify(liquid_balances.jsonData[key].token_identifier.rri))
                }
       
                var uniqueRRIs = [...new Set(rris)]
@@ -374,6 +390,7 @@ export class NetworkUtils {
                newAddrRRIs.set(activeAddress,uniqueRRIs);
                setAddressRRIs(newAddrRRIs);
 
+               getTokenMetadata(newAddrRRIs, setTokenMetadata, tokenMetadata);
             //   setTimeout(getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs), 5000);
           }
       }).catch((error) => {
@@ -426,18 +443,21 @@ const Home = ({route, navigation}) => {
     }, []);
 
     useEffect(() => {
-        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-}, [activeAddress, enabledAddresses]);
+        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs,setTokenMetadata, tokenMetadata);
+        getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
+    }, [activeAddress, enabledAddresses]);
 
-useEffect(() => {
-    getTokenMetadata(addressRRIs, setTokenMetadata);
-}, [addressRRIs]);
+// useEffect(() => {
+//     // alert("effect1")
+//     getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
+// }, [addressRRIs]);
 
     useInterval(() => {
-        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-      }, 20000);
+        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
+    }, 20000);
 
- 
+    //  alert("token MD: "+JSON.stringify(tokenMetadata.get(addressRRIs.get(1))))
+    
 
     //  while(first == true){
     //      console.log("in loop 1");

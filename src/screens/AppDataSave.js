@@ -52,7 +52,7 @@ function openCB() {
 
 
 
-function navigateHome(navigation, password, confirmPassword, mnemonic, word13, setIsActive){
+function navigateHome(navigation, password, confirmPassword, mnemonic, word13, setIsActive, firstFlag){
 
   setIsActive(true);
 
@@ -73,6 +73,25 @@ var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, er
 
 console.log("ABOUT TO LOAD TABLES")
 
+var doNothingStmt = "SELECT 'Do nothing'";
+
+var dropWallet = "";
+var createWallet = "";
+var insertWallet = "";
+var dropActiveWallet = "";
+var createActiveWallet = "";
+var insertActiveWallet = "";
+var dropActiveAddress = "";
+var createActiveAddress = "";
+var insertActiveAddress = "";
+var dropToken = "";
+var createToken = "";
+var dropAddress = "";
+var createAddress = "";
+var insertAddress = "";
+
+
+if(firstFlag){
 db.transaction((tx) => {
 
     tx.executeSql('DROP TABLE IF EXISTS application', [], (tx, results) => {
@@ -94,7 +113,7 @@ db.transaction((tx) => {
 }, errorCB);
 });
 
-
+}
 
 
 // db.transaction((tx) => {
@@ -192,37 +211,37 @@ db.transaction((tx) => {
                   logo_url TEXT
                   )`, [], (tx, results) => {
                       console.log("Create token table completed");
-                      db.transaction((tx) => {
-                        tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo_url) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
-                          console.log("Inserts into token table completed");
+                      // db.transaction((tx) => {
+                      //   tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo_url) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
+                      //     console.log("Inserts into token table completed");
                         
 
-                          db.transaction((tx) => {
-                            tx.executeSql('DROP TABLE IF EXISTS wallet_x_token', [], (tx, results) => {
-                              console.log("Drop wallet_x_token table completed");
-                              db.transaction((tx) => {
-                                tx.executeSql(`CREATE TABLE wallet_x_token (
-                                  id INTEGER PRIMARY KEY,
-                                  wallet_id INTEGER,
-                                  token_id INTEGER,
-                              enabled_flag INTEGER
-                              )`, [], (tx, results) => {
-                                  console.log("Create wallet_x_token table completed");
-                                  db.transaction((tx) => {
-                                    tx.executeSql('INSERT INTO wallet_x_token (wallet_id, token_id, enabled_flag) select distinct a.id, b.id, 1 from wallet a, token b', [], (tx, results) => {
-                                      console.log("Inserts into wallet_x_token token completed");
+                          // db.transaction((tx) => {
+                          //   tx.executeSql('DROP TABLE IF EXISTS wallet_x_token', [], (tx, results) => {
+                          //     console.log("Drop wallet_x_token table completed");
+                          //     db.transaction((tx) => {
+                          //       tx.executeSql(`CREATE TABLE wallet_x_token (
+                          //         id INTEGER PRIMARY KEY,
+                          //         wallet_id INTEGER,
+                          //         rri TEXT,
+                          //     enabled_flag INTEGER
+                          //     )`, [], (tx, results) => {
+                          //         console.log("Create wallet_x_token table completed");
+                                  // db.transaction((tx) => {
+                                  //   tx.executeSql('INSERT INTO wallet_x_token (wallet_id, token_id, enabled_flag) select distinct a.id, b.id, 1 from wallet a, token b', [], (tx, results) => {
+                                  //     console.log("Inserts into wallet_x_token token completed");
                                     
-                                    }, errorCB);
-                                  });
+                                  //   }, errorCB);
+                                  // });
                                   
-                                }, errorCB);
-                              });
-                            }, errorCB);
-                          });
+                          //       }, errorCB);
+                          //     });
+                          //   }, errorCB);
+                          // });
                           
                           
-                        }, errorCB);
-                      });
+              //           }, errorCB);
+              //         });
                     }, errorCB);
                   });
                 }, errorCB);
@@ -363,7 +382,7 @@ label='Confirm App Password' />
  <Button
         title="Continue"
         enabled
-        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, setIsActive)}
+        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, setIsActive, true)}
       />
 <Separator/>
 <Separator/>

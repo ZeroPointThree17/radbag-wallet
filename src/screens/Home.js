@@ -438,6 +438,8 @@ const Home = ({route, navigation}) => {
  
 
     var liquid_rri_balance = 0;
+
+    if(!(addressBalances.get(activeAddress) == undefined)){
     addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  {
      
         balances.set(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, ""),JSON.stringify(balance.value).replace(/["']/g, ""))
@@ -457,6 +459,7 @@ const Home = ({route, navigation}) => {
 
     balances.set(stakedTokenIdentifier,balances.get(stakedTokenIdentifier)+stakedAmount);
     }
+}
     // alert("ACTIVE "+JSON.stringify(addressBalances));
 
     // alert(enabledAddresses[parseInt(activeAddress)-1].radix_address);

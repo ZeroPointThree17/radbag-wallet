@@ -75,21 +75,91 @@ console.log("ABOUT TO LOAD TABLES")
 
 var doNothingStmt = "SELECT 'Do nothing'";
 
-var dropWallet = "";
-var createWallet = "";
-var insertWallet = "";
-var dropActiveWallet = "";
-var createActiveWallet = "";
-var insertActiveWallet = "";
-var dropActiveAddress = "";
-var createActiveAddress = "";
-var insertActiveAddress = "";
-var dropToken = "";
-var createToken = "";
-var dropAddress = "";
-var createAddress = "";
-var insertAddress = "";
+var nextWalledId=1;
+var nextAddressId=1;
 
+db.transaction((tx) => {
+  tx.executeSql('SELECT MAX(id) AS id from wallet', [], (tx, results) => {
+
+          var len = results.rows.length;
+      
+        for (let i = 0; i < len; i++) {
+      let row = results.rows.item(i);
+      nextWalledId = row.id + 1;
+        }
+
+        db.transaction((tx) => {
+          tx.executeSql('SELECT MAX(id) AS id from address', [], (tx, results) => {
+        
+                  var len = results.rows.length;
+              
+                for (let i = 0; i < len; i++) {
+              let row = results.rows.item(i);
+              nextAddressId = row.id + 1;
+
+
+              var dropWallet = "";
+              var createWallet = "";
+              var insertWallet = "";
+              var dropActiveWallet = "";
+              var createActiveWallet = "";
+              var insertActiveWallet = "";
+              var dropActiveAddress = "";
+              var createActiveAddress = "";
+              var insertActiveAddress = "";
+              var dropToken = "";
+              var createToken = "";
+              var dropAddress = "";
+              var createAddress = "";
+              var insertAddress = "";
+              switch(firstFlag) {
+  case true:
+    var dropWallet = 'DROP TABLE IF EXISTS wallet';
+    var createWallet = `CREATE TABLE wallet (
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      mnemonic_enc TEXT,
+      word13_enc TEXT
+  )`;
+    var insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet (#1)', '" + mnemonic_enc + "', '" + word13_enc + "')";
+    var dropActiveWallet = 'DROP TABLE IF EXISTS active_wallet';
+    var createActiveWallet = "";
+    var insertActiveWallet = "";
+    var dropActiveAddress = "";
+    var createActiveAddress = "";
+    var insertActiveAddress = "";
+    var dropToken = "";
+    var createToken = "";
+    var dropAddress = "";
+    var createAddress = "";
+    var insertAddress = "";
+    break;
+  case false:
+    var dropWallet = "";
+    var createWallet = "";
+    var insertWallet = "";
+    var dropActiveWallet = "";
+    var createActiveWallet = "";
+    var insertActiveWallet = "";
+    var dropActiveAddress = "";
+    var createActiveAddress = "";
+    var insertActiveAddress = "";
+    var dropToken = "";
+    var createToken = "";
+    var dropAddress = "";
+    var createAddress = "";
+    var insertAddress = "";
+    break;
+  default:
+    // code block
+}
+
+
+
+
+
+                }
+      
 
 if(firstFlag){
 db.transaction((tx) => {
@@ -143,19 +213,14 @@ db.transaction((tx) => {
 
 
 db.transaction((tx) => {
-  tx.executeSql('DROP TABLE IF EXISTS wallet', [], (tx, results) => {
+  tx.executeSql(dropWallet, [], (tx, results) => {
     console.log("Drop wallet table completed");
     db.transaction((tx) => {
-      tx.executeSql(`CREATE TABLE wallet (
-        id INTEGER PRIMARY KEY,
-        name TEXT,
-        mnemonic_enc TEXT,
-        word13_enc TEXT
-    )`, [], (tx, results) => {
+      tx.executeSql(createWallet, [], (tx, results) => {
         console.log("Create wallet table completed");
 
           db.transaction((tx) => {
-            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet (#1)', '" + mnemonic_enc + "', '" + word13_enc + "')", [], (tx, results) => {
+            tx.executeSql(insertWallet, [], (tx, results) => {
               console.log("Insert into wallet table completed");
 
 
@@ -163,7 +228,7 @@ db.transaction((tx) => {
 
 db.transaction((tx) => {
  
-  tx.executeSql('DROP TABLE IF EXISTS active_wallet', [], (tx, results) => {
+  tx.executeSql(dropActiveWallet, [], (tx, results) => {
     console.log("active_wallet DROP attempt completed.")
       db.transaction((tx) => {
           tx.executeSql(`CREATE TABLE active_wallet ( id INTEGER )`, [], (tx, results) => {
@@ -182,19 +247,19 @@ db.transaction((tx) => {
                                     tx.executeSql("INSERT INTO active_address (id) VALUES('1')", [], (tx, results) => {
                                       console.log("Insert into active address table completed");   
                                       navigation.navigate('Raddish Wallet');
-                                    }, errorCB("active addr failed"));
+                                    }, errorCB);
                                 }); 
-                    }, errorCB("active addr failed"));
+                    }, errorCB);
                 });
-                      }, errorCB("active addr failed"));
+                      }, errorCB);
                     });
                 
 
-                  }, errorCB("wallet active failed"));
+                  }, errorCB);
               }); 
-  }, errorCB("wall active failed"));
+  }, errorCB);
 });
-    }, errorCB("wall active failed"));
+    }, errorCB);
   });
 
 
@@ -318,7 +383,10 @@ db.transaction((tx) => {
   }, errorCB);
 });
 
-
+  }, errorCB);
+});
+    }, errorCB);
+  });
 
 
 

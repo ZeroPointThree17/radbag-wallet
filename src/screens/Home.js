@@ -1,4 +1,4 @@
-import { Alert, Button, ScrollView, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Alert, Image, Button, ScrollView, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState,useRef, useEffect, useReducer } from 'react';
 const bip39 = require('bip39');
 var HDKey = require('hdkey')
@@ -179,64 +179,62 @@ function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, a
 
         console.log("ADDRESSES: "+data) 
 
+        var balances = new Map();
         var rows = []
 
-        //  tokenMetadata.forEach((value, key) => { alert("IN RENDER "+JSON.stringify(value))})
-         addressBalances.forEach((value, key) => { 
+        addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  
+            balances.set(balance.token_identifier,balance.value)
+        );
+        
+        var stakedAmount = addressBalances.get(activeAddress).staked_and_unstaking_balance.value;
+        var stakedTokenIdentifier = addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri;
 
-              tokenMetadata.forEach((value2, key2) => { 
-                  
-                alert(typeof key2);
-                 alert("IN RENDER ("+JSON.stringify(tokenMetadata.get("xrd_rr1qy5wfsfh").name));
+        balances.set(stakedTokenIdentifier,balances.get(stakedTokenIdentifier)+stakedAmount);
+
+        // alert(stakedAmount);
+
+                //  alert("IN RENDER ("+JSON.stringify(tokenMetadata.get("xrd_rr1qy5wfsfh").name));
         
                  // alert("RRI:: "+ JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, ""))
         
-            var rri = JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
+            // var rri = JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
 
             // alert(rri);
             // alert(JSON.stringify(tokenMetadata.get(rri)))
         // alert(JSON.stringify(tokenMetadata.get(rri)))
+
+        rows.push(
+        <View key={1}>
+        <SeparatorBorder/>
+        <View style={styles.addrRowStyle}>
+        <Image style={{width: 50, height: 50}}
+        source={{uri: JSON.stringify(tokenMetadata.get(stakedTokenIdentifier).icon_url).replace(/["']/g, "")}}
+      />
+      
+        <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(tokenMetadata.get(stakedTokenIdentifier).name).replace(/["']/g, "")} (Staked or unstaking)</Text>
+        <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{JSON.stringify(stakedAmount).replace(/["']/g, "")}</Text>
+        </View> 
+        </View>
+        );
+    
+
+    addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  
+
+    //   alert(1)
             rows.push(
-            <View key={key}>
-
-
+            <View key={balance.token_identifier}>
     <SeparatorBorder/>
     <View style={styles.addrRowStyle}>
-
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(value) }</Text>
-    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>Token Data: {JSON.stringify(tokenMetadata.get("xrd_rr1qy5wfsfh"))}</Text>
+    <Image style={{width: 50, height: 50}}
+        source={{uri: JSON.stringify(tokenMetadata.get(balance.token_identifier.rri).icon_url).replace(/["']/g, "")}}
+      />
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(tokenMetadata.get(balance.token_identifier.rri).name).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{JSON.stringify((balance.value.replace(/["']/g, ""))/1000000000000000000) }</Text>
     </View> 
+    </View>        )
 
-{/* </Surface> */}
-{/* <Surface style={styles.surface}>
-     <Text>Surface</Text>
-  </Surface> */}
-{/* </List.Accordion> */}
-                {/* <SeparatorBorder/>
-            <View style={styles.rowStyle}>
-                <View style={{flex: 0.8}}>
-        <Text style={{fontWeight: 'normal', fontSize: 16, fontFamily: 'GillSans-Light'}}>{item[0]} - {shortenAddress(item[1])} </Text> 
-        <Text style={{fontSize: 16, fontFamily: 'GillSans-Light' }}>XRD: 01231 </Text>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={() =>  copyToClipboard(item[1])}>
-        <Icon style={{marginHorizontal: 8}} name="copy-outline" size={30} color="#4F8EF7" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => removeAddessWarning(db, wallet_id, item[2])}>
-   <IconFoundation name="minus-circle" size={30} color="red" />
-   </TouchableOpacity>
-   </View> */}
-      </View>
+        );
 
-
-
-
-        )
-
-    })
-
-
-            
-            })
 
            
 
@@ -585,8 +583,7 @@ const Home = ({route, navigation}) => {
 </View>
 
 <Separator/>
-<Text>Tokens                                                                   +</Text>
- 
+<Text>Tokens</Text>
 
 {renderAddressRows(enabledAddresses, db, activeAddress, addressBalances,activeWallet, addressRRIs,tokenMetadata,copyToClipboard)}
 

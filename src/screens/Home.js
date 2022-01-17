@@ -220,7 +220,7 @@ function renderAddressRows(balances, tokenMetadata,copyToClipboard){
         source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
-    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{ balance/10000000000000000000 }</Text>
+    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() }</Text>
     </View> 
     </View>        )
 
@@ -574,7 +574,7 @@ const Home = ({route, navigation}) => {
             setIsFocusAddr(true);
           }}
         />
-       <Text style={{fontSize: 25, color:"white"}}>Staked: {stakedAmount/1000000000000000000} XRD{"\n"}Liquid: {liquid_rri_balance/1000000000000000000} XRD</Text>
+       <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
         <Text >0.00 USD</Text>
         <View style={styles.rowStyle}>
         <TouchableOpacity style={styles.button} onPress={() =>  alert("hi")}>

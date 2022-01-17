@@ -170,26 +170,14 @@ function shortenAddress(address){
 
 }
 
-function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, addressRRIs, tokenMetadata,copyToClipboard){
+function renderAddressRows(balances, tokenMetadata,copyToClipboard){
 
 
-    if( addressBalances.size > 0 && activeAddress != undefined && tokenMetadata.size > 0  ){
+    if( balances.size > 0 && tokenMetadata.size > 0  ){
 
+        var rows = []
         // alert(JSON.stringify("in render " + JSON.stringify(tokenMetadata.get(addressRRIs.get(activeAddress)[0]))));
 
-        console.log("ADDRESSES: "+data) 
-
-        var balances = new Map();
-        var rows = []
-
-        addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  
-            balances.set(balance.token_identifier,balance.value)
-        );
-        
-        var stakedAmount = addressBalances.get(activeAddress).staked_and_unstaking_balance.value;
-        var stakedTokenIdentifier = addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri;
-
-        balances.set(stakedTokenIdentifier,balances.get(stakedTokenIdentifier)+stakedAmount);
 
         // alert(stakedAmount);
 
@@ -203,33 +191,36 @@ function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, a
             // alert(JSON.stringify(tokenMetadata.get(rri)))
         // alert(JSON.stringify(tokenMetadata.get(rri)))
 
-        rows.push(
-        <View key={1}>
-        <SeparatorBorder/>
-        <View style={styles.addrRowStyle}>
-        <Image style={{width: 50, height: 50}}
-        source={{uri: JSON.stringify(tokenMetadata.get(stakedTokenIdentifier).icon_url).replace(/["']/g, "")}}
-      />
+    //     rows.push(
+    //     <View key={1}>
+    //     <SeparatorBorder/>
+    //     <View style={styles.addrRowStyle}>
+    //     <Image style={{width: 50, height: 50}}
+    //     source={{uri: JSON.stringify(tokenMetadata.get(stakedTokenIdentifier).icon_url).replace(/["']/g, "")}}
+    //   />
       
-        <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(tokenMetadata.get(stakedTokenIdentifier).name).replace(/["']/g, "")} (Staked or unstaking)</Text>
-        <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{JSON.stringify(stakedAmount).replace(/["']/g, "")}</Text>
-        </View> 
-        </View>
-        );
+    //     <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(tokenMetadata.get(stakedTokenIdentifier).name).replace(/["']/g, "")} (Staked or unstaking)</Text>
+    //     <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{JSON.stringify(stakedAmount).replace(/["']/g, "")}</Text>
+    //     </View> 
+    //     </View>
+    //     );
     
 
-    addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  
+    balances.forEach((balance, rri) =>  
 
-    //   alert(1)
+   
             rows.push(
-            <View key={balance.token_identifier}>
+               
+            <View key={rri}>
+           { console.log("b: "+balance + " rri "+rri)}
+                   {/* {  console.log("TMD: " + JSON.stringify(tokenMetadata.get(JSON.stringify(rri.rri).replace(/["']/g, "")))) } */}
     <SeparatorBorder/>
     <View style={styles.addrRowStyle}>
-    <Image style={{width: 50, height: 50}}
-        source={{uri: JSON.stringify(tokenMetadata.get(balance.token_identifier.rri).icon_url).replace(/["']/g, "")}}
+    <Image style={{width: 40, height: 40}}
+        source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(tokenMetadata.get(balance.token_identifier.rri).name).replace(/["']/g, "")}</Text>
-    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{JSON.stringify((balance.value.replace(/["']/g, ""))/1000000000000000000) }</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{ balance/1000000000000000000 }</Text>
     </View> 
     </View>        )
 
@@ -372,7 +363,7 @@ export class NetworkUtils {
           // alert(JSON.stringify(json.account_balances))
                   // alert(JSON.stringify(json.account_balances))
             //   addressBalances.set(activeAddress,json.account_balances);
-              var newAddrBalances = new Map();
+              var newAddrBalances = new Map(addressBalances);
               newAddrBalances.set(activeAddress,json.account_balances);
        
               setAddressBalances(newAddrBalances);
@@ -390,11 +381,13 @@ export class NetworkUtils {
       
                var uniqueRRIs = [...new Set(rris)]
       
-               var newAddrRRIs = new Map();
+               var newAddrRRIs = new Map(addressRRIs);
 
 
                newAddrRRIs.set(activeAddress,uniqueRRIs);
                setAddressRRIs(newAddrRRIs);
+
+            // newAddrRRIs.forEach(value => alert(value))
 
                getTokenMetadata(newAddrRRIs, setTokenMetadata, tokenMetadata);
             //   setTimeout(getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs), 5000);
@@ -438,6 +431,32 @@ const Home = ({route, navigation}) => {
     const [addressRRIs, setAddressRRIs] = useState(new Map())
     const [tokenMetadata, setTokenMetadata] = useState(new Map())
 
+    var balances = new Map();
+    if( addressBalances.size > 0 && activeAddress != undefined && tokenMetadata.size > 0  ){
+
+  
+ 
+
+    var liquid_rri_balance = 0;
+    addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  {
+     
+        balances.set(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, ""),JSON.stringify(balance.value).replace(/["']/g, ""))
+     
+        if(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, "") === "xrd_rr1qy5wfsfh"){
+            liquid_rri_balance = JSON.stringify(balance.value).replace(/["']/g, "");
+        }
+    }
+
+        // alert(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, "") + " "+ JSON.stringify(balance.value).replace(/["']/g, ""))
+    );
+
+    
+
+    var stakedAmount = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.value).replace(/["']/g, "");
+    var stakedTokenIdentifier = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
+
+    balances.set(stakedTokenIdentifier,balances.get(stakedTokenIdentifier)+stakedAmount);
+    }
     // alert("ACTIVE "+JSON.stringify(addressBalances));
 
     // alert(enabledAddresses[parseInt(activeAddress)-1].radix_address);
@@ -548,13 +567,14 @@ const Home = ({route, navigation}) => {
           onFocus={() => {setIsFocusAddr(true)}}
           onBlur={() => setIsFocusAddr(false)}
           onChange={item => {
+            getBalances(enabledAddresses, item.value, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
             updateActiveAddress(db, item.value, setActiveAddress);
             setLabelAddr(item.label);
             setValueAddr(item.value);
             setIsFocusAddr(true);
           }}
         />
-       <Text style={{fontSize: 30, color:"white"}}>Liquid 0.000 XRD{"\n"}Staked 0.000 XRD</Text>
+       <Text style={{fontSize: 25, color:"white"}}>Staked: {stakedAmount/1000000000000000000} XRD{"\n"}Liquid: {liquid_rri_balance/1000000000000000000} XRD</Text>
         <Text >0.00 USD</Text>
         <View style={styles.rowStyle}>
         <TouchableOpacity style={styles.button} onPress={() =>  alert("hi")}>
@@ -585,7 +605,7 @@ const Home = ({route, navigation}) => {
 <Separator/>
 <Text>Tokens</Text>
 
-{renderAddressRows(enabledAddresses, db, activeAddress, addressBalances,activeWallet, addressRRIs,tokenMetadata,copyToClipboard)}
+{renderAddressRows(balances,tokenMetadata,copyToClipboard)}
 
         <Separator/>
 

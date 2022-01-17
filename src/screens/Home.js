@@ -216,11 +216,11 @@ function renderAddressRows(balances, tokenMetadata,copyToClipboard){
                    {/* {  console.log("TMD: " + JSON.stringify(tokenMetadata.get(JSON.stringify(rri.rri).replace(/["']/g, "")))) } */}
     <SeparatorBorder/>
     <View style={styles.addrRowStyle}>
-    <Image style={{width: 40, height: 40}}
+    <Image style={{width: 36, height: 36}}
         source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
-    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() }</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:16,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",flex:0.6,marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
     </View> 
     </View>        )
 

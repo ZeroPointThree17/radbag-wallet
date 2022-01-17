@@ -418,7 +418,7 @@ const Home = ({route, navigation}) => {
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
     const [addressBalances, setAddressBalances] = useState(new Map())
-    const [wallets, setWallets] = useState([{label: "Setting up for first time...", value:""}]);
+    const [wallets, setWallets] = useState([{label: "Setting up...", value:""}]);
     const [isFocus, setIsFocus] = useState(false);
     const [label, setLabel] = useState();
     const [value, setValue] = useState();
@@ -427,7 +427,7 @@ const Home = ({route, navigation}) => {
     const [valueAddr, setValueAddr] = useState();
     const [activeWallet, setActiveWallet] = useState(1);
     const [activeAddress, setActiveAddress] = useState(1);
-    const [enabledAddresses, setEnabledAddresses] = useState([{label: "Setting up for first time...", value:""}]);
+    const [enabledAddresses, setEnabledAddresses] = useState([{label: "Setting up...", value:""}]);
     const [addressRRIs, setAddressRRIs] = useState(new Map())
     const [tokenMetadata, setTokenMetadata] = useState(new Map())
 

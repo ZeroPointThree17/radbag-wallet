@@ -457,7 +457,12 @@ const Home = ({route, navigation}) => {
     var stakedAmount = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.value).replace(/["']/g, "");
     var stakedTokenIdentifier = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
 
-    balances.set(stakedTokenIdentifier,balances.get(stakedTokenIdentifier)+stakedAmount);
+    // alert(stakedAmount + " " + liquid_rri_balance)
+        if(liquid_rri_balance > 0 ){
+            balances.set(stakedTokenIdentifier,balances.get(stakedTokenIdentifier)+stakedAmount);
+        } else{
+            balances.set(stakedTokenIdentifier,JSON.stringify(stakedAmount).replace(/["']/g, ""));
+        }
     }
 }
     // alert("ACTIVE "+JSON.stringify(addressBalances));

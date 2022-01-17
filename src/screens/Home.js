@@ -184,15 +184,18 @@ function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, a
         //  tokenMetadata.forEach((value, key) => { alert("IN RENDER "+JSON.stringify(value))})
          addressBalances.forEach((value, key) => { 
 
-             tokenMetadata.forEach((value, key) => { alert("IN RENDER ("+key+") "+JSON.stringify(value))})
-
-            // alert("RRI:: "+ JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, ""))
+              tokenMetadata.forEach((value2, key2) => { 
+                  
+                alert(typeof key2);
+                 alert("IN RENDER ("+JSON.stringify(tokenMetadata.get("xrd_rr1qy5wfsfh").name));
+        
+                 // alert("RRI:: "+ JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, ""))
         
             var rri = JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
 
-            alert(rri);
+            // alert(rri);
             // alert(JSON.stringify(tokenMetadata.get(rri)))
-        alert(JSON.stringify(tokenMetadata.get(rri)))
+        // alert(JSON.stringify(tokenMetadata.get(rri)))
             rows.push(
             <View key={key}>
 
@@ -201,7 +204,7 @@ function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, a
     <View style={styles.addrRowStyle}>
 
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(value) }</Text>
-    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{JSON.stringify(tokenMetadata.get(JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "")))}</Text>
+    <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>Token Data: {JSON.stringify(tokenMetadata.get("xrd_rr1qy5wfsfh"))}</Text>
     </View> 
 
 {/* </Surface> */}
@@ -232,6 +235,10 @@ function renderAddressRows(data, db, activeAddress, addressBalances,wallet_id, a
     })
 
 
+            
+            })
+
+           
 
     return (rows)
 
@@ -285,9 +292,10 @@ export class NetworkUtils {
    function getTokenMetadata(addressRRIs, setTokenMetadata,tokenMetadata){
     // const isConnected = await NetworkUtils.isNetworkAvailable();
  
-    addressRRIs.forEach(rri => {
+    addressRRIs.forEach(rris => {
         
 
+        rris.forEach(rri => {
     // if(isConnected){
      fetch('https://mainnet-gateway.radixdlt.com/token', {
         method: 'POST',
@@ -331,7 +339,7 @@ export class NetworkUtils {
     // }
 
 });
-
+    });
   }
   
   async function getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata){
@@ -374,12 +382,12 @@ export class NetworkUtils {
               
             // //   alert(addressBalances);
               var rris = [];
-              rris.push(JSON.stringify(json.account_balances.staked_and_unstaking_balance.token_identifier.rri));
+              rris.push(JSON.stringify(json.account_balances.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, ""));
       
               var liquid_balances = json.account_balances.liquid_balances
       
               for(var key in liquid_balances.jsonData) {
-                  rris.push(JSON.stringify(liquid_balances.jsonData[key].token_identifier.rri))
+                  rris.push(JSON.stringify(liquid_balances.jsonData[key].token_identifier.rri).replace(/["']/g, ""))
                }
       
                var uniqueRRIs = [...new Set(rris)]

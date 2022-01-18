@@ -14,12 +14,13 @@ const Separator = () => (
 );
 
 
-function navigateAppPassword(navigation, mnemonic, word13){
+function navigateAppPassword(navigation, mnemonic, word13, firstTime){
 
   // var seed="";
   navigation.navigate('App Password', {
     mnemonicStr: mnemonic,
-    word13Str: word13
+    word13Str: word13,
+    firstTimeStr: firstTime
   });
 }
 
@@ -27,13 +28,10 @@ function navigateAppPassword(navigation, mnemonic, word13){
 
 const CreateWallet = ({route, navigation}) => {
 
+  var mnemonic = bip39.generateMnemonic();
 
-  const { mnemonicStr } = route.params;
-  var mnemonic = JSON.stringify(mnemonicStr).replaceAll('"','');
-
-
-
-
+  const { firstTimeStr } = route.params;
+  var firstTime = JSON.stringify(firstTimeStr).replaceAll('"','');
 
 
 const [word13flag, setword13flag] = useState(false);
@@ -72,7 +70,7 @@ label='25th word' style={styles.title}/>
  <Button style={styles.title}
         title="Understood - Continue"
         enabled
-        onPress={() => navigateAppPassword(navigation, mnemonic, word13)}
+        onPress={() => navigateAppPassword(navigation, mnemonic, word13, firstTime)}
       />
 
 

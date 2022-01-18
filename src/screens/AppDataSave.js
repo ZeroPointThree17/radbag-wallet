@@ -97,7 +97,6 @@ db.transaction((tx) => {
               let row = results.rows.item(i);
               nextAddressId = row.id + 1;
 
-
               var dropWallet = "";
               var createWallet = "";
               var insertWallet = "";
@@ -111,52 +110,64 @@ db.transaction((tx) => {
               var createToken = "";
               var dropAddress = "";
               var createAddress = "";
-              var insertAddress = "";
+              var insertAddressFirstPart = "";
+
               switch(firstFlag) {
   case true:
-    var dropWallet = 'DROP TABLE IF EXISTS wallet';
-    var createWallet = `CREATE TABLE wallet (
+    dropWallet = 'DROP TABLE IF EXISTS wallet';
+    createWallet = `CREATE TABLE wallet (
       id INTEGER PRIMARY KEY,
       name TEXT,
       mnemonic_enc TEXT,
       word13_enc TEXT
   )`;
-    var insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet (#1)', '" + mnemonic_enc + "', '" + word13_enc + "')";
-    var dropActiveWallet = 'DROP TABLE IF EXISTS active_wallet';
-    var createActiveWallet = "";
-    var insertActiveWallet = "";
-    var dropActiveAddress = "";
-    var createActiveAddress = "";
-    var insertActiveAddress = "";
-    var dropToken = "";
-    var createToken = "";
-    var dropAddress = "";
-    var createAddress = "";
-    var insertAddress = "";
+    insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet (#1)', '" + mnemonic_enc + "', '" + word13_enc + "')";
+    dropActiveWallet = 'DROP TABLE IF EXISTS active_wallet';
+    createActiveWallet = `CREATE TABLE active_wallet ( id INTEGER )`;
+    insertActiveWallet = "INSERT INTO active_wallet VALUES(1)";
+    dropActiveAddress = 'DROP TABLE IF EXISTS active_address';
+    createActiveAddress = "CREATE TABLE active_address ( id INTEGER )";
+    insertActiveAddress = "INSERT INTO active_address (id) VALUES('1')";
+    dropToken = 'DROP TABLE IF EXISTS token';
+    createToken = `CREATE TABLE token (
+      id INTEGER PRIMARY KEY,
+      rri TEXT,
+  name TEXT,
+  symbol TEXT,
+  decimals INTGER,
+  logo_url TEXT
+  )`;
+    dropAddress = 'DROP TABLE IF EXISTS address';
+    createAddress = `CREATE TABLE address (
+      id INTEGER PRIMARY KEY,
+      wallet_id INTEGER,
+      name TEXT,
+  radix_address TEXT,
+  publickey TEXT,
+  privatekey_enc TEXT,
+  enabled_flag INTEGER
+  )`;
+    insertAddressFirstPart = "INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1";
     break;
   case false:
-    var dropWallet = "";
-    var createWallet = "";
-    var insertWallet = "";
-    var dropActiveWallet = "";
-    var createActiveWallet = "";
-    var insertActiveWallet = "";
-    var dropActiveAddress = "";
-    var createActiveAddress = "";
-    var insertActiveAddress = "";
-    var dropToken = "";
-    var createToken = "";
-    var dropAddress = "";
-    var createAddress = "";
-    var insertAddress = "";
+    dropWallet = doNothingStmt;
+    createWallet = doNothingStmt;
+    insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES ("+nextWalledId+", 'My Wallet (#"+nextWalledId+")', '" + mnemonic_enc + "', '" + word13_enc + "')";
+    dropActiveWallet = doNothingStmt;
+    createActiveWallet = doNothingStmt;
+    insertActiveWallet = "INSERT INTO active_wallet VALUES("+nextWalledId+")";
+    dropActiveAddress = doNothingStmt;
+    createActiveAddress = doNothingStmt;
+    insertActiveAddress = "INSERT INTO active_address (id) VALUES('"+nextAddressId+"')";
+    dropToken = doNothingStmt;
+    createToken = doNothingStmt;
+    dropAddress = doNothingStmt;
+    createAddress = doNothingStmt;
+    insertAddressFirstPart = "INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES ("+nextWalledId;
     break;
   default:
     // code block
 }
-
-
-
-
 
                 }
       
@@ -231,20 +242,20 @@ db.transaction((tx) => {
   tx.executeSql(dropActiveWallet, [], (tx, results) => {
     console.log("active_wallet DROP attempt completed.")
       db.transaction((tx) => {
-          tx.executeSql(`CREATE TABLE active_wallet ( id INTEGER )`, [], (tx, results) => {
+          tx.executeSql(createActiveWallet, [], (tx, results) => {
               db.transaction((tx) => {
-                  tx.executeSql("INSERT INTO active_wallet VALUES(1)", [], (tx, results) => {
+                  tx.executeSql(insertActiveWallet, [], (tx, results) => {
                   console.log("insert into active_wallet completed");
 
 
                   db.transaction((tx) => {
                     console.log("pre active address 0.1 table completed"); 
-                    tx.executeSql('DROP TABLE IF EXISTS active_address', [], (tx, results) => {
+                    tx.executeSql(dropActiveAddress, [], (tx, results) => {
                       console.log("pre active address 0 table completed"); 
                         db.transaction((tx) => {
-                            tx.executeSql("CREATE TABLE active_address ( id INTEGER )", [], (tx, results) => {
+                            tx.executeSql(createActiveAddress, [], (tx, results) => {
                                 db.transaction((tx) => {
-                                    tx.executeSql("INSERT INTO active_address (id) VALUES('1')", [], (tx, results) => {
+                                    tx.executeSql(insertActiveAddress, [], (tx, results) => {
                                       console.log("Insert into active address table completed");   
                                       navigation.navigate('Raddish Wallet');
                                     }, errorCB);
@@ -264,17 +275,10 @@ db.transaction((tx) => {
 
 
               db.transaction((tx) => {
-                tx.executeSql('DROP TABLE IF EXISTS token', [], (tx, results) => {
+                tx.executeSql(dropToken, [], (tx, results) => {
                   console.log("Drop token table completed");
                   db.transaction((tx) => {
-                    tx.executeSql(`CREATE TABLE token (
-                      id INTEGER PRIMARY KEY,
-                      rri TEXT,
-                  name TEXT,
-                  symbol TEXT,
-                  decimals INTGER,
-                  logo_url TEXT
-                  )`, [], (tx, results) => {
+                    tx.executeSql(createToken, [], (tx, results) => {
                       console.log("Create token table completed");
                       // db.transaction((tx) => {
                       //   tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo_url) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
@@ -321,18 +325,10 @@ db.transaction((tx) => {
               
 
               db.transaction((tx) => {
-                tx.executeSql('DROP TABLE IF EXISTS address', [], (tx, results) => {
+                tx.executeSql(dropAddress, [], (tx, results) => {
                   console.log("Drop address table completed");
                   db.transaction((tx) => {
-                    tx.executeSql(`CREATE TABLE address (
-                      id INTEGER PRIMARY KEY,
-                      wallet_id INTEGER,
-                      name TEXT,
-                  radix_address TEXT,
-                  publickey TEXT,
-                  privatekey_enc TEXT,
-                  enabled_flag INTEGER
-                  )`, [], (tx, results) => {
+                    tx.executeSql(createAddress, [], (tx, results) => {
                       console.log("Create address table completed");
                       var enabled_flag=1;
                       for (let i = 1; i < 16; i++) {
@@ -348,7 +344,7 @@ db.transaction((tx) => {
                       
                           if(i==2){enabled_flag=0}
                           
-                          tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1,'My Address (#"+i.toString()+")','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"',"+enabled_flag+")", [], (tx, results) => {
+                          tx.executeSql(insertAddressFirstPart+",'My Address (#"+i.toString()+")','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"','"+enabled_flag+"')", [], (tx, results) => {
                             console.log("Insert into address table completed");
                             
 
@@ -408,10 +404,14 @@ function wait(ms){
 
 const AppDataSave = ({route, navigation}) => {
 
-  const { mnemonicStr, word13Str} = route.params;
+  const { mnemonicStr, word13Str, firstTimeStr} = route.params;
   var mnemonic = JSON.stringify(mnemonicStr).replaceAll('"','');
   var word13 = JSON.stringify(word13Str).replaceAll('"','');
+  var firstTimeString = JSON.stringify(firstTimeStr).replaceAll('"','');
 
+  var firstTime=false
+  if(firstTimeString=="true"){firstTime=true}
+  
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -450,7 +450,7 @@ label='Confirm App Password' />
  <Button
         title="Continue"
         enabled
-        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, setIsActive, true)}
+        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, setIsActive, firstTime)}
       />
 <Separator/>
 <Separator/>

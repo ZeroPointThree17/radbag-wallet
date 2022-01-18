@@ -9,9 +9,9 @@ const Separator = () => (
 );
 
 function navigateToCreateWallet(navigation){
-  var mnemonic = bip39.generateMnemonic();
+
   navigation.navigate('Mnemonic', {
-    mnemonicStr: mnemonic
+    firstTimeStr: "true"
   });
 }
 

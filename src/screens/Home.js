@@ -431,11 +431,15 @@ const Home = ({route, navigation}) => {
     const [addressRRIs, setAddressRRIs] = useState(new Map())
     const [tokenMetadata, setTokenMetadata] = useState(new Map())
 
+
+    console.log("about to output ADDRESSES: ");
+    enabledAddresses.forEach(element => 
+        
+        console.log(JSON.stringify(element))
+        )
+
     var balances = new Map();
     if( addressBalances.size > 0 && activeAddress != undefined && tokenMetadata.size > 0  ){
-
-  
- 
 
     var liquid_rri_balance = 0;
 

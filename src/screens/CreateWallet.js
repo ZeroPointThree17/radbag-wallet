@@ -16,10 +16,9 @@ const Separator = () => (
 
 function navigateAppPassword(navigation, mnemonic, word13, firstTime){
 
-
   const pushAction = StackActions.push('App Password', {
     mnemonicStr: mnemonic,
-    word13Str: word13,
+    word13Str: word13.trim(),
     firstTimeStr: firstTime
   });
 

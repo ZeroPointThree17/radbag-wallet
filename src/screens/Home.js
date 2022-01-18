@@ -682,12 +682,28 @@ const pushAction = StackActions.push('Mnemonic', { firstTimeStr: 'false' });
 navigation.dispatch(pushAction);
      }
     }>
-     <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
-<Text style={styles.buttonText} >Add Wallet</Text></View>
+     <View style={styles.rowStyle}>
+         {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
+<Text style={styles.buttonText} >Add Wallet  |  </Text></View>
+</TouchableOpacity>
+
+
+<TouchableOpacity style={styles.button} onPress={() => 
+
+{
+const pushAction = StackActions.push('Mnemonic Input', { firstTimeStr: 'false' });
+
+navigation.dispatch(pushAction);
+     }
+    }>
+     <View style={styles.rowStyle}>
+         {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
+<Text style={styles.buttonText} >Import Wallet  |  </Text></View>
 </TouchableOpacity>
 
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses,setActiveAddress)}>
-     <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
+     <View style={styles.rowStyle}>
+         {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
 <Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity> 
 

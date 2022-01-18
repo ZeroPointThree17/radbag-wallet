@@ -10,13 +10,14 @@ var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { catchError } from 'rxjs/operators';
 const bip39 = require('bip39');
+import { StackActions } from '@react-navigation/native';
 
 const Separator = () => (
   <View style={styles.separator} />
 );
 
 
-function navigateAppPassword(navigation, mnemonic){
+function navigateAppPassword(navigation, mnemonic, firstTime){
 
     mnemonic = mnemonic.replace(/\s\s+/g, ' ');
 
@@ -37,18 +38,25 @@ function navigateAppPassword(navigation, mnemonic){
    
 
     if(bip39.validateMnemonic(words12)){
-    navigation.navigate('App Password', {
-      mnemonicStr: mnemonic,
-      word13Str: word13
-    });
+    const pushAction = StackActions.push('App Password', {
+        mnemonicStr: mnemonic,
+        word13Str: word13,
+        firstTimeStr: firstTime
+      });
+    
+    navigation.dispatch(pushAction);
     } else{
         alert("Mnemonic is not valid")
     }
+    
 
   }
   
 
  const MnemonicInput = ({route, navigation}) => {
+
+    const { firstTimeStr } = route.params;
+    var firstTime = JSON.stringify(firstTimeStr).replaceAll('"','');
 
   const [mnemonic, setMnemonic] = useState();
   
@@ -69,7 +77,7 @@ function navigateAppPassword(navigation, mnemonic){
  <Button style={styles.title}
         title="Submit"
         enabled
-        onPress={() => navigateAppPassword(navigation, mnemonic)}
+        onPress={() => navigateAppPassword(navigation, mnemonic, firstTime)}
       />
 
   </View>)

@@ -19,7 +19,7 @@ const Separator = () => (
 
 function navigateAppPassword(navigation, mnemonic, firstTime){
 
-    mnemonic = mnemonic.replace(/\s\s+/g, ' ');
+    mnemonic = mnemonic.replace(/\s\s+/g, ' ').replace(/(\r\n|\n|\r)/gm, "");;
 
     mnemonicArr = mnemonic.split(" ");
 

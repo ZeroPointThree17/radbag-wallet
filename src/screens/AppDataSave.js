@@ -88,6 +88,7 @@ db.transaction((tx) => {
       nextWalledId = row.id + 1;
         }
 
+          // alert(nextWalledId)
         db.transaction((tx) => {
           tx.executeSql('SELECT MAX(id) AS id from address', [], (tx, results) => {
         
@@ -98,7 +99,6 @@ db.transaction((tx) => {
               nextAddressId = row.id + 1;
 
                 }
-
 
               var dropWallet = "";
               var createWallet = "";
@@ -114,7 +114,7 @@ db.transaction((tx) => {
               var dropAddress = "";
               var createAddress = "";
               var insertAddressFirstPart = "";
-
+// alert(firstFlag)
               switch(firstFlag) {
   case true:
     dropWallet = 'DROP TABLE IF EXISTS wallet';
@@ -171,8 +171,6 @@ db.transaction((tx) => {
   default:
     // code block
 }
-
-      
 
 if(firstFlag){
 db.transaction((tx) => {

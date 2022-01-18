@@ -105,7 +105,7 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
             }
 
 
-            
+            // addresses.forEach(el=> alert(wallet_id +" has "+ JSON.stringify(data)))
   
             setEnabledAddresses(addresses);
     //   alert(newEnabledAddresses)
@@ -294,11 +294,32 @@ function getActiveWallet(db,setActiveWallet,setEnabledAddresses){
                 }
 
                 setActiveWallet(id);
-                // alert("active wallet "+id)
+                //  alert("active wallet "+id)
 
                 getEnabledAddresses(id,db,setEnabledAddresses);
 
-        }, errorCB('update active_wallet'));
+        }, errorCB);
+    }); 
+}
+
+function getActiveAddress(db,setActiveAddress){
+    db.transaction((tx) => {
+        tx.executeSql("SELECT id FROM active_address", [], (tx, results) => {
+        
+                var len = results.rows.length;
+                      
+                var id = 0;
+                for (let i = 0; i < len; i++) {
+                    let row = results.rows.item(i);
+                    id = row.id;
+                }
+
+                setActiveAddress(id);
+                //  alert("active wallet "+id)
+
+      
+
+        }, errorCB);
     }); 
 }
 
@@ -365,6 +386,7 @@ export class NetworkUtils {
    
     const isConnected = await NetworkUtils.isNetworkAvailable();
  
+    //    alert(enabledAddresses.get(activeAddress).radix_address)
     if(isConnected){
     await fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
         method: 'POST',
@@ -542,6 +564,7 @@ const Home = ({route, navigation}) => {
 
        useEffect(() => {
         getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+        getActiveAddress(db, setActiveAddress);
         // getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
     }, []);
 
@@ -557,7 +580,7 @@ const Home = ({route, navigation}) => {
 
     useInterval(() => {
         getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-   
+        getActiveAddress(db, setActiveAddress);
         getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
     }, 20000);
 

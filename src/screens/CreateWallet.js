@@ -1,6 +1,6 @@
 import { Alert, Button, TextInput, Pressable, SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UInt256, U256 } from 'uint256';
 import { StackActions } from '@react-navigation/native';
@@ -32,10 +32,13 @@ navigation.dispatch(pushAction);
 }
 
 
+var mnemonic = bip39.generateMnemonic();
 
 const CreateWallet = ({route, navigation}) => {
 
-  var mnemonic = bip39.generateMnemonic();
+  useEffect(() => {
+     mnemonic = bip39.generateMnemonic();
+  }, []);
 
   const { firstTimeStr } = route.params;
   var firstTime = JSON.stringify(firstTimeStr).replaceAll('"','');

@@ -19,6 +19,7 @@ import IconFontisto from 'react-native-vector-icons/Fontisto';
 import ReactNativeSwipeableViewStack from 'react-native-swipeable-view-stack';
 import NetInfo from "@react-native-community/netinfo";
 import { assertNullLiteralTypeAnnotation } from '@babel/types';
+import { StackActions } from '@react-navigation/native';
 
 
 function useInterval(callback, delay) {
@@ -77,18 +78,24 @@ function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnable
              
              console.log("inside get wallets");
              console.log("inside get wallets2");
-             getEnabledAddresses(wallets[0].value,db, setActiveAddress,setEnabledAddresses, true,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)
+             getEnabledAddresses(wallets,db, setActiveAddress,setEnabledAddresses, false,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)
           }, errorCB);
         });
         
 }
 
-function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
-    db.transaction((tx) => {
-  
-        tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
+function getEnabledAddresses(walletArr,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
 
-          var addresses = [];
+        var addresses = [];
+
+        walletArr.forEach(wallet_id => 
+        {
+            db.transaction((tx) => {
+    
+            // alert(wallet_id.value);
+            tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id.value+"' AND enabled_flag='1'", [], (tx, results) => {
+
+                //  alert(wallet_id.value)
           var len = results.rows.length;
       
             for (let i = 0; i < len; i++) {
@@ -98,14 +105,34 @@ function getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, 
                     addresses.push(data);
             }
 
-            setEnabledAddresses(addresses);
+            // alert(addresses)
 
-            if(pickFirstAsActive==true){
-                setActiveAddress(addresses[0].value);
-            }
+            var newEnabledAddresses = []
+            // enabledAddresses.forEach(addressObj =>
+            //     {
+            //     if(!(addressObj.value == "")){
+            //     newEnabledAddresses.push(addressObj)
+            //     }
+            // }
+            //     );
+
+                addresses.forEach(addressObj =>
+                {
+                    newEnabledAddresses.push(addressObj) ;     
+                }
+                    );
+  
+            setEnabledAddresses(newEnabledAddresses);
+    //   alert(newEnabledAddresses)
+
 
           }, errorCB); 
         });
+
+    });
+
+  
+  
 }
 
 function addAddress(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
@@ -235,15 +262,29 @@ function renderAddressRows(balances, tokenMetadata,copyToClipboard){
 
 }
 
-function updateActiveWallet(wallet_id, setActiveWallet){
+function updateActiveWallet(wallet_id, setActiveWallet, setActiveAddress){
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
     db.transaction((tx) => {
         tx.executeSql("UPDATE active_wallet SET id = "+wallet_id, [], (tx, results) => {       
            setActiveWallet(wallet_id);
-        }, errorCB);
+           db.transaction((tx) => {
+            tx.executeSql("SELECT min(id) as id from address where wallet_id='"+wallet_id+"' and enabled_flag=1", [], (tx, results) => {
+                var len = results.rows.length;
+                      
+                var address_id = 0;
+                for (let i = 0; i < len; i++) {
+                    let row = results.rows.item(i);
+                    address_id = row.id;
+                }
+
+                updateActiveAddress(db, address_id, setActiveAddress);
+
+            }, errorCB);
     }); 
+}, errorCB);
+}); 
 }
 
 function updateActiveAddress(db, address_id, setActiveAddress){
@@ -267,6 +308,7 @@ function getActiveWallet(db,setActiveWallet){
                 }
 
                 setActiveWallet(id);
+                alert("active wallet "+id)
 
         }, errorCB('update active_wallet'));
     }); 
@@ -490,6 +532,8 @@ const Home = ({route, navigation}) => {
 // }, [addressRRIs]);
 
     useInterval(() => {
+        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+   
         getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
     }, 20000);
 
@@ -552,10 +596,11 @@ const Home = ({route, navigation}) => {
           searchPlaceholder="Search..."
           label={wallets[parseInt(activeWallet)-1].label}
           value={wallets[parseInt(activeWallet)-1].value}
-          onFocus={() => {setIsFocus(true)}}
+          onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            updateActiveWallet(item.value, setActiveWallet);
+            updateActiveWallet(item.value, setActiveWallet, setActiveAddress);
+            
             setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);
@@ -574,9 +619,9 @@ const Home = ({route, navigation}) => {
           valueField="value"
           placeholder={!isFocusAddr ? 'Select Address' : '...'}
           searchPlaceholder="Search..."
-          label={enabledAddresses[parseInt(activeAddress)-1].label}
-          value={enabledAddresses[parseInt(activeAddress)-1].value}
-          onFocus={() => {setIsFocusAddr(true)}}
+          label={ enabledAddresses[parseInt(activeAddress)-1].label}
+          value={ enabledAddresses[parseInt(activeAddress)-1].value}
+          onFocus={() => setIsFocusAddr(true)}
           onBlur={() => setIsFocusAddr(false)}
           onChange={item => {
             getBalances(enabledAddresses, item.value, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
@@ -601,7 +646,14 @@ const Home = ({route, navigation}) => {
 
      <View style={styles.rowStyle}>
        
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)}>
+     <TouchableOpacity style={styles.button} onPress={() => 
+
+{
+const pushAction = StackActions.push('Mnemonic', { firstTimeStr: 'false' });
+
+navigation.dispatch(pushAction);
+     }
+    }>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Wallet</Text></View>
 </TouchableOpacity>

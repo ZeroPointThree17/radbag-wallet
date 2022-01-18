@@ -3,7 +3,7 @@ const bip39 = require('bip39');
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UInt256, U256 } from 'uint256';
-
+import { StackActions } from '@react-navigation/native';
 import CheckBox from 'react-native-check-box';
 import PasswordInputText from 'react-native-hide-show-password-input';
 // import { UserContext } from "./UserProvider";
@@ -16,12 +16,20 @@ const Separator = () => (
 
 function navigateAppPassword(navigation, mnemonic, word13, firstTime){
 
-  // var seed="";
-  navigation.navigate('App Password', {
+
+  const pushAction = StackActions.push('App Password', {
     mnemonicStr: mnemonic,
     word13Str: word13,
     firstTimeStr: firstTime
   });
+
+navigation.dispatch(pushAction);
+
+  // navigation.navigate('App Password', {
+  //   mnemonicStr: mnemonic,
+  //   word13Str: word13,
+  //   firstTimeStr: firstTime
+  // });
 }
 
 
@@ -32,7 +40,6 @@ const CreateWallet = ({route, navigation}) => {
 
   const { firstTimeStr } = route.params;
   var firstTime = JSON.stringify(firstTimeStr).replaceAll('"','');
-
 
 const [word13flag, setword13flag] = useState(false);
 const [word13, setword13] = useState("");

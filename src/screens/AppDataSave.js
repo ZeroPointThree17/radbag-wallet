@@ -8,7 +8,7 @@ var bcrypt = require('react-native-bcrypt');;
 var SQLite = require('react-native-sqlite-storage');
 import {encrypt, decrypt} from '../helpers/encrypt';
 var HDKey = require('hdkey')
-
+import { StackActions, NavigationActions } from '@react-navigation/native';
 
 
 function convertbits (data, frombits, tobits, pad) {
@@ -89,13 +89,16 @@ db.transaction((tx) => {
         }
 
         db.transaction((tx) => {
-          tx.executeSql('SELECT MAX(id) AS id from address', [], (tx, results) => {
+          tx.executeSql('SELECT MAX(id) AS id from address where enabled_flag=1', [], (tx, results) => {
         
                   var len = results.rows.length;
               
                 for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);
               nextAddressId = row.id + 1;
+
+                }
+
 
               var dropWallet = "";
               var createWallet = "";
@@ -169,7 +172,6 @@ db.transaction((tx) => {
     // code block
 }
 
-                }
       
 
 if(firstFlag){
@@ -218,11 +220,6 @@ db.transaction((tx) => {
 // });
 
 
-
-
-
-
-
 db.transaction((tx) => {
   tx.executeSql(dropWallet, [], (tx, results) => {
     console.log("Drop wallet table completed");
@@ -256,8 +253,22 @@ db.transaction((tx) => {
                             tx.executeSql(createActiveAddress, [], (tx, results) => {
                                 db.transaction((tx) => {
                                     tx.executeSql(insertActiveAddress, [], (tx, results) => {
-                                      console.log("Insert into active address table completed");   
-                                      navigation.navigate('Raddish Wallet');
+                                      console.log("Insert into active address table completed");  
+                                      // setAppPw("");
+                                      // setAppPwConfirm(""); 
+                                      // setIsActive(false);
+                                      // 
+                                      
+                                    //   const resetAction = StackActions.reset({
+                                    //     index: 0,
+                                    //     actions: [NavigationActions.navigate({ routeName: 'Raddish Wallet' })],
+                                    // });
+                                    // navigation.dispatch(resetAction);
+                                    // navigation.navigate('Raddish Wallet');
+                                    const pushAction = StackActions.push('Raddish Wallet');
+                                  
+                                  navigation.dispatch(pushAction);
+                                  
                                     }, errorCB);
                                 }); 
                     }, errorCB);
@@ -384,9 +395,6 @@ db.transaction((tx) => {
     }, errorCB);
   });
 
-
-
-
  
   }
   else{
@@ -411,7 +419,7 @@ const AppDataSave = ({route, navigation}) => {
 
   var firstTime=false
   if(firstTimeString=="true"){firstTime=true}
-  
+
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -437,7 +445,7 @@ const [appPwConfirm, setAppPwConfirm] = useState("");
      <View > 
 
 
-    <Text style={styles.title}>Enter a password to protect the data in this app.</Text>
+    <Text style={styles.title}>Enter a password to protect the data in this wallet.</Text>
  <PasswordInputText style={styles.title}
 onChangeText={(password) => setAppPw( password )}
 label='App Password' />

@@ -3,6 +3,7 @@ import { Alert, Button, SectionList, SafeAreaView, View, Text, StyleSheet } from
 import React, { useState } from 'react';
 import Home from './Home';
 import SettingsNav from './SettingsNav';
+import CreateWallet from './CreateWallet';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import  Ionicons  from 'react-native-vector-icons/Ionicons';
@@ -16,7 +17,10 @@ export default function HomeNav({route, navigation}) {
 
   // var password = pwStr.pwStr;
 
-
+  // navigation.reset(
+  //   [NavigationActions.navigate({routeName: 'HomeNav'})],
+  //   0,
+  //   );
 
   return (
     <Tab.Navigator  
@@ -60,6 +64,7 @@ export default function HomeNav({route, navigation}) {
         <Ionicons name="settings-outline" color={color} size={size} />
       ),
     }}/>
+          {/* <Tab.Screen name="Mnemonic" component={CreateWallet} /> */}
     </Tab.Navigator>
   );
 }

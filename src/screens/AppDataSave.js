@@ -89,7 +89,7 @@ db.transaction((tx) => {
         }
 
         db.transaction((tx) => {
-          tx.executeSql('SELECT MAX(id) AS id from address where enabled_flag=1', [], (tx, results) => {
+          tx.executeSql('SELECT MAX(id) AS id from address', [], (tx, results) => {
         
                   var len = results.rows.length;
               

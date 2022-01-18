@@ -74,26 +74,25 @@ function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnable
             
              setWallets(wallets);
         
-             getActiveWallet(db, setActiveWallet);
+             getActiveWallet(db, setActiveWallet,setEnabledAddresses);
              
              console.log("inside get wallets");
              console.log("inside get wallets2");
-             getEnabledAddresses(wallets,db, setActiveAddress,setEnabledAddresses, false,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)
-          }, errorCB);
+      }, errorCB);
         });
         
 }
 
-function getEnabledAddresses(walletArr,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
+function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
 
-        var addresses = [];
+        var addresses = new Map();
 
-        walletArr.forEach(wallet_id => 
-        {
+        // walletArr.forEach(wallet_id => 
+        // {
             db.transaction((tx) => {
     
             // alert(wallet_id.value);
-            tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id.value+"' AND enabled_flag='1'", [], (tx, results) => {
+            tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
 
                 //  alert(wallet_id.value)
           var len = results.rows.length;
@@ -102,40 +101,26 @@ function getEnabledAddresses(walletArr,db,setActiveAddress,setEnabledAddresses, 
                 let row = results.rows.item(i);
                     var addrLabel = row.name + " - " + shortenAddress(row.radix_address);
                     var data = {label: addrLabel, value: row.id, radix_address:row.radix_address}
-                    addresses.push(data);
+                    addresses.set(row.id, data);
             }
 
-            // alert(addresses)
 
-            var newEnabledAddresses = []
-            // enabledAddresses.forEach(addressObj =>
-            //     {
-            //     if(!(addressObj.value == "")){
-            //     newEnabledAddresses.push(addressObj)
-            //     }
-            // }
-            //     );
-
-                addresses.forEach(addressObj =>
-                {
-                    newEnabledAddresses.push(addressObj) ;     
-                }
-                    );
+            
   
-            setEnabledAddresses(newEnabledAddresses);
+            setEnabledAddresses(addresses);
     //   alert(newEnabledAddresses)
 
 
           }, errorCB); 
         });
 
-    });
+    // });
 
   
   
 }
 
-function addAddress(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
+function addAddress(wallet_id,db,setEnabledAddresses,setActiveAddress){
 
     db.transaction((tx) => {
 
@@ -152,8 +137,9 @@ function addAddress(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirst
             } else{
             db.transaction((tx) => {
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
-                getEnabledAddresses(wallet_id,db,setActiveAddress,setEnabledAddresses, pickFirstAsActive,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);  
-                alert("New address is now in your address dropdown")
+                getEnabledAddresses(wallet_id,db,setEnabledAddresses);  
+                setActiveAddress(next_id);
+                // alert("New address is now in your address dropdown")
                   }, errorCB);
                 });
             }
@@ -177,14 +163,14 @@ Alert.alert(
   ]
 );
 
-function removeAddress(db, wallet_id, address_id){
+function removeAddress(db, wallet_id, address_id,setEnabledAddresses){
 
     // alert("Updating addresses 0.1");
     db.transaction((tx) => {
 
         tx.executeSql("UPDATE address SET enabled_flag='0' WHERE wallet_id='"+wallet_id+"' AND id='"+address_id+"' AND enabled_flag='1'", [], (tx, results) => {
 
-            getEnabledAddresses(wallet_id,db)
+            getEnabledAddresses(wallet_id,db,setEnabledAddresses)
 
           }, errorCB);
         });
@@ -295,7 +281,7 @@ function updateActiveAddress(db, address_id, setActiveAddress){
     }); 
 }
 
-function getActiveWallet(db,setActiveWallet){
+function getActiveWallet(db,setActiveWallet,setEnabledAddresses){
     db.transaction((tx) => {
         tx.executeSql("SELECT id FROM active_wallet", [], (tx, results) => {
         
@@ -308,7 +294,9 @@ function getActiveWallet(db,setActiveWallet){
                 }
 
                 setActiveWallet(id);
-                alert("active wallet "+id)
+                // alert("active wallet "+id)
+
+                getEnabledAddresses(id,db,setEnabledAddresses);
 
         }, errorCB('update active_wallet'));
     }); 
@@ -391,7 +379,7 @@ export class NetworkUtils {
                 "network": "mainnet"
               },
               "account_identifier": {
-                "address": enabledAddresses[parseInt(activeAddress)-1].radix_address
+                "address": enabledAddresses.get(activeAddress).radix_address
               }
             }      
       
@@ -442,6 +430,19 @@ export class NetworkUtils {
     }
 }
 
+function getDDIndex(dropdownVals,activeAddress){
+
+    // alert(dropdownVals.length)
+    for(var x = 0; x <dropdownVals.length ; x++){
+// alert(JSON.stringify(dropdownVals[x]))
+        if(dropdownVals[x].value == activeAddress){
+            // alert(x);
+            return x;
+        }
+    }
+
+    return 0;
+}
 
 const Home = ({route, navigation}) => {
 
@@ -459,6 +460,8 @@ const Home = ({route, navigation}) => {
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
+    var initialEnabledAddresses = new Map();
+    initialEnabledAddresses.set(1,{label: "Setting up...", value:""})
     const [addressBalances, setAddressBalances] = useState(new Map())
     const [wallets, setWallets] = useState([{label: "Setting up...", value:""}]);
     const [isFocus, setIsFocus] = useState(false);
@@ -469,15 +472,38 @@ const Home = ({route, navigation}) => {
     const [valueAddr, setValueAddr] = useState();
     const [activeWallet, setActiveWallet] = useState(1);
     const [activeAddress, setActiveAddress] = useState(1);
-    const [enabledAddresses, setEnabledAddresses] = useState([{label: "Setting up...", value:""}]);
+    const [enabledAddresses, setEnabledAddresses] = useState(initialEnabledAddresses);
     const [addressRRIs, setAddressRRIs] = useState(new Map())
     const [tokenMetadata, setTokenMetadata] = useState(new Map())
 
 
     console.log("about to output ADDRESSES: ");
-    enabledAddresses.forEach(element => 
-        
-        console.log(JSON.stringify(element))
+    var dropdownVals = [
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+        // {label: "", value:""},
+    ]
+
+    
+
+    enabledAddresses.forEach((element, id)=> 
+        {
+        console.log(JSON.stringify(element));
+        dropdownVals.push(element);
+
+        }
         )
 
     var balances = new Map();
@@ -511,10 +537,8 @@ const Home = ({route, navigation}) => {
         }
     }
 }
-    // alert("ACTIVE "+JSON.stringify(addressBalances));
 
-    // alert(enabledAddresses[parseInt(activeAddress)-1].radix_address);
-
+// dropdownVals.forEach(val=>alert(JSON.stringify(val)))
 
        useEffect(() => {
         getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
@@ -600,7 +624,8 @@ const Home = ({route, navigation}) => {
           onBlur={() => setIsFocus(false)}
           onChange={item => {
             updateActiveWallet(item.value, setActiveWallet, setActiveAddress);
-            
+            getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+            getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
             setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);
@@ -612,23 +637,26 @@ const Home = ({route, navigation}) => {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={enabledAddresses}
+          data={dropdownVals}
           search
           maxHeight={300}
           labelField="label"
           valueField="value"
           placeholder={!isFocusAddr ? 'Select Address' : '...'}
           searchPlaceholder="Search..."
-          label={ enabledAddresses[parseInt(activeAddress)-1].label}
-          value={ enabledAddresses[parseInt(activeAddress)-1].value}
+          label={ dropdownVals[getDDIndex(dropdownVals,activeAddress)].label}
+          value={ dropdownVals[getDDIndex(dropdownVals,activeAddress)].value}
           onFocus={() => setIsFocusAddr(true)}
           onBlur={() => setIsFocusAddr(false)}
           onChange={item => {
-            getBalances(enabledAddresses, item.value, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
             updateActiveAddress(db, item.value, setActiveAddress);
+            getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+            getBalances(enabledAddresses, item.value, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
             setLabelAddr(item.label);
             setValueAddr(item.value);
             setIsFocusAddr(true);
+
+            // alert(item)
           }}
         />
        <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
@@ -658,7 +686,7 @@ navigation.dispatch(pushAction);
 <Text style={styles.buttonText} >Add Wallet</Text></View>
 </TouchableOpacity>
 
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setActiveAddress, setEnabledAddresses, false, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses,setActiveAddress)}>
      <View style={styles.rowStyle}><Icon name="add-circle-outline" size={20} color="#4F8EF7" />
 <Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity> 

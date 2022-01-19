@@ -9,135 +9,159 @@ import { decrypt } from '../helpers/encrypt';
 var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { catchError } from 'rxjs/operators';
+import SelectDropdown from 'react-native-select-dropdown'
+import Clipboard from '@react-native-clipboard/clipboard';
 
 const Separator = () => (
   <View style={styles.separator} />
 );
 
 
-function errorCB(err) {
-  alert("SQL Error: " + err.message);
-}
 
-function successCB() {
-  console.log("SQL executed fine");
-}
+function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee){
 
-function openCB() {
-  // console.log("Database OPENED");
-}
+  amount = BigInt(amount) * 1000000000000000000n;
 
-
-function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, setword13){
-  
-  try{
-  var mnemonic = decrypt(mnemonic_enc, Buffer.from(password));
-  var word13 = decrypt(word13_enc, Buffer.from(password));
-  setMnemonic(mnemonic);
-  setword13(word13);
-  setShow(true);
-  } catch(err){
-    alert("Password was incorrect")
-  }
-}
-
-
-
-
- const MnemonicDisplay = ({route}) => {
-
-
-
-  var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
-
-  db.transaction((tx) => {
-    tx.executeSql("SELECT wallet.mnemonic_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
-      var len = results.rows.length;
-      var tempMnemonic = "default_val";
-        for (let i = 0; i < len; i++) {
-            let row = results.rows.item(i);
-            tempMnemonic = row.mnemonic_enc
-        }
-
-        setMnemonic_enc(tempMnemonic);
-
-        db.transaction((tx) => {
-          tx.executeSql("SELECT wallet.word13_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
-            var len = results.rows.length;
-            var tempword13_enc = "default_val";
-              for (let i = 0; i < len; i++) {
-                  let row = results.rows.item(i);
-                  tempword13_enc = row.word13_enc
-              }
+  fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
       
-              setword13_enc(tempword13_enc);
-
-              
-        db.transaction((tx) => {
-          tx.executeSql("SELECT wallet.name FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
-            var len = results.rows.length;
-            var wallet_name = "default_val";
-              for (let i = 0; i < len; i++) {
-                  let row = results.rows.item(i);
-                  wallet_name = row.name
+          {
+            "network_identifier": {
+              "network": "mainnet"
+            },
+            "actions": [
+              {
+                "type": "TransferTokens",
+                "from_account": {
+                  "address": sourceXrdAddr
+                },
+                "to_account": {
+                  "address": xrdAddr
+                },
+                "amount": {
+                  "token_identifier": {
+                    "rri": rri
+                  },
+                  "value": amount
+                }
               }
+            ],
+            "fee_payer": {
+              "address": sourceXrdAddr
+            },
+            "disable_token_mint_and_burn": true
+          } 
       
-              setWalletName("Selected Wallet Name: \n" + wallet_name);
+        )
+      }).then((response) => response.json()).then((json) => {
 
-            });
-          }, errorCB);
-              
-            });
-          }, errorCB);
+        //  alert(JSON.stringify(json));
+          // activeAddressBalances
+          if(!(json === undefined) && json.hasOwnProperty("transaction_build") ){
+            
+            setFee(json.transaction_build.fee.value);
+             
+          }
+      }).catch((error) => {
+          console.error(error);
       });
-    }, errorCB);
+}
 
 
-  const [password, setPassword] = useState();
-  const [mnemonic_enc, setMnemonic_enc] = useState();
-  const [show, setShow] = useState(false);
-  const [mnemonic, setMnemonic] = useState();
-  const [word13_enc, setword13_enc] = useState();
-  const [word13, setword13] = useState();
 
-  const [walletName, setWalletName] = useState();
+ const Send = ({route, navigation}) => {
+ 
+  const { balancesMap, sourceXrdAddr } = route.params;
+  const [ copiedText, setCopiedText ] = useState();
 
+  const fetchCopiedText = async () => {
+    const text = await Clipboard.getString();
+    setCopiedText(text);
+  };
+
+  var rris = []
+  balancesMap.forEach((balance, rri) => {
+    rris.push(rri)
+  });
   
+
+  const [xrdAddr, onChangeXrdAddr] = useState(null);
+  const [amount, onChangeAmount] = useState(null);
+  const [rri, onChangeRRI] = useState(null);
+  const [fee, setFee] = useState(null);
+
+
 
  return ( 
      <View style={styles.container}> 
       <Separator/>
       <Separator/>
-      <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontSize:20}}>{walletName}</Text>
+      <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontSize:20}}>Wallet Name</Text>
       <Separator/>
         <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Enter the Radix address to send to:</Text>
         <Separator/>
-        <PasswordInputText  style={{marginHorizontal: 25}}
-        onChangeText={(password) => setPassword( password )}
-        label='App Password' />
+
+        <TextInput
+        style={{inputWidth:'auto', paddingHorizontal:10, marginHorizontal: 10, height: 300, borderWidth:StyleSheet.hairlineWidth}}
+        onChangeText={onChangeXrdAddr}
+        value={copiedText}
+        placeholder="Radix address"
+      />
+
+<Button  style={{marginHorizontal: 25}}
+                title="Paste"
+                enabled
+                onPress={() => fetchCopiedText}
+              />
+      
+
+<SelectDropdown
+	data={rris}
+	onSelect={(selectedItem, index) => {
+		onChangeRRI(selectedItem)
+	}}
+	buttonTextAfterSelection={(selectedItem, index) => {
+		// text represented after item is selected
+		// if data array is an array of objects then return selectedItem.property to render after item is selected
+		return selectedItem
+	}}
+	rowTextForSelection={(item, index) => {
+		// text represented for each item in dropdown
+		// if data array is an array of objects then return item.property to represent item in dropdown
+		return item
+	}}
+/>
+
+<TextInput
+        style={{paddingHorizontal:10, marginHorizontal: 10, height: 30, borderWidth:StyleSheet.hairlineWidth}}
+        onChangeText={onChangeAmount}
+        value={xrdAddr}
+        placeholder="Amount"
+      />
+
+
 
         <Button  style={{marginHorizontal: 25}}
-                title="Show Mnemonic"
+                title="Send"
                 enabled
-                onPress={() => showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13)}
+                onPress={() => buildTxn(sourceXrdAddr, xrdAddr, rri, amount,setFee)}
               />
               <Separator/>
               <Separator/>
               <Separator/>
-
+<Text>Copied Text: {copiedText}</Text>
               
-              { show && 
-       <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Mnemonic Phrase:</Text> 
+
         
-        }
 
 <Separator/>
 
-        { show && 
-       
-        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>{mnemonic} {word13}</Text>
-        }
-  
+
   </View>)
 };
 
@@ -159,4 +183,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MnemonicDisplay;
+export default Send;

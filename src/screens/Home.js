@@ -21,7 +21,6 @@ import NetInfo from "@react-native-community/netinfo";
 import { assertNullLiteralTypeAnnotation } from '@babel/types';
 import { StackActions } from '@react-navigation/native';
 
-
 function useInterval(callback, delay) {
     const savedCallback = useRef();
   
@@ -466,19 +465,27 @@ function getDDIndex(dropdownVals,activeAddress){
     return 0;
 }
 
+function copyToClipboard(string){
+
+
+     alert(string.replace(/["']/g, ""))
+    Clipboard.setString(string.replace(/["']/g, ""));
+
+    showMessage({
+      message: "Address copied to clipboard",
+      type: "info",
+    });
+  };
+
+
 const Home = ({route, navigation}) => {
 
     const [copiedText, setCopiedText] = useState('');
 
-    const copyToClipboard = (string) => {
 
-      Clipboard.setString(string);
+ 
 
-      showMessage({
-        message: "Address copied to clipboard",
-        type: "info",
-      });
-    };
+      
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -595,7 +602,7 @@ const Home = ({route, navigation}) => {
     // }
 
     console.log("WALLETS: "+JSON.stringify(wallets));
-
+//(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))
 
     // // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
   
@@ -621,7 +628,8 @@ const Home = ({route, navigation}) => {
 
     <SafeAreaView style={styles.containerMain}>
 
-        <FlashMessage position="bottom" />
+        <FlashMessage position="top" />
+
         <ScrollView style={styles.scrollView}>
             <View  > 
             <Separator/>
@@ -682,11 +690,15 @@ const Home = ({route, navigation}) => {
             // alert(item)
           }}
         />
+
        <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
         <Text >0.00 USD</Text>
+        <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))}}>
+        <Text>Copy Address </Text>
+        </TouchableOpacity>
         <View style={styles.rowStyle}>
-        <TouchableOpacity style={styles.button} onPress={() =>  alert("hi")}>
-        <Text>Recieve - Send </Text>
+        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}>
+        <Text>Send </Text>
         </TouchableOpacity>
         </View>
         </Surface>

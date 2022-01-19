@@ -39,6 +39,7 @@ import Home from './src/screens/Home';
 import HomeNav from './src/screens/HomeNav';
 import AppDataSave from './src/screens/AppDataSave';
 import MnemonicInput from './src/screens/MnemonicInput';
+import Send from './src/screens/Send';
 
 // import NFTs from './src/screens/NFTs';
 // import bitcoin from 'react-native-bitcoinjs-lib'
@@ -346,9 +347,9 @@ LogBox.ignoreAllLogs();
         headerTitleStyle: {
           fontWeight: 'bold',
         },
-      }}>{ firstTimer == false
+      }}>{ firstTimer == true
   ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} />
-  :     <Stack.Screen name="Raddish  Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
+  :     <Stack.Screen name="Raddish Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
 
 }
      
@@ -356,7 +357,7 @@ LogBox.ignoreAllLogs();
       <Stack.Screen name="Mnemonic Input" component={MnemonicInput} />
       <Stack.Screen name="App Password" component={AppDataSave} />
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
- 
+      <Stack.Screen name="Send" component={Send} />
     </Stack.Navigator>
     </NavigationContainer>
   

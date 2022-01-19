@@ -11112,6 +11112,11 @@
     "@types/node" "^14.14.35"
     "buffer" "^5.6.0"
 
+"react-native-select-dropdown@^1.7.0":
+  "integrity" "sha512-zdHOHzrmWdNYLXuC+F1abbJhzUpBMgptWWOKN4gi3ge1gV3uPep/hpBznAUo7jHzObXQh6JHZP/AMmbg/1rWFA=="
+  "resolved" "https://registry.npmjs.org/react-native-select-dropdown/-/react-native-select-dropdown-1.7.0.tgz"
+  "version" "1.7.0"
+
 "react-native-select-multiple@^2.1.0":
   "integrity" "sha512-sJepp/RNeLorR+/bEUVuWnVEX5klpyf0MHWKy0SN1MIty4vcKhL9ZhPM6Zydm5p6qHeFcvA7Q87FzO1JTdaqkw=="
   "resolved" "https://registry.npmjs.org/react-native-select-multiple/-/react-native-select-multiple-2.1.0.tgz"

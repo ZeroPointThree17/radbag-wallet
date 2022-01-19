@@ -30,8 +30,9 @@ function openCB() {
 
 function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee, public_key, privKey_enc){
 
-  amount = (amount * 1000000000000000000).toString();
+  var amountStr = (amount * 1000000000000000000).toString();
 
+  alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token id: "+rri + " amount "+amountStr)
   fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
         method: 'POST',
         headers: {
@@ -57,7 +58,7 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee, public_key, privKe
                   "token_identifier": {
                     "rri": rri
                   },
-                  "value": amount
+                  "value": amountStr
                 }
               }
             ],
@@ -299,7 +300,7 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
         <Button  style={{marginHorizontal: 25}}
                 title="Send"
                 enabled
-                onPress={() => buildTxn(sourceXrdAddr, xrdAddr, rri, amount,setFee, public_key, privKey_enc)}
+                onPress={() => buildTxn(sourceXrdAddr, destAddr, rri, amount,setFee, public_key, privKey_enc)}
               />
               <Separator/>
               <Separator/>

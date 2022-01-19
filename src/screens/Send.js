@@ -76,11 +76,13 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee){
 
  const Send = ({route, navigation}) => {
  
-  const { balancesMap, sourceXrdAddr } = route.params;
+  const { balancesMap, sourceXrdAddr, clipboardObj } = route.params;
   const [ copiedText, setCopiedText ] = useState();
 
   const fetchCopiedText = async () => {
-    const text = await Clipboard.getString();
+ 
+    const text = await clipboardObj.getString();
+    alert("text copied: "  + text)
     setCopiedText(text);
   };
 
@@ -116,7 +118,7 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee){
 <Button  style={{marginHorizontal: 25}}
                 title="Paste"
                 enabled
-                onPress={() => fetchCopiedText}
+                onPress={() => fetchCopiedText()}
               />
       
 

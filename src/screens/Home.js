@@ -11,7 +11,7 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
 import  IconFoundation  from 'react-native-vector-icons/Foundation';
-import Clipboard from '@react-native-clipboard/clipboard';
+import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
 import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
 import { Surface, List } from 'react-native-paper';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
@@ -465,16 +465,23 @@ function getDDIndex(dropdownVals,activeAddress){
     return 0;
 }
 
-function copyToClipboard(string){
+async function copyToClipboard(string){
 
 
      alert(string.replace(/["']/g, ""))
-    Clipboard.setString(string.replace(/["']/g, ""));
-
+    await Clipboard.setString(string.replace(/["']/g, ""));
+    const text = await Clipboard.getString();
+    alert("text copied: "  + text)
     showMessage({
       message: "Address copied to clipboard",
       type: "info",
     });
+  };
+
+function fetchCopiedText(cpdata){
+ 
+    // const text = await Clipboard.getString();
+     alert("text copied: "  + cpdata)
   };
 
 
@@ -504,6 +511,7 @@ const Home = ({route, navigation}) => {
     const [enabledAddresses, setEnabledAddresses] = useState(initialEnabledAddresses);
     const [addressRRIs, setAddressRRIs] = useState(new Map())
     const [tokenMetadata, setTokenMetadata] = useState(new Map())
+    const [cpdata, setString] = useClipboard();
 
 
     console.log("about to output ADDRESSES: ");
@@ -602,6 +610,8 @@ const Home = ({route, navigation}) => {
     // }
 
     console.log("WALLETS: "+JSON.stringify(wallets));
+
+
 //(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))
 
     // // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
@@ -693,11 +703,12 @@ const Home = ({route, navigation}) => {
 
        <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
         <Text >0.00 USD</Text>
-        <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))}}>
+        <TouchableOpacity style={styles.button} onPress={ () => {setString(JSON.stringify(enabledAddresses.get(activeAddress).radix_address));fetchCopiedText(cpdata)}}> 
+ 
         <Text>Copy Address </Text>
         </TouchableOpacity>
         <View style={styles.rowStyle}>
-        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}>
+        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, clipboardObj:Clipboard})}>
         <Text>Send </Text>
         </TouchableOpacity>
         </View>

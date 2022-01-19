@@ -708,15 +708,23 @@ const Home = ({route, navigation}) => {
 
        <Separator/>
 
+       <View style={styles.rowStyle}>
+       <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, setStringObj: setString, cpdataObj: cpdata})}>
+        <View style={styles.rowStyle}>
+        <IconMaterialCommunityIcons name="call-received" size={20} color="white" />
+        <Text style={{fontSize: 16, color:"white"}}> Receive</Text>
+        </View>
+        </TouchableOpacity>
 
+        <Text style={{fontSize: 16, color:"white"}}>          </Text>
+  
         <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, setStringObj: setString, cpdataObj: cpdata})}>
         <View style={styles.rowStyle}>
-
         <IconFeather name="send" size={20} color="white" />
         <Text style={{fontSize: 16, color:"white"}}> Send</Text>
         </View>
         </TouchableOpacity>
-       
+        </View>
         {/* </Surface> */}
         </LinearGradient>
       {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
@@ -742,7 +750,7 @@ navigation.dispatch(pushAction);
     }>
      <View style={styles.rowStyle}>
      <IconMaterialCommunityIcons name="application-import" size={20} color="black" />
-<Text style={styles.buttonText} >Import Wallet     </Text></View>
+<Text style={styles.buttonText} > Import Wallet     </Text></View>
 </TouchableOpacity>
 
 
@@ -758,7 +766,7 @@ navigation.dispatch(pushAction);
      <View style={styles.rowStyle}>
      <IconEntypo name="wallet" size={20} color="black" />
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={styles.buttonText} >Add Wallet     </Text></View>
+<Text style={styles.buttonText} > Add Wallet     </Text></View>
 </TouchableOpacity>
 
 
@@ -774,7 +782,7 @@ navigation.dispatch(pushAction);
 </View>
 
 
-<View style={{margin:20}}>
+<View style={{margin:24}}>
 <Text>Tokens</Text>
 
 {renderAddressRows(balances,tokenMetadata,copyToClipboard)}

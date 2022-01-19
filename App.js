@@ -347,7 +347,7 @@ LogBox.ignoreAllLogs();
         headerTitleStyle: {
           fontWeight: 'bold',
         },
-      }}>{ firstTimer == false
+      }}>{ firstTimer == true
   ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} />
   :     <Stack.Screen name="Raddish Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
 

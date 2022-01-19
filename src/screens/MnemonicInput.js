@@ -19,6 +19,7 @@ const Separator = () => (
 
 function navigateAppPassword(navigation, mnemonic, firstTime){
 
+    if(mnemonic.length > 0){
     mnemonic = mnemonic.replace(/\s\s+/g, ' ').replace(/(\r\n|\n|\r)/gm, "");;
 
     mnemonicArr = mnemonic.split(" ");
@@ -48,7 +49,9 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
     } else{
         alert("Mnemonic is not valid")
     }
-    
+} else{
+    alert("Mnemonic cannot be empty")
+}
 
   }
   
@@ -58,7 +61,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
     const { firstTimeStr } = route.params;
     var firstTime = JSON.stringify(firstTimeStr).replaceAll('"','');
 
-  const [mnemonic, setMnemonic] = useState();
+  const [mnemonic, setMnemonic] = useState("");
   
  return ( 
      <View style={styles.container} removeClippedSubviews={false}> 

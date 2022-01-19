@@ -235,7 +235,7 @@ function renderAddressRows(balances, tokenMetadata,copyToClipboard){
         source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:16,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
-    <Text style={{color:"black",flex:0.2,marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",flex:0.7,marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
     </View> 
     </View>        )
 

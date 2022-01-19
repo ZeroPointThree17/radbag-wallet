@@ -22,7 +22,8 @@ import { assertNullLiteralTypeAnnotation } from '@babel/types';
 import { StackActions } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import IconFeather from 'react-native-vector-icons/Feather';
-
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 function useInterval(callback, delay) {
     const savedCallback = useRef();
   
@@ -234,7 +235,7 @@ function renderAddressRows(balances, tokenMetadata,copyToClipboard){
         source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:16,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
-    <Text style={{color:"black",flex:0.6,marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",flex:0.2,marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
     </View> 
     </View>        )
 
@@ -676,6 +677,7 @@ const Home = ({route, navigation}) => {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
+          containerStyle ={styles.containerStyle}
           data={dropdownVals}
           activeColor="#4DA892"
           search
@@ -700,17 +702,21 @@ const Home = ({route, navigation}) => {
           }}
         />
 
+<Separator/>
        <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
  
 
-  
+       <Separator/>
 
-        <View style={styles.rowStyle}>
 
         <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, setStringObj: setString, cpdataObj: cpdata})}>
-        <Text style={{fontSize: 25, color:"white"}}>Send </Text>
-        </TouchableOpacity>
+        <View style={styles.rowStyle}>
+
+        <IconFeather name="send" size={20} color="white" />
+        <Text style={{fontSize: 16, color:"white"}}> Send</Text>
         </View>
+        </TouchableOpacity>
+       
         {/* </Surface> */}
         </LinearGradient>
       {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
@@ -735,7 +741,7 @@ navigation.dispatch(pushAction);
      }
     }>
      <View style={styles.rowStyle}>
-         {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
+     <IconMaterialCommunityIcons name="application-import" size={20} color="black" />
 <Text style={styles.buttonText} >Import Wallet     </Text></View>
 </TouchableOpacity>
 
@@ -750,8 +756,9 @@ navigation.dispatch(pushAction);
      }
     }>
      <View style={styles.rowStyle}>
+     <IconEntypo name="wallet" size={20} color="black" />
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={styles.buttonText} >+ Wallet     </Text></View>
+<Text style={styles.buttonText} >Add Wallet     </Text></View>
 </TouchableOpacity>
 
 
@@ -759,18 +766,20 @@ navigation.dispatch(pushAction);
 
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses,setActiveAddress)}>
      <View style={styles.rowStyle}>
-         {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={styles.buttonText} >+ Address</Text></View>
+     <IconFeather name="hash" size={20} color="black" />
+<Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity> 
 
 
 </View>
 
-<Separator/>
+
+<View style={{margin:20}}>
 <Text>Tokens</Text>
 
 {renderAddressRows(balances,tokenMetadata,copyToClipboard)}
 
+</View> 
         <Separator/>
 
   </View> 
@@ -835,8 +844,8 @@ const styles = StyleSheet.create({
         marginVertical:5
       },
       buttonText: {
-        fontSize: 16,
-        color:"#4F8EF7"
+        fontSize: 14,
+        color:"black"
       },
   text: {
     fontSize: 20,
@@ -893,7 +902,7 @@ const styles = StyleSheet.create({
     alignContent:"flex-start",
     justifyContent:"flex-start",
     textAlign:"left",
-    height: 24,
+    height: 20,
     borderColor: 'gray',
     borderWidth: 0,
     borderRadius: 8,
@@ -915,13 +924,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
 containerStyle: {
-
-    // backgroundColor: "black"
+    //  backgroundColor: "#183A81",
+     backgroundColor: "#183A81",
+     color:"white"
   },
   placeholderStyle: {
     fontSize: 16,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    color:"white"
   },
   selectedTextStyle: {
     fontSize: 16,
@@ -938,7 +949,7 @@ containerStyle: {
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
-
+    color:"white"
   },
   scrollView: {
    

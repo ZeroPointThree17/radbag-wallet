@@ -62,6 +62,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
   
  return ( 
      <View style={styles.container} removeClippedSubviews={false}> 
+     <Separator/>
 <Text style={styles.title, {margin: 20}}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
 <KeyboardAvoidingView>
 <TextInput
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 0,
     backgroundColor: "white",
-    justifyContent: 'center'
+    // justifyContent: 'center'
    },
    sectionHeader: {
      paddingTop: 2,

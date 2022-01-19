@@ -107,7 +107,6 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
  return ( 
      <View style={styles.container}> 
       <Separator/>
-      <Separator/>
       <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontSize:20}}>{walletName}</Text>
       <Separator/>
         <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Enter your wallet password to display the mnemonic for this wallet</Text>

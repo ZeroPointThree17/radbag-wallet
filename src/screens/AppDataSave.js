@@ -73,7 +73,7 @@ var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, er
 
 console.log("ABOUT TO LOAD TABLES")
 
-var doNothingStmt = "SELECT 'Do nothing'";
+var doNothingStmt = "SELECT 'DO_NOTHING' as do_nothing_stmt";
 
 var nextWalledId=1;
 var nextAddressId=1;
@@ -142,18 +142,18 @@ maxWalletId='SELECT MAX(id) AS id from wallet';
 maxAddressId='SELECT MAX(id) AS id from address';
 dropWallet = doNothingStmt;
 createWallet = doNothingStmt;
-insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES ("+nextWalledId+", 'My Wallet (#"+nextWalledId+")', '" + mnemonic_enc + "', '" + word13_enc + "')";
+// insertWallet = 
 dropActiveWallet = doNothingStmt;
 createActiveWallet = doNothingStmt;
-insertActiveWallet = "INSERT INTO active_wallet VALUES("+nextWalledId+")";
+// insertActiveWallet = "INSERT INTO active_wallet VALUES("+nextWalledId+")";
 dropActiveAddress = doNothingStmt;
 createActiveAddress = doNothingStmt;
-insertActiveAddress = "INSERT INTO active_address (id) VALUES('"+nextAddressId+"')";
+// insertActiveAddress = ;
 dropToken = doNothingStmt;
 createToken = doNothingStmt;
 dropAddress = doNothingStmt;
 createAddress = doNothingStmt;
-insertAddressFirstPart = "INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES ("+nextWalledId;
+// insertAddressFirstPart = ;
 break;
 default:
 // code block
@@ -165,8 +165,13 @@ db.transaction((tx) => {
           var len = results.rows.length;
       
         for (let i = 0; i < len; i++) {
+
       let row = results.rows.item(i);
-      nextWalledId = row.id + 1;
+      if(row.do_nothing_stmt!="DO_NOTHING"){
+        nextWalledId = row.id + 1;
+        // alert("Next wallet ID: " + nextWalledId)
+      }
+     
         }
 
           // alert(nextWalledId)
@@ -177,7 +182,12 @@ db.transaction((tx) => {
               
                 for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);
-              nextAddressId = row.id + 1;
+
+              if(row.do_nothing_stmt!="DO_NOTHING"){
+                
+                nextAddressId = row.id + 1;
+                // alert("Next address ID: " + nextAddressId)
+              }
 
                 }
 
@@ -236,7 +246,7 @@ db.transaction((tx) => {
         console.log("Create wallet table completed");
 
           db.transaction((tx) => {
-            tx.executeSql(insertWallet, [], (tx, results) => {
+            tx.executeSql("INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES ("+nextWalledId+", 'My Wallet (#"+nextWalledId+")', '" + mnemonic_enc + "', '" + word13_enc + "')", [], (tx, results) => {
               console.log("Insert into wallet table completed");
 
 
@@ -249,7 +259,7 @@ db.transaction((tx) => {
       db.transaction((tx) => {
           tx.executeSql(createActiveWallet, [], (tx, results) => {
               db.transaction((tx) => {
-                  tx.executeSql(insertActiveWallet, [], (tx, results) => {
+                  tx.executeSql("INSERT INTO active_wallet VALUES("+nextWalledId+")", [], (tx, results) => {
                   console.log("insert into active_wallet completed");
 
 
@@ -260,7 +270,7 @@ db.transaction((tx) => {
                         db.transaction((tx) => {
                             tx.executeSql(createActiveAddress, [], (tx, results) => {
                                 db.transaction((tx) => {
-                                    tx.executeSql(insertActiveAddress, [], (tx, results) => {
+                                    tx.executeSql("INSERT INTO active_address (id) VALUES('"+nextAddressId+"')", [], (tx, results) => {
                                       console.log("Insert into active address table completed");  
                                       // setAppPw("");
                                       // setAppPwConfirm(""); 
@@ -363,7 +373,7 @@ db.transaction((tx) => {
                       
                           if(i==2){enabled_flag=0}
                           
-                          tx.executeSql(insertAddressFirstPart+",'My Address (#"+i.toString()+")','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"','"+enabled_flag+"')", [], (tx, results) => {
+                          tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES ("+nextWalledId+",'My Address (#"+i.toString()+")','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"','"+enabled_flag+"')", [], (tx, results) => {
                             console.log("Insert into address table completed");
                             
 
@@ -451,9 +461,21 @@ const [appPwConfirm, setAppPwConfirm] = useState("");
   
   return (
     <SafeAreaView style={styles.container}>
+      <Separator/>
+      <Separator/>
      <View > 
 
+     { isActive
+  &&
+  <ActivityIndicator />
+  }
 
+{ isActive
+  &&
+  <Text style={styles.title}>Setting up wallet for the first time. Please wait...</Text>
+  }
+<Separator/>
+<Separator/>
     <Text style={styles.title}>Enter a password to protect the data in this wallet.</Text>
  <PasswordInputText style={styles.title}
 onChangeText={(password) => setAppPw( password )}
@@ -466,15 +488,13 @@ label='Confirm App Password' />
  <Separator/>
  <Button
         title="Continue"
-        enabled
+        enabled = {
+          isActive?false:true
+        }
         onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, setIsActive, firstTime)}
       />
 <Separator/>
 <Separator/>
-  { isActive
-  &&
-  <ActivityIndicator />
-  }
 
   </View> 
   </SafeAreaView>
@@ -498,7 +518,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 0,
     paddingHorizontal: 20,

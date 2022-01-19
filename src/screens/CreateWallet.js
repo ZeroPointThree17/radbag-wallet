@@ -50,7 +50,7 @@ const [word13, setword13] = useState("");
   return (
 
     <SafeAreaView style={styles.container}>
-   
+   <Separator/>
      <View > 
       <Text style={styles.title}>Below is your mnemonic phrase. Write it down and keep them in a safe place. DO NOT take a photo of the phrase or copy and paste it anywhere. This key holds ALL YOUR FUNDS!</Text>
  <Separator/>
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     backgroundColor: 'white',
   },
    sectionHeader: {

@@ -724,9 +724,30 @@ const Home = ({route, navigation}) => {
       {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
 <Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity> */}
 
+
+
+
+
 </View>
 
      <View style={styles.rowStyle}>
+       
+
+
+     <TouchableOpacity style={styles.button} onPress={() => 
+
+{
+const pushAction = StackActions.push('Mnemonic Input', { firstTimeStr: 'false' });
+
+navigation.dispatch(pushAction);
+     }
+    }>
+     <View style={styles.rowStyle}>
+         {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
+<Text style={styles.buttonText} >Import Wallet     </Text></View>
+</TouchableOpacity>
+
+
        
      <TouchableOpacity style={styles.button} onPress={() => 
 
@@ -738,27 +759,16 @@ navigation.dispatch(pushAction);
     }>
      <View style={styles.rowStyle}>
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={styles.buttonText} >Add Wallet  |  </Text></View>
+<Text style={styles.buttonText} >+ Wallet     </Text></View>
 </TouchableOpacity>
 
 
-<TouchableOpacity style={styles.button} onPress={() => 
 
-{
-const pushAction = StackActions.push('Mnemonic Input', { firstTimeStr: 'false' });
-
-navigation.dispatch(pushAction);
-     }
-    }>
-     <View style={styles.rowStyle}>
-         {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={styles.buttonText} >Import Wallet  |  </Text></View>
-</TouchableOpacity>
 
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses,setActiveAddress)}>
      <View style={styles.rowStyle}>
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={styles.buttonText} >Add Address</Text></View>
+<Text style={styles.buttonText} >+ Address</Text></View>
 </TouchableOpacity> 
 
 
@@ -827,7 +837,7 @@ const styles = StyleSheet.create({
         marginVertical:5
       },
       buttonText: {
-        fontSize: 18,
+        fontSize: 16,
         color:"#4F8EF7"
       },
   text: {

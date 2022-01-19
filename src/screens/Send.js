@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -11,6 +11,7 @@ import PasswordInputText from 'react-native-hide-show-password-input';
 import { catchError } from 'rxjs/operators';
 import SelectDropdown from 'react-native-select-dropdown'
 import Clipboard from '@react-native-clipboard/clipboard';
+import { Input, Icon } from 'react-native-elements';
 
 const Separator = () => (
   <View style={styles.separator} />
@@ -20,7 +21,7 @@ const Separator = () => (
 
 function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee){
 
-  amount = BigInt(amount) * 1000000000000000000n;
+  amount = amount * 1000000000000000000;
 
   fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
         method: 'POST',
@@ -76,7 +77,7 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee){
 
  const Send = ({route, navigation}) => {
  
-  const { balancesMap, sourceXrdAddr, clipboardObj } = route.params;
+  const { balancesMap, sourceXrdAddr, setStringObj, cpdataObj } = route.params;
   const [ copiedText, setCopiedText ] = useState();
 
   const fetchCopiedText = async () => {
@@ -100,25 +101,33 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee){
 
 
  return ( 
-     <View style={styles.container}> 
+     <View style={styles.container} removeClippedSubviews={false}> 
+         <Input
+        placeholder='INPUT WITH ICON'
+        leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
+      />
+             <ScrollView style={styles.scrollView}
+        keyboardShouldPersistTaps="handled"
+        removeClippedSubviews={false}>
+
       <Separator/>
       <Separator/>
       <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontSize:20}}>Wallet Name</Text>
       <Separator/>
         <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Enter the Radix address to send to:</Text>
         <Separator/>
-
+<KeyboardAvoidingView>
         <TextInput
         style={{inputWidth:'auto', paddingHorizontal:10, marginHorizontal: 10, height: 300, borderWidth:StyleSheet.hairlineWidth}}
-        onChangeText={onChangeXrdAddr}
-        value={copiedText}
+        // onChangeText={onChangeXrdAddr}
+        // value={copiedText}
         placeholder="Radix address"
       />
-
+</KeyboardAvoidingView>
 <Button  style={{marginHorizontal: 25}}
                 title="Paste"
                 enabled
-                onPress={() => fetchCopiedText()}
+                onPress={() => alert(cpdataObj)}
               />
       
 
@@ -156,14 +165,14 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee){
               <Separator/>
               <Separator/>
               <Separator/>
-<Text>Copied Text: {copiedText}</Text>
+<Text>Copied Text: {cpdataObj}</Text>
               
 
         
 
 <Separator/>
 
-
+</ScrollView>
   </View>)
 };
 

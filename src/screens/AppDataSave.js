@@ -78,8 +78,89 @@ var doNothingStmt = "SELECT 'Do nothing'";
 var nextWalledId=1;
 var nextAddressId=1;
 
+
+
+var maxWalletId = "";
+var maxAddressId = "";
+var dropWallet = "";
+var createWallet = "";
+var insertWallet = "";
+var dropActiveWallet = "";
+var createActiveWallet = "";
+var insertActiveWallet = "";
+var dropActiveAddress = "";
+var createActiveAddress = "";
+var insertActiveAddress = "";
+var dropToken = "";
+var createToken = "";
+var dropAddress = "";
+var createAddress = "";
+var insertAddressFirstPart = "";
+// alert(firstFlag)
+
+switch(firstFlag) {
+case true:
+maxWalletId = doNothingStmt;
+maxAddressId = doNothingStmt;
+dropWallet = 'DROP TABLE IF EXISTS wallet';
+createWallet = `CREATE TABLE wallet (
+id INTEGER PRIMARY KEY,
+name TEXT,
+mnemonic_enc TEXT,
+word13_enc TEXT
+)`;
+insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet (#1)', '" + mnemonic_enc + "', '" + word13_enc + "')";
+dropActiveWallet = 'DROP TABLE IF EXISTS active_wallet';
+createActiveWallet = `CREATE TABLE active_wallet ( id INTEGER )`;
+insertActiveWallet = "INSERT INTO active_wallet VALUES(1)";
+dropActiveAddress = 'DROP TABLE IF EXISTS active_address';
+createActiveAddress = "CREATE TABLE active_address ( id INTEGER )";
+insertActiveAddress = "INSERT INTO active_address (id) VALUES('1')";
+dropToken = 'DROP TABLE IF EXISTS token';
+createToken = `CREATE TABLE token (
+id INTEGER PRIMARY KEY,
+rri TEXT,
+name TEXT,
+symbol TEXT,
+decimals INTGER,
+logo_url TEXT
+)`;
+dropAddress = 'DROP TABLE IF EXISTS address';
+createAddress = `CREATE TABLE address (
+id INTEGER PRIMARY KEY,
+wallet_id INTEGER,
+name TEXT,
+radix_address TEXT,
+publickey TEXT,
+privatekey_enc TEXT,
+enabled_flag INTEGER
+)`;
+insertAddressFirstPart = "INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1";
+break;
+case false:
+maxWalletId='SELECT MAX(id) AS id from wallet';
+maxAddressId='SELECT MAX(id) AS id from address';
+dropWallet = doNothingStmt;
+createWallet = doNothingStmt;
+insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES ("+nextWalledId+", 'My Wallet (#"+nextWalledId+")', '" + mnemonic_enc + "', '" + word13_enc + "')";
+dropActiveWallet = doNothingStmt;
+createActiveWallet = doNothingStmt;
+insertActiveWallet = "INSERT INTO active_wallet VALUES("+nextWalledId+")";
+dropActiveAddress = doNothingStmt;
+createActiveAddress = doNothingStmt;
+insertActiveAddress = "INSERT INTO active_address (id) VALUES('"+nextAddressId+"')";
+dropToken = doNothingStmt;
+createToken = doNothingStmt;
+dropAddress = doNothingStmt;
+createAddress = doNothingStmt;
+insertAddressFirstPart = "INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES ("+nextWalledId;
+break;
+default:
+// code block
+}
+
 db.transaction((tx) => {
-  tx.executeSql('SELECT MAX(id) AS id from wallet', [], (tx, results) => {
+  tx.executeSql(maxWalletId, [], (tx, results) => {
 
           var len = results.rows.length;
       
@@ -90,7 +171,7 @@ db.transaction((tx) => {
 
           // alert(nextWalledId)
         db.transaction((tx) => {
-          tx.executeSql('SELECT MAX(id) AS id from address', [], (tx, results) => {
+          tx.executeSql(maxAddressId, [], (tx, results) => {
         
                   var len = results.rows.length;
               
@@ -100,78 +181,7 @@ db.transaction((tx) => {
 
                 }
 
-              var dropWallet = "";
-              var createWallet = "";
-              var insertWallet = "";
-              var dropActiveWallet = "";
-              var createActiveWallet = "";
-              var insertActiveWallet = "";
-              var dropActiveAddress = "";
-              var createActiveAddress = "";
-              var insertActiveAddress = "";
-              var dropToken = "";
-              var createToken = "";
-              var dropAddress = "";
-              var createAddress = "";
-              var insertAddressFirstPart = "";
-// alert(firstFlag)
-              switch(firstFlag) {
-  case true:
-    dropWallet = 'DROP TABLE IF EXISTS wallet';
-    createWallet = `CREATE TABLE wallet (
-      id INTEGER PRIMARY KEY,
-      name TEXT,
-      mnemonic_enc TEXT,
-      word13_enc TEXT
-  )`;
-    insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES (1, 'My Wallet (#1)', '" + mnemonic_enc + "', '" + word13_enc + "')";
-    dropActiveWallet = 'DROP TABLE IF EXISTS active_wallet';
-    createActiveWallet = `CREATE TABLE active_wallet ( id INTEGER )`;
-    insertActiveWallet = "INSERT INTO active_wallet VALUES(1)";
-    dropActiveAddress = 'DROP TABLE IF EXISTS active_address';
-    createActiveAddress = "CREATE TABLE active_address ( id INTEGER )";
-    insertActiveAddress = "INSERT INTO active_address (id) VALUES('1')";
-    dropToken = 'DROP TABLE IF EXISTS token';
-    createToken = `CREATE TABLE token (
-      id INTEGER PRIMARY KEY,
-      rri TEXT,
-  name TEXT,
-  symbol TEXT,
-  decimals INTGER,
-  logo_url TEXT
-  )`;
-    dropAddress = 'DROP TABLE IF EXISTS address';
-    createAddress = `CREATE TABLE address (
-      id INTEGER PRIMARY KEY,
-      wallet_id INTEGER,
-      name TEXT,
-  radix_address TEXT,
-  publickey TEXT,
-  privatekey_enc TEXT,
-  enabled_flag INTEGER
-  )`;
-    insertAddressFirstPart = "INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES (1";
-    break;
-  case false:
-    dropWallet = doNothingStmt;
-    createWallet = doNothingStmt;
-    insertWallet = "INSERT INTO wallet (id, name, mnemonic_enc, word13_enc) VALUES ("+nextWalledId+", 'My Wallet (#"+nextWalledId+")', '" + mnemonic_enc + "', '" + word13_enc + "')";
-    dropActiveWallet = doNothingStmt;
-    createActiveWallet = doNothingStmt;
-    insertActiveWallet = "INSERT INTO active_wallet VALUES("+nextWalledId+")";
-    dropActiveAddress = doNothingStmt;
-    createActiveAddress = doNothingStmt;
-    insertActiveAddress = "INSERT INTO active_address (id) VALUES('"+nextAddressId+"')";
-    dropToken = doNothingStmt;
-    createToken = doNothingStmt;
-    dropAddress = doNothingStmt;
-    createAddress = doNothingStmt;
-    insertAddressFirstPart = "INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES ("+nextWalledId;
-    break;
-  default:
-    // code block
-}
-
+  
 if(firstFlag){
 db.transaction((tx) => {
 
@@ -415,8 +425,9 @@ const AppDataSave = ({route, navigation}) => {
   var word13 = JSON.stringify(word13Str).replaceAll('"','');
   var firstTimeString = JSON.stringify(firstTimeStr).replaceAll('"','');
 
-  var firstTime=false
-  if(firstTimeString=="true"){firstTime=true}
+  var firstTime=true
+  if(firstTimeString=="false"){firstTime=false}
+  console.log("first time: "+firstTime)
 
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);

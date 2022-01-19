@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView,Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -61,18 +61,18 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
   const [mnemonic, setMnemonic] = useState();
   
  return ( 
-     <View style={styles.container}> 
+     <View style={styles.container} removeClippedSubviews={false}> 
 <Text style={styles.title, {margin: 20}}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
- 
+<KeyboardAvoidingView>
 <TextInput
-    editable
+    editable = {true}
     onChangeText={(input) => setMnemonic( input )}
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
       style={{height: 150, padding: 10, margin:20, marginTop:10, borderWidth:StyleSheet.hairlineWidth}}
     />
-  
+  </KeyboardAvoidingView>
 
  <Button style={styles.title}
         title="Submit"

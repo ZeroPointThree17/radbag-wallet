@@ -1,4 +1,4 @@
-import { Alert, Image, Button, ScrollView, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, Button, ScrollView, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState,useRef, useEffect, useReducer } from 'react';
 const bip39 = require('bip39');
 var HDKey = require('hdkey')
@@ -633,14 +633,15 @@ const Home = ({route, navigation}) => {
 //          <Text >Radix Key: {rdx_addr} </Text>
        
 //        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
-
+//  fetchCopiedText(cpdata);
   return (
 
     <SafeAreaView style={styles.containerMain}>
 
         <FlashMessage position="top" />
-
-        <ScrollView style={styles.scrollView}>
+        <ScrollView style={styles.scrollView}
+        keyboardShouldPersistTaps="handled"
+        removeClippedSubviews={false}>
             <View  > 
             <Separator/>
                 <View style={styles.rowStyle}>
@@ -703,12 +704,19 @@ const Home = ({route, navigation}) => {
 
        <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
         <Text >0.00 USD</Text>
-        <TouchableOpacity style={styles.button} onPress={ () => {setString(JSON.stringify(enabledAddresses.get(activeAddress).radix_address));fetchCopiedText(cpdata)}}> 
- 
+
+        <TouchableOpacity style={styles.button} onPress={ () => {setString(JSON.stringify(enabledAddresses.get(activeAddress).radix_address));
+        showMessage({
+            message: "Address copied to clipboard",
+            type: "info",
+          })
+        }}>
         <Text>Copy Address </Text>
         </TouchableOpacity>
+
         <View style={styles.rowStyle}>
-        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, clipboardObj:Clipboard})}>
+
+        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, setStringObj: setString, cpdataObj: cpdata})}>
         <Text>Send </Text>
         </TouchableOpacity>
         </View>

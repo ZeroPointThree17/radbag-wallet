@@ -12,8 +12,8 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		DDA021ECE18D132F8593BB6F /* libPods-RaddishWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 751AD27AAE9553726A8669B9 /* libPods-RaddishWallet.a */; };
-		E0E156627CD434B9B009B81C /* libPods-RaddishWallet-RaddishWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BC382AD404443FD608887E6 /* libPods-RaddishWallet-RaddishWalletTests.a */; };
+		D31DB6D2FDB839FE7F1B0E37 /* libPods-RaddishWallet-RaddishWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D62714416808B0CCBD27BAF3 /* libPods-RaddishWallet-RaddishWalletTests.a */; };
+		FE93A3B6A1A546703CB3F2A5 /* libPods-RaddishWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1AB121DDABD9B62A234D19 /* libPods-RaddishWallet.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,19 +30,20 @@
 		00E356EE1AD99517003FC87E /* RaddishWalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RaddishWalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* RaddishWalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RaddishWalletTests.m; sourceTree = "<group>"; };
-		0AF28C7DD5A0BE0A8B5EB13B /* Pods-RaddishWallet-RaddishWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaddishWallet-RaddishWalletTests.release.xcconfig"; path = "Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* RaddishWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RaddishWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = RaddishWallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = RaddishWallet/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RaddishWallet/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RaddishWallet/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RaddishWallet/main.m; sourceTree = "<group>"; };
-		48D414B8893108A79E200166 /* Pods-RaddishWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaddishWallet.release.xcconfig"; path = "Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet.release.xcconfig"; sourceTree = "<group>"; };
-		59F8DF35DD152DC2745488C0 /* Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
-		751AD27AAE9553726A8669B9 /* libPods-RaddishWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RaddishWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1945C13391AC57C6F681AE19 /* Pods-RaddishWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaddishWallet.release.xcconfig"; path = "Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet.release.xcconfig"; sourceTree = "<group>"; };
+		3B1AB121DDABD9B62A234D19 /* libPods-RaddishWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RaddishWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BFAB00BECFF8FE56A925F9D /* Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
+		4E645B9827985F6F00A9A2E9 /* RaddishWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = RaddishWallet.entitlements; path = RaddishWallet/RaddishWallet.entitlements; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = RaddishWallet/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		9449597AB58004C0525D0FAC /* Pods-RaddishWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaddishWallet.debug.xcconfig"; path = "Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet.debug.xcconfig"; sourceTree = "<group>"; };
-		9BC382AD404443FD608887E6 /* libPods-RaddishWallet-RaddishWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RaddishWallet-RaddishWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		83393BB48D04881E4F5A95D5 /* Pods-RaddishWallet-RaddishWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaddishWallet-RaddishWalletTests.release.xcconfig"; path = "Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests.release.xcconfig"; sourceTree = "<group>"; };
+		A1DA98E84964DC48957D2DBB /* Pods-RaddishWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaddishWallet.debug.xcconfig"; path = "Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		D62714416808B0CCBD27BAF3 /* libPods-RaddishWallet-RaddishWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RaddishWallet-RaddishWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -51,7 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0E156627CD434B9B009B81C /* libPods-RaddishWallet-RaddishWalletTests.a in Frameworks */,
+				D31DB6D2FDB839FE7F1B0E37 /* libPods-RaddishWallet-RaddishWalletTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDA021ECE18D132F8593BB6F /* libPods-RaddishWallet.a in Frameworks */,
+				FE93A3B6A1A546703CB3F2A5 /* libPods-RaddishWallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +87,7 @@
 		13B07FAE1A68108700A75B9A /* RaddishWallet */ = {
 			isa = PBXGroup;
 			children = (
+				4E645B9827985F6F00A9A2E9 /* RaddishWallet.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -99,10 +101,10 @@
 		2128757393C2F2004AD24ACC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				9449597AB58004C0525D0FAC /* Pods-RaddishWallet.debug.xcconfig */,
-				48D414B8893108A79E200166 /* Pods-RaddishWallet.release.xcconfig */,
-				59F8DF35DD152DC2745488C0 /* Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig */,
-				0AF28C7DD5A0BE0A8B5EB13B /* Pods-RaddishWallet-RaddishWalletTests.release.xcconfig */,
+				A1DA98E84964DC48957D2DBB /* Pods-RaddishWallet.debug.xcconfig */,
+				1945C13391AC57C6F681AE19 /* Pods-RaddishWallet.release.xcconfig */,
+				3BFAB00BECFF8FE56A925F9D /* Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig */,
+				83393BB48D04881E4F5A95D5 /* Pods-RaddishWallet-RaddishWalletTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -111,8 +113,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				751AD27AAE9553726A8669B9 /* libPods-RaddishWallet.a */,
-				9BC382AD404443FD608887E6 /* libPods-RaddishWallet-RaddishWalletTests.a */,
+				3B1AB121DDABD9B62A234D19 /* libPods-RaddishWallet.a */,
+				D62714416808B0CCBD27BAF3 /* libPods-RaddishWallet-RaddishWalletTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -155,12 +157,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "RaddishWalletTests" */;
 			buildPhases = (
-				32709274A615AECC2809038E /* [CP] Check Pods Manifest.lock */,
+				D0A8BEA2BB2CBB1AE3A1BA5B /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				B5616A37665A30469CCC0111 /* [CP] Embed Pods Frameworks */,
-				6B0BB63F3B90E0C637F57FAA /* [CP] Copy Pods Resources */,
+				67F43FFEE9B09E1B163C31F2 /* [CP] Embed Pods Frameworks */,
+				82FA6E72DCD039BF69548CF2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -176,14 +178,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RaddishWallet" */;
 			buildPhases = (
-				33E210A2C439E230C9012D86 /* [CP] Check Pods Manifest.lock */,
+				3605898BC8A50E88D00A44A9 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				383537BCD171B2B3DAE17222 /* [CP] Embed Pods Frameworks */,
-				D26A3FFC317D9E38650A4E43 /* [CP] Copy Pods Resources */,
+				2FBDC54305DEB41310B0FBB2 /* [CP] Embed Pods Frameworks */,
+				9D01E91E0F5D768FE5DFFA12 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -264,29 +266,24 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		32709274A615AECC2809038E /* [CP] Check Pods Manifest.lock */ = {
+		2FBDC54305DEB41310B0FBB2 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-RaddishWallet-RaddishWalletTests-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		33E210A2C439E230C9012D86 /* [CP] Check Pods Manifest.lock */ = {
+		3605898BC8A50E88D00A44A9 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -308,41 +305,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		383537BCD171B2B3DAE17222 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6B0BB63F3B90E0C637F57FAA /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B5616A37665A30469CCC0111 /* [CP] Embed Pods Frameworks */ = {
+		67F43FFEE9B09E1B163C31F2 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -359,7 +322,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D26A3FFC317D9E38650A4E43 /* [CP] Copy Pods Resources */ = {
+		82FA6E72DCD039BF69548CF2 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet-RaddishWalletTests/Pods-RaddishWallet-RaddishWalletTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9D01E91E0F5D768FE5DFFA12 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -374,6 +354,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RaddishWallet/Pods-RaddishWallet-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D0A8BEA2BB2CBB1AE3A1BA5B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RaddishWallet-RaddishWalletTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -428,7 +430,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 59F8DF35DD152DC2745488C0 /* Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig */;
+			baseConfigurationReference = 3BFAB00BECFF8FE56A925F9D /* Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -455,7 +457,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0AF28C7DD5A0BE0A8B5EB13B /* Pods-RaddishWallet-RaddishWalletTests.release.xcconfig */;
+			baseConfigurationReference = 83393BB48D04881E4F5A95D5 /* Pods-RaddishWallet-RaddishWalletTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -479,11 +481,13 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9449597AB58004C0525D0FAC /* Pods-RaddishWallet.debug.xcconfig */;
+			baseConfigurationReference = A1DA98E84964DC48957D2DBB /* Pods-RaddishWallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = RaddishWallet/RaddishWallet.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C8P4QFZ442;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = RaddishWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -506,11 +510,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 48D414B8893108A79E200166 /* Pods-RaddishWallet.release.xcconfig */;
+			baseConfigurationReference = 1945C13391AC57C6F681AE19 /* Pods-RaddishWallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = RaddishWallet/RaddishWallet.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C8P4QFZ442;
 				INFOPLIST_FILE = RaddishWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (

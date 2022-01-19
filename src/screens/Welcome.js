@@ -22,11 +22,11 @@ const Welcome = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
      <View style={styles.text}> 
 
- <Text style={styles.title}>Welcome to the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
+ <Text style={styles.title}>Welcome nto the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
  <Button
         title="Yes - Import a Wallet"
         enabled
-        onPress={() => navigation.navigate('Mnemonic Input')}
+        onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: "true"})}
       />
  <Button
         title="No - Create New Wallet"

@@ -20,6 +20,7 @@ import ReactNativeSwipeableViewStack from 'react-native-swipeable-view-stack';
 import NetInfo from "@react-native-community/netinfo";
 import { assertNullLiteralTypeAnnotation } from '@babel/types';
 import { StackActions } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -465,13 +466,12 @@ function getDDIndex(dropdownVals,activeAddress){
     return 0;
 }
 
-async function copyToClipboard(string){
+function copyToClipboard(string){
 
-
-     alert(string.replace(/["']/g, ""))
-    await Clipboard.setString(string.replace(/["']/g, ""));
-    const text = await Clipboard.getString();
-    alert("text copied: "  + text)
+    //  alert(string.replace(/["']/g, ""))
+    Clipboard.setString(string.replace(/["']/g, ""));
+    // const text = await Clipboard.getString();
+    // alert("text copied: "  + text)
     showMessage({
       message: "Address copied to clipboard",
       type: "info",
@@ -489,10 +489,6 @@ const Home = ({route, navigation}) => {
 
     const [copiedText, setCopiedText] = useState('');
 
-
- 
-
-      
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -515,23 +511,7 @@ const Home = ({route, navigation}) => {
 
 
     console.log("about to output ADDRESSES: ");
-    var dropdownVals = [
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-        // {label: "", value:""},
-    ]
+    var dropdownVals = []
 
     
 
@@ -643,10 +623,11 @@ const Home = ({route, navigation}) => {
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews={false}>
             <View  > 
+                
             <Separator/>
                 <View style={styles.rowStyle}>
-    
-            <Surface style={styles.surface}>
+                <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={15} style={styles.surface}>
+            {/* <Surface style={styles.surface}> */}
 <Dropdown
          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
@@ -705,22 +686,18 @@ const Home = ({route, navigation}) => {
        <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
         <Text >0.00 USD</Text>
 
-        <TouchableOpacity style={styles.button} onPress={ () => {setString(JSON.stringify(enabledAddresses.get(activeAddress).radix_address));
-        showMessage({
-            message: "Address copied to clipboard",
-            type: "info",
-          })
-        }}>
+        <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))}}>
         <Text>Copy Address </Text>
         </TouchableOpacity>
 
         <View style={styles.rowStyle}>
 
         <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, setStringObj: setString, cpdataObj: cpdata})}>
-        <Text>Send </Text>
+        <Text style={{fontSize: 25, color:"white"}}>Send </Text>
         </TouchableOpacity>
         </View>
-        </Surface>
+        {/* </Surface> */}
+        </LinearGradient>
       {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
 <Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity> */}
 
@@ -791,6 +768,12 @@ navigation.dispatch(pushAction);
 
 
 const styles = StyleSheet.create({
+    // linearGradient: {
+    //     flex: 1,
+    //     paddingLeft: 8,
+    //     paddingRight: 15,
+    //     borderRadius: 5
+    //   },
     surface: {
         padding: 8,
         height: 'auto',

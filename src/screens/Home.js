@@ -21,6 +21,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { assertNullLiteralTypeAnnotation } from '@babel/types';
 import { StackActions } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import IconFeather from 'react-native-vector-icons/Feather';
 
 function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -466,17 +467,17 @@ function getDDIndex(dropdownVals,activeAddress){
     return 0;
 }
 
-function copyToClipboard(string){
+// function copyToClipboard(string){
 
-    //  alert(string.replace(/["']/g, ""))
-    Clipboard.setString(string.replace(/["']/g, ""));
-    // const text = await Clipboard.getString();
-    // alert("text copied: "  + text)
-    showMessage({
-      message: "Address copied to clipboard",
-      type: "info",
-    });
-  };
+//     //  alert(string.replace(/["']/g, ""))
+//     Clipboard.setString(string.replace(/["']/g, ""));
+//     // const text = await Clipboard.getString();
+//     // alert("text copied: "  + text)
+//     showMessage({
+//       message: "Address copied to clipboard",
+//       type: "info",
+//     });
+//   };
 
 function fetchCopiedText(cpdata){
  
@@ -489,6 +490,14 @@ const Home = ({route, navigation}) => {
 
     const [copiedText, setCopiedText] = useState('');
 
+    const copyToClipboard = (string) => {
+        Clipboard.setString(string)
+
+            showMessage({
+      message: "Address copied to clipboard",
+      type: "info",
+    });
+      }
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -618,7 +627,7 @@ const Home = ({route, navigation}) => {
 
     <SafeAreaView style={styles.containerMain}>
 
-        <FlashMessage position="top" />
+        <FlashMessage position="center" />
         <ScrollView style={styles.scrollView}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews={false}>
@@ -628,13 +637,16 @@ const Home = ({route, navigation}) => {
                 <View style={styles.rowStyle}>
                 <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={15} style={styles.surface}>
             {/* <Surface style={styles.surface}> */}
+            <View style={styles.rowStyle}>
 <Dropdown
          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
+          containerStyle ={styles.containerStyle}
           data={wallets}
+          activeColor="#4DA892"
           search
           maxHeight={300}
           labelField="label"
@@ -654,6 +666,10 @@ const Home = ({route, navigation}) => {
             setIsFocus(true);
           }}
         />
+      <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))}}>
+<IconFeather name="copy" size={20} color="white" />
+</TouchableOpacity>
+ </View>
 <Dropdown
          style={[styles.dropdown, isFocusAddr && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
@@ -661,6 +677,7 @@ const Home = ({route, navigation}) => {
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
           data={dropdownVals}
+          activeColor="#4DA892"
           search
           maxHeight={300}
           labelField="label"
@@ -684,11 +701,9 @@ const Home = ({route, navigation}) => {
         />
 
        <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
-        <Text >0.00 USD</Text>
+ 
 
-        <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))}}>
-        <Text>Copy Address </Text>
-        </TouchableOpacity>
+  
 
         <View style={styles.rowStyle}>
 
@@ -890,7 +905,7 @@ const styles = StyleSheet.create({
   },
   label: {
     position: 'absolute',
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     left: 22,
     top: 8,
     zIndex: 999,
@@ -898,6 +913,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+containerStyle: {
+
+    // backgroundColor: "black"
   },
   placeholderStyle: {
     fontSize: 16,
@@ -908,7 +927,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    textAlign: 'left'
+    textAlign: 'left',
+    color:"white"
+
   },
   iconStyle: {
     width: 0,
@@ -917,6 +938,7 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
+
   },
   scrollView: {
    

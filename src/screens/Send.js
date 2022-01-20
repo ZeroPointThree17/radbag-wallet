@@ -34,7 +34,10 @@ function openCB() {
 
 function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount, setFee, public_key, privKey_enc, setShow, setTxHash){
 
-  if ( isNaN(amount)){
+  if(xrdAddr == undefined || xrdAddr.length==0){
+    alert("Destination address is required")
+  }
+  else if ( isNaN(amount) ){
     alert("Amount entered must be a number")
   } else if(amount == undefined || amount.length==0){
     alert("Amount is required")
@@ -85,9 +88,12 @@ function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount
       
         )
       }).then((response) => response.json()).then((json) => {
-        alert(JSON.stringify(json))
+        // alert(JSON.stringify(json))
          if(json.code == 400 && json.message == "Account address is invalid"){
            alert("You've entered an invalid address")
+         }
+         else if(json.code == 400 && json.details.type == "NotEnoughTokensForTransferError"){
+          alert("Insufficient balance for this transaction")
          }
          else{
         // alert(JSON.stringify(json))
@@ -317,6 +323,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         onChangeText={value => onChangeDestAddr(value)}
         multiline={true}
         numberOfLines={4}
+        // value="rdx1qsp3xmjp8q7jr6yeqluaqs9dhl7fr9qvfkrq6mpp3kk7rdtdhftunggghslzh"
       />
        <Separator/>
 
@@ -332,7 +339,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholderTextColor="#d3d3d3"
          value={amount}
         onChangeText={value => onChangeAmount(value)}
-        // value="rdx1qsp3xmjp8q7jr6yeqluaqs9dhl7fr9qvfkrq6mpp3kk7rdtdhftunggghslzh"
+         
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
 

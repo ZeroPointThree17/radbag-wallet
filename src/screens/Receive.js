@@ -30,6 +30,8 @@ const Receive = ({route, navigation}) => {
        <Separator/>
 <QRCode 
      value={xrdAddress}
+     logoSize={100}
+     size={200}
    />
    <Separator/>
    <Separator/>

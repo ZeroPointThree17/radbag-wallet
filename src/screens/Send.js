@@ -85,7 +85,7 @@ function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount
       
         )
       }).then((response) => response.json()).then((json) => {
-
+        alert(JSON.stringify(json))
          if(json.code == 400 && json.message == "Account address is invalid"){
            alert("You've entered an invalid address")
          }
@@ -275,7 +275,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
  return ( 
      <View style={styles.container} > 
 
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16}}>Address you are sending from:</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
  
         <TextInput
@@ -293,16 +293,17 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
  
       { cameraOn &&
       <QRCodeScanner
-      cameraStyle={{width:'auto'}}
+      cameraStyle={{width:'auto', height:200}}
         onRead={this.onSuccess}
         flashMode={RNCamera.Constants.FlashMode.auto}
       />
       }
-<View style={styles.rowStyle}>
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16, flex:1}}>Address to send to:</Text>
-      <TouchableOpacity style={styles.button} onPress={() => {setCameraOn(!cameraOn)} }>
- 
- <IconMaterial name="qrcode-scan" size={20} color="black" />
+<View style={styles.sendRowStyle}>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>{"\n"}Address to send to:</Text>
+      <TouchableOpacity style={{justifyContent:'center'}} onPress={() => {setCameraOn(!cameraOn)} }>
+      <Text style={{ textAlign:'center', marginHorizontal: 0, fontSize:8}}>Scan QR</Text>
+  
+ <IconMaterial style={{justifyContent:'center', alignSelf:'center'}} name="qrcode-scan" size={20} color="black" />
  </TouchableOpacity>
  </View>
 
@@ -311,6 +312,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 <TextInput
 style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Destination Radix Address'
+        placeholderTextColor="#d3d3d3"
         value={destAddr}
         onChangeText={value => onChangeDestAddr(value)}
         multiline={true}
@@ -322,11 +324,12 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 
 <Separator/>
 
-<Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16}}>Amount to send:</Text>
+<Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to send:</Text>
 <View style={styles.rowStyle}>
 <TextInput
         style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Amount'
+        placeholderTextColor="#d3d3d3"
          value={amount}
         onChangeText={value => onChangeAmount(value)}
         // value="rdx1qsp3xmjp8q7jr6yeqluaqs9dhl7fr9qvfkrq6mpp3kk7rdtdhftunggghslzh"
@@ -334,7 +337,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
       />
 
 <SelectDropdown
- buttonStyle={{backgroundColor:"#183A81", height: 38, flex:0.3, borderWidth:StyleSheet.hairlineWidth, marginRight:10}}
+ buttonStyle={{backgroundColor:"#183A81", flex:0.3, borderWidth:StyleSheet.hairlineWidth, marginRight:10}}
  buttonTextStyle={{color:"white"}}
 	data={symbols}
   defaultValue={defaultSymbol}
@@ -353,7 +356,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 	}}
 />
 </View>
-<Text>Current balance: {currentBalance} {symbol}</Text>
+<Text style={{fontSize: 12, color:"black"}}>Current balance: {currentBalance} {symbol}</Text>
 
 
 
@@ -415,7 +418,7 @@ const styles = StyleSheet.create({
     fontSize: 4,
     alignItems: 'flex-start',
     justifyContent: 'center',
-    marginVertical:5
+    marginVertical:0
   },
 });
 

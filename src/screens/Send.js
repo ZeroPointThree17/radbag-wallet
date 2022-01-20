@@ -266,12 +266,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
              
 
-      <Separator/>
-      <Separator/>
-     <Separator/>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
-        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:16}}>From:</Text>
+ 
         <TextInput
+        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300, backgroundColor:"#d3d3d3"}}
         disabled="true"
         multiline={true}
         numberOfLines={4}
@@ -281,13 +280,14 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
+      <Separator/>
 
-
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16}}>Address to send to:</Text>
       <View style={styles.rowStyle}>
-      <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:16}}>To:</Text>
-  
+
 <TextInput
-        placeholder='INPUT WITH ICON'
+style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300}}
+        placeholder='Destination Radix Address'
         value={destAddr}
         onChangeText={value => onChangeDestAddr(value)}
         multiline={true}
@@ -305,11 +305,12 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 </KeyboardAvoidingView> */}
 </View>
 
+<Separator/>
 
-
-
+<Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16}}>Amount to send:</Text>
 <View style={styles.rowStyle}>
 <TextInput
+        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:40, width:180}}
         placeholder='Amount'
          value={amount}
         onChangeText={value => onChangeAmount(value)}
@@ -318,7 +319,8 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       />
 
 <SelectDropdown
- buttonStyle={{backgroundColor:"white", width:150}}
+ buttonStyle={{backgroundColor:"#183A81", height: 40, width:100, borderWidth:StyleSheet.hairlineWidth, margin:10}}
+ buttonTextStyle={{color:"white"}}
 	data={symbols}
   defaultValue={defaultSymbol}
 	onSelect={(selectedItem, index) => {
@@ -343,13 +345,20 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         placeholder="Amount"
       /> */}
 
-
+<Separator/>
 
         <Button  style={{fontSize:16, marginHorizontal: 0, color:"black", borderWidth:StyleSheet.hairlineWidth, borderColor:'black'}}
                 title="Send"
                 enabled
                 onPress={() => buildTxn(reverseTokenMetadataMap, sourceXrdAddr, destAddr, symbol, amount,setFee, public_key, privKey_enc, setShow, setTxHash)}
               />
+
+{/* <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
+        <View style={styles.rowStyle}>
+        <IconFeather name="send" size={20} color="white" />
+        <Text style={{fontSize: 16, color:"white"}}> Send</Text>
+        </View>
+        </TouchableOpacity> */}
               <Separator/>
               <Separator/>
               {/* <Text>Fee: {fee/1000000000000000000} XRD</Text>
@@ -376,8 +385,8 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    padding: 0,
-    margin: 20,
+    padding: 50,
+    margin: 0,
     backgroundColor: "white",
     justifyContent: "flex-start"
    },

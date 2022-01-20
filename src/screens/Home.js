@@ -12,6 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
 
 function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -744,7 +745,7 @@ navigation.dispatch(pushAction);
      }
     }>
      <View style={styles.rowStyle}>
-     <IconMaterialCommunityIcons name="application-import" size={20} color="black" />
+     <IconMaterialCommunityIcons name="application-import" size={16} color="black" />
 <Text style={styles.buttonText} > Import Wallet     </Text></View>
 </TouchableOpacity>
 
@@ -759,7 +760,7 @@ navigation.dispatch(pushAction);
      }
     }>
      <View style={styles.rowStyle}>
-     <IconEntypo name="wallet" size={20} color="black" />
+     <IconEntypo name="wallet" size={16} color="black" />
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
 <Text style={styles.buttonText} > Add Wallet     </Text></View>
 </TouchableOpacity>
@@ -769,7 +770,7 @@ navigation.dispatch(pushAction);
 
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses,setActiveAddress)}>
      <View style={styles.rowStyle}>
-     <IconFeather name="hash" size={20} color="black" />
+     <IconFeather name="hash" size={16} color="black" />
 <Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity> 
 
@@ -847,7 +848,7 @@ const styles = StyleSheet.create({
         marginVertical:5
       },
       buttonText: {
-        fontSize: 14,
+        fontSize: 10,
         color:"black"
       },
   text: {

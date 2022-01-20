@@ -1,29 +1,18 @@
 import { Alert, Image, KeyboardAvoidingView, Button, ScrollView, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState,useRef, useEffect, useReducer } from 'react';
-const bip39 = require('bip39');
-var HDKey = require('hdkey')
-let { bech32, bech32m } = require('bech32')
-var bitcoinMessage = require('bitcoinjs-message')
-const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
-import {encrypt, decrypt} from '../helpers/encrypt';
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
 import  IconFoundation  from 'react-native-vector-icons/Foundation';
 import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
-import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
-import { Surface, List } from 'react-native-paper';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
-// import { NativeBaseProvider,Content, Card, CardItem, Body } from "native-base";
-import ReactNativeSwipeableViewStack from 'react-native-swipeable-view-stack';
 import NetInfo from "@react-native-community/netinfo";
-import { assertNullLiteralTypeAnnotation } from '@babel/types';
 import { StackActions } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 function useInterval(callback, delay) {
     const savedCallback = useRef();
   
@@ -629,12 +618,12 @@ const Home = ({route, navigation}) => {
        
 //        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
 //  fetchCopiedText(cpdata);
-var mainRef = useRef(1);
+
   return (
 
     <SafeAreaView style={styles.containerMain}>
 
-        <FlashMessage position="center" ref={mainRef}/>
+        {/* <FlashMessage position="center" ref={mainRef}/> */}
         <ScrollView style={styles.scrollView}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews={false}>

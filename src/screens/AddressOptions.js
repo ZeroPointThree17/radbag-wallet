@@ -11,6 +11,26 @@ const Separator = () => (
   <View style={styles.separator} />
 );
 
+// function useInterval(callback, delay) {
+//   const savedCallback = useRef();
+
+//   // Remember the latest callback.
+//   useEffect(() => {
+//     savedCallback.current = callback;
+//   }, [callback]);
+
+//   // Set up the interval.
+//   useEffect(() => {
+//     function tick() {
+//       savedCallback.current();
+//     }
+//     if (delay !== null) {
+//       let id = setInterval(tick, delay);
+//       return () => clearInterval(id);
+//     }
+//   }, [delay]);
+// }
+
 function errorCB(err) {
   console.log("SQL Error: " + err.message);
 }
@@ -100,6 +120,8 @@ const AddressOptions = ({route, navigation}) => {
 [radixAddress, setRadixAddress] = useState();
 [walletId, setWalletId] = useState();
 
+// useInterval(() => {
+
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
   useEffect(() => {
@@ -128,14 +150,7 @@ db.transaction((tx) => {
 }, errorCB);
 }, []);
 
-  const copyToClipboard = (string) => {
-    Clipboard.setString(string);
-// alert(string)
-        showMessage({
-  message: "Address copied to clipboard",
-  type: "info",
-});
-  }
+// }, 1000);
 
  return ( 
     //  <View >

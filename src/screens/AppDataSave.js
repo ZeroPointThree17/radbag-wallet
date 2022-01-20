@@ -479,11 +479,11 @@ const [appPwConfirm, setAppPwConfirm] = useState("");
     <Text style={styles.title}>Enter a password to protect the data in this wallet.</Text>
  <PasswordInputText style={styles.title}
 onChangeText={(password) => setAppPw( password )}
-label='App Password' />
+label='Wallet Password' />
 
 <PasswordInputText style={styles.title}
 onChangeText={(password) => setAppPwConfirm( password )}
-label='Confirm App Password' />
+label='Confirm Wallet Password' />
 
  <Separator/>
  <Button

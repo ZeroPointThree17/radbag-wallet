@@ -76,6 +76,19 @@ function removeWallet(walletId, navigation){
       db.transaction((tx) => {
         tx.executeSql("UPDATE active_wallet SET id="+maxId, [], (tx, results) => {
     
+          db.transaction((tx) => {
+            tx.executeSql("SELECT MAX(id) AS id FROM address WHERE enabled_flag=1 AND wallet_id="+maxId, [], (tx, results) => {
+        
+              var len = results.rows.length;
+              var maxAddressId = 0
+              for (let i = 0; i < len; i++) {
+                  let row = results.rows.item(i);
+                  maxAddressId = row.id ;
+              }
+
+              db.transaction((tx) => {
+                tx.executeSql("UPDATE active_address SET id="+maxAddressId, [], (tx, results) => {
+            
       alert("The wallet has been removed");
 
       const pushAction = StackActions.push('Raddish Wallet');
@@ -92,7 +105,14 @@ function removeWallet(walletId, navigation){
 }, errorCB);
 
 });
+}, errorCB);
+
+});
+}, errorCB);
+
+});
 }, errorCB)}
+
 
 
 }, errorCB);

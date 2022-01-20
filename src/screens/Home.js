@@ -240,7 +240,7 @@ function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses
         source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:16,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
-    <Text style={{color:"black",flex:0.7,marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
 
     </View> 
     </TouchableOpacity>
@@ -643,7 +643,7 @@ const Home = ({route, navigation}) => {
                 
             <Separator/>
                 <View style={styles.rowStyle}>
-                <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={15} style={styles.surface}>
+                <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
             {/* <Surface style={styles.surface}> */}
             <View style={styles.rowStyle}>
 <Dropdown

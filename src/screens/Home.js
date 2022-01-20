@@ -1,4 +1,4 @@
-import { Alert, Image, KeyboardAvoidingView, Button, ScrollView, TouchableOpacity,SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { RefreshControl, Alert, Image, Button, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState,useRef, useEffect, useReducer } from 'react';
 var SQLite = require('react-native-sqlite-storage');
 import { Dropdown } from 'react-native-element-dropdown';
@@ -130,12 +130,10 @@ function addAddress(wallet_id,db,setEnabledAddresses,setActiveAddress){
             db.transaction((tx) => {
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
                 getEnabledAddresses(wallet_id,db,setEnabledAddresses);  
-                setActiveAddress(next_id);
-                // alert("New address is now in your address dropdown")
+                updateActiveAddress(db, next_id, setActiveAddress);
                   }, errorCB);
                 });
             }
-
           }, errorCB);
         });
 
@@ -229,8 +227,8 @@ function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses
     <Image style={{width: 36, height: 36}}
         source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:16,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
 
     </View> 
     </TouchableOpacity>
@@ -465,26 +463,18 @@ function getDDIndex(dropdownVals,activeAddress){
     return 0;
 }
 
-// function copyToClipboard(string){
-
-//     //  alert(string.replace(/["']/g, ""))
-//     Clipboard.setString(string.replace(/["']/g, ""));
-//     // const text = await Clipboard.getString();
-//     // alert("text copied: "  + text)
-//     showMessage({
-//       message: "Address copied to clipboard",
-//       type: "info",
-//     });
-//   };
-
-function fetchCopiedText(cpdata){
- 
-    // const text = await Clipboard.getString();
-     alert("text copied: "  + cpdata)
-  };
-
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
 
 const Home = ({route, navigation}) => {
+
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      wait(2000).then(() => setRefreshing(false));
+    }, []);
 
     const copyToClipboard = (string) => {
         Clipboard.setString(string)
@@ -582,7 +572,7 @@ const Home = ({route, navigation}) => {
         getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
         getActiveAddress(db, setActiveAddress);
         getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
-    }, 20000);
+    }, 30000);
 
     //  alert("token MD: "+JSON.stringify(tokenMetadata.get(addressRRIs.get(1))))
     
@@ -626,6 +616,11 @@ const Home = ({route, navigation}) => {
 
         {/* <FlashMessage position="center" ref={mainRef}/> */}
         <ScrollView style={styles.scrollView}
+        refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}/>
+            }
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews={false}>
             <View  > 
@@ -699,7 +694,7 @@ const Home = ({route, navigation}) => {
         />
 
 <Separator/>
-       <Text style={{fontSize: 25, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
+       <Text style={{fontSize: 20, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
  
 
        <Separator/>
@@ -707,17 +702,17 @@ const Home = ({route, navigation}) => {
        <View style={styles.rowStyle}>
        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Receive',{xrdAddress: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
-        <IconMaterialCommunityIcons name="call-received" size={20} color="white" />
-        <Text style={{fontSize: 16, color:"white"}}> Receive</Text>
+        <IconMaterialCommunityIcons name="call-received" size={18} color="white" />
+        <Text style={{fontSize: 14, color:"white"}}> Receive</Text>
         </View>
         </TouchableOpacity>
 
-        <Text style={{fontSize: 16, color:"white"}}>          </Text>
+        <Text style={{fontSize: 14, color:"white"}}>          </Text>
   
         <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
         <View style={styles.rowStyle}>
-        <IconFeather name="send" size={20} color="white" />
-        <Text style={{fontSize: 16, color:"white"}}> Send</Text>
+        <IconFeather name="send" size={18} color="white" />
+        <Text style={{fontSize: 14, color:"white"}}> Send</Text>
         </View>
         </TouchableOpacity>
         </View>
@@ -765,9 +760,6 @@ navigation.dispatch(pushAction);
 <Text style={styles.buttonText} > Add Wallet     </Text></View>
 </TouchableOpacity>
 
-
-
-
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses,setActiveAddress)}>
      <View style={styles.rowStyle}>
      <IconFeather name="hash" size={16} color="black" />
@@ -778,7 +770,7 @@ navigation.dispatch(pushAction);
 </View>
 
 
-<View style={{margin:24}}>
+<View style={{margin:16}}>
 <Text>Tokens</Text>
 
 {renderAddressRows(balances,tokenMetadata, navigation, enabledAddresses,activeAddress)}
@@ -803,9 +795,11 @@ const styles = StyleSheet.create({
     //     borderRadius: 5
     //   },
     surface: {
-        padding: 8,
+        flex: 1,
+        padding: 9,
+        margin: 6,
         height: 'auto',
-        width: 325,
+        width: 'auto',
         // alignItems: 'flex-start',
         // justifyContent: 'center',
         // elevation: 4,
@@ -933,13 +927,13 @@ containerStyle: {
      color:"white"
   },
   placeholderStyle: {
-    fontSize: 16,
+    fontSize: 14,
     alignItems: 'center',
     justifyContent: 'center',
     color:"white"
   },
   selectedTextStyle: {
-    fontSize: 16,
+    fontSize: 14,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     textAlign: 'left',
@@ -952,7 +946,7 @@ containerStyle: {
   },
   inputSearchStyle: {
     height: 40,
-    fontSize: 16,
+    fontSize: 14,
     color:"white"
   },
   scrollView: {

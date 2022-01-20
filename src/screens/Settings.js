@@ -47,17 +47,17 @@ const list = [
   ViewComponent={LinearGradient} // Only if no expo
 >
 
-<IconMaterial name="file-word-box-outline" size={30} color="#4F8EF7" />
+<IconMaterial name="file-word-box-outline" size={20} color="#4F8EF7" />
 
   <ListItem.Content >
   
     <ListItem.Title >
- <Text style={{ color: 'black', fontWeight: 'bold', flex:1  }}>Show Mnemonic</Text>
+ <Text style={{fontSize:14,  color: 'black', fontWeight: 'bold', flex:1  }}>Show Mnemonic</Text>
 
     </ListItem.Title>
 
     <ListItem.Subtitle  >
-      <Text style={{ color: 'black', flexWrap: 'wrap', flex:1 }}>Show the mnemonic phrase that you set up when you created this wallet</Text>
+      <Text style={{fontSize:14,  color: 'black', flexWrap: 'wrap', flex:1 }}>Show the mnemonic phrase that you set up when you created this wallet</Text>
     </ListItem.Subtitle>
 
   </ListItem.Content>
@@ -69,7 +69,7 @@ const list = [
 
 <Separator/>
 
-<ListItem
+{/* <ListItem
  onPress={() => {alert("ASF")}}
   Component={TouchableScale}
   friction={90} //
@@ -82,19 +82,19 @@ const list = [
   }}
   ViewComponent={LinearGradient} // Only if no expo
 >
-<IconFA name="network-wired" size={25} color="#4F8EF7" />
+<IconFA name="network-wired" size={20} color="#4F8EF7" />
   <ListItem.Content>
-    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
+    <ListItem.Title style={{fontSize:14, color: 'black', fontWeight: 'bold' }}>
       <Text>Select Network</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{ color: 'black' }}>
+    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
       <Text>Select the Radix network that this app should connect to</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
-</ListItem>
+</ListItem> 
 
-<Separator/>
+<Separator/>*/}
 
 <ListItem
  onPress={() => {navigation.navigate('MnemonicDisplay')}}
@@ -109,13 +109,13 @@ const list = [
   }}
   ViewComponent={LinearGradient} // Only if no expo
 >
-<IconMaterial name="rename-box" size={30} color="#4F8EF7"/>
+<IconMaterial name="pound" size={20} color="#4F8EF7"/>
   <ListItem.Content>
-    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
-      <Text>Change Address Nickname</Text>
+    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold' }}>
+      <Text>Address Options</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Change the nickname of the currently selected address</Text>
+    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
+      <Text>Options for the currently selected address</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
@@ -135,20 +135,20 @@ const list = [
   }}
   ViewComponent={LinearGradient} // Only if no expo
 >
-<IconMaterial name="rename-box" size={30} color="#4F8EF7"/>
+<IconMaterial name="wallet" size={20} color="#4F8EF7"/>
   <ListItem.Content>
-    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
-      <Text>Change Wallet Nickname</Text>
+    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold' }}>
+      <Text>Wallet Options</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{ color: 'black' }}>
-      <Text>Change the nickname of the currently selected wallet</Text>
+    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
+      <Text>Options for the currently selected wallet</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
 </ListItem>
 <Separator/>
 
-<ListItem
+{/* <ListItem
  onPress={() => {alert("ASF")}}
   Component={TouchableScale}
   friction={90} //
@@ -161,20 +161,20 @@ const list = [
   }}
   ViewComponent={LinearGradient} // Only if no expo
 >
-<IconMaterial name="delete-forever-outline" size={30} color="#4F8EF7" />
+<IconMaterial name="delete-forever-outline" size={20} color="#4F8EF7" />
   <ListItem.Content>
-    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
+    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold' }}>
       <Text>Remove Address</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{ color: 'black' }}>
+    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
       <Text>Remove the currently selected address</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
 </ListItem>
-<Separator/>
+<Separator/> */}
 
-<ListItem
+{/* <ListItem
  onPress={() => {alert("ASF")}}
   Component={TouchableScale}
   friction={90} //
@@ -187,19 +187,19 @@ const list = [
   }}
   ViewComponent={LinearGradient} // Only if no expo
 >
-<IconMaterial name="delete-forever-outline" size={30} color="#4F8EF7" />
+<IconMaterial name="delete-forever-outline" size={20} color="#4F8EF7" />
   <ListItem.Content>
-    <ListItem.Title style={{ color: 'black', fontWeight: 'bold' }}>
+    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold' }}>
       <Text>Remove Wallet</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{ color: 'black' }}>
+    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
       <Text>Remove the currently selected wallet{"\n"}{"\n"}(NOTE: This will also remove all addresses associated to the currently selected wallet)</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
-</ListItem>
+</ListItem> 
 
-<Separator/>
+<Separator/>*/}
 
 
   </View>  

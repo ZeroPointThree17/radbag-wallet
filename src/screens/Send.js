@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Linking, Alert, ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, Linking, Alert, ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -13,8 +13,11 @@ import SelectDropdown from 'react-native-select-dropdown'
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Input, Icon } from 'react-native-elements';
 import { shortenAddress } from './Home';
+import IconFeather from 'react-native-vector-icons/Feather';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { RNCamera } from 'react-native-camera';
 
 const Separator = () => (
   <View style={styles.separator} />
@@ -243,34 +246,40 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       });
     }, errorCB);
 
-
-  var symbols = []
-  var reverseTokenMetadataMap = new Map();
-  balancesMap.forEach((balance, rri) => {
-    symbols.push(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""))
-    reverseTokenMetadataMap.set(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""), rri);
-    // alert(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""));
-  });
-  
-
   const [xrdAddr, onChangeXrdAddr] = useState(sourceXrdAddr);
-  const [destAddr, onChangeDestAddr] = useState("rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz");
+  const [destAddr, onChangeDestAddr] = useState();
   const [amount, onChangeAmount] = useState(null);
   const [symbol, onChangeSymbol] = useState(defaultSymbol);
   const [fee, setFee] = useState(null);
   const [txnHash, setTxHash] = useState(null);
   const [show, setShow] = useState(false);
+  const [cameraOn, setCameraOn] = useState(false);
+
+  var currentBalance = "";
+  var symbols = []
+  var reverseTokenMetadataMap = new Map();
+  balancesMap.forEach((balance, rri) => {
+    symbols.push(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""))
+    reverseTokenMetadataMap.set(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""), rri);
+    
+    if(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g == defaultSymbol)){
+      currentBalance = JSON.stringify(balance).replace(/["']/g, "");
+    }
+  });
+
+  onSuccess = e => {
+    onChangeDestAddr(e.data);
+    setCameraOn(false);
+  };
 
  return ( 
      <View style={styles.container} > 
-
-             
 
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
  
         <TextInput
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300, backgroundColor:"#d3d3d3"}}
+        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300, backgroundColor:"#d3d3d3", flex:1}}
         disabled="true"
         multiline={true}
         numberOfLines={4}
@@ -281,28 +290,34 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       />
       </View>
       <Separator/>
+ 
+      { cameraOn &&
+      <QRCodeScanner
+      cameraStyle={{width:'auto'}}
+        onRead={this.onSuccess}
+        flashMode={RNCamera.Constants.FlashMode.auto}
+      />
+      }
+<View style={styles.rowStyle}>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16, flex:1}}>Address to send to:</Text>
+      <TouchableOpacity style={styles.button} onPress={() => {setCameraOn(!cameraOn)} }>
+ 
+ <IconMaterial name="qrcode-scan" size={20} color="black" />
+ </TouchableOpacity>
+ </View>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16}}>Address to send to:</Text>
       <View style={styles.rowStyle}>
 
 <TextInput
-style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300}}
+style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Destination Radix Address'
         value={destAddr}
         onChangeText={value => onChangeDestAddr(value)}
         multiline={true}
         numberOfLines={4}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
        <Separator/>
-{/* <KeyboardAvoidingView>
-        <TextInput
-        style={{inputWidth:'auto', paddingHorizontal:10, marginHorizontal: 10, height: 300, borderWidth:StyleSheet.hairlineWidth}}
-        // onChangeText={onChangeXrdAddr}
-        // value={copiedText}
-        placeholder="Radix address"
-      />
-</KeyboardAvoidingView> */}
+
 </View>
 
 <Separator/>
@@ -310,7 +325,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300}}
 <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:16}}>Amount to send:</Text>
 <View style={styles.rowStyle}>
 <TextInput
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:40, width:180}}
+        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Amount'
          value={amount}
         onChangeText={value => onChangeAmount(value)}
@@ -319,7 +334,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300}}
       />
 
 <SelectDropdown
- buttonStyle={{backgroundColor:"#183A81", height: 40, width:100, borderWidth:StyleSheet.hairlineWidth, margin:10}}
+ buttonStyle={{backgroundColor:"#183A81", height: 38, flex:0.3, borderWidth:StyleSheet.hairlineWidth, marginRight:10}}
  buttonTextStyle={{color:"white"}}
 	data={symbols}
   defaultValue={defaultSymbol}
@@ -338,27 +353,19 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300}}
 	}}
 />
 </View>
-{/* <TextInput
-        style={{paddingHorizontal:10, marginHorizontal: 10, height: 30, borderWidth:StyleSheet.hairlineWidth}}
-        onChangeText={onChangeAmount}
-        value={xrdAddr}
-        placeholder="Amount"
-      /> */}
+<Text>Current balance: {currentBalance} {symbol}</Text>
+
+
 
 <Separator/>
-
-        <Button  style={{fontSize:16, marginHorizontal: 0, color:"black", borderWidth:StyleSheet.hairlineWidth, borderColor:'black'}}
-                title="Send"
-                enabled
-                onPress={() => buildTxn(reverseTokenMetadataMap, sourceXrdAddr, destAddr, symbol, amount,setFee, public_key, privKey_enc, setShow, setTxHash)}
-              />
-
-{/* <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
-        <View style={styles.rowStyle}>
-        <IconFeather name="send" size={20} color="white" />
-        <Text style={{fontSize: 16, color:"white"}}> Send</Text>
+<Separator/>
+<Separator/>
+<TouchableOpacity style={styles.button} onPress={() => buildTxn(reverseTokenMetadataMap, sourceXrdAddr, destAddr, symbol, amount,setFee, public_key, privKey_enc, setShow, setTxHash)}>
+        <View style={styles.sendRowStyle}>
+        <IconFeather name="send" size={20} color="black" />
+        <Text style={{fontSize: 18, color:"black"}}> Send</Text>
         </View>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
               <Separator/>
               <Separator/>
               {/* <Text>Fee: {fee/1000000000000000000} XRD</Text>
@@ -385,7 +392,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    padding: 50,
+    padding: 25,
     margin: 0,
     backgroundColor: "white",
     justifyContent: "flex-start"
@@ -399,7 +406,14 @@ const styles = StyleSheet.create({
   rowStyle: {
     flexDirection: 'row',
     fontSize: 4,
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    marginVertical:5
+  },
+  sendRowStyle: {
+    flexDirection: 'row',
+    fontSize: 4,
+    alignItems: 'flex-start',
     justifyContent: 'center',
     marginVertical:5
   },

@@ -270,7 +270,7 @@ function updateActiveWallet(wallet_id, setActiveWallet, setActiveAddress){
 }); 
 }
 
-function updateActiveAddress(db, address_id, setActiveAddress){
+export function updateActiveAddress(db, address_id, setActiveAddress){
     db.transaction((tx) => {
         tx.executeSql("UPDATE active_address set id = '"+address_id+"'", [], (tx, results) => {
            setActiveAddress(address_id);
@@ -573,10 +573,10 @@ const Home = ({route, navigation}) => {
 // }, [addressRRIs]);
 
     useInterval(() => {
-        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
         getActiveAddress(db, setActiveAddress);
+        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
         getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
-    }, 20000);
+    }, 10000);
 
     //  alert("token MD: "+JSON.stringify(tokenMetadata.get(addressRRIs.get(1))))
     
@@ -649,8 +649,8 @@ const Home = ({route, navigation}) => {
           valueField="value"
           placeholder={!isFocus ? 'Select Wallet' : '...'}
           searchPlaceholder="Search..."
-          label={wallets[parseInt(activeWallet)-1].label}
-          value={wallets[parseInt(activeWallet)-1].value}
+          label={wallets[parseInt(activeWallet)-1] == undefined ? "Setting up..." : wallets[parseInt(activeWallet)-1].label}
+          value={wallets[parseInt(activeWallet)-1] == undefined ? "Setting up..." : wallets[parseInt(activeWallet)-1].value}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {

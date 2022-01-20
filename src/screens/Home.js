@@ -496,8 +496,6 @@ function fetchCopiedText(cpdata){
 
 const Home = ({route, navigation}) => {
 
-    const [copiedText, setCopiedText] = useState('');
-
     const copyToClipboard = (string) => {
         Clipboard.setString(string)
 
@@ -631,11 +629,12 @@ const Home = ({route, navigation}) => {
        
 //        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
 //  fetchCopiedText(cpdata);
+var mainRef = useRef(1);
   return (
 
     <SafeAreaView style={styles.containerMain}>
 
-        <FlashMessage position="center" />
+        <FlashMessage position="center" ref={mainRef}/>
         <ScrollView style={styles.scrollView}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews={false}>
@@ -716,7 +715,7 @@ const Home = ({route, navigation}) => {
        <Separator/>
 
        <View style={styles.rowStyle}>
-       <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
+       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Receive',{xrdAddress: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
         <IconMaterialCommunityIcons name="call-received" size={20} color="white" />
         <Text style={{fontSize: 16, color:"white"}}> Receive</Text>

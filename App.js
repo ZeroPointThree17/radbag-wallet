@@ -15,7 +15,7 @@ import { NavigationContext, NavigationContainer, useNavigationContainerRef } fro
 import { createStackNavigator } from '@react-navigation/stack';
 // import { UserProvider } from "./screens/UserProvider"
 var SQLite = require('react-native-sqlite-storage');
-
+import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
 import {
   Colors,
   DebugInstructions,
@@ -40,6 +40,7 @@ import HomeNav from './src/screens/HomeNav';
 import AppDataSave from './src/screens/AppDataSave';
 import MnemonicInput from './src/screens/MnemonicInput';
 import Send from './src/screens/Send';
+import Receive from './src/screens/Receive';
 
 // import NFTs from './src/screens/NFTs';
 // import bitcoin from 'react-native-bitcoinjs-lib'
@@ -358,7 +359,9 @@ LogBox.ignoreAllLogs();
       <Stack.Screen name="App Password" component={AppDataSave} />
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
       <Stack.Screen name="Send" component={Send} />
+      <Stack.Screen name="Receive" component={Receive} />
     </Stack.Navigator>
+    <FlashMessage position="center" />
     </NavigationContainer>
   
   );

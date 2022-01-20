@@ -179,16 +179,16 @@ function removeAddress(db, wallet_id, address_id,setEnabledAddresses){
 }
 
 
-function shortenAddress(address){
+export function shortenAddress(address){
 
     return address.substring(0, 7) +"..."+ address.substring(address.length-4, address.length) 
 
 }
 
-function renderAddressRows(balances, tokenMetadata,copyToClipboard){
+function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses, activeAddress){
 
 
-    if( balances.size > 0 && tokenMetadata.size > 0  ){
+    if( balances.size > 0 && tokenMetadata.size > 0 && enabledAddresses.size > 0 ){
 
         var rows = []
         // alert(JSON.stringify("in render " + JSON.stringify(tokenMetadata.get(addressRRIs.get(activeAddress)[0]))));
@@ -223,22 +223,29 @@ function renderAddressRows(balances, tokenMetadata,copyToClipboard){
 
     balances.forEach((balance, rri) =>  
 
-   
+   {
+    //    alert(JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, ""))
             rows.push(
                
             <View key={rri}>
            { console.log("b: "+balance + " rri "+rri)}
                    {/* {  console.log("TMD: " + JSON.stringify(tokenMetadata.get(JSON.stringify(rri.rri).replace(/["']/g, "")))) } */}
     <SeparatorBorder/>
+    <TouchableOpacity onPress={ () => {navigation.navigate('Send',{defaultSymbol:JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, ""), balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}}>
+
     <View style={styles.addrRowStyle}>
+
+
     <Image style={{width: 36, height: 36}}
         source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:16,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
     <Text style={{color:"black",flex:0.7,marginTop:0,fontSize:16, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
-    </View> 
-    </View>        )
 
+    </View> 
+    </TouchableOpacity>
+    </View>        )
+    }
         );
 
 
@@ -709,7 +716,7 @@ const Home = ({route, navigation}) => {
        <Separator/>
 
        <View style={styles.rowStyle}>
-       <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, setStringObj: setString, cpdataObj: cpdata})}>
+       <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
         <View style={styles.rowStyle}>
         <IconMaterialCommunityIcons name="call-received" size={20} color="white" />
         <Text style={{fontSize: 16, color:"white"}}> Receive</Text>
@@ -718,7 +725,7 @@ const Home = ({route, navigation}) => {
 
         <Text style={{fontSize: 16, color:"white"}}>          </Text>
   
-        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, setStringObj: setString, cpdataObj: cpdata})}>
+        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={20} color="white" />
         <Text style={{fontSize: 16, color:"white"}}> Send</Text>
@@ -785,7 +792,7 @@ navigation.dispatch(pushAction);
 <View style={{margin:24}}>
 <Text>Tokens</Text>
 
-{renderAddressRows(balances,tokenMetadata,copyToClipboard)}
+{renderAddressRows(balances,tokenMetadata, navigation, enabledAddresses,activeAddress)}
 
 </View> 
         <Separator/>

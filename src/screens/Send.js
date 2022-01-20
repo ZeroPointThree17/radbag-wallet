@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Alert, ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Linking, Alert, ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -12,6 +12,7 @@ import { catchError } from 'rxjs/operators';
 import SelectDropdown from 'react-native-select-dropdown'
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Input, Icon } from 'react-native-elements';
+import { shortenAddress } from './Home';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 
@@ -28,11 +29,22 @@ function openCB() {
 }
 
 
-function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee, public_key, privKey_enc){
+function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount, setFee, public_key, privKey_enc, setShow, setTxHash){
+
+  if ( isNaN(amount)){
+    alert("Amount entered must be a number")
+  } else if(amount == undefined || amount.length==0){
+    alert("Amount is required")
+  }
+  else if(amount==0){
+    alert("Amount must be greater than 0")
+  }
+  else{
 
   var amountStr = (amount * 1000000000000000000).toString();
 
-  alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token id: "+rri + " amount "+amountStr)
+
+  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
   fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
         method: 'POST',
         headers: {
@@ -56,7 +68,7 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee, public_key, privKe
                 },
                 "amount": {
                   "token_identifier": {
-                    "rri": rri
+                    "rri": reverseTokenMetadataMap.get(symbol)
                   },
                   "value": amountStr
                 }
@@ -71,6 +83,11 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee, public_key, privKe
         )
       }).then((response) => response.json()).then((json) => {
 
+         if(json.code == 400 && json.message == "Account address is invalid"){
+           alert("You've entered an invalid address")
+         }
+         else{
+        // alert(JSON.stringify(json))
        
         Alert.alert(
           "Commit Transaction?",
@@ -81,7 +98,7 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee, public_key, privKe
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc) }
+            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash) }
           ]
         );
           // activeAddressBalances
@@ -92,10 +109,12 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee, public_key, privKe
              
           }
 
-
+        }
       }).catch((error) => {
           console.error(error);
       });
+}
+
 }
 
 
@@ -103,94 +122,104 @@ function buildTxn(sourceXrdAddr,xrdAddr, rri, amount, setFee, public_key, privKe
 
 
 
+function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash){
 
+  setShow(false);
 
-function submitTxn(message,unsigned_transaction,public_key,privKey_enc){
+  var passwordStr = ""
+  Alert.prompt(
+    "Enter wallet password",
+    "Enter the wallet password to perform this transaction",
+    [
+      {
+        text: "Cancel",
+        onPress: () => alert("Transaction not performed"),
+        style: "cancel"
+      },
+      {
+        text: "OK",
+        onPress: password => {
 
-  //// var message = '9a25747cd03f9764de539934e1800edc8160a4978aa27b1a6fb8411a11543697'
-  var signature = "";
-  var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from("c")).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-  // privatekey = decrypt(privKey_enc, Buffer.from("c"));
-  // alert("Privekey unc: "+privatekey)
-   signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
-
-
-var result=new Uint8Array(72);
-secp256k1.signatureExport(signature.signature,result);
-
-var finalSig = Buffer.from(result).toString('hex');
-
-// alert("Message: " +message + " Unsigned Txn: " + unsigned_transaction + " PubkEY: " +public_key+ " PRIVKEY: " +privKey_enc)
-
-// alert("Sig: "+result)
-  fetch('https://mainnet-gateway.radixdlt.com/transaction/finalize', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-      
-          {
-            "network_identifier": {
-              "network": "mainnet"
-            },
-            "unsigned_transaction": unsigned_transaction,
-            "signature": {
-              "public_key": {
-                "hex": public_key
-              },
-              "bytes": finalSig
-            },
-            "submit": true
-          }
-      
-        )
-      }).then((response) => response.json()).then((json) => {
-
-       alert(JSON.stringify(json))
-  
-
-      }).catch((error) => {
-          console.error(error);
-      });
-}
-
-
-
-
-
-
-
-
-function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, setword13){
-  
   try{
-  var mnemonic = decrypt(mnemonic_enc, Buffer.from(password));
-  var word13 = decrypt(word13_enc, Buffer.from(password));
-  setMnemonic(mnemonic);
-  setword13(word13);
-  setShow(true);
-  } catch(err){
-    alert("Password was incorrect")
+    var signature = "";
+  var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+         // privatekey = decrypt(privKey_enc, Buffer.from("c"));
+  // alert("Privekey unc: "+privatekey)
+  signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
+
+
+  var result=new Uint8Array(72);
+  secp256k1.signatureExport(signature.signature,result);
+  
+  var finalSig = Buffer.from(result).toString('hex');
+  
+  // alert("Message: " +message + " Unsigned Txn: " + unsigned_transaction + " PubkEY: " +public_key+ " PRIVKEY: " +privKey_enc)
+  
+  // alert("Sig: "+result)
+    fetch('https://mainnet-gateway.radixdlt.com/transaction/finalize', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(
+        
+            {
+              "network_identifier": {
+                "network": "mainnet"
+              },
+              "unsigned_transaction": unsigned_transaction,
+              "signature": {
+                "public_key": {
+                  "hex": public_key
+                },
+                "bytes": finalSig
+              },
+              "submit": true
+            }
+        
+          )
+        }).then((response) => response.json()).then((json) => {
+  
+         var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
+        
+         setShow(true);
+         setTxHash(txnHash);
+  
+        }).catch((error) => {
+            console.error(error);
+        });  
+} catch(err){
+    alert("Password incorrect")
   }
+  
+        }
+      }
+    ],
+    "secure-text"
+  );
+
 }
+
+
+
+
+
+
+
+
+
 
 
 
  const Send = ({route, navigation}) => {
  
-  const { balancesMap, sourceXrdAddr, setStringObj, cpdataObj } = route.params;
+  const { defaultSymbol, balancesMap, sourceXrdAddr, tokenMetadataObj } = route.params;
   const [password, setPassword] = useState();
-  const [mnemonic_enc, setMnemonic_enc] = useState();
-  const [show, setShow] = useState(false);
-  const [mnemonic, setMnemonic] = useState();
-  const [word13_enc, setword13_enc] = useState();
-  const [word13, setword13] = useState();
-  const [walletName, setWalletName] = useState();
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
 
+  // alert(defaultSymbol)
   
 
 
@@ -215,41 +244,54 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
     }, errorCB);
 
 
-  var rris = []
+  var symbols = []
+  var reverseTokenMetadataMap = new Map();
   balancesMap.forEach((balance, rri) => {
-    rris.push(rri)
+    symbols.push(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""))
+    reverseTokenMetadataMap.set(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""), rri);
+    // alert(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""));
   });
   
 
   const [xrdAddr, onChangeXrdAddr] = useState(sourceXrdAddr);
   const [destAddr, onChangeDestAddr] = useState("rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz");
   const [amount, onChangeAmount] = useState(null);
-  const [rri, onChangeRRI] = useState(null);
+  const [symbol, onChangeSymbol] = useState(defaultSymbol);
   const [fee, setFee] = useState(null);
- 
+  const [txnHash, setTxHash] = useState(null);
+  const [show, setShow] = useState(false);
+
  return ( 
-     <View style={styles.container} removeClippedSubviews={false}> 
+     <View style={styles.container} > 
 
-             <ScrollView style={styles.scrollView}
-        keyboardShouldPersistTaps="handled"
-        removeClippedSubviews={false}>
+             
 
       <Separator/>
       <Separator/>
-      <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontSize:20}}>Wallet Name</Text>
-      <Separator/>
-        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Enter the Radix address to send to:</Text>
-        <Input
+     <Separator/>
+     <View style={styles.rowStyle}>
+        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:16}}>From:</Text>
+        <TextInput
+        disabled="true"
+        multiline={true}
+        numberOfLines={4}
         placeholder='INPUT WITH ICON'
-        value={xrdAddr}
-        onChangeText={value => onChangeXrdAddr(value)}
+        value={sourceXrdAddr}
+        // onChangeText={value => onChangeXrdAddr(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
+      </View>
 
-<Input
+
+      <View style={styles.rowStyle}>
+      <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:16}}>To:</Text>
+  
+<TextInput
         placeholder='INPUT WITH ICON'
         value={destAddr}
         onChangeText={value => onChangeDestAddr(value)}
+        multiline={true}
+        numberOfLines={4}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
        <Separator/>
@@ -261,9 +303,13 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
         placeholder="Radix address"
       />
 </KeyboardAvoidingView> */}
+</View>
 
 
-<Input
+
+
+<View style={styles.rowStyle}>
+<TextInput
         placeholder='Amount'
          value={amount}
         onChangeText={value => onChangeAmount(value)}
@@ -272,9 +318,11 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
       />
 
 <SelectDropdown
-	data={rris}
+ buttonStyle={{backgroundColor:"white", width:150}}
+	data={symbols}
+  defaultValue={defaultSymbol}
 	onSelect={(selectedItem, index) => {
-		onChangeRRI(selectedItem)
+		onChangeSymbol(selectedItem)
 	}}
 	buttonTextAfterSelection={(selectedItem, index) => {
 		// text represented after item is selected
@@ -287,7 +335,7 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
 		return item
 	}}
 />
-
+</View>
 {/* <TextInput
         style={{paddingHorizontal:10, marginHorizontal: 10, height: 30, borderWidth:StyleSheet.hairlineWidth}}
         onChangeText={onChangeAmount}
@@ -297,25 +345,29 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
 
 
 
-        <Button  style={{marginHorizontal: 25}}
+        <Button  style={{fontSize:16, marginHorizontal: 0, color:"black", borderWidth:StyleSheet.hairlineWidth, borderColor:'black'}}
                 title="Send"
                 enabled
-                onPress={() => buildTxn(sourceXrdAddr, destAddr, rri, amount,setFee, public_key, privKey_enc)}
+                onPress={() => buildTxn(reverseTokenMetadataMap, sourceXrdAddr, destAddr, symbol, amount,setFee, public_key, privKey_enc, setShow, setTxHash)}
               />
               <Separator/>
               <Separator/>
-              <Separator/>
-              <Text>Fee: {fee/1000000000000000000} XRD</Text>
+              {/* <Text>Fee: {fee/1000000000000000000} XRD</Text>
               <Text>Priv Key Enc: {privKey_enc}</Text>
-              <Text>Pub Key : {public_key}</Text>
-{/* <Text>Copied Text: {cpdataObj}</Text>
-              
-
-         */}
+              <Text>Pub Key : {public_key}</Text> */}
 
 <Separator/>
 
-</ScrollView>
+{ show == true &&
+<Text
+       style={{color: 'blue', textAlign: "center"}}
+       onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
+     >
+       Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.
+     </Text>
+ }
+
+
   </View>)
 };
 
@@ -325,7 +377,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0,
-    margin: 0,
+    margin: 20,
     backgroundColor: "white",
     justifyContent: "flex-start"
    },
@@ -334,6 +386,13 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderBottomColor: '#737373',
     borderBottomWidth: 0,
+  },
+  rowStyle: {
+    flexDirection: 'row',
+    fontSize: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical:5
   },
 });
 

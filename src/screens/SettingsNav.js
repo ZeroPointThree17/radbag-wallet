@@ -8,7 +8,8 @@ import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createStackNavigator } from '@react-navigation/stack';
 import Settings from './Settings';
 import MnemonicDisplay from './MnemonicDisplay';
-import { CommonActions } from '@react-navigation/native';
+import AddressOptions from './AddressOptions';
+import WalletOptions from './WalletOptions';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,9 @@ const Separator = () => (
   <Stack.Navigator>
     <Stack.Screen name="Settings" component={Settings} options={{ tabBarLabel: 'Settings', headerShown: false }}/>
     <Stack.Screen name="Mnemonic Display" component={MnemonicDisplay}/>
+    <Stack.Screen name="Address Options" component={AddressOptions}/>
+    <Stack.Screen name="Wallet Options" component={WalletOptions}/>
+  
   </Stack.Navigator>
 );
 };

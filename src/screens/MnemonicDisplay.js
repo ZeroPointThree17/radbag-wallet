@@ -16,15 +16,11 @@ const Separator = () => (
 
 
 function errorCB(err) {
-  alert("SQL Error: " + err.message);
-}
-
-function successCB() {
-  console.log("SQL executed fine");
+  console.log("SQL Error: " + err.message);
 }
 
 function openCB() {
-  // console.log("Database OPENED");
+  console.log("Database OPENED");
 }
 
 
@@ -99,7 +95,6 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
   const [mnemonic, setMnemonic] = useState();
   const [word13_enc, setword13_enc] = useState();
   const [word13, setword13] = useState();
-
   const [walletName, setWalletName] = useState();
 
   

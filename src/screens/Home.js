@@ -472,6 +472,10 @@ const Home = ({route, navigation}) => {
     const [refreshing, setRefreshing] = React.useState(false);
 
     const onRefresh = React.useCallback(() => {
+        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+        getActiveAddress(db, setActiveAddress);
+        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs,setTokenMetadata, tokenMetadata);
+        getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
       setRefreshing(true);
       wait(2000).then(() => setRefreshing(false));
     }, []);
@@ -572,7 +576,7 @@ const Home = ({route, navigation}) => {
         getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
         getActiveAddress(db, setActiveAddress);
         getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
-    }, 30000);
+    }, 20000);
 
     //  alert("token MD: "+JSON.stringify(tokenMetadata.get(addressRRIs.get(1))))
     

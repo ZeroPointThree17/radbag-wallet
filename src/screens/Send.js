@@ -339,8 +339,6 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholderTextColor="#d3d3d3"
          value={amount}
         onChangeText={value => onChangeAmount(value)}
-         
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
 
 <SelectDropdown

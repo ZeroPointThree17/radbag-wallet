@@ -20,8 +20,12 @@ const Welcome = ({ navigation }) => {
   return (
 
     <SafeAreaView style={styles.container}>
+        <Image
+        style={{width:150, height:150}}
+        source={require('../assets/radish_nobackground.png')}
+      />
      <View style={styles.text}> 
-
+   
  <Text style={styles.title}>Welcome to the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
  <Button
         title="Yes - Import a Wallet"

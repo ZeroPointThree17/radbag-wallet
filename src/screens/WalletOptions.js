@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { TouchableOpacity, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Alert, TouchableOpacity, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -57,6 +57,18 @@ function removeWallet(walletId, navigation){
     alert("Cannot remove the last wallet in this app")
   }
     else{
+
+      Alert.alert(
+        "Remove Wallet",
+        "Are you sure you want to remove this wallet? All associated addresses will also be removed.",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "Yes", onPress: () => {
+
   db.transaction((tx) => {
     tx.executeSql("DELETE FROM address WHERE wallet_id="+walletId, [], (tx, results) => {
 
@@ -111,7 +123,16 @@ function removeWallet(walletId, navigation){
 }, errorCB);
 
 });
-}, errorCB)}
+}, errorCB)
+
+
+} }
+]
+);
+
+
+
+}
 
 
 

@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { TouchableOpacity, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Alert, TouchableOpacity, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -70,11 +70,23 @@ function removeAddress(addressId, walletId, navigation,setActiveAddress){
 
       count = row.count
   }
-
+ 
   if(count==1){
     alert("Cannot remove the last address from the wallet")
   }
     else{
+
+      Alert.alert(
+        "Remove address",
+        "Are you sure you want to remove this address from this wallet?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "Yes", onPress: () => {
+
   db.transaction((tx) => {
     tx.executeSql("UPDATE address SET enabled_flag=0 WHERE id="+addressId, [], (tx, results) => {
 
@@ -105,7 +117,15 @@ function removeAddress(addressId, walletId, navigation,setActiveAddress){
     }, errorCB);
 
   });
-}, errorCB);}
+}, errorCB);
+
+
+
+} }
+]
+);
+
+}
 
 });
 }, errorCB);

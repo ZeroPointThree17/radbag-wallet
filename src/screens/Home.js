@@ -51,7 +51,7 @@ function useInterval(callback, delay) {
     <View style={styles.separatorBorder} />
     );
 
-function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses, enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs){
+function getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances) {
 
     db.transaction((tx) => {
 
@@ -66,7 +66,7 @@ function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnable
             
              setWallets(wallets);
         
-             getActiveWallet(db, setActiveWallet,setEnabledAddresses);
+             getActiveWallet(db, setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
              
              console.log("inside get wallets");
              console.log("inside get wallets2");
@@ -75,7 +75,7 @@ function getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnable
         
 }
 
-function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
+function getEnabledAddresses(wallet_id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
 
         var addresses = new Map();
 
@@ -100,9 +100,10 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
             // addresses.forEach(el=> alert(wallet_id +" has "+ JSON.stringify(data)))
   
             setEnabledAddresses(addresses);
+            getActiveAddress(db, setActiveAddress, addresses, addressBalances, setAddressBalances);
     //   alert(newEnabledAddresses)
-
-
+    
+  
           }, errorCB); 
         });
 
@@ -112,7 +113,7 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses){
   
 }
 
-function addAddress(wallet_id,db,setEnabledAddresses,setActiveAddress){
+function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
 
     db.transaction((tx) => {
 
@@ -129,8 +130,8 @@ function addAddress(wallet_id,db,setEnabledAddresses,setActiveAddress){
             } else{
             db.transaction((tx) => {
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
-                getEnabledAddresses(wallet_id,db,setEnabledAddresses);  
-                updateActiveAddress(db, next_id, setActiveAddress);
+                    getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+ 
                   }, errorCB);
                 });
             }
@@ -153,18 +154,18 @@ Alert.alert(
   ]
 );
 
-function removeAddress(db, wallet_id, address_id,setEnabledAddresses){
+// function removeAddress(db, wallet_id, address_id,setEnabledAddresses){
 
-    // alert("Updating addresses 0.1");
-    db.transaction((tx) => {
+//     // alert("Updating addresses 0.1");
+//     db.transaction((tx) => {
 
-        tx.executeSql("UPDATE address SET enabled_flag='0' WHERE wallet_id='"+wallet_id+"' AND id='"+address_id+"' AND enabled_flag='1'", [], (tx, results) => {
+//         tx.executeSql("UPDATE address SET enabled_flag='0' WHERE wallet_id='"+wallet_id+"' AND id='"+address_id+"' AND enabled_flag='1'", [], (tx, results) => {
 
-            getEnabledAddresses(wallet_id,db,setEnabledAddresses)
+//             getEnabledAddresses(wallet_id,db,setEnabledAddresses)
 
-          }, errorCB);
-        });
-}
+//           }, errorCB);
+//         });
+// }
 
 
 export function shortenAddress(address){
@@ -176,7 +177,7 @@ export function shortenAddress(address){
 function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses, activeAddress){
 
 
-    if( balances.size > 0 && tokenMetadata.size > 0 && enabledAddresses.size > 0 ){
+    if( balances.size > 0 && enabledAddresses.size > 0 ){
 
         var rows = []
         // alert(JSON.stringify("in render " + JSON.stringify(tokenMetadata.get(addressRRIs.get(activeAddress)[0]))));
@@ -212,31 +213,35 @@ function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses
     balances.forEach((balance, rri) =>  
 
    {
+    //    alert(rri)
     //    alert(JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, ""))
+
+    try{
             rows.push(
                
             <View key={rri}>
            { console.log("b: "+balance + " rri "+rri)}
                    {/* {  console.log("TMD: " + JSON.stringify(tokenMetadata.get(JSON.stringify(rri.rri).replace(/["']/g, "")))) } */}
     <SeparatorBorder/>
-    <TouchableOpacity onPress={ () => {navigation.navigate('Send',{defaultSymbol:JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, ""), balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}}>
+    <TouchableOpacity onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
     <View style={styles.addrRowStyle}>
 
 
     <Image style={{width: 36, height: 36}}
-        source={{uri: JSON.stringify(tokenMetadata.get(rri).icon_url).replace(/["']/g, "")}}
+        source={{uri: balance[3]}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {JSON.stringify(tokenMetadata.get(rri).name).replace(/["']/g, "")}</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance/10000000000000000000).toLocaleString() } {JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, "")}</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance[0]/10000000000000000000).toLocaleString() } {balance[1]}</Text>
 
     </View> 
     </TouchableOpacity>
     </View>        )
-    }
-        );
-
-
+    }    
+    catch(err){
+        console.log(err)
+   }
+   });
            
 
     return (rows)
@@ -273,12 +278,12 @@ function updateActiveWallet(wallet_id, setActiveWallet, setActiveAddress){
 export function updateActiveAddress(db, address_id, setActiveAddress){
     db.transaction((tx) => {
         tx.executeSql("UPDATE active_address set id = '"+address_id+"'", [], (tx, results) => {
-           setActiveAddress(address_id);
+            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
         }, errorCB);
     }); 
 }
 
-function getActiveWallet(db,setActiveWallet,setEnabledAddresses){
+function getActiveWallet(db,setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
     db.transaction((tx) => {
         tx.executeSql("SELECT id FROM active_wallet", [], (tx, results) => {
         
@@ -293,13 +298,16 @@ function getActiveWallet(db,setActiveWallet,setEnabledAddresses){
                 setActiveWallet(id);
                 //  alert("active wallet "+id)
 
-                getEnabledAddresses(id,db,setEnabledAddresses);
+                getEnabledAddresses(id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
 
         }, errorCB);
     }); 
 }
 
-function getActiveAddress(db,setActiveAddress){
+function getActiveAddress(db, setActiveAddress, addresses, addressBalances, setAddressBalances){
+
+    // var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+
     db.transaction((tx) => {
         tx.executeSql("SELECT id FROM active_address", [], (tx, results) => {
         
@@ -314,7 +322,8 @@ function getActiveAddress(db,setActiveAddress){
                 setActiveAddress(id);
                 //  alert("active wallet "+id)
 
-      
+                getBalances(addresses, id, addressBalances, setAddressBalances)
+
 
         }, errorCB);
     }); 
@@ -326,13 +335,12 @@ export class NetworkUtils {
       return response.isConnected;
   }}
 
-   function getTokenMetadata(addressRRIs, setTokenMetadata,tokenMetadata){
+   function getTokenMetadata(uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances){
     // const isConnected = await NetworkUtils.isNetworkAvailable();
  
-    addressRRIs.forEach(rris => {
-        
-
-        rris.forEach(rri => {
+     var rri = uniqueRRIs.pop();
+      // uniqueRRIs.forEach(rri => {
+        //    alert(rri) 
     // if(isConnected){
      fetch('https://mainnet-gateway.radixdlt.com/token', {
         method: 'POST',
@@ -347,25 +355,45 @@ export class NetworkUtils {
                   "network": "mainnet"
                 },
                 "token_identifier": {
-                  "rri": "xrd_rr1qy5wfsfh"
+                  "rri": rri
                 }
               }    
       
         )
       }).then((response) => response.json()).then((json) => {
 
-        //  alert(JSON.stringify(json));
+        //  alert("BNB: "+JSON.stringify(json));
           // activeAddressBalances
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
             
-          // alert(JSON.stringify(json.account_balances))
-                  // alert(JSON.stringify(json.account_balances))
-            //   addressBalances.set(activeAddress,json.account_balances);
-              var newTokenMetadata = new Map(tokenMetadata);
+            var newBalance = new Map(newAddrBalances);
+            if(newBalance.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri == rri){
+                newBalance.get(activeAddress).staked_and_unstaking_balance.token_identifier['symbol'] =  json.token.token_properties.symbol
+                newBalance.get(activeAddress).staked_and_unstaking_balance.token_identifier['icon_url'] = json.token.token_properties.icon_url;
+                newBalance.get(activeAddress).staked_and_unstaking_balance.token_identifier['name'] = json.token.token_properties.name;
 
-              newTokenMetadata.set(rri,json.token.token_properties);
-       
-              setTokenMetadata(newTokenMetadata);
+              }
+
+            newBalance.get(activeAddress).liquid_balances.forEach( balance => {
+
+                if(balance.token_identifier.rri == rri){
+//  alert("token meta rri: "+rri)
+                    balance.token_identifier['symbol'] = json.token.token_properties.symbol;
+                    balance.token_identifier['icon_url'] = json.token.token_properties.icon_url;
+                    balance.token_identifier['name'] = json.token.token_properties.name;
+                }
+
+
+            })
+
+            newBalance.forEach((b, active_address) => console.log("NB ("+active_address+"):"+JSON.stringify(b)))
+
+            if(uniqueRRIs.length == 0){
+              setAddressBalances(newBalance);
+            } else{
+              getTokenMetadata(uniqueRRIs, activeAddress, newBalance, setAddressBalances)
+            }
+  
              
           }
       }).catch((error) => {
@@ -375,11 +403,11 @@ export class NetworkUtils {
     //     alert("No internet connection available. Please connect to the internet.");
     // }
 
-});
-    });
+// });
+ 
   }
   
-  async function getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata){
+  async function getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances){
    
     const isConnected = await NetworkUtils.isNetworkAvailable();
  
@@ -405,40 +433,43 @@ export class NetworkUtils {
         )
       }).then((response) => response.json()).then((json) => {
 
+        // alert("GB: "+JSON.stringify(json));
         // alert(JSON.stringify(json));
           // activeAddressBalances
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
-            
+            // alert("GB2: "+JSON.stringify(json));
           // alert(JSON.stringify(json.account_balances))
                   // alert(JSON.stringify(json.account_balances))
             //   addressBalances.set(activeAddress,json.account_balances);
               var newAddrBalances = new Map(addressBalances);
               newAddrBalances.set(activeAddress,json.account_balances);
        
-              setAddressBalances(newAddrBalances);
-            //    alert("ACTIVE 2 "+JSON.stringify(addressBalances.get(activeAddress)));
+              // setAddressBalances(newAddrBalances);
+              // alert("ACTIVE 2 "+JSON.stringify(newAddrBalances.get(activeAddress)));
               
             // //   alert(addressBalances);
               var rris = [];
               rris.push(JSON.stringify(json.account_balances.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, ""));
       
               var liquid_balances = json.account_balances.liquid_balances
-      
-              for(var key in liquid_balances.jsonData) {
-                  rris.push(JSON.stringify(liquid_balances.jsonData[key].token_identifier.rri).replace(/["']/g, ""))
+            // alert(JSON.stringify(liquid_balances))
+              liquid_balances.forEach( (element) => {
+                  rris.push(JSON.stringify(element.token_identifier.rri).replace(/["']/g, ""))
                }
+              )
       
+            //    alert(rris)
                var uniqueRRIs = [...new Set(rris)]
       
-               var newAddrRRIs = new Map(addressRRIs);
+              //  var newAddrRRIs = new Map();
 
-
-               newAddrRRIs.set(activeAddress,uniqueRRIs);
-               setAddressRRIs(newAddrRRIs);
+// alert(uniqueRRIs)
+              //  newAddrRRIs.set(activeAddress,uniqueRRIs);
+            //    setAddressRRIs(newAddrRRIs);
 
             // newAddrRRIs.forEach(value => alert(value))
-
-               getTokenMetadata(newAddrRRIs, setTokenMetadata, tokenMetadata);
+           
+               getTokenMetadata(uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances);
             //   setTimeout(getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs), 5000);
           }
       }).catch((error) => {
@@ -472,10 +503,7 @@ const Home = ({route, navigation}) => {
     const [refreshing, setRefreshing] = React.useState(false);
 
     const onRefresh = React.useCallback(() => {
-        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-        getActiveAddress(db, setActiveAddress);
-        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs,setTokenMetadata, tokenMetadata);
-        getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
+        getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
       setRefreshing(true);
       wait(2000).then(() => setRefreshing(false));
     }, []);
@@ -522,61 +550,81 @@ const Home = ({route, navigation}) => {
         }
         )
 
+        useEffect(() => {
+            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+            // getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
+        }, []);
+    
+        // useEffect(() => {
+        //     getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)          // getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
+        // }, [activeAddress, enabledAddresses]);
+    
+        useInterval(() => {
+            // getActiveAddress(db, setActiveAddress);
+            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    }, 10000);
+
+            // alert("ab1 size " + addressBalances.size)
     var balances = new Map();
-    if( addressBalances.size > 0 && activeAddress != undefined && tokenMetadata.size > 0  ){
+    if( addressBalances.size > 0 && activeAddress != undefined ){
 
-    var liquid_rri_balance = 0;
+    var liquid_rdx_balance = 0;
 
+    addressBalances.forEach((balance, active_address) => {console.log("INITIAL BALS ("+active_address+"): "+JSON.stringify(balance))})
+    console.log(activeAddress)
+    // alert(JSON.stringify(addressBalances))
     if(!(addressBalances.get(activeAddress) == undefined)){
+     
     addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  {
+  
+   console.log("Bs"+JSON.stringify(balance))
+        balances.set(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, ""),[
+            JSON.stringify(balance.value).replace(/["']/g, ""),
+             JSON.stringify(balance.token_identifier.symbol).replace(/["']/g, "").toUpperCase(),
+             JSON.stringify(balance.token_identifier.name).replace(/["']/g, ""),
+            JSON.stringify(balance.token_identifier.icon_url).replace(/["']/g, "") ])
+
+            if(JSON.stringify(balance.token_identifier.rri.replace(/["']/g, "")) == 'xrd_rr1qy5wfsfh'){
+                liquid_rdx_balance = JSON.stringify(balance.value).replace(/["']/g, "");
+
+            }
      
-        balances.set(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, ""),JSON.stringify(balance.value).replace(/["']/g, ""))
-     
-        if(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, "") === "xrd_rr1qy5wfsfh"){
-            liquid_rri_balance = JSON.stringify(balance.value).replace(/["']/g, "");
-        }
     }
 
         // alert(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, "") + " "+ JSON.stringify(balance.value).replace(/["']/g, ""))
     );
 
-    
+   
 
     var stakedAmount = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.value).replace(/["']/g, "");
     var stakedTokenIdentifier = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
 
-    // alert(stakedAmount + " " + liquid_rri_balance)
-        if(liquid_rri_balance > 0 ){
-            balances.set(stakedTokenIdentifier,balances.get(stakedTokenIdentifier)+stakedAmount);
+
+    //  alert(stakedAmount + " " + stakedTokenIdentifier)
+        if(!(balances.get(stakedTokenIdentifier) == undefined) ){
+            balances.set(stakedTokenIdentifier,[balances.get(stakedTokenIdentifier)[0]+stakedAmount,balances.get(stakedTokenIdentifier)[1],balances.get(stakedTokenIdentifier)[2],balances.get(stakedTokenIdentifier)[3]]);
         } else{
-            balances.set(stakedTokenIdentifier,JSON.stringify(stakedAmount).replace(/["']/g, ""));
+            balances.set(stakedTokenIdentifier,[stakedAmount,
+                
+                JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.symbol).replace(/["']/g, "").toUpperCase(),
+
+                JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.name).replace(/["']/g, ""),
+               JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.icon_url).replace(/["']/g, "") ])
+      
         }
     }
 }
 
+//  alert("AB: "+balances.size)
+// balances.forEach((balance) => {alert(balance)})
 // dropdownVals.forEach(val=>alert(JSON.stringify(val)))
 
-       useEffect(() => {
-        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-        getActiveAddress(db, setActiveAddress);
-        // getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-    }, []);
-
-    useEffect(() => {
-        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs,setTokenMetadata, tokenMetadata);
-        getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
-    }, [activeAddress, enabledAddresses]);
 
 // useEffect(() => {
 //     // alert("effect1")
 //     getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
 // }, [addressRRIs]);
 
-    useInterval(() => {
-        getActiveAddress(db, setActiveAddress);
-        getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-        getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
-    }, 10000);
+  
 
     //  alert("token MD: "+JSON.stringify(tokenMetadata.get(addressRRIs.get(1))))
     
@@ -655,9 +703,7 @@ const Home = ({route, navigation}) => {
           onBlur={() => setIsFocus(false)}
           onChange={item => {
             updateActiveWallet(item.value, setActiveWallet, setActiveAddress);
-            getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-            getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
-            setLabel(item.label);
+           setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);
           }}
@@ -687,9 +733,7 @@ const Home = ({route, navigation}) => {
           onBlur={() => setIsFocusAddr(false)}
           onChange={item => {
             updateActiveAddress(db, item.value, setActiveAddress);
-            getWallets(db, setWallets, setActiveWallet, setActiveAddress, setEnabledAddresses,enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-            getBalances(enabledAddresses, item.value, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs, setTokenMetadata, tokenMetadata);
-            setLabelAddr(item.label);
+           setLabelAddr(item.label);
             setValueAddr(item.value);
             setIsFocusAddr(true);
 
@@ -698,7 +742,7 @@ const Home = ({route, navigation}) => {
         />
 
 <Separator/>
-       <Text style={{fontSize: 20, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rri_balance/1000000000000000000).toLocaleString()} XRD</Text>
+       <Text style={{fontSize: 20, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rdx_balance/1000000000000000000).toLocaleString()} XRD</Text>
  
 
        <Separator/>
@@ -764,7 +808,7 @@ navigation.dispatch(pushAction);
 <Text style={styles.buttonText} > Add Wallet     </Text></View>
 </TouchableOpacity>
 
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setEnabledAddresses,setActiveAddress)}>
+     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
      <View style={styles.rowStyle}>
      <IconFeather name="hash" size={16} color="black" />
 <Text style={styles.buttonText} >Add Address</Text></View>

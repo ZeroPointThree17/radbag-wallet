@@ -12,9 +12,9 @@ CREATE TABLE wallet (
     id INTEGER PRIMARY KEY,
     name TEXT,
     mnemonic_enc TEXT,
-    word13_enc TEXT
+    word25_enc TEXT
 );
-INSERT INTO wallet VALUES(1,'Wallet 1', mnemonic_enc, word13_enc);
+INSERT INTO wallet VALUES('Wallet 1', mnemonic_enc, word25_enc);
 
 
 CREATE TABLE address (
@@ -36,7 +36,7 @@ symbol TEXT,
 decimals INTGER,
 logo BLOB
 );
-INSERT INTO token VALUES (1,'xrd_rr1qy5wfsfh','Radix','XRD',18,null);
+INSERT INTO token VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null);
 
 DROP table wallet_x_token;
 CREATE TABLE wallet_x_token (

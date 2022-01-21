@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import { TouchableOpacity, Linking, Alert, ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
@@ -71,6 +71,7 @@ function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount
                 },
                 "to_account": {
                   "address": xrdAddr
+                  // "address": "rdx1qsp3xmjp8q7jr6yeqluaqs9dhl7fr9qvfkrq6mpp3kk7rdtdhftunggghslzh"
                 },
                 "amount": {
                   "token_identifier": {
@@ -100,7 +101,7 @@ function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount
        
         Alert.alert(
           "Commit Transaction?",
-          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD \n Do you want to commit this transaction?",
+          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD\n for a tranfer of "+amount+" "+symbol+"\n\nDo you want to commit this transaction?",
           [
             {
               text: "Cancel",
@@ -223,14 +224,61 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
  const Send = ({route, navigation}) => {
  
-  const { defaultSymbol, balancesMap, sourceXrdAddr, tokenMetadataObj } = route.params;
-  const [password, setPassword] = useState();
+  const { defaultSymbol, balancesMap, sourceXrdAddr } = route.params;
+  console.log("Default symbol: "+defaultSymbol)
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
+  const [destAddr, onChangeDestAddr] = useState();
+  const [amount, onChangeAmount] = useState(null);
+  const [symbol, onChangeSymbol] = useState(defaultSymbol);
+  const [txnHash, setTxHash] = useState(null);
+  const [show, setShow] = useState(false);
+  const [cameraOn, setCameraOn] = useState(false);
+  const [currentBalance, setCurrentBalance] = useState(false);
+  const [symbols, setSymbols] = useState([defaultSymbol]);
 
-  // alert(defaultSymbol)
+ 
+  var reverseTokenMetadataMap = new Map();
   
 
+  useEffect( () => {
+
+    var symbolsTemp = [];
+    var currentValTemp = null;
+    var currentSymbolTemp="";
+  balancesMap.forEach((balance, rri) => {
+  
+    console.log("Send: "+balance)
+    symbolsTemp.push(balance[1])
+    reverseTokenMetadataMap.set(balance[1], rri);
+    
+    if(balance[1] == defaultSymbol){
+      currentValTemp = balance[0];
+      currentSymbolTemp = balance[1];
+    }
+  });
+
+  setCurrentBalance(currentValTemp);
+  setSymbols(symbolsTemp);
+  onChangeSymbol(currentSymbolTemp);
+  
+},[]);
+
+
+useEffect( () => {
+  
+var currentValTemp = null;
+
+balancesMap.forEach((balance, rri) => {
+
+  if(balance[1] == symbol){
+    currentValTemp = balance[0];
+  }
+});
+
+setCurrentBalance(currentValTemp);
+
+},[symbol]);
 
 
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
@@ -252,31 +300,14 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       });
     }, errorCB);
 
-  const [xrdAddr, onChangeXrdAddr] = useState(sourceXrdAddr);
-  const [destAddr, onChangeDestAddr] = useState();
-  const [amount, onChangeAmount] = useState(null);
-  const [symbol, onChangeSymbol] = useState(defaultSymbol);
-  const [fee, setFee] = useState(null);
-  const [txnHash, setTxHash] = useState(null);
-  const [show, setShow] = useState(false);
-  const [cameraOn, setCameraOn] = useState(false);
 
-  var currentBalance = "";
-  var symbols = []
-  var reverseTokenMetadataMap = new Map();
-  balancesMap.forEach((balance, rri) => {
-    symbols.push(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""))
-    reverseTokenMetadataMap.set(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g, ""), rri);
-    
-    if(JSON.stringify(tokenMetadataObj.get(rri).symbol.toUpperCase()).replace(/["']/g == defaultSymbol)){
-      currentBalance = JSON.stringify(balance).replace(/["']/g, "");
-    }
-  });
 
   onSuccess = e => {
     onChangeDestAddr(e.data);
     setCameraOn(false);
   };
+
+  console.log(symbols)
 
  return ( 
      <View style={styles.container} > 
@@ -289,7 +320,8 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         disabled="true"
         multiline={true}
         numberOfLines={4}
-        placeholder='INPUT WITH ICON'
+        autoCapitalize='none'
+        placeholder='Radix Address sending from'
         value={sourceXrdAddr}
         // onChangeText={value => onChangeXrdAddr(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
@@ -321,6 +353,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholderTextColor="#d3d3d3"
         value={destAddr}
         onChangeText={value => onChangeDestAddr(value)}
+        autoCapitalize='none'
         multiline={true}
         numberOfLines={4}
         // value="rdx1qsp3xmjp8q7jr6yeqluaqs9dhl7fr9qvfkrq6mpp3kk7rdtdhftunggghslzh"
@@ -336,16 +369,17 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 <TextInput
         style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Amount'
+        autoCapitalize='none'
         placeholderTextColor="#d3d3d3"
          value={amount}
         onChangeText={value => onChangeAmount(value)}
       />
 
 <SelectDropdown
- buttonStyle={{backgroundColor:"#183A81", flex:0.3, borderWidth:StyleSheet.hairlineWidth, marginRight:10}}
+ buttonStyle={{backgroundColor:"#183A81", flex:0.5, borderWidth:StyleSheet.hairlineWidth, marginRight:10}}
  buttonTextStyle={{color:"white"}}
 	data={symbols}
-  defaultValue={defaultSymbol}
+  defaultValue={symbol}
 	onSelect={(selectedItem, index) => {
 		onChangeSymbol(selectedItem)
 	}}
@@ -361,7 +395,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 	}}
 />
 </View>
-<Text style={{fontSize: 12, color:"black"}}>Current balance: {currentBalance} {symbol}</Text>
+<Text style={{fontSize: 12, color:"black"}}>Current balance: {Number(currentBalance/10000000000000000000).toLocaleString()} {symbol}</Text>
 
 
 

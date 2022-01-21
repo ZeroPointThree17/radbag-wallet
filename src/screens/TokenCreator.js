@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { TouchableOpacity, Linking, Alert, ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, Linking, Alert, ScrollView, Image, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -19,7 +19,8 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
- 
+var Poof = require("../assets/poof.png");
+
 const Separator = () => (
   <View style={styles.separator} />
 );
@@ -61,6 +62,23 @@ function openCB() {
 function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
   //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
 
+  if( isNaN(tknSupply) ){
+    alert("Token supply must be a number")
+  } else if (
+    
+    !((tknIconUrl.startsWith('http://') || tknIconUrl.startsWith('https://')) && (tknUrl.startsWith('http://') || tknUrl.startsWith('https://')))
+  
+  ){
+    alert("URLs must start with http:// or https://")
+  }
+
+  else if(tknIconUrl.replace('http://',"").replace('https://',"").length==0){
+      alert("URL part after http(s):// must not be empty")
+    }
+
+  else if(tknUrl.replace('http://',"").replace('https://',"").length==0){
+      alert("URL part after http(s):// must not be empty")
+  } else {
   var rri=""
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
   fetch('https://mainnet-gateway.radixdlt.com/token/derive', {
@@ -83,7 +101,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
       }).then((response) => response.json()).then((json) => {
         //  alert(JSON.stringify(json))
          
-        if(json.code == 400){
+        if(json.code == 400 || json.code == 500){
           alert(JSON.stringify(json.message));
          }
          else{
@@ -95,7 +113,9 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
       }).catch((error) => {
           console.error(error);
       });
+    }
 }
+
 function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
 //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
 
@@ -148,10 +168,10 @@ var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
       
         )
       }).then((response) => response.json()).then((json) => {
-         alert(JSON.stringify(json))
+        //  alert(JSON.stringify(json))
          
-        if(json.code == 400 && json.details.type == "NotEnoughTokensForTransferError"){
-          alert("Insufficient balance for this transaction")
+         if(json.code == 400 || json.code == 500){
+          alert(JSON.stringify(json.message));
          }
          else{
         // alert(JSON.stringify(json))
@@ -327,7 +347,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
  return ( 
   <ScrollView style={styles.scrollView}>
      <View style={styles.container} > 
-
+     <Image style={{width: 100, height: 100, alignSelf:'center'}}
+    source={Poof}
+      />
+      <Separator/>
+      <Separator/>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Name:</Text>
      <View style={styles.rowStyle}>
  
@@ -337,6 +361,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         autoCapitalize='none'
         placeholder='Token Name'
         value={tknName}
+        maxLength={199}
         onChangeText={value => settknName(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
@@ -347,9 +372,12 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <View style={styles.rowStyle}>
  
         <TextInput
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth,  height: 125, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
+        multiline={true}
+        numberOfLines={5}
+        maxLength={255}
         placeholder='Token Description'
         value={tknDesc}
         onChangeText={value => settknDesc(value)}
@@ -358,23 +386,23 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Symbol</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Symbol (must be lowercase and alphanumeric)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:50, backgroundColor:"white", flex:0.33}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Symbol'
         value={tknSymbol}
-        onChangeText={value => settknSymbol(value)}
+        onChangeText={value => settknSymbol(value.toLowerCase())}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
       <Separator/>
 
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Icon URL</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Icon URL (must begin with http:// or https://)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput
@@ -389,7 +417,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Project URL</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Project URL (must begin with http:// or https://)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput

@@ -347,10 +347,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
  return ( 
   <ScrollView style={styles.scrollView}>
      <View style={styles.container} > 
-     <Image style={{width: 100, height: 100, alignSelf:'center'}}
+
+     <Image style={{margin: 10, width: 100, height: 100, alignSelf:'center'}}
     source={Poof}
       />
-      <Separator/>
+    
       <Separator/>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Name:</Text>
      <View style={styles.rowStyle}>

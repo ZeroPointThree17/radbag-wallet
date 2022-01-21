@@ -1,6 +1,7 @@
 import { RefreshControl, Alert, Image, Button, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState,useRef, useEffect, useReducer } from 'react';
-var SQLite = require('react-native-sqlite-storage');
+var GenericToken = require("../assets/generic_token.png");
+ var SQLite = require('react-native-sqlite-storage');
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
 import  IconFoundation  from 'react-native-vector-icons/Foundation';
@@ -181,56 +182,25 @@ function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
         var rows = []
-        // alert(JSON.stringify("in render " + JSON.stringify(tokenMetadata.get(addressRRIs.get(activeAddress)[0]))));
-
-
-        // alert(stakedAmount);
-
-                //  alert("IN RENDER ("+JSON.stringify(tokenMetadata.get("xrd_rr1qy5wfsfh").name));
-        
-                 // alert("RRI:: "+ JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, ""))
-        
-            // var rri = JSON.stringify(value.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
-
-            // alert(rri);
-            // alert(JSON.stringify(tokenMetadata.get(rri)))
-        // alert(JSON.stringify(tokenMetadata.get(rri)))
-
-    //     rows.push(
-    //     <View key={1}>
-    //     <SeparatorBorder/>
-    //     <View style={styles.addrRowStyle}>
-    //     <Image style={{width: 50, height: 50}}
-    //     source={{uri: JSON.stringify(tokenMetadata.get(stakedTokenIdentifier).icon_url).replace(/["']/g, "")}}
-    //   />
-      
-    //     <Text style={{color:"black",flex:1,marginTop:0,fontSize:20,justifyContent:'flex-start' }}>{JSON.stringify(tokenMetadata.get(stakedTokenIdentifier).name).replace(/["']/g, "")} (Staked or unstaking)</Text>
-    //     <Text style={{color:"black",flex:0.5,marginTop:0,fontSize:20, justifyContent:'flex-end' }}>{JSON.stringify(stakedAmount).replace(/["']/g, "")}</Text>
-    //     </View> 
-    //     </View>
-    //     );
-    
 
     balances.forEach((balance, rri) =>  
 
    {
-    //    alert(rri)
-    //    alert(JSON.stringify(tokenMetadata.get(rri).symbol.toUpperCase()).replace(/["']/g, ""))
 
     try{
             rows.push(
                
             <View key={rri}>
            { console.log("b: "+balance + " rri "+rri)}
-                   {/* {  console.log("TMD: " + JSON.stringify(tokenMetadata.get(JSON.stringify(rri.rri).replace(/["']/g, "")))) } */}
-    <SeparatorBorder/>
+   <SeparatorBorder/>
     <TouchableOpacity onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
     <View style={styles.addrRowStyle}>
 
 
     <Image style={{width: 36, height: 36}}
-        source={{uri: balance[3]}}
+    defaultSource={GenericToken}
+    source={{uri: balance[3]}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance[0]/10000000000000000000).toLocaleString() } {balance[1]}</Text>
@@ -518,6 +488,7 @@ const Home = ({route, navigation}) => {
     });
       }
 
+      
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
     var initialEnabledAddresses = new Map();

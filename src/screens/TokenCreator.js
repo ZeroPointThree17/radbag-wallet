@@ -467,22 +467,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         />
 </View>
       <Separator/>
-
-      {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Granularity</Text>
-     <View style={styles.rowStyle}>
- 
-        <TextInput
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
-        disabled="false"
-        autoCapitalize='none'
-        placeholder='Token Granularity'
-        value={tknGranularity}
-        onChangeText={value => settknGranularity(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
-      />
-      </View> 
- <Separator/> */}
-
+      <Separator/>
 <TouchableOpacity style={styles.button} onPress={() => startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}>
         <View style={styles.sendRowStyle}>
         <IconFA5 name="coins" size={20} color="black" />
@@ -491,10 +476,9 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         </TouchableOpacity>
               <Separator/>
               <Separator/>
-              {/* <Text>Fee: {fee/1000000000000000000} XRD</Text>
-              <Text>Priv Key Enc: {privKey_enc}</Text>
-              <Text>Pub Key : {public_key}</Text> */}
-
+<Separator/>
+<Separator/>
+<Separator/>
 <Separator/>
 <Separator/>
 { show == true &&

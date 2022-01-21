@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { TouchableOpacity, Linking, Alert, ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
@@ -18,10 +18,37 @@ const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
-
+import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+ 
 const Separator = () => (
   <View style={styles.separator} />
 );
+
+function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+
+
+var radio_props = [
+  {label: 'Yes', value: true },
+  {label: 'No', value: false }
+];
 
 function errorCB(err) {
   console.log("SQL Error: " + err.message);
@@ -31,7 +58,7 @@ function openCB() {
   console.log("Database OPENED");
 }
 
-function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknRRI, setFee ){
+function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
   //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
 
   var rri=""
@@ -63,13 +90,13 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
         // alert(JSON.stringify(json))
         rri = JSON.stringify(json.token_identifier.rri).replace(/["']/g, "")
         // alert(rri)
-        buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, setFee )
+        buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity )
         }
       }).catch((error) => {
           console.error(error);
       });
 }
-function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, setFee ){
+function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
 //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
 
 var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
@@ -97,8 +124,8 @@ var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
                   "icon_url": tknIconUrl,
                   "url": tknUrl,
                   "symbol": tknSymbol,
-                  "is_supply_mutable": false,
-                  "granularity": 1,
+                  "is_supply_mutable": tknIsSuppMut,
+                  "granularity": tknGranularity,
                   "owner": {
                     "address": sourceXrdAddr
                   }
@@ -141,13 +168,6 @@ var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
             { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash) }
           ]
         );
-          // activeAddressBalances
-          if(!(json === undefined) && json.hasOwnProperty("transaction_build") ){
-            
-            // alert(privKey_enc);
-            setFee(json.transaction_build.fee.value);
-             
-          }
 
         }
       }).catch((error) => {
@@ -256,7 +276,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
  
   // const { defaultSymbol, balancesMap, sourceXrdAddr, tokenMetadataObj } = route.params;
 
-  const [fee, setFee] = useState();
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
   const [sourceXrdAddr, setSourceXrdAddr] = useState();
@@ -267,15 +286,19 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
           const [tknSymbol, settknSymbol] = useState();
             const [tknIsSuppMut, settknIsSuppMut] = useState();
               const [tknSupply, settknSupply] = useState();
-                const [tknRRI, settknRRI] = useState();
                 const [txnHash, setTxHash] = useState(null);
                 const [show, setShow] = useState(false);
+                const [tknGranularity, settknGranularity] = useState(1);
+
+                
               
               
 
 
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
  
+  useInterval(() => {
+
   db.transaction((tx) => {
     tx.executeSql("SELECT address.radix_address,address.privatekey_enc, address.publickey FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
       var len = results.rows.length;
@@ -297,6 +320,8 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       });
     }, errorCB);
 
+
+  }, 5000);
 
 
  return ( 
@@ -395,44 +420,42 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
 
+
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Make supply mutable?</Text>
-     <View style={styles.rowStyle}>
+      <View style={styles.rowStyle}>
  
-        <TextInput
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
-        disabled="true"
-        autoCapitalize='none'
-        multiline={true}
-        numberOfLines={4}
-        placeholder='Is supply mutable?'
-        value={sourceXrdAddr}
-        // onChangeText={value => onChangeXrdAddr(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
-      />
-      </View>
+     <RadioForm
+          radio_props={radio_props}
+          initial={true}
+          onPress={(value) => settknIsSuppMut(value)}
+          formHorizontal={false}
+          selectedButtonColor="black"
+          buttonColor="black"
+          buttonInnerColor="black"
+          buttonOuterColor="black"
+          buttonSize={10}
+          buttonOuterSize={20}
+          buttonWrapStyle={{marginLeft: 0}}
+        />
+</View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token RRI</Text>
+      {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Granularity</Text>
      <View style={styles.rowStyle}>
  
         <TextInput
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
-        placeholder='Token RRI'
-        value={tknRRI}
-        onChangeText={value => settknRRI(value)}
+        placeholder='Token Granularity'
+        value={tknGranularity}
+        onChangeText={value => settknGranularity(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
-      </View>
-      <Separator/>
+      </View> 
+ <Separator/> */}
 
-
-
-<Separator/>
-<Separator/>
-
-<TouchableOpacity style={styles.button} onPress={() => startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknRRI, setFee )}>
+<TouchableOpacity style={styles.button} onPress={() => startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}>
         <View style={styles.sendRowStyle}>
         <IconFA5 name="coins" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Mint Tokens</Text>

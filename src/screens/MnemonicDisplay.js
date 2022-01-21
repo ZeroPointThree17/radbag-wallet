@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
@@ -14,6 +14,25 @@ const Separator = () => (
   <View style={styles.separator} />
 );
 
+function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
 
 function errorCB(err) {
   console.log("SQL Error: " + err.message);
@@ -38,13 +57,7 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
 }
 
 
-
-
- const MnemonicDisplay = ({route}) => {
-
-
-
-  var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalletName){
 
   db.transaction((tx) => {
     tx.executeSql("SELECT wallet.mnemonic_enc FROM wallet INNER JOIN active_wallet ON wallet.id=active_wallet.id", [], (tx, results) => {
@@ -87,7 +100,24 @@ function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, 
           }, errorCB);
       });
     }, errorCB);
+}
 
+ const MnemonicDisplay = ({route}) => {
+
+
+
+  var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+
+
+  useEffect(() => {
+    getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalletName)
+  }, []);
+
+  useInterval(() => {
+
+    getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalletName)
+
+  }, 1000);
 
   const [password, setPassword] = useState();
   const [mnemonic_enc, setMnemonic_enc] = useState();

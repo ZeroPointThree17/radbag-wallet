@@ -361,6 +361,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Name'
+        placeholderTextColor="#d3d3d3"
         value={tknName}
         maxLength={199}
         onChangeText={value => settknName(value)}
@@ -380,6 +381,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         numberOfLines={5}
         maxLength={255}
         placeholder='Token Description'
+        placeholderTextColor="#d3d3d3"
         value={tknDesc}
         onChangeText={value => settknDesc(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
@@ -395,6 +397,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Symbol'
+        placeholderTextColor="#d3d3d3"
         value={tknSymbol}
         onChangeText={value => settknSymbol(value.toLowerCase())}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
@@ -411,6 +414,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Icon URL'
+        placeholderTextColor="#d3d3d3"
         value={tknIconUrl}
         onChangeText={value => settknIconUrl(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
@@ -426,6 +430,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         disabled="false"
         autoCapitalize='none'
         placeholder='Project URL'
+        placeholderTextColor="#d3d3d3"
         value={tknUrl}
         onChangeText={value => settknUrl(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
@@ -434,7 +439,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Separator/>
 
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Supply</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Supply (must be a number)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput
@@ -442,6 +447,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Supply'
+        placeholderTextColor="#d3d3d3"
         value={tknSupply}
         onChangeText={value => settknSupply(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}

@@ -142,19 +142,7 @@ function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddress
 
 }
 
-const removeAddessWarning = (db, wallet_id, address_id) =>
-Alert.alert(
-  "Remove address",
-  "Are you sure you want to remove this address from this wallet?",
-  [
-    {
-      text: "Cancel",
-      onPress: () => console.log("Cancel Pressed"),
-      style: "cancel"
-    },
-    { text: "Yes", onPress: () => removeAddress(db, wallet_id, address_id) }
-  ]
-);
+
 
 // function removeAddress(db, wallet_id, address_id,setEnabledAddresses){
 
@@ -555,9 +543,9 @@ const Home = ({route, navigation}) => {
              JSON.stringify(balance.token_identifier.name).replace(/["']/g, ""),
             JSON.stringify(balance.token_identifier.icon_url).replace(/["']/g, "") ])
 
-            if(JSON.stringify(balance.token_identifier.rri.replace(/["']/g, "")) == 'xrd_rr1qy5wfsfh'){
+            if(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, "") == 'xrd_rr1qy5wfsfh'){
                 liquid_rdx_balance = JSON.stringify(balance.value).replace(/["']/g, "");
-
+                
             }
      
     }

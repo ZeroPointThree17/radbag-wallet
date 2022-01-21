@@ -130,8 +130,9 @@ function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddress
             } else{
             db.transaction((tx) => {
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
-                    getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
- 
+                  
+                  updateActiveAddress(db, next_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+
                   }, errorCB);
                 });
             }
@@ -250,7 +251,7 @@ function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses
 
 }
 
-function updateActiveWallet(wallet_id, setActiveWallet, setActiveAddress){
+function updateActiveWallet(wallet_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -267,7 +268,7 @@ function updateActiveWallet(wallet_id, setActiveWallet, setActiveAddress){
                     address_id = row.id;
                 }
 
-                updateActiveAddress(db, address_id, setActiveAddress);
+                updateActiveAddress(db, address_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
 
             }, errorCB);
     }); 
@@ -275,7 +276,7 @@ function updateActiveWallet(wallet_id, setActiveWallet, setActiveAddress){
 }); 
 }
 
-export function updateActiveAddress(db, address_id, setActiveAddress){
+export function updateActiveAddress(db, address_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
     db.transaction((tx) => {
         tx.executeSql("UPDATE active_address set id = '"+address_id+"'", [], (tx, results) => {
             getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
@@ -561,7 +562,7 @@ const Home = ({route, navigation}) => {
     
         useInterval(() => {
             // getActiveAddress(db, setActiveAddress);
-            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    }, 10000);
+            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    }, 20000);
 
             // alert("ab1 size " + addressBalances.size)
     var balances = new Map();
@@ -702,7 +703,7 @@ const Home = ({route, navigation}) => {
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            updateActiveWallet(item.value, setActiveWallet, setActiveAddress);
+            updateActiveWallet(item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
            setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);
@@ -732,7 +733,7 @@ const Home = ({route, navigation}) => {
           onFocus={() => setIsFocusAddr(true)}
           onBlur={() => setIsFocusAddr(false)}
           onChange={item => {
-            updateActiveAddress(db, item.value, setActiveAddress);
+            updateActiveAddress(db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
            setLabelAddr(item.label);
             setValueAddr(item.value);
             setIsFocusAddr(true);

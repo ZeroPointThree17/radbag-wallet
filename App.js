@@ -44,6 +44,7 @@ import AppDataSave from './src/screens/AppDataSave';
 import MnemonicInput from './src/screens/MnemonicInput';
 import Send from './src/screens/Send';
 import Receive from './src/screens/Receive';
+import Staking from './src/screens/Staking';
 
 // import NFTs from './src/screens/NFTs';
 // import bitcoin from 'react-native-bitcoinjs-lib'
@@ -367,6 +368,7 @@ LogBox.ignoreAllLogs();
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
       <Stack.Screen name="Send" component={Send} />
       <Stack.Screen name="Receive" component={Receive} />
+      <Stack.Screen name="Staking" component={Staking} />
     </Stack.Navigator>
     <FlashMessage position="center" />
     </NavigationContainer>

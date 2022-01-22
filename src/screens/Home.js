@@ -744,6 +744,16 @@ const Home = ({route, navigation}) => {
         <Text style={{fontSize: 14, color:"white"}}> Send</Text>
         </View>
         </TouchableOpacity>
+
+        <Text style={{fontSize: 14, color:"white"}}>          </Text>
+
+        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Staking',{})}>
+        <View style={styles.rowStyle}>
+        <Icon name="arrow-down-circle-outline" size={20} color="white" />
+        <Text style={{fontSize: 14, color:"white"}}> Staking</Text>
+        </View>
+        </TouchableOpacity>
+
         </View>
         {/* </Surface> */}
         </LinearGradient>

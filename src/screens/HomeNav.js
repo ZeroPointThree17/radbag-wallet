@@ -42,7 +42,7 @@ export default function HomeNav({route, navigation}) {
         marginTop:0,
         paddingBottom: 25,
         backgroundColor: '#183A81',
-        position: 'absoulte',
+        position: 'absolute',
         borderTopWidth: 0,
         
     },

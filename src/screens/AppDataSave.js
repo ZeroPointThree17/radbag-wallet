@@ -52,9 +52,7 @@ function openCB() {
 
 
 
-function navigateHome(navigation, password, confirmPassword, mnemonic, word13, setIsActive, firstFlag){
-
-  setIsActive(true);
+function navigateHome(navigation, password, confirmPassword, mnemonic, word13, firstFlag){
 
   if(password.length == 0 || confirmPassword.length == 0 ){
     alert("Password is required");
@@ -77,8 +75,6 @@ var doNothingStmt = "SELECT 'DO_NOTHING' as do_nothing_stmt";
 
 var nextWalledId=1;
 var nextAddressId=1;
-
-
 
 var maxWalletId = "";
 var maxAddressId = "";
@@ -441,22 +437,9 @@ const AppDataSave = ({route, navigation}) => {
 
   const [, updateState] = React.useState();
 const forceUpdate = React.useCallback(() => updateState({}), []);
-
-const [isActive, setIsActive] = useState(false);
 const [appPw, setAppPw] = useState("");
 const [appPwConfirm, setAppPwConfirm] = useState("");
-// const [walletName, setWalletName] = useState("");
-{/* <Separator/>
-<Separator/>
-
-<Text style={styles.title}>Enter a nickname for your wallet.</Text>
-
-<TextInput
-        style={styles.input}
-        onChangeText={(name) => setWalletName( name )}
-        placeholder="Wallet nickname"
-      />
-      <Separator/> */}
+var isActive=false;
 
   
   return (
@@ -488,10 +471,8 @@ label='Confirm Wallet Password' />
  <Separator/>
  <Button
         title="Continue"
-        enabled = {
-          isActive?false:true
-        }
-        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, setIsActive, firstTime)}
+        enabled = {!isActive}
+        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, firstTime)}
       />
 <Separator/>
 <Separator/>

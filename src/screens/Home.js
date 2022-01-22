@@ -191,7 +191,7 @@ function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses
     source={{uri: balance[3]}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance[0]/10000000000000000000).toLocaleString() } {balance[1]}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance[0]/1_000_000_000_000_000_000).toLocaleString() } {balance[1]}</Text>
 
     </View> 
     </TouchableOpacity>
@@ -392,7 +392,7 @@ export class NetworkUtils {
         )
       }).then((response) => response.json()).then((json) => {
 
-        // alert("GB: "+JSON.stringify(json));
+        console.log("GB: "+JSON.stringify(json));
         // alert(JSON.stringify(json));
           // activeAddressBalances
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
@@ -561,7 +561,7 @@ const Home = ({route, navigation}) => {
 
     //  alert(stakedAmount + " " + stakedTokenIdentifier)
         if(!(balances.get(stakedTokenIdentifier) == undefined) ){
-            balances.set(stakedTokenIdentifier,[balances.get(stakedTokenIdentifier)[0]+stakedAmount,balances.get(stakedTokenIdentifier)[1],balances.get(stakedTokenIdentifier)[2],balances.get(stakedTokenIdentifier)[3]]);
+            balances.set(stakedTokenIdentifier,[parseInt(balances.get(stakedTokenIdentifier)[0])+parseInt(stakedAmount),balances.get(stakedTokenIdentifier)[1],balances.get(stakedTokenIdentifier)[2],balances.get(stakedTokenIdentifier)[3]]);
         } else{
             balances.set(stakedTokenIdentifier,[stakedAmount,
                 
@@ -668,7 +668,7 @@ const Home = ({route, navigation}) => {
             setIsFocus(true);
           }}
         />
-      <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))}}>
+      <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""))}}>
 <IconFeather name="copy" size={20} color="white" />
 </TouchableOpacity>
  </View>

@@ -32,12 +32,14 @@ function openCB() {
 }
 
 
-function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
+function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
-  if(xrdAddr == undefined || xrdAddr.length==0){
-    alert("Destination address is required")
-  }
-  else if ( isNaN(amount) ){
+  // alert(rri)
+  // if(xrdAddr == undefined || xrdAddr.length==0){
+  //   alert("Destination address is required")
+  // }
+  // else 
+  if ( isNaN(amount) ){
     alert("Amount entered must be a number")
   } else if(amount == undefined || amount.length==0){
     alert("Amount is required")
@@ -70,12 +72,12 @@ function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  "address": xrdAddr
-                  // "address": "rdx1qsp3xmjp8q7jr6yeqluaqs9dhl7fr9qvfkrq6mpp3kk7rdtdhftunggghslzh"
+                  // "address": xrdAddr
+                  "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
                 },
                 "amount": {
                   "token_identifier": {
-                    "rri": reverseTokenMetadataMap.get(symbol)
+                    "rri": rri
                   },
                   "value": amountStr
                 }
@@ -218,6 +220,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   const [cameraOn, setCameraOn] = useState(false);
   const [currentBalance, setCurrentBalance] = useState(false);
   const [symbols, setSymbols] = useState([defaultSymbol]);
+  const [rri, setRRI] = useState();
 
  
   var reverseTokenMetadataMap = new Map();
@@ -228,39 +231,44 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
     var symbolsTemp = [];
     var currentValTemp = null;
     var currentSymbolTemp="";
-  balancesMap.forEach((balance, rri) => {
+    var rriTemp="";
+
+    balancesMap.forEach((balance, rri) => {
   
-    console.log("Send: "+balance)
+    // alert("Send: "+balance[1] + "rri: "+rri)
+ 
     symbolsTemp.push(balance[1])
     reverseTokenMetadataMap.set(balance[1], rri);
     
-    if(balance[1] == defaultSymbol){
+    if(balance[1] == symbol){
       currentValTemp = balance[0];
       currentSymbolTemp = balance[1];
+      rriTemp=rri;
     }
   });
 
   setCurrentBalance(currentValTemp);
   setSymbols(symbolsTemp);
   onChangeSymbol(currentSymbolTemp);
+  setRRI(rriTemp);
   
-},[]);
-
-
-useEffect( () => {
-  
-var currentValTemp = null;
-
-balancesMap.forEach((balance, rri) => {
-
-  if(balance[1] == symbol){
-    currentValTemp = balance[0];
-  }
-});
-
-setCurrentBalance(currentValTemp);
-
 },[symbol]);
+
+
+// useEffect( () => {
+  
+// var currentValTemp = null;
+
+// balancesMap.forEach((balance, rri) => {
+
+//   if(balance[1] == symbol){
+//     currentValTemp = balance[0];
+//   }
+// });
+
+// setCurrentBalance(currentValTemp);
+
+// },[]);
 
 
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
@@ -384,7 +392,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity style={styles.button} onPress={() => buildTxn(reverseTokenMetadataMap, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}>
+<TouchableOpacity style={styles.button} onPress={() => buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Send</Text>

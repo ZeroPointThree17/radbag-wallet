@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { TouchableOpacity, Linking, Alert, ScrollView, Image, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Keyboard, TouchableOpacity, Linking, Alert, ScrollView, Image, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -267,6 +267,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
          var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
         
+         Keyboard.dismiss;
          setShow(true);
          setTxHash(txnHash);
   

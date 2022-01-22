@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import { TouchableOpacity, Linking, Alert, ScrollView,KeyboardAvoidingView, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Keyboard, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -34,6 +34,7 @@ function openCB() {
 
 function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
+  Keyboard.dismiss; 
   // alert(rri)
   if(xrdAddr == undefined || xrdAddr.length==0){
     alert("Destination address is required")
@@ -188,6 +189,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
          var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
         
+         Keyboard.dismiss; 
          setShow(true);
          setTxHash(txnHash);
   
@@ -300,7 +302,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   console.log(symbols)
 
  return ( 
-     <View style={styles.container} > 
+     <ScrollView style={styles.container} > 
 
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
@@ -392,7 +394,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity style={styles.button} onPress={() => buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}>
+<TouchableOpacity style={styles.button} onPress={() => {buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Send</Text>
@@ -416,7 +418,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
  }
 
 
-  </View>)
+  </ScrollView>)
 };
 
 

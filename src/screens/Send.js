@@ -210,7 +210,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
  const Send = ({route, navigation}) => {
  
-  const { defaultSymbol, balancesMap, sourceXrdAddr } = route.params;
+  const { xrdLiquidBalance, defaultSymbol, balancesMap, sourceXrdAddr } = route.params;
   console.log("Default symbol: "+defaultSymbol)
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
@@ -242,8 +242,13 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
     symbolsTemp.push(balance[1])
     reverseTokenMetadataMap.set(balance[1], rri);
     
-    if(balance[1] == symbol){
+
+    if(balance[1] == symbol && symbol!="XRD"){
       currentValTemp = balance[0];
+      currentSymbolTemp = balance[1];
+      rriTemp=rri;
+    } else if(balance[1] == "XRD"){
+      currentValTemp = xrdLiquidBalance;
       currentSymbolTemp = balance[1];
       rriTemp=rri;
     }
@@ -302,7 +307,8 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   console.log(symbols)
 
  return ( 
-     <ScrollView style={styles.container} > 
+   <View style={styles.container}>
+     <ScrollView  > 
 
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
@@ -387,7 +393,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 	}}
 />
 </View>
-<Text style={{fontSize: 12, color:"black"}}>Current balance: {Number(currentBalance/1000000000000000000).toLocaleString()} {symbol}</Text>
+<Text style={{fontSize: 12, color:"black"}}>Current liquid balance: {Number(currentBalance/1000000000000000000).toLocaleString()} {symbol}</Text>
 
 
 
@@ -418,7 +424,8 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
  }
 
 
-  </ScrollView>)
+  </ScrollView>
+  </View>)
 };
 
 

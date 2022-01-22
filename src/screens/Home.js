@@ -164,7 +164,7 @@ export function shortenAddress(address){
 
 }
 
-function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses, activeAddress){
+function renderAddressRows(balances, liquid_rdx_balance, navigation, enabledAddresses, activeAddress){
 
 
     if( balances.size > 0 && enabledAddresses.size > 0 ){
@@ -181,7 +181,7 @@ function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses
             <View key={rri}>
            { console.log("b: "+balance + " rri "+rri)}
    <SeparatorBorder/>
-    <TouchableOpacity onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+    <TouchableOpacity onPress={ () => {navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance,defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
     <View style={styles.addrRowStyle}>
 
@@ -738,7 +738,7 @@ const Home = ({route, navigation}) => {
 
         <Text style={{fontSize: 14, color:"white"}}>          </Text>
   
-        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
+        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance, defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
         <Text style={{fontSize: 14, color:"white"}}> Send</Text>
@@ -802,7 +802,7 @@ navigation.dispatch(pushAction);
 <View style={{margin:16}}>
 <Text>Tokens</Text>
 
-{renderAddressRows(balances,tokenMetadata, navigation, enabledAddresses,activeAddress)}
+{renderAddressRows(balances,liquid_rdx_balance, navigation, enabledAddresses,activeAddress)}
 
 </View> 
         <Separator/>

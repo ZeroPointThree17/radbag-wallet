@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint .",
     "postinstall": "./node_modules/.bin/rn-nodeify --install vm,process,crypto,buffer,stream,assert,events --hack && npm i -S buffer@5",
-    "generate": "react-native generate-bootsplash ./src/assets/radish_nobackground.png --background-color=183A81   --logo-width=100 --assets-path=./src/assets --flavor=main"
+    "generate": "react-native generate-bootsplash ./src/assets/radish_nobackground.png --background-color=183A81   --logo-width=288 --assets-path=./src/assets --flavor=main"
   },
   "dependencies": {
     "@noble/secp256k1": "^1.4.0",

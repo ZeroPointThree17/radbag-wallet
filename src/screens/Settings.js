@@ -1,11 +1,12 @@
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity,FlatList, SectionList, View, StyleSheet } from 'react-native';
+import { ScrollView, Text, Image,FlatList, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
 import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFA  from 'react-native-vector-icons/FontAwesome5';
+var Raddish = require("../assets/radish_nobackground.png");
 
 
 const Separator = () => (
@@ -27,10 +28,11 @@ const list = [
 
  const Settings = ({route, navigation}) => {
  return ( 
-     <ScrollView style={styles.scrollView} > 
+  <View style={{flex:1}}>
+     <ScrollView style={{flex:1}}> 
 
 
-  <View>
+ 
   <Separator/>
 
  <ListItem
@@ -201,10 +203,25 @@ const list = [
 
 <Separator/>*/}
 
+</ScrollView>
 
-  </View>  
+<View style={{flex:1,justifyContent:"center" , alignSelf:"center"}}>
+<Image style={{margin: 0, width: 75, height: 75, alignSelf:'center'}}
+    source={Raddish}/>
+    <Text style={{ alignSelf:'center'}}>Raddish Wallet v.1.0.0</Text>
+</View>
+
+
+
+
+
+ 
+ </View>
+
+      
+
   
-  </ScrollView>)
+ )
 };
 
 
@@ -237,6 +254,13 @@ const styles = StyleSheet.create({
     marginVertical: 0,
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  rowStyle: {
+    flexDirection: 'row',
+    fontSize: 4,
+    // alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical:5
   },
 });
 

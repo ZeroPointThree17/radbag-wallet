@@ -16,10 +16,7 @@ import { shortenAddress } from './Home';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
-var Poof = require("../assets/poof.png");
+var Raddish = require("../assets/radish_nobackground.png");
 
 const Separator = () => (
   <View style={styles.separator} />
@@ -353,23 +350,25 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   <ScrollView style={{backgroundColor:"white"}}>
      <View style={styles.container} > 
     
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: rdxasddasffsdf</Text>
+
+
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
+      
+       <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
+       <Image style={{margin: 0, width: 50, height: 50, marginBottom:4, alignSelf:'center'}}
+    source={Raddish}/>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}Our validator address is pre-populated below.{"\n"}Any stakes of 100 XRD or greater to the Raddish.io validator will enable the{"\n"}BONUS SECTION: "TOKEN CREATOR" in this app!</Text>
+       <Separator/>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Or... select any validator to stake with and enter their validator address in the box below.</Text>
+       </LinearGradient>
+       <Separator/>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: rdxasddasffsdf</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: 12312.0000</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance: 1212.0000</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Pending Stake Balance: 12312.0000</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Pending Unstake Balance: 1212.0000</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: 12312.0000</Text>
-
-      <Separator/>
-      <Separator/>
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
-       <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
-    
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", fontWeight:'bold', textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}Our validator address is pre-populatd below.{"\n"}Any stakes of over 100 XRD to the Raddish.io validator will enable the BONUS SECTION: "Token Creator" in this app!</Text>
-       <Separator/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:'bold', color:"white", textAlign:"center", alignSelf:'center'}}>Or... select any validator to stake with and enter their validator address in the box below.</Text>
-       </LinearGradient>
-       <Separator/>
+     <Separator/>
       <View style={styles.rowStyle}>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address:</Text>
      <Text

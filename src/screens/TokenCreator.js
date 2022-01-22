@@ -474,6 +474,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 </View>
       <Separator/>
       <Separator/>
+      <Separator/>
 <TouchableOpacity style={styles.button} onPress={() => startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}>
         <View style={styles.sendRowStyle}>
         <IconFA5 name="coins" size={20} color="black" />

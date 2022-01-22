@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import { TouchableOpacity, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, ScrollView, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -23,9 +23,9 @@ const Receive = ({route, navigation}) => {
   }
 
  return ( 
-    //  <View >
-            
+    
       <View style={styles.container}> 
+      <ScrollView>
        <Text style={{textAlign:'center', fontWeight:'bold'}}>Radix Address QR Code:</Text>
        <Separator/>
 <QRCode 
@@ -48,9 +48,9 @@ const Receive = ({route, navigation}) => {
 <Text> Copy address to clipboard</Text>
 </View>
 </TouchableOpacity>
-
+</ScrollView>
   </View>
-  // </View>
+
   )
 };
 

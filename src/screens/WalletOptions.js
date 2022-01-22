@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { Alert, Keyboard, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Alert, Keyboard, Button, Text, TextInput, ScrollView, View, StyleSheet } from 'react-native';
 import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
 import { StackActions, NavigationActions } from '@react-navigation/native';
 var SQLite = require('react-native-sqlite-storage');
@@ -197,9 +197,9 @@ const WalletOptions = ({route, navigation}) => {
 const walletNameRef = useRef();
 
 return ( 
-    //  <View >
             
       <View style={styles.container}> 
+      <ScrollView>
       <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center'}}>Current Wallet Name: {"\n"}{walletName}</Text>
        <Separator/>
        <Text style={{textAlign:'left', fontWeight:'bold'}}>Enter new Wallet Name:</Text>
@@ -228,8 +228,9 @@ return (
                 enabled
                 onPress={() => removeWallet(walletId, navigation)}
               />
+    </ScrollView>
   </View>
-  // </View>
+
   )
 };
 

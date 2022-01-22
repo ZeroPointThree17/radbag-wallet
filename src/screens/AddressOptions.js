@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { Alert, Keyboard, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Alert, Keyboard, Button, Text, TextInput, ScrollView, View, StyleSheet } from 'react-native';
 import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -184,9 +184,9 @@ useInterval(() => {
 const addressNameRef = useRef();
 
  return ( 
-    //  <View >
             
       <View style={styles.container}> 
+      <ScrollView>
        <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center'}}>Current Address Name: {"\n"}{addressName}</Text>
        <Separator/>
        <Text style={{textAlign:'left', fontWeight:'bold'}}>Enter New Address Name:</Text>
@@ -216,8 +216,8 @@ const addressNameRef = useRef();
                 enabled
                 onPress={() => removeAddress(activeAddress, walletId, navigation, setActiveAddress)}
               />
+</ScrollView>
   </View>
-  // </View>
   )
 };
 

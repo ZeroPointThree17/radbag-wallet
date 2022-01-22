@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { Button, Text, Keyboard, SectionList, View, StyleSheet } from 'react-native';
+import { Button, Text, Keyboard, ScrollView, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -127,6 +127,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
 
   return ( 
      <View style={styles.container}> 
+     <ScrollView>
       <Separator/>
       <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontSize:20}}>{walletName}</Text>
       <Separator/>
@@ -158,7 +159,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
        
         <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>{mnemonic} {word13}</Text>
         }
-  
+  </ScrollView>
   </View>)
 };
 

@@ -262,22 +262,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 },[symbol]);
 
 
-// useEffect( () => {
-  
-// var currentValTemp = null;
-
-// balancesMap.forEach((balance, rri) => {
-
-//   if(balance[1] == symbol){
-//     currentValTemp = balance[0];
-//   }
-// });
-
-// setCurrentBalance(currentValTemp);
-
-// },[]);
-
-
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
   db.transaction((tx) => {
@@ -297,8 +281,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       });
     }, errorCB);
 
-
-
   onSuccess = e => {
     onChangeDestAddr(e.data);
     setCameraOn(false);
@@ -313,7 +295,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
  return ( 
    <View style={styles.container}>
-     <ScrollView  > 
+     <ScrollView> 
 
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>

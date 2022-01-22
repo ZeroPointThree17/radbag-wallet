@@ -24,22 +24,11 @@ function navigateAppPassword(navigation, mnemonic, word13, firstTime){
 
 navigation.dispatch(pushAction);
 
-  // navigation.navigate('App Password', {
-  //   mnemonicStr: mnemonic,
-  //   word13Str: word13,
-  //   firstTimeStr: firstTime
-  // });
 }
-
-
-var mnemonic = bip39.generateMnemonic();
 
 const CreateWallet = ({route, navigation}) => {
 
-  useEffect(() => {
-     mnemonic = bip39.generateMnemonic();
-  }, []);
-
+  const[mnemonic, setMnemonic] = useState(bip39.generateMnemonic());
   const { firstTimeStr } = route.params;
   var firstTime = JSON.stringify(firstTimeStr).replaceAll('"','');
 
@@ -67,13 +56,13 @@ const [word13, setword13] = useState("");
     }}
     isChecked={word13flag}
 /> 
-<Text style={styles.title2}>Add 25th word?</Text>
+<Text style={styles.title2}>Add 13th word?</Text>
 </View > 
 { word13flag && 
 
 <PasswordInputText 
 onChangeText={(password) => setword13( password )}
-label='25th word' style={styles.title}/>
+label='13th word' style={styles.title}/>
  }
 <Separator/>
  <Button style={styles.title}

@@ -498,7 +498,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         </View>
         </TouchableOpacity>
               <Separator/>
-
 { show == true &&
 <Text
        style={{color: 'blue', textAlign: "center"}}
@@ -508,6 +507,12 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      </Text>
  }
 
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
 <Separator/>
 <Separator/>
   </View>

@@ -183,6 +183,7 @@ function getWalletDataFromDatabase(db, setWalletId, setWalletName){
 const WalletOptions = ({route, navigation}) => {
  
 [walletName, setWalletName] = useState();
+[newWalletName, setNewWalletName] = useState();
 [walletId, setWalletId] = useState();
 
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
@@ -200,22 +201,24 @@ const WalletOptions = ({route, navigation}) => {
     //  <View >
             
       <View style={styles.container}> 
-       <Text style={{textAlign:'left', fontWeight:'bold'}}>Wallet Name:</Text>
+      <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center'}}>Current Wallet Name: {"\n"}{walletName}</Text>
+       <Separator/>
+       <Text style={{textAlign:'left', fontWeight:'bold'}}>Enter new Wallet Name:</Text>
       
        <View style={styles.rowStyle}>
        <TextInput
         style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1}}
         placeholder='Wallet Name'
         placeholderTextColor="#d3d3d3"
-         value={walletName}
-        onChangeText={value => setWalletName(value)}
+        autoCapitalize='none'
+        onChangeText={value => setNewWalletName(value)}
       />
   
               </View>
               <Button  style={{marginHorizontal: 25}}
                 title="Change Wallet Name"
                 enabled
-                onPress={() => updateWalletName(walletName, walletId)}
+                onPress={() => updateWalletName(newWalletName, walletId)}
               />
 
    <Separator/>

@@ -521,7 +521,7 @@ const Home = ({route, navigation}) => {
     
         useInterval(() => {
             // getActiveAddress(db, setActiveAddress);
-            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    }, 20000);
+            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    }, 10000);
 
             // alert("ab1 size " + addressBalances.size)
     var balances = new Map();

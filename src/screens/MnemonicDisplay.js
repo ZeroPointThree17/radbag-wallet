@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Button, Text, Keyboard, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -114,9 +114,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
   }, []);
 
   useInterval(() => {
-
     getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalletName)
-
   }, 1000);
 
   const [password, setPassword] = useState();
@@ -127,23 +125,22 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
   const [word13, setword13] = useState();
   const [walletName, setWalletName] = useState();
 
-  
-
- return ( 
+  return ( 
      <View style={styles.container}> 
       <Separator/>
       <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontSize:20}}>{walletName}</Text>
       <Separator/>
         <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20}}>Enter your wallet password to display the mnemonic for this wallet</Text>
         <Separator/>
-        <PasswordInputText  style={{marginHorizontal: 25}}
+        <PasswordInputText  style={{marginHorizontal: 25}} 
         onChangeText={(password) => setPassword( password )}
         label='App Password' />
 
         <Button  style={{marginHorizontal: 25}}
                 title="Show Mnemonic"
                 enabled
-                onPress={() => showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13)}
+                onPress={() => {Keyboard.dismiss;
+                  showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13)}}
               />
               <Separator/>
               <Separator/>

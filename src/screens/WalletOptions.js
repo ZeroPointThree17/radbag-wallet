@@ -1,8 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { Alert, TouchableOpacity, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
-import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
-import QRCode from 'react-native-qrcode-svg';
-import IconFeather from 'react-native-vector-icons/Feather';
+import { Alert, Keyboard, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
 import { StackActions, NavigationActions } from '@react-navigation/native';
 var SQLite = require('react-native-sqlite-storage');
@@ -197,7 +194,9 @@ const WalletOptions = ({route, navigation}) => {
     getWalletDataFromDatabase(db, setWalletId, setWalletName)
 }, 1000);
 
- return ( 
+const walletNameRef = useRef();
+
+return ( 
     //  <View >
             
       <View style={styles.container}> 
@@ -206,7 +205,7 @@ const WalletOptions = ({route, navigation}) => {
        <Text style={{textAlign:'left', fontWeight:'bold'}}>Enter new Wallet Name:</Text>
       
        <View style={styles.rowStyle}>
-       <TextInput
+       <TextInput ref={walletNameRef}
         style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1}}
         placeholder='Wallet Name'
         placeholderTextColor="#d3d3d3"
@@ -218,7 +217,7 @@ const WalletOptions = ({route, navigation}) => {
               <Button  style={{marginHorizontal: 25}}
                 title="Change Wallet Name"
                 enabled
-                onPress={() => updateWalletName(newWalletName, walletId)}
+                onPress={() => {walletNameRef.current.blur();Keyboard.dismiss;updateWalletName(newWalletName, walletId)}}
               />
 
    <Separator/>

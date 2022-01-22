@@ -296,7 +296,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 
 
-
  const TokenCreator = ({route, navigation}) => {
  
   // const { defaultSymbol, balancesMap, sourceXrdAddr, tokenMetadataObj } = route.params;
@@ -343,6 +342,12 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
   }, 5000);
 
+  const tknNameRef = useRef();
+  const tknDescRef = useRef();
+  const tknSymbolRef = useRef();
+  const tknIconURLRef = useRef();
+  const tknURLRef = useRef();
+  const tknSupplyRef = useRef();
 
  return ( 
   <ScrollView style={styles.scrollView}>
@@ -356,7 +361,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Name:</Text>
      <View style={styles.rowStyle}>
  
-        <TextInput
+        <TextInput ref={tknNameRef}
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
@@ -373,7 +378,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Description</Text>
      <View style={styles.rowStyle}>
  
-        <TextInput
+        <TextInput ref={tknDescRef}
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth,  height: 125, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
@@ -392,7 +397,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Symbol (must be lowercase and alphanumeric)</Text>
      <View style={styles.rowStyle}>
  
-        <TextInput
+        <TextInput ref={tknSymbolRef}
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:50, backgroundColor:"white", flex:0.33}}
         disabled="false"
         autoCapitalize='none'
@@ -409,7 +414,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Icon URL (must begin with http:// or https://)</Text>
      <View style={styles.rowStyle}>
  
-        <TextInput
+        <TextInput ref={tknIconURLRef}
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
@@ -425,7 +430,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Project URL (must begin with http:// or https://)</Text>
      <View style={styles.rowStyle}>
  
-        <TextInput
+        <TextInput ref={tknURLRef}
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
@@ -439,27 +444,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Separator/>
 
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Supply (must be a number)</Text>
-     <View style={styles.rowStyle}>
- 
-        <TextInput
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
-        disabled="false"
-        autoCapitalize='none'
-        placeholder='Token Supply'
-        placeholderTextColor="#d3d3d3"
-        value={tknSupply}
-        onChangeText={value => settknSupply(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
-      />
-      </View>
-      <Separator/>
-
 
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Make supply mutable?</Text>
       <View style={styles.rowStyle}>
  
-     <RadioForm
+     <RadioForm 
           radio_props={radio_props}
           onPress={(value) => settknIsSuppMut(value)}
           formHorizontal={false}
@@ -473,22 +462,43 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
           buttonWrapStyle={{marginLeft: 0}}
         />
 </View>
+
+<Separator/>
+
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Supply (must be a number)</Text>
+     <View style={styles.rowStyle}>
+ 
+        <TextInput ref={tknSupplyRef}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
+        disabled="false"
+        autoCapitalize='none'
+        placeholder='Token Supply'
+        placeholderTextColor="#d3d3d3"
+        value={tknSupply}
+        onChangeText={value => settknSupply(value)}
+        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
+      />
+      </View>
+
       <Separator/>
       <Separator/>
       <Separator/>
-<TouchableOpacity style={styles.button} onPress={() => startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}>
+<TouchableOpacity style={styles.button} onPress={() => {
+     tknNameRef.current.blur();
+     tknDescRef.current.blur();
+     tknSymbolRef.current.blur();
+     tknIconURLRef.current.blur();
+     tknURLRef.current.blur();
+     tknSupplyRef.current.blur();
+     Keyboard.dismiss;
+  startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}}>
         <View style={styles.sendRowStyle}>
         <IconFA5 name="coins" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Mint Tokens</Text>
         </View>
         </TouchableOpacity>
               <Separator/>
-              <Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
+
 { show == true &&
 <Text
        style={{color: 'blue', textAlign: "center"}}

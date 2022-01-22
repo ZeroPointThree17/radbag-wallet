@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { Alert, TouchableOpacity, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Alert, Keyboard, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -181,6 +181,8 @@ useInterval(() => {
   getAddressDataFromDatabase(db, setActiveAddress, setAddressName, setRadixAddress, setWalletId)
 }, 1000);
 
+const addressNameRef = useRef();
+
  return ( 
     //  <View >
             
@@ -190,7 +192,7 @@ useInterval(() => {
        <Text style={{textAlign:'left', fontWeight:'bold'}}>Enter New Address Name:</Text>
       
        <View style={styles.rowStyle}>
-       <TextInput
+       <TextInput ref={addressNameRef}
         style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1}}
         placeholder='Address Name'
         placeholderTextColor="#d3d3d3"
@@ -203,7 +205,7 @@ useInterval(() => {
               <Button  style={{marginHorizontal: 25}}
                 title="Change Address Name"
                 enabled
-                onPress={() => updateAddresssName(newAddressName, activeAddress)}
+                onPress={() => {addressNameRef.current.blur(); Keyboard.dismiss; updateAddresssName(newAddressName, activeAddress)}}
               />
 
    <Separator/>

@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { Keyboard, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
@@ -306,6 +306,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
   console.log(symbols)
 
+  const addrFromRef = useRef();
+  const addrToRef = useRef();
+  const amountRef = useRef();
+
+
  return ( 
    <View style={styles.container}>
      <ScrollView  > 
@@ -313,7 +318,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
  
-        <TextInput
+        <TextInput ref={addrFromRef}
         style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300, backgroundColor:"#d3d3d3", flex:1}}
         disabled="true"
         multiline={true}
@@ -345,7 +350,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
       <View style={styles.rowStyle}>
 
-<TextInput
+<TextInput ref={addrToRef}
 style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Destination Radix Address'
         placeholderTextColor="#d3d3d3"
@@ -364,7 +369,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 
 <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to send:</Text>
 <View style={styles.rowStyle}>
-<TextInput
+<TextInput ref={amountRef}
         style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Amount'
         autoCapitalize='none'
@@ -400,7 +405,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity style={styles.button} onPress={() => {buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
+<TouchableOpacity style={styles.button} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Send</Text>

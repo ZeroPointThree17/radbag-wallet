@@ -72,8 +72,8 @@ function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKe
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  // "address": xrdAddr
-                  "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
+                  "address": xrdAddr
+                  // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
                 },
                 "amount": {
                   "token_identifier": {

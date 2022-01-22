@@ -52,7 +52,9 @@ function openCB() {
 
 
 
-function navigateHome(navigation, password, confirmPassword, mnemonic, word13, firstFlag){
+function navigateHome(setIsActive,navigation, password, confirmPassword, mnemonic, word13, firstFlag){
+
+  setIsActive(true)
 
   if(password.length == 0 || confirmPassword.length == 0 ){
     alert("Password is required");
@@ -439,8 +441,7 @@ const AppDataSave = ({route, navigation}) => {
 const forceUpdate = React.useCallback(() => updateState({}), []);
 const [appPw, setAppPw] = useState("");
 const [appPwConfirm, setAppPwConfirm] = useState("");
-var isActive=false;
-
+const [isActive, setIsActive] = useState(false);
   
   return (
     <SafeAreaView style={styles.container}>
@@ -469,11 +470,16 @@ onChangeText={(password) => setAppPwConfirm( password )}
 label='Confirm Wallet Password' />
 
  <Separator/>
+ { !isActive
+  &&
+  
  <Button
         title="Continue"
         enabled = {!isActive}
-        onPress={() => navigateHome(navigation, appPw, appPwConfirm, mnemonic, word13, firstTime)}
+        onPress={() => {setIsActive(true); navigateHome(setIsActive,navigation, appPw, appPwConfirm, mnemonic, word13, firstTime)}}
       />
+     
+  }
 <Separator/>
 <Separator/>
 

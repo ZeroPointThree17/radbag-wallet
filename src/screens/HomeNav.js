@@ -35,11 +35,14 @@ export default function HomeNav({route, navigation}) {
         fontWeight: 'bold',
       },
       tabBarStyle: {
-        height: 90,
+        // height: 'auto',
+        height: 78,
         paddingHorizontal: 5,
-        paddingTop: 0,
+        paddingTop: 10,
+        marginTop:0,
+        paddingBottom: 25,
         backgroundColor: '#183A81',
-        position: 'absolute',
+        position: 'absoulte',
         borderTopWidth: 0,
         
     },

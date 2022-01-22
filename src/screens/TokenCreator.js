@@ -308,16 +308,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       const [tknIconUrl, settknIconUrl] = useState();
         const [tknUrl, settknUrl] = useState();
           const [tknSymbol, settknSymbol] = useState();
-            const [tknIsSuppMut, settknIsSuppMut] = useState();
+            const [tknIsSuppMut, settknIsSuppMut] = useState(true);
               const [tknSupply, settknSupply] = useState();
                 const [txnHash, setTxHash] = useState(null);
                 const [show, setShow] = useState(false);
                 const [tknGranularity, settknGranularity] = useState(1);
-
-                
-              
-              
-
 
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
  
@@ -467,6 +462,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
           radio_props={radio_props}
           onPress={(value) => settknIsSuppMut(value)}
           formHorizontal={false}
+          value={tknIsSuppMut}
           selectedButtonColor="black"
           buttonColor="black"
           buttonInnerColor="black"

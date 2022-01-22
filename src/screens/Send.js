@@ -35,10 +35,10 @@ function openCB() {
 function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
   // alert(rri)
-  // if(xrdAddr == undefined || xrdAddr.length==0){
-  //   alert("Destination address is required")
-  // }
-  // else 
+  if(xrdAddr == undefined || xrdAddr.length==0){
+    alert("Destination address is required")
+  }
+  else 
   if ( isNaN(amount) ){
     alert("Amount entered must be a number")
   } else if(amount == undefined || amount.length==0){
@@ -385,7 +385,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 	}}
 />
 </View>
-<Text style={{fontSize: 12, color:"black"}}>Current balance: {Number(currentBalance/10000000000000000000).toLocaleString()} {symbol}</Text>
+<Text style={{fontSize: 12, color:"black"}}>Current balance: {Number(currentBalance/1000000000000000000).toLocaleString()} {symbol}</Text>
 
 
 

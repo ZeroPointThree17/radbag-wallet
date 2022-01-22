@@ -441,7 +441,6 @@ export class NetworkUtils {
 
 function getDDIndex(dropdownVals,activeAddress){
 
-    // alert(dropdownVals.length)
     for(var x = 0; x <dropdownVals.length ; x++){
 // alert(JSON.stringify(dropdownVals[x]))
         if(dropdownVals[x].value == activeAddress){
@@ -451,6 +450,19 @@ function getDDIndex(dropdownVals,activeAddress){
     }
 
     return 0;
+}
+
+function getWalletDDIndex(walletDropdownVals,activeWallet){
+
+  for(var x = 0; x <walletDropdownVals.length ; x++){
+// alert(JSON.stringify(dropdownVals[x]))
+      if(walletDropdownVals[x].value == activeWallet){
+          // alert(x);
+          return x;
+      }
+  }
+
+  return 0;
 }
 
 const wait = (timeout) => {
@@ -499,6 +511,7 @@ const Home = ({route, navigation}) => {
 
     console.log("about to output ADDRESSES: ");
     var dropdownVals = []
+    var walletDropdownVals = []
 
     
 
@@ -508,7 +521,15 @@ const Home = ({route, navigation}) => {
         dropdownVals.push(element);
 
         }
-        )
+    )
+
+    wallets.forEach((element)=> 
+    {
+    console.log(JSON.stringify(element));
+    walletDropdownVals.push(element);
+
+    }
+)
 
         useEffect(() => {
             getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
@@ -649,7 +670,7 @@ const Home = ({route, navigation}) => {
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
           containerStyle ={styles.containerStyle}
-          data={wallets}
+          data={walletDropdownVals}
           activeColor="#4DA892"
           search
           maxHeight={300}
@@ -657,8 +678,8 @@ const Home = ({route, navigation}) => {
           valueField="value"
           placeholder={!isFocus ? 'Select Wallet' : '...'}
           searchPlaceholder="Search..."
-          label={wallets[parseInt(activeWallet)-1] == undefined ? "Setting up..." : wallets[parseInt(activeWallet)-1].label}
-          value={wallets[parseInt(activeWallet)-1] == undefined ? "Setting up..." : wallets[parseInt(activeWallet)-1].value}
+          label={walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)] == undefined ? "Setting up..." : walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)].label}
+          value={walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)] == undefined ? "Setting up..." : walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)].value}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {

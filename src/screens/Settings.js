@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity,FlatList, SectionList, View, StyleSheet } from 'react-native';
+import { ScrollView, Text, TouchableOpacity,FlatList, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -27,7 +27,7 @@ const list = [
 
  const Settings = ({route, navigation}) => {
  return ( 
-     <View > 
+     <ScrollView style={styles.scrollView} > 
 
 
   <View>
@@ -204,7 +204,7 @@ const list = [
 
   </View>  
   
-  </View>)
+  </ScrollView>)
 };
 
 

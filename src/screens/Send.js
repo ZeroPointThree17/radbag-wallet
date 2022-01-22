@@ -32,7 +32,7 @@ function openCB() {
 }
 
 
-function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount, setFee, public_key, privKey_enc, setShow, setTxHash){
+function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
   if(xrdAddr == undefined || xrdAddr.length==0){
     alert("Destination address is required")
@@ -111,13 +111,6 @@ function buildTxn(reverseTokenMetadataMap, sourceXrdAddr,xrdAddr, symbol, amount
             { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash) }
           ]
         );
-          // activeAddressBalances
-          if(!(json === undefined) && json.hasOwnProperty("transaction_build") ){
-            
-            // alert(privKey_enc);
-            setFee(json.transaction_build.fee.value);
-             
-          }
 
         }
       }).catch((error) => {
@@ -210,17 +203,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   );
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
  const Send = ({route, navigation}) => {
  
@@ -402,7 +384,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity style={styles.button} onPress={() => buildTxn(reverseTokenMetadataMap, sourceXrdAddr, destAddr, symbol, amount,setFee, public_key, privKey_enc, setShow, setTxHash)}>
+<TouchableOpacity style={styles.button} onPress={() => buildTxn(reverseTokenMetadataMap, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Send</Text>

@@ -62,9 +62,13 @@ function openCB() {
 function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
   //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
 
-  if( isNaN(tknSupply) ){
+  if(tknName == undefined || tknDesc  == undefined || tknIconUrl == undefined || tknUrl == undefined || 
+     tknSymbol == undefined || tknIsSuppMut == undefined || tknSupply == undefined || tknGranularity == undefined){
+       alert("All fields are required")
+     }
+  else if( isNaN(tknSupply) ){
     alert("Token supply must be a number")
-  } else if (
+  } else if ( 
     
     !((tknIconUrl.startsWith('http://') || tknIconUrl.startsWith('https://')) && (tknUrl.startsWith('http://') || tknUrl.startsWith('https://')))
   
@@ -72,7 +76,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
     alert("URLs must start with http:// or https://")
   }
 
-  else if(tknIconUrl.replace('http://',"").replace('https://',"").length==0){
+  else if((!(tknIconUrl==undefined) && !(tknUrl==undefined)) && tknIconUrl.replace('http://',"").replace('https://',"").length==0){
       alert("URL part after http(s):// must not be empty")
     }
 
@@ -461,7 +465,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
  
      <RadioForm
           radio_props={radio_props}
-          initial={true}
           onPress={(value) => settknIsSuppMut(value)}
           formHorizontal={false}
           selectedButtonColor="black"

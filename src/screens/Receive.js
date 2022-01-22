@@ -23,9 +23,8 @@ const Receive = ({route, navigation}) => {
   }
 
  return ( 
-    
+    <ScrollView styles={{backgroundColor:"white"}}>
       <View style={styles.container}> 
-      <ScrollView>
        <Text style={{textAlign:'center', fontWeight:'bold'}}>Radix Address QR Code:</Text>
        <Separator/>
 <QRCode 
@@ -48,8 +47,9 @@ const Receive = ({route, navigation}) => {
 <Text> Copy address to clipboard</Text>
 </View>
 </TouchableOpacity>
-</ScrollView>
+
   </View>
+  </ScrollView>
 
   )
 };

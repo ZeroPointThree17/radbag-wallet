@@ -23,7 +23,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import SplashScreen from 'react-native-splash-screen'
+// import SplashScreen from 'react-native-splash-screen'
+import RNBootSplash from 'react-native-bootsplash';
 
 // import AesGcmCrypto from 'react-native-aes-gcm-crypto';
 const { Entropy, charset16 } = require('entropy-string')
@@ -339,13 +340,13 @@ db.transaction((tx) => {
 
 LogBox.ignoreAllLogs();
 
-React.useEffect(() => {
-  SplashScreen.hide();
-});
+// React.useEffect(() => {
+//   SplashScreen.hide();
+// });
 
   return (
 
-<NavigationContainer>
+<NavigationContainer onReady={() => RNBootSplash.hide()}>
     <Stack.Navigator       screenOptions={{
         headerStyle: {
           backgroundColor: '#183A81',

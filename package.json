@@ -8,7 +8,8 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "./node_modules/.bin/rn-nodeify --install vm,process,crypto,buffer,stream,assert,events --hack && npm i -S buffer@5"
+    "postinstall": "./node_modules/.bin/rn-nodeify --install vm,process,crypto,buffer,stream,assert,events --hack && npm i -S buffer@5",
+    "generate": "react-native generate-bootsplash ./src/assets/radish_nobackground.png --background-color=183A81   --logo-width=100 --assets-path=./src/assets --flavor=main"
   },
   "dependencies": {
     "@noble/secp256k1": "^1.4.0",
@@ -72,6 +73,7 @@
     "react-native-bcrypt": "^2.4.0",
     "react-native-bip32-utils": "^0.9.3",
     "react-native-bitcoinjs-lib": "^2.3.4",
+    "react-native-bootsplash": "^4.1.0",
     "react-native-bouncy-checkbox": "^2.1.10",
     "react-native-camera": "^4.2.1",
     "react-native-check-box": "^2.1.7",

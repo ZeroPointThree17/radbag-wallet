@@ -191,7 +191,7 @@ function renderAddressRows(balances, tokenMetadata, navigation, enabledAddresses
     source={{uri: balance[3]}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance[0]/1_000_000_000_000_000_000).toLocaleString() } {balance[1]}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance[0]/1000000000000000000).toLocaleString() } {balance[1]}</Text>
 
     </View> 
     </TouchableOpacity>

@@ -365,7 +365,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
        <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
     
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", fontWeight:'bold', textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}Our validator address is pre-populatd below.</Text>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", fontWeight:'bold', textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}Our validator address is pre-populatd below.{"\n"}Any stakes of over 100 XRD to the Raddish.io validator will enable the BONUS SECTION: "Token Creator" in this app!</Text>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:'bold', color:"white", textAlign:"center", alignSelf:'center'}}>Or... select any validator to stake with and enter their validator address in the box below.</Text>
        </LinearGradient>

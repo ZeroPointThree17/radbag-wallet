@@ -355,11 +355,9 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
       
        <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
-       <Image style={{margin: 0, width: 50, height: 50, marginBottom:4, alignSelf:'center'}}
+       <Image style={{margin: 0, width: 50, height: 70, marginBottom:4, alignSelf:'center'}}
     source={Raddish}/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}Our validator address is pre-populated below.{"\n"}Any stakes of 100 XRD or greater to the Raddish.io validator will enable the{"\n"}BONUS SECTION: "TOKEN CREATOR" in this app!</Text>
-       <Separator/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Or... select any validator to stake with and enter their validator address in the box below.</Text>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}Any stakes of 100 XRD or greater to the Raddish.io validator will enable the{"\n"}BONUS SECTION: "TOKEN CREATOR" in this app!</Text>
        </LinearGradient>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: rdxasddasffsdf</Text>
@@ -370,7 +368,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: 12312.0000</Text>
      <Separator/>
       <View style={styles.rowStyle}>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address:</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>
      <Text
        style={{color: 'blue', textAlign: "center" , fontSize:12, flex:0.5}}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/validators')}}

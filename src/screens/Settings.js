@@ -206,7 +206,7 @@ const list = [
 </ScrollView>
 
 <View style={{flex:1,justifyContent:"center" , alignSelf:"center"}}>
-<Image style={{margin: 0, width: 75, height: 75, alignSelf:'center'}}
+<Image style={{margin: 0, padding:20, width: 50, height: 80, alignSelf:'center'}}
     source={Raddish}/>
     <Text style={{ alignSelf:'center'}}>Raddish Wallet v.1.0.0</Text>
 </View>

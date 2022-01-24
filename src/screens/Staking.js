@@ -203,12 +203,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
          Keyboard.dismiss;
          setShow(true);
          setTxHash(txnHash);
-         
-         var fullAmt = amount * 1000000000000000000;
-         if(actionType=="STAKE"){
-          setCurrentlyStaked(((currentlyStaked/1000000000000000000) + (fullAmt/1000000000000000000)) * 1000000000000000000)
-          setCurrentlyLiquid(((currentlyLiquid/1000000000000000000) - (fullAmt/1000000000000000000)) * 1000000000000000000)
-         } 
   
         }).catch((error) => {
             console.error(error);
@@ -362,7 +356,7 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
       var pendingUnstakes = 0
 
       json.pending_unstakes.forEach(element => {
-        pendingUnstakes += element.unstaking_amount.value
+        pendingUnstakes = ((pendingUnstakes/1000000000000000000) + (element.unstaking_amount.value/1000000000000000000)) * 1000000000000000000
        });
 
       setPendingUnstake(pendingUnstakes);

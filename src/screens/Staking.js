@@ -19,7 +19,7 @@ import { Separator, SeparatorBorder, SeparatorBorderMargin } from '../helpers/js
 import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard } from '../helpers/helpers';
 
 
-function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, xrdAddr, amount , actionType){
+function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, xrdAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
 
   Keyboard.dismiss; 
 
@@ -129,7 +129,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, xr
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash) }
+            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid) }
           ]
         );
 
@@ -141,7 +141,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, xr
 }
 
 
-function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash){
+function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid){
 
   setShow(false);
 
@@ -202,6 +202,15 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
          Keyboard.dismiss;
          setShow(true);
          setTxHash(txnHash);
+         
+         var fullAmt = amount * 1000000000000000000;
+         if(actionType=="STAKE"){
+          setCurrentlyStaked(currentlyStaked + fullAmt)
+          setCurrentlyLiquid(currentlyLiquid - fullAmt)
+         } else if(actionType=="UNSTAKE"){
+          setTotalUnstaking(totalUnstaking + fullAmt)
+          setCurrentlyLiquid(currentlyLiquid + fullAmt)
+         }
   
         }).catch((error) => {
             console.error(error);
@@ -442,12 +451,13 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
 
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
-  const [sourceXrdAddr, setSourceXrdAddr] = useState();
  
                 const [txnHash, setTxHash] = useState(null);
                 const [show, setShow] = useState(false);
       
 
+                const [currentlyLiquid, setCurrentlyLiquid] = useState(currLiqBal);
+                const [currentlyStaked, setCurrentlyStaked] = useState(currStaked);
                 const [totalUnstaking, setTotalUnstaking] = useState(0);
                 const [stakeValidators, setStakeValidators] = useState([]);
                 const [validatorData, setValidatorData] = useState(new Map());
@@ -499,10 +509,10 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
        </LinearGradient>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: {Number(currLiqBal/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance: {Number(currStaked/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: {Number(currentlyLiquid/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance: {Number(currentlyStaked/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Unstaking Balance: {Number(totalUnstaking/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currLiqBal+currStaked)/10000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currentlyLiquid+currentlyStaked)/10000000000000000000).toLocaleString()} XRD</Text>
      <Separator/>
       <View style={styles.rowStyle}>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>
@@ -550,7 +560,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      stakeValRef.current.blur();
      stakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "STAKE") }}>
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "STAKE", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid) }}>
 
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={20} color="black" />
@@ -558,8 +568,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
         </View>
         </TouchableOpacity>
  
-
-           
+     
 </View>
 </React.Fragment>
 }
@@ -612,7 +621,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      unstakeValRef.current.blur();
      unstakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "UNSTAKE")
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "UNSTAKE", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid )
   }}>
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-up-circle-outline" size={20} color="black" />
@@ -630,7 +639,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
               <SeparatorBorderMargin/>
 {renderedStakeValidatorRows}
 </View>
- 
+<Separator/>
 { show == true &&
 <Text
        style={{color: 'blue', textAlign: "center"}}

@@ -336,7 +336,7 @@ export class NetworkUtils {
         )
       }).then((response) => response.json()).then((json) => {
 
-        console.log("GB: "+JSON.stringify(json));
+        console.log("Get Balances call: "+JSON.stringify(json));
         
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
               var newAddrBalances = new Map(addressBalances);

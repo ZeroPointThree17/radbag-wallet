@@ -226,7 +226,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 }
 
 
-function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake){
+function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
   fetch('https://mainnet-gateway.radixdlt.com/account/stakes', {
     method: 'POST',
@@ -257,7 +257,7 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
       var pendingStake=0;
 
       json.pending_stakes.forEach(element => {
-        pendingStake += element.delegated_stake.value
+        pendingStake = ((pendingStake/1000000000000000000) + (element.delegated_stake.value/1000000000000000000)) * 1000000000000000000
        });
 
        json.stakes.forEach(element => {
@@ -268,7 +268,7 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
        setStakeValidators(stakeValidatorsArr);
        setPendingStake(pendingStake)
 
-       getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake)
+       getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
     }
   }).catch((error) => {
       console.error(error);
@@ -276,7 +276,7 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
 }
 
 
-function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake){
+function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
   var origStakeValidators = stakeValidators.slice();
   // alert("GV SL Len: "+stakeValidators.length)
@@ -317,10 +317,10 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
      
          setValidatorData(validatorData)
 
-         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake)
+         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
          
        } else{
-        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake)
+        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
        }
     }
   }).catch((error) => {
@@ -332,7 +332,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
 }
 
 
-function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData,setPrivKey_enc,setPublic_key, setPendingUnstake){
+function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
  
   fetch('https://mainnet-gateway.radixdlt.com/account/unstakes', {
     method: 'POST',
@@ -392,15 +392,64 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
      
              setPrivKey_enc(tempPrivkey_enc);
              setPublic_key(tempPubkey);
-     
+             getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked)
            });
          }, errorCB);
       }
   }).catch((error) => {
       console.error(error);
   });
- 
 }
+
+
+
+function getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked){
+   
+  fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(
+    
+        {
+            "network_identifier": {
+              "network": "mainnet"
+            },
+            "account_identifier": {
+              "address": currAddr
+            }
+          }      
+    
+      )
+    }).then((response) => response.json()).then((json) => {
+
+      // alert("Get Balances call: "+JSON.stringify(json));
+      
+        var liquid_balance = 0;
+        if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
+
+          json.account_balances.liquid_balances.forEach( (balance) =>{
+            if(balance.token_identifier.rri == "xrd_rr1qy5wfsfh"){
+              liquid_balance = balance.value;
+            }
+
+          } );
+
+          var staked_balance = json.account_balances.staked_and_unstaking_balance.value
+          // alert(liquid_balance)
+          setCurrentlyLiquid(parseInt(liquid_balance));
+          setCurrentlyStaked(staked_balance);
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+
+  }
+ 
+
+
 
 
 function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValidators, validatorData){
@@ -462,27 +511,26 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
 
  const Staking = ({route, navigation}) => {
  
-  const { currAddr,currLiqBal, currStaked } = route.params;
+      const { currAddr } = route.params;
 
-  const [privKey_enc, setPrivKey_enc] = useState();
-  const [public_key, setPublic_key] = useState();
- 
-                const [txnHash, setTxHash] = useState(null);
-                const [show, setShow] = useState(false);
-      
+      const [privKey_enc, setPrivKey_enc] = useState();
+      const [public_key, setPublic_key] = useState();
+    
+      const [txnHash, setTxHash] = useState(null);
+      const [show, setShow] = useState(false);
 
-                const [currentlyLiquid, setCurrentlyLiquid] = useState(currLiqBal);
-                const [currentlyStaked, setCurrentlyStaked] = useState(currStaked);
-                const [pendingStake, setPendingStake] = useState(0);
-                const [totalUnstaking, setTotalUnstaking] = useState(0);
-                const [pendingUnstake, setPendingUnstake] = useState(0);
-                const [stakeValidators, setStakeValidators] = useState([]);
-                const [validatorData, setValidatorData] = useState(new Map());
-                const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
-                const [valAddr, setValAddr] = useState();
-                const [stakingScreenActive, setStakingScreenActive] = useState(true);
-                const [stakeAmt, setStakeAmt] = useState();
-                const [unstakeAmt, setUnstakeAmt] = useState();
+      const [currentlyLiquid, setCurrentlyLiquid] = useState();
+      const [currentlyStaked, setCurrentlyStaked] = useState();
+      const [pendingStake, setPendingStake] = useState(0);
+      const [totalUnstaking, setTotalUnstaking] = useState(0);
+      const [pendingUnstake, setPendingUnstake] = useState(0);
+      const [stakeValidators, setStakeValidators] = useState([]);
+      const [validatorData, setValidatorData] = useState(new Map());
+      const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
+      const [valAddr, setValAddr] = useState();
+      const [stakingScreenActive, setStakingScreenActive] = useState(true);
+      const [stakeAmt, setStakeAmt] = useState();
+      const [unstakeAmt, setUnstakeAmt] = useState();
 
       const stakeValRef = useRef();
       const stakeAmtRef = useRef();
@@ -491,12 +539,12 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
 
 
   useEffect(() => {
-    getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake)
+    getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked)
 }, []);
 
 useInterval(() => {
-  getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake)
-}, 1000);
+  getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+}, 2000);
  
  return ( 
   <ScrollView style={{backgroundColor:"white"}}> 
@@ -522,9 +570,12 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
       
        <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
-       <Image style={{margin: 0, width: 50, height: 70, marginBottom:4, alignSelf:'center'}}
+      
+       <Image style={{margin: 0, width: 30, height: 50, marginBottom:4, alignSelf:'center'}}
     source={Raddish}/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}NOTE: Staking to the Raddish.io validator will enable{"\n"}the BONUS: "TOKEN CREATOR" in this app!</Text>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!</Text>
+       
+     
        </LinearGradient>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>

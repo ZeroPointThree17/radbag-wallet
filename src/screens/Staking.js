@@ -305,7 +305,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
      else{
 
         validatorData.set(validatorAddr, json.validator.properties);
- console.log(stakeValidators.length)
+
        if(stakeValidators.length==0){
         // alert(JSON.stringify(json))
      

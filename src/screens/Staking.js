@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { Keyboard, TouchableOpacity, Linking, Alert, ScrollView, Image, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
+import { Keyboard, TouchableOpacity, TouchableHighlight, Linking, Alert, ScrollView, Image, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
@@ -480,14 +480,12 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
                 const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
                 const [valAddr, setValAddr] = useState();
                 const [stakingScreenActive, setStakingScreenActive] = useState(true);
+                const [unstakeAmt, setUnstakeAmt] = useState();
 
-
-  const tknNameRef = useRef();
-  const tknDescRef = useRef();
-  const tknSymbolRef = useRef();
-  const tknIconURLRef = useRef();
-  const tknURLRef = useRef();
-  const tknSupplyRef = useRef();
+  const stakeValRef = useRef();
+  const stakeAmtRef = useRef();
+  const unstakeValRef = useRef();
+  const unstakeAmtRef = useRef();
 
 
   useEffect(() => {
@@ -508,12 +506,19 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
   <ScrollView style={{backgroundColor:"white"}}> 
      <Separator/>
      <View style={styles.addrRowStyle}>
-     <TouchableOpacity style={styles.button} onPress={() => {setStakingScreenActive(true)}}>
-  <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center'}}>Staking</Text>
-</TouchableOpacity>
-<TouchableOpacity style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
-  <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center'}}>  |  Unstaking</Text>
-  </TouchableOpacity>
+     <TouchableHighlight 
+     activeOpacity={0.6}
+     underlayColor="#DDDDDD"
+     style={styles.button} onPress={() => {setStakingScreenActive(true)}}>
+  <Text style={{marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center', textDecorationLine: stakingScreenActive? 'underline' : 'none'}}>Staking</Text>
+</TouchableHighlight>
+<Text style={{marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center'}}>    </Text>
+<TouchableHighlight 
+activeOpacity={0.6}
+underlayColor="#DDDDDD"
+style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
+  <Text style={{marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center', textDecorationLine: stakingScreenActive? 'none' : 'underline'}}>Unstaking</Text>
+  </TouchableHighlight>
     </View>
 
 {stakingScreenActive && <React.Fragment>
@@ -543,7 +548,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
      </View>
      <View style={styles.rowStyle}>
  
-        <TextInput ref={tknNameRef}
+        <TextInput ref={stakeValRef}
         style={{padding:8, borderWidth:StyleSheet.hairlineWidth, height:44, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
@@ -561,11 +566,11 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to Stake:</Text>
      <View style={styles.rowStyle}>
  
-        <TextInput ref={tknSupplyRef}
+        <TextInput ref={stakeAmtRef}
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:0.5}}
         disabled="false"
         autoCapitalize='none'
-        placeholder='Token Supply'
+        placeholder='Amount'
         placeholderTextColor="#d3d3d3"
         value={tknSupply}
         onChangeText={value => settknSupply(value)}
@@ -589,11 +594,8 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
         <Text style={{fontSize: 18, color:"black"}}> Stake</Text>
         </View>
         </TouchableOpacity>
-              <Separator/>
-              <Separator/>
+ 
 
-              <Text style={{fontSize: 16, color:"black"}}>Current Stakes</Text>
-              <SeparatorBorderMargin/>
            
 </View>
 </React.Fragment>
@@ -610,7 +612,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
   
     
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Validator to unstake from:</Text>
-        <TextInput ref={tknNameRef}
+        <TextInput ref={unstakeValRef}
         style={{padding:8, borderWidth:StyleSheet.hairlineWidth, height:44, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
@@ -629,14 +631,14 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to Unstake:</Text>
      <View style={styles.rowStyle}>
  
-        <TextInput ref={tknSupplyRef}
+        <TextInput ref={unstakeAmtRef}
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:0.5}}
         disabled="false"
         autoCapitalize='none'
-        placeholder='Token Supply'
+        placeholder='Amount'
         placeholderTextColor="#d3d3d3"
-        value={tknSupply}
-        onChangeText={value => settknSupply(value)}
+        value={unstakeAmt}
+        onChangeText={value => setUnstakeAmt(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
@@ -657,14 +659,17 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
         <Text style={{fontSize: 18, color:"black"}}> Unstake</Text>
         </View>
         </TouchableOpacity>
-              <Separator/>
 
 </View>
 
 </React.Fragment>
 }
 
+<View style={styles.container} > 
+<Text style={{fontSize: 16, color:"black"}}>Current Stakes</Text>
+              <SeparatorBorderMargin/>
 {renderedStakeValidatorRows}
+</View>
  
 { show == true &&
 <Text

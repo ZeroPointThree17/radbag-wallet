@@ -20,10 +20,16 @@ export function useInterval(callback, delay) {
   }, [delay]);
 }
 
-function errorCB(err) {
+export function errorCB(err) {
   console.log("SQL Error: " + err.message);
 }
 
-function openCB() {
+export function openCB() {
   console.log("Database OPENED");
+}
+
+export function shortenAddress(address){
+
+  return address.substring(0, 7) +"..."+ address.substring(address.length-5, address.length) 
+
 }

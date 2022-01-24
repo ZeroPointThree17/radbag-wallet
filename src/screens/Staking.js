@@ -12,13 +12,12 @@ import { catchError } from 'rxjs/operators';
 import SelectDropdown from 'react-native-select-dropdown'
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Input, Icon } from 'react-native-elements';
-import { shortenAddress } from './Home';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
-import { Separator } from '../helpers/jsxlib';
-import { useInterval, openCB, errorCB } from '../helpers/helpers';
+import { Separator, SeparatorBorder } from '../helpers/jsxlib';
+import { shortenAddress, useInterval, openCB, errorCB } from '../helpers/helpers';
 
 
 var radio_props = [
@@ -52,7 +51,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
       alert("URL part after http(s):// must not be empty")
   } else {
   var rri=""
-  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
+
   fetch('https://mainnet-gateway.radixdlt.com/token/derive', {
         method: 'POST',
         headers: {
@@ -254,6 +253,191 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 }
 
+
+
+
+function getStakeData(currAddr, setTotalUnstaking, setStakeValidators, setValidatorData){
+
+  fetch('https://mainnet-gateway.radixdlt.com/account/stakes', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(
+      {
+        "network_identifier": {
+          "network": "mainnet"
+        },
+        "account_identifier": {
+          // "address": currAddr
+          "address": "rdx1qspnfus07y7pjcy8ez4alquuuxhzma5gwd5mk25czlacv7pz2x2nw4q0h87mn"
+        }
+      }
+    )
+  }).then((response) => response.json()).then((json) => {
+      // alert(JSON.stringify(json))
+     
+    if(json.code == 400 || json.code == 500){
+      // alert(JSON.stringify(json.message));
+     }
+     else{
+      var stakeValidators = []
+
+       json.stakes.forEach(element => {
+        stakeValidators.push({address: element.validator_identifier.address, delegated_stake: element.delegated_stake.value})
+       });
+       alert(JSON.stringify(stakeValidators));
+       setStakeValidators(stakeValidators);
+
+       getUnstakeData(currAddr, setTotalUnstaking, stakeValidators, setValidatorData, new Map())
+    }
+  }).catch((error) => {
+      console.error(error);
+  });
+ 
+}
+
+
+function getValidatorData(stakeValidators, setValidatorData, inputMap){
+
+  // alert(stakeValidators.length)
+  if(stakeValidators.length>0){
+  var validatorAddr = stakeValidators.pop().address;
+
+  var validatorData = new Map(inputMap);
+
+  fetch('https://mainnet-gateway.radixdlt.com/validator', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(
+      {
+        "network_identifier": {
+          "network": "mainnet"
+        },
+        "validator_identifier": {
+          "address": validatorAddr
+        }
+      }
+    )
+  }).then((response) => response.json()).then((json) => {
+   
+    if(json.code == 400 || json.code == 500){
+      // alert(JSON.stringify(json.message));
+     }
+     else{
+
+        validatorData.set(validatorAddr, json.validator.properties);
+ console.log(stakeValidators.length)
+       if(stakeValidators.length==0){
+        // alert(JSON.stringify(json))
+     
+         setValidatorData(validatorData)
+       } else{
+        getValidatorData(stakeValidators, setValidatorData, validatorData)
+       }
+    }
+  }).catch((error) => {
+      console.error(error);
+  });
+
+}
+ 
+}
+
+
+function getUnstakeData(currAddr, setTotalUnstaking, stakeValidators, setValidatorData){
+ 
+  fetch('https://mainnet-gateway.radixdlt.com/account/unstakes', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(
+      {
+        "network_identifier": {
+          "network": "mainnet"
+        },
+        "account_identifier": {
+          "address": currAddr
+          // "address": "rdx1qspnfus07y7pjcy8ez4alquuuxhzma5gwd5mk25czlacv7pz2x2nw4q0h87mn"
+        }
+      }
+    )
+  }).then((response) => response.json()).then((json) => {
+      // alert(JSON.stringify(json))
+     
+    if(json.code == 400 || json.code == 500){
+      // alert(JSON.stringify(json.message));
+     }
+     else{
+      var totalUnstaking = 0
+       json.unstakes.forEach(element => {
+        totalUnstaking = totalUnstaking + element.unstaking_amount.value
+       });
+       setTotalUnstaking(totalUnstaking);
+
+       getValidatorData(stakeValidators, setValidatorData)
+    }
+  }).catch((error) => {
+      console.error(error);
+  });
+ 
+}
+
+
+
+
+function renderStakeValidatorRows(stakeValidators, validatorData){
+
+  alert(stakeValidators.size);
+  if( stakeValidators.size > 0  ){
+
+      var rows = []
+
+      stakeValidators.forEach((validatorDetails) =>  
+ {
+
+  try{
+    // alert(JSON.stringify(validatorDetails.name))
+          rows.push(
+             
+          <View key={validatorDetails.address}>
+validatorData.get(validatorDetails.address).
+
+<SeparatorBorder/>
+
+    <View style={styles.addrRowStyle}>
+
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>{validatorData.get(validatorDetails.address).name}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Amount Fee Addr</Text>
+
+ 
+    </View>   
+  </View>        
+  )
+
+  }    
+  catch(err){
+      console.log(err)
+ }
+ });
+         
+
+  return (rows)
+
+  }
+
+}
+
+
+
+
+
  const Staking = ({route, navigation}) => {
  
   const { currAddr,currLiqBal, currStaked } = route.params;
@@ -272,33 +456,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
                 const [show, setShow] = useState(false);
                 const [tknGranularity, settknGranularity] = useState(1);
 
-  var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
- 
-  useInterval(() => {
-
-  db.transaction((tx) => {
-    tx.executeSql("SELECT address.radix_address,address.privatekey_enc, address.publickey FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
-      var len = results.rows.length;
-      var tempPrivkey_enc = "default_val";
-      var tempPubkey = "default_val";
-      var radix_addr = "default_val";
-      
-        for (let i = 0; i < len; i++) {
-            let row = results.rows.item(i);
-            tempPrivkey_enc = row.privatekey_enc;
-            tempPubkey = row.publickey;
-            radix_addr = row.radix_address
-        }
-
-        setPrivKey_enc(tempPrivkey_enc);
-        setPublic_key(tempPubkey);
-        setSourceXrdAddr(radix_addr);
-
-      });
-    }, errorCB);
+                const [totalUnstaking, setTotalUnstaking] = useState(0);
+                const [stakeValidators, setStakeValidators] = useState([]);
+                const [validatorData, setValidatorData] = useState(new Map());
 
 
-  }, 5000);
 
   const tknNameRef = useRef();
   const tknDescRef = useRef();
@@ -306,6 +468,14 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   const tknIconURLRef = useRef();
   const tknURLRef = useRef();
   const tknSupplyRef = useRef();
+
+
+  useEffect(() => {
+
+  
+    getStakeData(currAddr,setTotalUnstaking, setStakeValidators, setValidatorData);
+}, []);
+
 
  return ( 
   <ScrollView style={{backgroundColor:"white"}}>
@@ -324,8 +494,8 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: {Number(currLiqBal/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance: {Number(currStaked/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Unstaking Balance: 1212.0000 XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currLiqBal+currStaked)/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Unstaking Balance: {Number(totalUnstaking/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currLiqBal+currStaked)/10000000000000000000).toLocaleString()} XRD</Text>
      <Separator/>
       <View style={styles.rowStyle}>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>
@@ -349,7 +519,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         value={tknName}
         maxLength={199}
         onChangeText={value => settknName(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
       <Separator/>
@@ -365,7 +534,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         placeholderTextColor="#d3d3d3"
         value={tknSupply}
         onChangeText={value => settknSupply(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
 
@@ -396,6 +564,13 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
  }
 
 <Separator/>
+
+
+
+{renderStakeValidatorRows(stakeValidators, validatorData)}
+
+
+
 <Separator/>
 <Separator/>
 <Separator/>
@@ -523,6 +698,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     fontSize: 4,
     alignItems: 'flex-start',
+    justifyContent: 'center',
+    marginVertical:0
+  },
+  addrRowStyle: {
+    flexDirection: 'row',
+    fontSize: 4,
+    alignItems: 'center',
     justifyContent: 'center',
     marginVertical:0
   },

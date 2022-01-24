@@ -4,7 +4,7 @@ var GenericToken = require("../assets/generic_token.png");
  var SQLite = require('react-native-sqlite-storage');
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import NetInfo from "@react-native-community/netinfo";
 import { StackActions } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -14,7 +14,7 @@ import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommun
 import {showMessage} from "react-native-flash-message";
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { useInterval, openCB, errorCB } from '../helpers/helpers';
+import { shortenAddress, useInterval, openCB, errorCB } from '../helpers/helpers';
 
 
     const SeparatorBorder = () => (
@@ -98,28 +98,25 @@ function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddress
 }
 
 
-export function shortenAddress(address){
-
-    return address.substring(0, 7) +"..."+ address.substring(address.length-4, address.length) 
-
-}
-
 function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress){
-
 
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
         var rows = []
+        var xrdRow = []
 
     balances.forEach((balance, rri) =>  
 
    {
 
     try{
-            rows.push(
+
+      if(rri=="xrd_rr1qy5wfsfh"){
+
+        xrdRow.push(
                
             <View key={rri}>
-           { console.log("b: "+balance + " rri "+rri)}
+
    <SeparatorBorder/>
     <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance,defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
@@ -136,18 +133,43 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     </View> 
     </TouchableOpacity>
     </View>        )
+      } else{
+
+        rows.push(
+               
+          <View key={rri}>
+
+ <SeparatorBorder/>
+  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance,defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+
+  <View style={styles.addrRowStyle}>
+
+
+  <Image style={{width: 36, height: 36}}
+  defaultSource={GenericToken}
+  source={{uri: balance[3]}}
+    />
+  <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
+  <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ Number(balance[0]/1000000000000000000).toLocaleString() } {balance[1]}</Text>
+
+  </View> 
+  </TouchableOpacity>
+  </View>        )
+
+      }
     }    
     catch(err){
         console.log(err)
    }
-   });
+   })
            
 
-    return (rows)
+    return (xrdRow.concat(rows))
 
     }
 
 }
+
 
 function updateActiveWallet(wallet_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
 
@@ -486,12 +508,9 @@ console.log("WALLETS: "+JSON.stringify(wallets));
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}/>
-            }
-        keyboardShouldPersistTaps="handled"
-        removeClippedSubviews={false}>
+            }>
             <View  > 
                 
-            <Separator/>
                 <View style={styles.rowStyle}>
 
                 <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>

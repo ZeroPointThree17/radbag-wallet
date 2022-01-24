@@ -18,8 +18,7 @@ var radio_props = [
 
 
 function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
-  //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
-
+ 
   if(tknName == undefined || tknDesc  == undefined || tknIconUrl == undefined || tknUrl == undefined || 
      tknSymbol == undefined || tknIsSuppMut == undefined || tknSupply == undefined || tknGranularity == undefined){
        alert("All fields are required")
@@ -60,15 +59,14 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
           }
         )
       }).then((response) => response.json()).then((json) => {
-        //  alert(JSON.stringify(json))
-         
+
         if(json.code == 400 || json.code == 500){
           alert(JSON.stringify(json.message));
          }
          else{
-        // alert(JSON.stringify(json))
+
         rri = JSON.stringify(json.token_identifier.rri).replace(/["']/g, "")
-        // alert(rri)
+
         buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity )
         }
       }).catch((error) => {
@@ -268,8 +266,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
       });
     }, errorCB);
-
-
+    
   }, 5000);
 
   const tknNameRef = useRef();

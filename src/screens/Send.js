@@ -210,7 +210,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
     symbolsTemp.push(balance[1])
     reverseTokenMetadataMap.set(balance[1], rri);
     
-
     if(balance[1] == symbol && symbol!="XRD"){
       currentValTemp = balance[0];
       currentSymbolTemp = balance[1];

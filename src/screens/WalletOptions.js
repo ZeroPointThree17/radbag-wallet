@@ -155,8 +155,7 @@ const WalletOptions = ({route, navigation}) => {
 
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
-
-    useEffect(() => {
+  useEffect(() => {
       getWalletDataFromDatabase(db, setWalletId, setWalletName)
   }, []);
 

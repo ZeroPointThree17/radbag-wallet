@@ -251,7 +251,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 
 
-function getStakeData(currAddr, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows){
+function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows){
 
   fetch('https://mainnet-gateway.radixdlt.com/account/stakes', {
     method: 'POST',
@@ -285,7 +285,7 @@ function getStakeData(currAddr, setStakeValidators, setValidatorData, setTotalUn
       //  alert(JSON.stringify(stakeValidatorsArr));
        setStakeValidators(stakeValidatorsArr);
 
-       getValidatorData(currAddr, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows)
+       getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows)
     }
   }).catch((error) => {
       console.error(error);
@@ -294,7 +294,7 @@ function getStakeData(currAddr, setStakeValidators, setValidatorData, setTotalUn
 }
 
 
-function getValidatorData(currAddr, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows){
+function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows){
 
   var origStakeValidators = stakeValidators.slice();
   // alert("GV SL Len: "+stakeValidators.length)
@@ -335,10 +335,10 @@ function getValidatorData(currAddr, stakeValidators, setValidatorData, inputMap,
      
          setValidatorData(validatorData)
 
-         getUnstakeData(currAddr, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData)
+         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData)
          
        } else{
-        getValidatorData(stakeValidators, setValidatorData, inputMap, setTotalUnstaking)
+        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows)
        }
     }
   }).catch((error) => {
@@ -350,7 +350,7 @@ function getValidatorData(currAddr, stakeValidators, setValidatorData, inputMap,
 }
 
 
-function getUnstakeData(currAddr, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData){
+function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData){
  
   fetch('https://mainnet-gateway.radixdlt.com/account/unstakes', {
     method: 'POST',
@@ -384,7 +384,7 @@ function getUnstakeData(currAddr, setTotalUnstaking, setRenderedStakeValidatorRo
 
        setTotalUnstaking(totalUnstaking);
 
-       setRenderedStakeValidatorRows(renderStakeValidatorRows(stakeValidators, validatorData))
+       setRenderedStakeValidatorRows(renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValidators, validatorData))
   }
   }).catch((error) => {
       console.error(error);
@@ -394,7 +394,7 @@ function getUnstakeData(currAddr, setTotalUnstaking, setRenderedStakeValidatorRo
 
 
 
-function renderStakeValidatorRows(stakeValidators, validatorData){
+function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValidators, validatorData){
 
   // alert("stked val len: " + stakeValidators.length);
   if( stakeValidators.length > 0  && validatorData.size > 0){
@@ -424,10 +424,10 @@ function renderStakeValidatorRows(stakeValidators, validatorData){
     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(validatorDetails.address)}}>
     < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>[Copy Address]</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(validatorDetails.address)}}>
+    <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(validatorDetails.address); setStakingScreenActive(false)}}>
     < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>  [Reduce Stake]</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(validatorDetails.address)}}>
+    <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(validatorDetails.address); setStakingScreenActive(true)}}>
     < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>  [Add to Stake]</Text>
     </TouchableOpacity>
      </View>   
@@ -452,10 +452,7 @@ function renderStakeValidatorRows(stakeValidators, validatorData){
 
 
 
-function renderStakingRows(stakeValidators, validatorData){
 
-
-}
 
 
 
@@ -481,6 +478,8 @@ function renderStakingRows(stakeValidators, validatorData){
                 const [stakeValidators, setStakeValidators] = useState([]);
                 const [validatorData, setValidatorData] = useState(new Map());
                 const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
+                const [valAddr, setValAddr] = useState();
+                const [stakingScreenActive, setStakingScreenActive] = useState(true);
 
 
   const tknNameRef = useRef();
@@ -493,7 +492,7 @@ function renderStakingRows(stakeValidators, validatorData){
 
   useEffect(() => {
 
-    getStakeData(currAddr, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows)
+    getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows)
 }, []);
 
 
@@ -509,13 +508,17 @@ function renderStakingRows(stakeValidators, validatorData){
   <ScrollView style={{backgroundColor:"white"}}> 
      <Separator/>
      <View style={styles.addrRowStyle}>
+     <TouchableOpacity style={styles.button} onPress={() => {setStakingScreenActive(true)}}>
   <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center'}}>Staking</Text>
+</TouchableOpacity>
+<TouchableOpacity style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
   <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center'}}>  |  Unstaking</Text>
- 
+  </TouchableOpacity>
     </View>
-{true && <React.Fragment><View style={styles.container} > 
-  
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
+
+{stakingScreenActive && <React.Fragment>
+  <View style={styles.container}>
+<Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
       
        <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
        <Image style={{margin: 0, width: 50, height: 70, marginBottom:4, alignSelf:'center'}}
@@ -546,11 +549,11 @@ function renderStakingRows(stakeValidators, validatorData){
         autoCapitalize='none'
         multiline={true}
         numberOfLines={4}
-        placeholder='Token Name'
+        placeholder='Validator Address'
         placeholderTextColor="#d3d3d3"
-        value={tknName}
+        value={valAddr}
         maxLength={199}
-        onChangeText={value => settknName(value)}
+        onChangeText={value => setValAddr(value)}
       />
       </View>
       <Separator/>
@@ -580,6 +583,7 @@ function renderStakingRows(stakeValidators, validatorData){
      tknSupplyRef.current.blur();
      Keyboard.dismiss;
   startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}}>
+
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Stake</Text>
@@ -590,43 +594,17 @@ function renderStakingRows(stakeValidators, validatorData){
 
               <Text style={{fontSize: 16, color:"black"}}>Current Stakes</Text>
               <SeparatorBorderMargin/>
-              {renderedStakeValidatorRows}
-
-
-
-
-{ show == true &&
-<Text
-       style={{color: 'blue', textAlign: "center"}}
-       onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
-     >
-       Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.
-     </Text>
- }
-
-<Separator/>
-
-
-
-
-
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
+           
 </View>
 </React.Fragment>
 }
 
 
 
+{stakingScreenActive==false && <React.Fragment>
 <View style={styles.container} > 
     
-      <Separator/>
-      <Separator/>
+      
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Unstake</Text>
        <Separator/>
   
@@ -638,11 +616,11 @@ function renderStakingRows(stakeValidators, validatorData){
         autoCapitalize='none'
         multiline={true}
         numberOfLines={4}
-        placeholder='Token Name'
+        placeholder='Validator Address'
         placeholderTextColor="#d3d3d3"
-        value={tknName}
+        value={valAddr}
         maxLength={199}
-        onChangeText={value => settknName(value)}
+        onChangeText={value => setValAddr(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
      
@@ -680,6 +658,14 @@ function renderStakingRows(stakeValidators, validatorData){
         </View>
         </TouchableOpacity>
               <Separator/>
+
+</View>
+
+</React.Fragment>
+}
+
+{renderedStakeValidatorRows}
+ 
 { show == true &&
 <Text
        style={{color: 'blue', textAlign: "center"}}
@@ -697,13 +683,8 @@ function renderStakingRows(stakeValidators, validatorData){
 <Separator/>
 <Separator/>
 <Separator/>
-</View>
-
-
- 
-  
   </ScrollView>
-  )
+ )
 };
 
 

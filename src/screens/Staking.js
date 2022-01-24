@@ -18,136 +18,111 @@ var Raddish = require("../assets/radish_nobackground.png");
 import { Separator, SeparatorBorder, SeparatorBorderMargin } from '../helpers/jsxlib';
 import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard } from '../helpers/helpers';
 
-var radio_props = [
-  {label: 'Yes', value: true },
-  {label: 'No', value: false }
-];
 
+function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, xrdAddr, amount , actionType){
 
-function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
-  //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
+  Keyboard.dismiss; 
 
-  if(tknName == undefined || tknDesc  == undefined || tknIconUrl == undefined || tknUrl == undefined || 
-     tknSymbol == undefined || tknIsSuppMut == undefined || tknSupply == undefined || tknGranularity == undefined){
-       alert("All fields are required")
-     }
-  else if( isNaN(tknSupply) ){
-    alert("Token supply must be a number")
-  } else if ( 
-    
-    !((tknIconUrl.startsWith('http://') || tknIconUrl.startsWith('https://')) && (tknUrl.startsWith('http://') || tknUrl.startsWith('https://')))
-  
-  ){
-    alert("URLs must start with http:// or https://")
+  if(xrdAddr == undefined || xrdAddr.length==0){
+    alert("Validator address is required")
+  }
+  else 
+  if ( isNaN(amount) ){
+    alert("Amount entered must be a number")
+  } else if(amount == undefined || amount.length==0){
+    alert("Amount is required")
+  }
+  else if(amount==0){
+    alert("Amount must be greater than 0")
+  }
+  else{
+
+  var amountStr = (amount * 1000000000000000000).toString();
+  var jsonBody = null;
+
+  if(actionType == "STAKE"){
+
+    jsonBody =
+    {
+      "network_identifier": {
+        "network": "mainnet"
+      },
+      "actions": [
+        {
+          "type": "StakeTokens",
+          "from_account": {
+            "address": sourceXrdAddr
+          },
+          "to_validator": {
+            "address": xrdAddr
+            // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
+          },
+          "amount": {
+            "token_identifier": {
+              "rri": "xrd_rr1qy5wfsfh"
+            },
+            "value": amountStr
+          }
+        }
+      ],
+      "fee_payer": {
+        "address": sourceXrdAddr
+      },
+      "disable_token_mint_and_burn": true
+    };
+  } else if (actionType == "UNSTAKE"){
+    jsonBody =
+    {
+      "network_identifier": {
+        "network": "mainnet"
+      },
+      "actions": [
+        {
+          "type": "UnstakeTokens",
+          "from_validator": {
+            "address": xrdAddr
+          },
+          "to_account": {
+            "address": sourceXrdAddr
+            // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
+          },
+          "amount": {
+            "token_identifier": {
+              "rri": "xrd_rr1qy5wfsfh"
+            },
+            "value": amountStr
+          }
+        }
+      ],
+      "fee_payer": {
+        "address": sourceXrdAddr
+      },
+      "disable_token_mint_and_burn": true
+    };
   }
 
-  else if((!(tknIconUrl==undefined) && !(tknUrl==undefined)) && tknIconUrl.replace('http://',"").replace('https://',"").length==0){
-      alert("URL part after http(s):// must not be empty")
-    }
-
-  else if(tknUrl.replace('http://',"").replace('https://',"").length==0){
-      alert("URL part after http(s):// must not be empty")
-  } else {
-  var rri=""
-
-  fetch('https://mainnet-gateway.radixdlt.com/token/derive', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-          {
-            "network_identifier": {
-              "network": "mainnet"
-            },
-            "public_key": {
-              "hex": public_key
-            },
-            "symbol": tknSymbol
-          }
-        )
-      }).then((response) => response.json()).then((json) => {
-        //  alert(JSON.stringify(json))
-         
-        if(json.code == 400 || json.code == 500){
-          alert(JSON.stringify(json.message));
-         }
-         else{
-        // alert(JSON.stringify(json))
-        rri = JSON.stringify(json.token_identifier.rri).replace(/["']/g, "")
-        // alert(rri)
-        buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity )
-        }
-      }).catch((error) => {
-          console.error(error);
-      });
-    }
-}
-
-function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
-//  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
-
-var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
-
-// alert(sourceXrdAddr+" "+ tknName+" "+  tknDesc+" "+ tknIconUrl+" "+  tknUrl+" "+  tknSymbol+" "+ tknIsSuppMut+" "+ tknSupply+" "+  rri)
-  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
   fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(
-      
-          {
-            "network_identifier": {
-              "network": "mainnet"
-            },
-            "actions": [
-              {
-                "type": "CreateTokenDefinition",
-                "token_properties": {
-                  "name": tknName,
-                  "description": tknDesc,
-                  "icon_url": tknIconUrl,
-                  "url": tknUrl,
-                  "symbol": tknSymbol,
-                  "is_supply_mutable": tknIsSuppMut,
-                  "granularity": tknGranularity,
-                  "owner": {
-                    "address": sourceXrdAddr
-                  }
-                },
-                "token_supply": {
-                  "value": tknSupplyStr,
-                  "token_identifier": {
-                    "rri": rri
-                  }
-                },
-                "to_account": {
-                  "address": sourceXrdAddr
-                }
-              }
-            ],
-            "fee_payer": {
-              "address": sourceXrdAddr
-            }
-          } 
-      
-        )
+        body: JSON.stringify(jsonBody)
       }).then((response) => response.json()).then((json) => {
-        //  alert(JSON.stringify(json))
-         
-         if(json.code == 400 || json.code == 500){
-          alert(JSON.stringify(json.message));
+         if(json.code == 400 && json.message == "Account address is invalid"){
+           alert("You've entered an invalid address")
+         }
+         else if(json.code == 400 && json.details.type == "NotEnoughTokensForTransferError"){
+          alert("Insufficient balance for this transaction")
+         }
+         else if(json.code == 400 || json.code == 500){
+          alert(json.message)
          }
          else{
-        // alert(JSON.stringify(json))
        
         Alert.alert(
           "Commit Transaction?",
-          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + "\n\nDo you want to commit this transaction?",
+          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD\n to stake "+amount+" XRD\n\nDo you want to commit this transaction?",
           [
             {
               text: "Cancel",
@@ -163,12 +138,7 @@ var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
           console.error(error);
       });
 }
-
-
-
-
-
-
+}
 
 
 function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash){
@@ -249,9 +219,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 }
 
 
-
-
-function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows){
+function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key){
 
   fetch('https://mainnet-gateway.radixdlt.com/account/stakes', {
     method: 'POST',
@@ -285,16 +253,15 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
       //  alert(JSON.stringify(stakeValidatorsArr));
        setStakeValidators(stakeValidatorsArr);
 
-       getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows)
+       getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key)
     }
   }).catch((error) => {
       console.error(error);
   });
- 
 }
 
 
-function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows){
+function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key){
 
   var origStakeValidators = stakeValidators.slice();
   // alert("GV SL Len: "+stakeValidators.length)
@@ -335,10 +302,10 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
      
          setValidatorData(validatorData)
 
-         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData)
+         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData,setPrivKey_enc,setPublic_key)
          
        } else{
-        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows)
+        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key)
        }
     }
   }).catch((error) => {
@@ -350,7 +317,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
 }
 
 
-function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData){
+function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData,setPrivKey_enc,setPublic_key){
  
   fetch('https://mainnet-gateway.radixdlt.com/account/unstakes', {
     method: 'POST',
@@ -385,13 +352,31 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
        setTotalUnstaking(totalUnstaking);
 
        setRenderedStakeValidatorRows(renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValidators, validatorData))
-  }
+
+       var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+
+       db.transaction((tx) => {
+         tx.executeSql("SELECT address.privatekey_enc, address.publickey FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
+           var len = results.rows.length;
+           var tempPrivkey_enc = "default_val";
+           var tempPubkey = "default_val";
+             for (let i = 0; i < len; i++) {
+                 let row = results.rows.item(i);
+                 tempPrivkey_enc = row.privatekey_enc;
+                 tempPubkey = row.publickey;
+             }
+     
+             setPrivKey_enc(tempPrivkey_enc);
+             setPublic_key(tempPubkey);
+     
+           });
+         }, errorCB);
+      }
   }).catch((error) => {
       console.error(error);
   });
  
 }
-
 
 
 function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValidators, validatorData){
@@ -451,11 +436,6 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
 }
 
 
-
-
-
-
-
  const Staking = ({route, navigation}) => {
  
   const { currAddr,currLiqBal, currStaked } = route.params;
@@ -463,16 +443,10 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
   const [sourceXrdAddr, setSourceXrdAddr] = useState();
-  const [tknName, settknName] = useState("rdx2343422332423434323432434234423342234324");
-    const [tknDesc, settknDesc] = useState();
-      const [tknIconUrl, settknIconUrl] = useState();
-        const [tknUrl, settknUrl] = useState();
-          const [tknSymbol, settknSymbol] = useState();
-            const [tknIsSuppMut, settknIsSuppMut] = useState(true);
-              const [tknSupply, settknSupply] = useState();
+ 
                 const [txnHash, setTxHash] = useState(null);
                 const [show, setShow] = useState(false);
-                const [tknGranularity, settknGranularity] = useState(1);
+      
 
                 const [totalUnstaking, setTotalUnstaking] = useState(0);
                 const [stakeValidators, setStakeValidators] = useState([]);
@@ -480,26 +454,19 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
                 const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
                 const [valAddr, setValAddr] = useState();
                 const [stakingScreenActive, setStakingScreenActive] = useState(true);
+                const [stakeAmt, setStakeAmt] = useState();
                 const [unstakeAmt, setUnstakeAmt] = useState();
 
-  const stakeValRef = useRef();
-  const stakeAmtRef = useRef();
-  const unstakeValRef = useRef();
-  const unstakeAmtRef = useRef();
+      const stakeValRef = useRef();
+      const stakeAmtRef = useRef();
+      const unstakeValRef = useRef();
+      const unstakeAmtRef = useRef();
 
 
   useEffect(() => {
 
-    getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows)
+    getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key)
 }, []);
-
-
-// useEffect(() => {
-//   alert("3")
-  
-//   setRenderedStakeValidatorRows(renderStakeValidatorRows(stakeValidators, validatorData))
-// }, [stakeValidators, validatorData]);
-
 
  
  return ( 
@@ -528,7 +495,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
        <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
        <Image style={{margin: 0, width: 50, height: 70, marginBottom:4, alignSelf:'center'}}
     source={Raddish}/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}Any stakes of 100 XRD or greater to the Raddish.io validator will enable the{"\n"}BONUS SECTION: "TOKEN CREATOR" in this app!</Text>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}NOTE: Staking to the Raddish.io validator will enable the{"\n"}BONUS SECTION: "TOKEN CREATOR" in this app!</Text>
        </LinearGradient>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
@@ -563,7 +530,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
       </View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to Stake:</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to Stake (Min 90):</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeAmtRef}
@@ -572,22 +539,18 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
         autoCapitalize='none'
         placeholder='Amount'
         placeholderTextColor="#d3d3d3"
-        value={tknSupply}
-        onChangeText={value => settknSupply(value)}
+        value={stakeAmt}
+        onChangeText={value => setStakeAmt(value)}
       />
       </View>
 
       <Separator/>
       <Separator/>
 <TouchableOpacity style={styles.button} onPress={() => {
-     tknNameRef.current.blur();
-     tknDescRef.current.blur();
-     tknSymbolRef.current.blur();
-     tknIconURLRef.current.blur();
-     tknURLRef.current.blur();
-     tknSupplyRef.current.blur();
+     stakeValRef.current.blur();
+     stakeAmtRef.current.blur();
      Keyboard.dismiss;
-  startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}}>
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "STAKE") }}>
 
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={20} color="black" />
@@ -646,14 +609,11 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
       <Separator/>
       <Separator/>
 <TouchableOpacity style={styles.button} onPress={() => {
-     tknNameRef.current.blur();
-     tknDescRef.current.blur();
-     tknSymbolRef.current.blur();
-     tknIconURLRef.current.blur();
-     tknURLRef.current.blur();
-     tknSupplyRef.current.blur();
+     unstakeValRef.current.blur();
+     unstakeAmtRef.current.blur();
      Keyboard.dismiss;
-  startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}}>
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "UNSTAKE")
+  }}>
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-up-circle-outline" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Unstake</Text>

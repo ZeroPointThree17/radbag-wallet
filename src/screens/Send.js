@@ -79,6 +79,9 @@ function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKe
          else if(json.code == 400 && json.details.type == "NotEnoughTokensForTransferError"){
           alert("Insufficient balance for this transaction")
          }
+         else if(json.code == 400 || json.code == 500){
+          alert(json.message)
+         }
          else{
        
         Alert.alert(

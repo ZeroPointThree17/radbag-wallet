@@ -5,19 +5,12 @@ import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {showMessage} from "react-native-flash-message";
 import { Separator } from '../helpers/jsxlib';
+import { copyToClipboard } from '../helpers/helpers';
 
 
 const Receive = ({route, navigation}) => {
  
   const { xrdAddress } = route.params;
-
-  const copyToClipboard = (string) => {
-    Clipboard.setString(string);
-        showMessage({
-  message: "Address copied to clipboard",
-  type: "info",
-});
-  }
 
  return ( 
     <ScrollView styles={{backgroundColor:"white"}}>

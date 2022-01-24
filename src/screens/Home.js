@@ -4,17 +4,15 @@ var GenericToken = require("../assets/generic_token.png");
  var SQLite = require('react-native-sqlite-storage');
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Clipboard from '@react-native-clipboard/clipboard';
 import NetInfo from "@react-native-community/netinfo";
 import { StackActions } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {showMessage} from "react-native-flash-message";
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { shortenAddress, useInterval, openCB, errorCB } from '../helpers/helpers';
+import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard } from '../helpers/helpers';
 
 
     const SeparatorBorder = () => (
@@ -399,16 +397,6 @@ const Home = ({route, navigation}) => {
       wait(2000).then(() => setRefreshing(false));
     }, []);
 
-    const copyToClipboard = (string) => {
-        Clipboard.setString(string)
-
-            showMessage({
-      message: "Address copied to clipboard",
-      type: "info",
-    });
-      }
-
-      
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
     var initialEnabledAddresses = new Map();

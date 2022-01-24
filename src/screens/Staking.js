@@ -10,15 +10,13 @@ var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { catchError } from 'rxjs/operators';
 import SelectDropdown from 'react-native-select-dropdown'
-import Clipboard from '@react-native-clipboard/clipboard';
 import { Input, Icon } from 'react-native-elements';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
-import { Separator, SeparatorBorder } from '../helpers/jsxlib';
-import { shortenAddress, useInterval, openCB, errorCB } from '../helpers/helpers';
-
+import { Separator, SeparatorBorder, SeparatorBorderMargin } from '../helpers/jsxlib';
+import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard } from '../helpers/helpers';
 
 var radio_props = [
   {label: 'Yes', value: true },
@@ -204,9 +202,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-  // alert("Message: " +message + " Unsigned Txn: " + unsigned_transaction + " PubkEY: " +public_key+ " PRIVKEY: " +privKey_enc)
-  
-  // alert("Sig: "+result)
     fetch('https://mainnet-gateway.radixdlt.com/transaction/finalize', {
           method: 'POST',
           headers: {
@@ -256,7 +251,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 
 
-function getStakeData(currAddr, setTotalUnstaking, setStakeValidators, setValidatorData){
+function getStakeData(currAddr, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows){
 
   fetch('https://mainnet-gateway.radixdlt.com/account/stakes', {
     method: 'POST',
@@ -282,15 +277,15 @@ function getStakeData(currAddr, setTotalUnstaking, setStakeValidators, setValida
       // alert(JSON.stringify(json.message));
      }
      else{
-      var stakeValidators = []
+      var stakeValidatorsArr = []
 
        json.stakes.forEach(element => {
-        stakeValidators.push({address: element.validator_identifier.address, delegated_stake: element.delegated_stake.value})
+        stakeValidatorsArr.push({address: element.validator_identifier.address, delegated_stake: element.delegated_stake.value})
        });
-       alert(JSON.stringify(stakeValidators));
-       setStakeValidators(stakeValidators);
+      //  alert(JSON.stringify(stakeValidatorsArr));
+       setStakeValidators(stakeValidatorsArr);
 
-       getUnstakeData(currAddr, setTotalUnstaking, stakeValidators, setValidatorData, new Map())
+       getValidatorData(currAddr, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows)
     }
   }).catch((error) => {
       console.error(error);
@@ -299,12 +294,15 @@ function getStakeData(currAddr, setTotalUnstaking, setStakeValidators, setValida
 }
 
 
-function getValidatorData(stakeValidators, setValidatorData, inputMap){
+function getValidatorData(currAddr, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows){
 
-  // alert(stakeValidators.length)
+  var origStakeValidators = stakeValidators.slice();
+  // alert("GV SL Len: "+stakeValidators.length)
   if(stakeValidators.length>0){
-  var validatorAddr = stakeValidators.pop().address;
+    // alert("stakeValidators: "+JSON.stringify(stakeValidators))
 
+  var validatorAddr = stakeValidators.pop().address;
+  // alert("val addr: "+validatorAddr)
   var validatorData = new Map(inputMap);
 
   fetch('https://mainnet-gateway.radixdlt.com/validator', {
@@ -336,8 +334,11 @@ function getValidatorData(stakeValidators, setValidatorData, inputMap){
         // alert(JSON.stringify(json))
      
          setValidatorData(validatorData)
+
+         getUnstakeData(currAddr, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData)
+         
        } else{
-        getValidatorData(stakeValidators, setValidatorData, validatorData)
+        getValidatorData(stakeValidators, setValidatorData, inputMap, setTotalUnstaking)
        }
     }
   }).catch((error) => {
@@ -349,7 +350,7 @@ function getValidatorData(stakeValidators, setValidatorData, inputMap){
 }
 
 
-function getUnstakeData(currAddr, setTotalUnstaking, stakeValidators, setValidatorData){
+function getUnstakeData(currAddr, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData){
  
   fetch('https://mainnet-gateway.radixdlt.com/account/unstakes', {
     method: 'POST',
@@ -363,8 +364,8 @@ function getUnstakeData(currAddr, setTotalUnstaking, stakeValidators, setValidat
           "network": "mainnet"
         },
         "account_identifier": {
-          "address": currAddr
-          // "address": "rdx1qspnfus07y7pjcy8ez4alquuuxhzma5gwd5mk25czlacv7pz2x2nw4q0h87mn"
+          // "address": currAddr
+          "address": "rdx1qspnfus07y7pjcy8ez4alquuuxhzma5gwd5mk25czlacv7pz2x2nw4q0h87mn"
         }
       }
     )
@@ -376,13 +377,15 @@ function getUnstakeData(currAddr, setTotalUnstaking, stakeValidators, setValidat
      }
      else{
       var totalUnstaking = 0
+
        json.unstakes.forEach(element => {
         totalUnstaking = totalUnstaking + element.unstaking_amount.value
        });
+
        setTotalUnstaking(totalUnstaking);
 
-       getValidatorData(stakeValidators, setValidatorData)
-    }
+       setRenderedStakeValidatorRows(renderStakeValidatorRows(stakeValidators, validatorData))
+  }
   }).catch((error) => {
       console.error(error);
   });
@@ -391,11 +394,10 @@ function getUnstakeData(currAddr, setTotalUnstaking, stakeValidators, setValidat
 
 
 
-
 function renderStakeValidatorRows(stakeValidators, validatorData){
 
-  alert(stakeValidators.size);
-  if( stakeValidators.size > 0  ){
+  // alert("stked val len: " + stakeValidators.length);
+  if( stakeValidators.length > 0  && validatorData.size > 0){
 
       var rows = []
 
@@ -403,21 +405,36 @@ function renderStakeValidatorRows(stakeValidators, validatorData){
  {
 
   try{
-    // alert(JSON.stringify(validatorDetails.name))
+    //  alert("Val deets: "+JSON.stringify(validatorDetails))
           rows.push(
              
           <View key={validatorDetails.address}>
-validatorData.get(validatorDetails.address).
 
-<SeparatorBorder/>
 
-    <View style={styles.addrRowStyle}>
+
+<View>
+    {/* <View style={styles.addrRowStyle}> */}
 
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>{validatorData.get(validatorDetails.address).name}</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Amount Fee Addr</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>Staked: {Number(validatorDetails.delegated_stake/1000000000000000000).toLocaleString()} XRD</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Fee: {validatorData.get(validatorDetails.address).validator_fee_percentage}%</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Addr: {shortenAddress(validatorDetails.address)}</Text>
 
- 
+    <View style={styles.rowStyle}>
+    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(validatorDetails.address)}}>
+    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>[Copy Address]</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(validatorDetails.address)}}>
+    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>  [Reduce Stake]</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(validatorDetails.address)}}>
+    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>  [Add to Stake]</Text>
+    </TouchableOpacity>
+     </View>   
+
     </View>   
+
+    <SeparatorBorderMargin/>
   </View>        
   )
 
@@ -427,7 +444,6 @@ validatorData.get(validatorDetails.address).
  }
  });
          
-
   return (rows)
 
   }
@@ -435,6 +451,11 @@ validatorData.get(validatorDetails.address).
 }
 
 
+
+function renderStakingRows(stakeValidators, validatorData){
+
+
+}
 
 
 
@@ -459,7 +480,7 @@ validatorData.get(validatorDetails.address).
                 const [totalUnstaking, setTotalUnstaking] = useState(0);
                 const [stakeValidators, setStakeValidators] = useState([]);
                 const [validatorData, setValidatorData] = useState(new Map());
-
+                const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
 
 
   const tknNameRef = useRef();
@@ -472,17 +493,28 @@ validatorData.get(validatorDetails.address).
 
   useEffect(() => {
 
-  
-    getStakeData(currAddr,setTotalUnstaking, setStakeValidators, setValidatorData);
+    getStakeData(currAddr, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows)
 }, []);
 
 
+// useEffect(() => {
+//   alert("3")
+  
+//   setRenderedStakeValidatorRows(renderStakeValidatorRows(stakeValidators, validatorData))
+// }, [stakeValidators, validatorData]);
+
+
+ 
  return ( 
-  <ScrollView style={{backgroundColor:"white"}}>
-     <View style={styles.container} > 
-    
-
-
+  <ScrollView style={{backgroundColor:"white"}}> 
+     <Separator/>
+     <View style={styles.addrRowStyle}>
+  <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center'}}>Staking</Text>
+  <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center'}}>  |  Unstaking</Text>
+ 
+    </View>
+{true && <React.Fragment><View style={styles.container} > 
+  
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
       
        <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
@@ -554,6 +586,15 @@ validatorData.get(validatorDetails.address).
         </View>
         </TouchableOpacity>
               <Separator/>
+              <Separator/>
+
+              <Text style={{fontSize: 16, color:"black"}}>Current Stakes</Text>
+              <SeparatorBorderMargin/>
+              {renderedStakeValidatorRows}
+
+
+
+
 { show == true &&
 <Text
        style={{color: 'blue', textAlign: "center"}}
@@ -567,8 +608,6 @@ validatorData.get(validatorDetails.address).
 
 
 
-{renderStakeValidatorRows(stakeValidators, validatorData)}
-
 
 
 <Separator/>
@@ -579,6 +618,9 @@ validatorData.get(validatorDetails.address).
 <Separator/>
 <Separator/>
 </View>
+</React.Fragment>
+}
+
 
 
 <View style={styles.container} > 

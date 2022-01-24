@@ -19,6 +19,7 @@ import { Separator, SeparatorBorder, SeparatorBorderMargin } from '../helpers/js
 import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard } from '../helpers/helpers';
 
 
+
 function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, xrdAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
 
   Keyboard.dismiss; 
@@ -205,11 +206,10 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
          
          var fullAmt = amount * 1000000000000000000;
          if(actionType=="STAKE"){
-          setCurrentlyStaked(currentlyStaked + fullAmt)
-          setCurrentlyLiquid(currentlyLiquid - fullAmt)
+          setCurrentlyStaked(((currentlyStaked/1000000000000000000) + (fullAmt/1000000000000000000)) * 1000000000000000000)
+          setCurrentlyLiquid(((currentlyLiquid/1000000000000000000) - (fullAmt/1000000000000000000)) * 1000000000000000000)
          } else if(actionType=="UNSTAKE"){
-          setTotalUnstaking(totalUnstaking + fullAmt)
-          setCurrentlyLiquid(currentlyLiquid + fullAmt)
+          setTotalUnstaking(((totalUnstaking/1000000000000000000) + (fullAmt/1000000000000000000)) * 1000000000000000000)
          }
   
         }).catch((error) => {
@@ -228,7 +228,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 }
 
 
-function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key){
+function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake){
 
   fetch('https://mainnet-gateway.radixdlt.com/account/stakes', {
     method: 'POST',
@@ -242,8 +242,8 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
           "network": "mainnet"
         },
         "account_identifier": {
-          // "address": currAddr
-          "address": "rdx1qspnfus07y7pjcy8ez4alquuuxhzma5gwd5mk25czlacv7pz2x2nw4q0h87mn"
+          "address": currAddr
+          // "address": "rdx1qspnfus07y7pjcy8ez4alquuuxhzma5gwd5mk25czlacv7pz2x2nw4q0h87mn"
         }
       }
     )
@@ -256,13 +256,21 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
      else{
       var stakeValidatorsArr = []
 
+      var pendingStake=0;
+
+      json.pending_stakes.forEach(element => {
+        pendingStake += element.delegated_stake.value
+       });
+
        json.stakes.forEach(element => {
         stakeValidatorsArr.push({address: element.validator_identifier.address, delegated_stake: element.delegated_stake.value})
        });
+
       //  alert(JSON.stringify(stakeValidatorsArr));
        setStakeValidators(stakeValidatorsArr);
+       setPendingStake(pendingStake)
 
-       getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key)
+       getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake)
     }
   }).catch((error) => {
       console.error(error);
@@ -270,7 +278,7 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
 }
 
 
-function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key){
+function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake){
 
   var origStakeValidators = stakeValidators.slice();
   // alert("GV SL Len: "+stakeValidators.length)
@@ -311,10 +319,10 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
      
          setValidatorData(validatorData)
 
-         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData,setPrivKey_enc,setPublic_key)
+         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake)
          
        } else{
-        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key)
+        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake)
        }
     }
   }).catch((error) => {
@@ -326,7 +334,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
 }
 
 
-function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData,setPrivKey_enc,setPublic_key){
+function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData,setPrivKey_enc,setPublic_key, setPendingUnstake){
  
   fetch('https://mainnet-gateway.radixdlt.com/account/unstakes', {
     method: 'POST',
@@ -340,8 +348,8 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
           "network": "mainnet"
         },
         "account_identifier": {
-          // "address": currAddr
-          "address": "rdx1qspnfus07y7pjcy8ez4alquuuxhzma5gwd5mk25czlacv7pz2x2nw4q0h87mn"
+          "address": currAddr
+          // "address": "rdx1qspnfus07y7pjcy8ez4alquuuxhzma5gwd5mk25czlacv7pz2x2nw4q0h87mn"
         }
       }
     )
@@ -352,6 +360,15 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
       // alert(JSON.stringify(json.message));
      }
      else{
+
+      var pendingUnstakes = 0
+
+      json.pending_unstakes.forEach(element => {
+        pendingUnstakes += element.unstaking_amount.value
+       });
+
+      setPendingUnstake(pendingUnstakes);
+
       var totalUnstaking = 0
 
        json.unstakes.forEach(element => {
@@ -458,7 +475,9 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
 
                 const [currentlyLiquid, setCurrentlyLiquid] = useState(currLiqBal);
                 const [currentlyStaked, setCurrentlyStaked] = useState(currStaked);
+                const [pendingStake, setPendingStake] = useState(0);
                 const [totalUnstaking, setTotalUnstaking] = useState(0);
+                const [pendingUnstake, setPendingUnstake] = useState(0);
                 const [stakeValidators, setStakeValidators] = useState([]);
                 const [validatorData, setValidatorData] = useState(new Map());
                 const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
@@ -474,10 +493,12 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
 
 
   useEffect(() => {
-
-    getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key)
+    getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake)
 }, []);
 
+useInterval(() => {
+  getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake)
+}, 1000);
  
  return ( 
   <ScrollView style={{backgroundColor:"white"}}> 
@@ -505,14 +526,16 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
        <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
        <Image style={{margin: 0, width: 50, height: 70, marginBottom:4, alignSelf:'center'}}
     source={Raddish}/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}NOTE: Staking to the Raddish.io validator will enable the{"\n"}BONUS SECTION: "TOKEN CREATOR" in this app!</Text>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}NOTE: Staking to the Raddish.io validator will enable{"\n"}the BONUS: "TOKEN CREATOR" in this app!</Text>
        </LinearGradient>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: {Number(currentlyLiquid/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance: {Number(currentlyStaked/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Unstaking Balance: {Number(totalUnstaking/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currentlyLiquid+currentlyStaked)/10000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currentlyLiquid/1000000000000000000)+(currentlyStaked/1000000000000000000)).toLocaleString()} XRD</Text>
      <Separator/>
       <View style={styles.rowStyle}>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>
@@ -577,12 +600,18 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 
 {stakingScreenActive==false && <React.Fragment>
 <View style={styles.container} > 
-    
       
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Unstake</Text>
        <Separator/>
-  
-    
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: {Number(currentlyLiquid/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance: {Number(currentlyStaked/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Unstaking Balance: {Number(totalUnstaking/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currentlyLiquid/1000000000000000000)+(currentlyStaked/1000000000000000000)).toLocaleString()} XRD</Text>
+     <Separator/>
+     <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Validator to unstake from:</Text>
         <TextInput ref={unstakeValRef}
         style={{padding:8, borderWidth:StyleSheet.hairlineWidth, height:44, width:300, backgroundColor:"white", flex:1}}
@@ -635,7 +664,10 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 }
 
 <View style={styles.container} > 
+<View >
 <Text style={{fontSize: 16, color:"black"}}>Current Stakes</Text>
+<Text style={{fontSize: 12, color:"black"}}>(excludes amounts pending and being unstaked) </Text>
+</View>
               <SeparatorBorderMargin/>
 {renderedStakeValidatorRows}
 </View>

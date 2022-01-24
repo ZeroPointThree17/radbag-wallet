@@ -21,7 +21,7 @@ const Welcome = ({ navigation }) => {
 
     <SafeAreaView style={styles.container}>
         <Image
-        style={{width:150, height:150}}
+        style={{width:150, height:210}}
         source={require('../assets/radish_nobackground.png')}
       />
      <View style={styles.text}> 

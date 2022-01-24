@@ -1,4 +1,4 @@
-import { RefreshControl, Alert, Image, Button, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import {findNodeHandle,  Switch, InteractionManager, RefreshControl, Alert, Image, Button, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState,useRef, useEffect, useReducer } from 'react';
 var GenericToken = require("../assets/generic_token.png");
  var SQLite = require('react-native-sqlite-storage');
@@ -13,7 +13,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
+import {showMessage} from "react-native-flash-message";
+import * as Progress from 'react-native-progress';
 
 function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -164,7 +165,7 @@ export function shortenAddress(address){
 
 }
 
-function renderAddressRows(balances, liquid_rdx_balance, navigation, enabledAddresses, activeAddress){
+function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress){
 
 
     if( balances.size > 0 && enabledAddresses.size > 0 ){
@@ -181,7 +182,7 @@ function renderAddressRows(balances, liquid_rdx_balance, navigation, enabledAddr
             <View key={rri}>
            { console.log("b: "+balance + " rri "+rri)}
    <SeparatorBorder/>
-    <TouchableOpacity onPress={ () => {navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance,defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+    <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance,defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
     <View style={styles.addrRowStyle}>
 
@@ -647,6 +648,11 @@ const Home = ({route, navigation}) => {
 
     <SafeAreaView style={styles.containerMain}>
 
+{/* <BlurView style={styles.blurView}
+reducedTransparencyFallbackColor="gray"
+blurType="light"
+blurAmount={20}
+/> */}
         {/* <FlashMessage position="center" ref={mainRef}/> */}
         <ScrollView style={styles.scrollView}
         refreshControl={
@@ -660,6 +666,9 @@ const Home = ({route, navigation}) => {
                 
             <Separator/>
                 <View style={styles.rowStyle}>
+                {/* <BlurRootView  blurNode="myNode">
+                <BlurView  
+        blurNode="myNode" > */}
                 <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
             {/* <Surface style={styles.surface}> */}
             <View style={styles.rowStyle}>
@@ -729,7 +738,7 @@ const Home = ({route, navigation}) => {
        <Separator/>
 
        <View style={styles.rowStyle}>
-       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Receive',{xrdAddress: enabledAddresses.get(activeAddress).radix_address})}>
+       <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() => navigation.navigate('Receive',{xrdAddress: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
         <IconMaterialCommunityIcons name="call-received" size={18} color="white" />
         <Text style={{fontSize: 14, color:"white"}}> Receive</Text>
@@ -738,7 +747,7 @@ const Home = ({route, navigation}) => {
 
         <Text style={{fontSize: 14, color:"white"}}>          </Text>
   
-        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance, defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
+        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance, defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
         <Text style={{fontSize: 14, color:"white"}}> Send</Text>
@@ -747,7 +756,10 @@ const Home = ({route, navigation}) => {
 
         <Text style={{fontSize: 14, color:"white"}}>          </Text>
 
-        <TouchableOpacity style={styles.button} onPress={() =>  navigation.navigate('Staking',{})}>
+        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),
+      currLiqBal: liquid_rdx_balance,
+      currStaked: stakedAmount
+      })}>
         <View style={styles.rowStyle}>
         <Icon name="arrow-down-circle-outline" size={20} color="white" />
         <Text style={{fontSize: 14, color:"white"}}> Staking</Text>
@@ -757,6 +769,9 @@ const Home = ({route, navigation}) => {
         </View>
         {/* </Surface> */}
         </LinearGradient>
+
+{/* </BlurView>
+        </BlurRootView> */}
       {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
 <Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity> */}
 
@@ -812,11 +827,13 @@ navigation.dispatch(pushAction);
 <View style={{margin:16}}>
 <Text>Tokens</Text>
 
-{renderAddressRows(balances,liquid_rdx_balance, navigation, enabledAddresses,activeAddress)}
+{renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress)}
 
 </View> 
         <Separator/>
-
+        { isNaN(stakedAmount) &&
+<Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
+}
   </View> 
   </ScrollView>
   </SafeAreaView>
@@ -992,6 +1009,13 @@ containerStyle: {
    
     marginHorizontal: 10,
   },
+  blurView:{
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
+    }
 });
 
 

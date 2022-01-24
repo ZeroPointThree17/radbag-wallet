@@ -295,7 +295,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
  const Staking = ({route, navigation}) => {
  
-  // const { defaultSymbol, balancesMap, sourceXrdAddr, tokenMetadataObj } = route.params;
+  const { currAddr,currLiqBal, currStaked } = route.params;
 
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
@@ -360,12 +360,12 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!{"\n"}{"\n"}Any stakes of 100 XRD or greater to the Raddish.io validator will enable the{"\n"}BONUS SECTION: "TOKEN CREATOR" in this app!</Text>
        </LinearGradient>
        <Separator/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: rdxasddasffsdf</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: 12312.0000</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance: 1212.0000</Text>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: {Number(currLiqBal/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance:{currStaked} {Number(currStaked/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Pending Stake Balance: 12312.0000</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Pending Unstake Balance: 1212.0000</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: 12312.0000</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>{Number((currLiqBal+currStaked)/1000000000000000000).toLocaleString()}</Text>
      <Separator/>
       <View style={styles.rowStyle}>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>

@@ -1,20 +1,8 @@
 import React, {useState} from 'react';
-import { KeyboardAvoidingView,Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
-import { List } from 'react-native-paper';
-import { ListItem, Avatar } from 'react-native-elements';
-import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
-import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
-import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { decrypt } from '../helpers/encrypt';
-var SQLite = require('react-native-sqlite-storage');
-import PasswordInputText from 'react-native-hide-show-password-input';
-import { catchError } from 'rxjs/operators';
+import { KeyboardAvoidingView,Button, Text, TextInput, View, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import { StackActions } from '@react-navigation/native';
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
+import { Separator } from '../helpers/jsxlib';
 
 
 function navigateAppPassword(navigation, mnemonic, firstTime){
@@ -33,10 +21,6 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
     if(word13 === undefined){
         word13="";
     }
-
-    // alert(words12);
-    // alert(word13);
-   
 
     if(bip39.validateMnemonic(words12)){
     const pushAction = StackActions.push('App Password', {
@@ -64,10 +48,10 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
   const [mnemonic, setMnemonic] = useState("");
   
  return ( 
-     <View style={styles.container} removeClippedSubviews={false}> 
+     <View style={styles.container}> 
      <Separator/>
 <Text style={styles.title, {margin: 20}}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
-<KeyboardAvoidingView>
+
 <TextInput
     editable = {true}
     onChangeText={(input) => setMnemonic( input )}
@@ -76,7 +60,6 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
       autoCapitalize='none'
       style={{height: 150, padding: 10, margin:20, marginTop:10, borderWidth:StyleSheet.hairlineWidth}}
     />
-  </KeyboardAvoidingView>
 
  <Button style={styles.title}
         title="Submit"
@@ -99,7 +82,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 0,
     backgroundColor: "white",
-    // justifyContent: 'center'
    },
    sectionHeader: {
      paddingTop: 2,
@@ -115,11 +97,6 @@ const styles = StyleSheet.create({
      fontSize: 18,
      height: 44,
    },
-   separator: {
-    marginVertical: 0,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
 });
 
 export default MnemonicInput;

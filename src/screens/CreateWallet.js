@@ -1,17 +1,11 @@
-import { Alert, Button, TextInput, Pressable, SectionList, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Button, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UInt256, U256 } from 'uint256';
 import { StackActions } from '@react-navigation/native';
 import CheckBox from 'react-native-check-box';
 import PasswordInputText from 'react-native-hide-show-password-input';
-// import { UserContext } from "./UserProvider";
+import { Separator } from '../helpers/jsxlib';
 
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
 
 
 function navigateAppPassword(navigation, mnemonic, word13, firstTime){
@@ -70,12 +64,6 @@ label='13th word' style={styles.title}/>
         enabled
         onPress={() => navigateAppPassword(navigation, mnemonic, word13, firstTime)}
       />
-
-
-
-{/* <TouchableOpacity style={styles.button} onPress={() => dispatch({ type: "toggle_button" })}>
-     { state.active ? <Text>On</Text> : <Text>Off</Text> }  
-        </TouchableOpacity> */}
         
   </View> 
   </SafeAreaView>
@@ -120,11 +108,6 @@ const styles = StyleSheet.create({
      fontSize: 18,
      height: 44,
    },
-   separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: 0,
-  },
   title: {
     textAlign: 'center',
     marginVertical: 8,

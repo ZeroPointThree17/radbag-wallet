@@ -1,10 +1,5 @@
 import React from 'react';
-import { Text, FlatList, SectionList, View, StyleSheet } from 'react-native';
-import { List } from 'react-native-paper';
-import { ListItem, Avatar } from 'react-native-elements';
-import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
-import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
-import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
+import { View, StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Settings from './Settings';
 import MnemonicDisplay from './MnemonicDisplay';
@@ -13,12 +8,7 @@ import WalletOptions from './WalletOptions';
 
 const Stack = createStackNavigator();
 
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
-
- const SettingsNav = ({route, navigation}) => {
+const SettingsNav = ({route, navigation}) => {
 
  return (
   <Stack.Navigator>
@@ -57,11 +47,7 @@ const styles = StyleSheet.create({
      fontSize: 18,
      height: 44,
    },
-   separator: {
-    marginVertical: 0,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
 });
+
 
 export default SettingsNav;

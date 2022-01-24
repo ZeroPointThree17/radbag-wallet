@@ -1,17 +1,12 @@
 import React from 'react';
-import { ScrollView, Text, Image,FlatList, SectionList, View, StyleSheet } from 'react-native';
-import { List } from 'react-native-paper';
+import { ScrollView, Text, Image, View, StyleSheet } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
 import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
-import IconFA  from 'react-native-vector-icons/FontAwesome5';
 var Raddish = require("../assets/radish_nobackground.png");
+import { SeparatorBorder } from '../helpers/jsxlib';
 
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
 
 const list = [
   {
@@ -33,7 +28,7 @@ const list = [
 
 
  
-  <Separator/>
+  <SeparatorBorder/>
 
  <ListItem
   onPress={() => {navigation.navigate('Mnemonic Display')}}
@@ -69,34 +64,8 @@ const list = [
 </ListItem>
 
 
-<Separator/>
+<SeparatorBorder/>
 
-{/* <ListItem
- onPress={() => {alert("ASF")}}
-  Component={TouchableScale}
-  friction={90} //
-  tension={100} // These props are passed to the parent component (here TouchableScale)
-  activeScale={0.95} //
-  linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
-    start: { x: 1, y: 0 },
-    end: { x: 0.2, y: 0 },
-  }}
-  ViewComponent={LinearGradient} // Only if no expo
->
-<IconFA name="network-wired" size={20} color="#4F8EF7" />
-  <ListItem.Content>
-    <ListItem.Title style={{fontSize:14, color: 'black', fontWeight: 'bold' }}>
-      <Text>Select Network</Text>
-    </ListItem.Title>
-    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
-      <Text>Select the Radix network that this app should connect to</Text>
-    </ListItem.Subtitle>
-  </ListItem.Content>
-  <ListItem.Chevron color="black" />
-</ListItem> 
-
-<Separator/>*/}
 
 <ListItem
  onPress={() => {navigation.navigate('Address Options')}}
@@ -122,7 +91,7 @@ const list = [
   </ListItem.Content>
   <ListItem.Chevron color="black" />
 </ListItem>
-<Separator/>
+<SeparatorBorder/>
 
 <ListItem
  onPress={() => {navigation.navigate('Wallet Options')}}
@@ -148,60 +117,11 @@ const list = [
   </ListItem.Content>
   <ListItem.Chevron color="black" />
 </ListItem>
-<Separator/>
+<SeparatorBorder/>
 
-{/* <ListItem
- onPress={() => {alert("ASF")}}
-  Component={TouchableScale}
-  friction={90} //
-  tension={100} // These props are passed to the parent component (here TouchableScale)
-  activeScale={0.95} //
-  linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
-    start: { x: 1, y: 0 },
-    end: { x: 0.2, y: 0 },
-  }}
-  ViewComponent={LinearGradient} // Only if no expo
->
-<IconMaterial name="delete-forever-outline" size={20} color="#4F8EF7" />
-  <ListItem.Content>
-    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold' }}>
-      <Text>Remove Address</Text>
-    </ListItem.Title>
-    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
-      <Text>Remove the currently selected address</Text>
-    </ListItem.Subtitle>
-  </ListItem.Content>
-  <ListItem.Chevron color="black" />
-</ListItem>
-<Separator/> */}
 
-{/* <ListItem
- onPress={() => {alert("ASF")}}
-  Component={TouchableScale}
-  friction={90} //
-  tension={100} // These props are passed to the parent component (here TouchableScale)
-  activeScale={0.95} //
-  linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
-    start: { x: 1, y: 0 },
-    end: { x: 0.2, y: 0 },
-  }}
-  ViewComponent={LinearGradient} // Only if no expo
->
-<IconMaterial name="delete-forever-outline" size={20} color="#4F8EF7" />
-  <ListItem.Content>
-    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold' }}>
-      <Text>Remove Wallet</Text>
-    </ListItem.Title>
-    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
-      <Text>Remove the currently selected wallet{"\n"}{"\n"}(NOTE: This will also remove all addresses associated to the currently selected wallet)</Text>
-    </ListItem.Subtitle>
-  </ListItem.Content>
-  <ListItem.Chevron color="black" />
-</ListItem> 
 
-<Separator/>*/}
+
 
 </ScrollView>
 
@@ -211,16 +131,8 @@ const list = [
     <Text style={{ alignSelf:'center'}}>Raddish Wallet v.1.0.0</Text>
 </View>
 
-
-
-
-
  
- </View>
-
-      
-
-  
+ </View>  
  )
 };
 
@@ -250,15 +162,9 @@ const styles = StyleSheet.create({
      fontSize: 18,
      height: 44,
    },
-   separator: {
-    marginVertical: 0,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
   rowStyle: {
     flexDirection: 'row',
     fontSize: 4,
-    // alignItems: 'center',
     justifyContent: 'center',
     marginVertical:5
   },

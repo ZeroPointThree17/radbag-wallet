@@ -1,46 +1,10 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { Button, Text, Keyboard, ScrollView, View, StyleSheet } from 'react-native';
-import { List } from 'react-native-paper';
-import { ListItem, Avatar } from 'react-native-elements';
-import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
-import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
-import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { decrypt } from '../helpers/encrypt';
+import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
-import { catchError } from 'rxjs/operators';
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
-
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
-
-function errorCB(err) {
-  console.log("SQL Error: " + err.message);
-}
-
-function openCB() {
-  console.log("Database OPENED");
-}
+import { Separator } from '../helpers/jsxlib';
+import { useInterval, openCB, errorCB } from '../helpers/helpers';
 
 
 function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, setword13){
@@ -103,8 +67,6 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
 }
 
  const MnemonicDisplay = ({route}) => {
-
-
 
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -173,12 +135,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "flex-start"
    },
-
-   separator: {
-    marginVertical: 10,
-    borderBottomColor: '#737373',
-    borderBottomWidth: 0,
-  },
 });
 
 export default MnemonicDisplay;

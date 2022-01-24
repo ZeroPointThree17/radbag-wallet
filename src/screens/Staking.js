@@ -5,7 +5,7 @@ import { ListItem, Avatar } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { decrypt } from '../helpers/encrypt';
+import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { catchError } from 'rxjs/operators';
@@ -17,30 +17,8 @@ import IconIonicons from 'react-native-vector-icons/Ionicons';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
-
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
+import { Separator } from '../helpers/jsxlib';
+import { useInterval, openCB, errorCB } from '../helpers/helpers';
 
 
 var radio_props = [
@@ -48,13 +26,6 @@ var radio_props = [
   {label: 'No', value: false }
 ];
 
-function errorCB(err) {
-  console.log("SQL Error: " + err.message);
-}
-
-function openCB() {
-  console.log("Database OPENED");
-}
 
 function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
   //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
@@ -283,16 +254,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 }
 
-
-
-
-
-
-
-
-
-
-
  const Staking = ({route, navigation}) => {
  
   const { currAddr,currLiqBal, currStaked } = route.params;
@@ -362,10 +323,9 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Liquid Balance: {Number(currLiqBal/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance:{currStaked} {Number(currStaked/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Pending Stake Balance: 12312.0000</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Pending Unstake Balance: 1212.0000</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>{Number((currLiqBal+currStaked)/1000000000000000000).toLocaleString()}</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Staked Balance: {Number(currStaked/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Current Unstaking Balance: 1212.0000 XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currLiqBal+currStaked)/1000000000000000000).toLocaleString()} XRD</Text>
      <Separator/>
       <View style={styles.rowStyle}>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>
@@ -552,12 +512,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "flex-start"
    },
-
-   separator: {
-    marginVertical: 10,
-    borderBottomColor: '#737373',
-    borderBottomWidth: 0,
-  },
   rowStyle: {
     flexDirection: 'row',
     fontSize: 4,

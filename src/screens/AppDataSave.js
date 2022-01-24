@@ -1,14 +1,15 @@
 import { Button, ActivityIndicator, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState } from 'react';
-let { bech32, bech32m } = require('bech32')
-import QRCode from 'react-native-qrcode-svg';
+let { bech32 } = require('bech32')
 import PasswordInputText from 'react-native-hide-show-password-input';
 var bcrypt = require('react-native-bcrypt');;
 var SQLite = require('react-native-sqlite-storage');
-import {encrypt, decrypt} from '../helpers/encrypt';
+import {encrypt} from '../helpers/encryption';
 var HDKey = require('hdkey')
-import { StackActions, NavigationActions } from '@react-navigation/native';
+import { StackActions } from '@react-navigation/native';
+import { Separator } from '../helpers/jsxlib';
+import { openCB, errorCB } from '../helpers/helpers';
 
 
 function convertbits (data, frombits, tobits, pad) {
@@ -38,19 +39,6 @@ function convertbits (data, frombits, tobits, pad) {
   return ret;
 }
 
-const Separator = () => (
-  <View style={styles.separator} />
-);
-
-function errorCB(err) {
-  console.log("SQL Error: " + err.message );
-}
-
-function openCB() {
-  console.log("Database OPENED");
-}
-
-
 
 function navigateHome(setIsActive,navigation, password, confirmPassword, mnemonic, word13, firstFlag){
 
@@ -60,10 +48,6 @@ function navigateHome(setIsActive,navigation, password, confirmPassword, mnemoni
     alert("Password is required");
   } 
   else if(password === confirmPassword){
-    // var salt = bcrypt.genSaltSync(10);
-    // var pwHash = bcrypt.hashSync(password, salt);
-
-  //  console.log(bcrypt.compareSync(password, pwHash)); // true
 
 var mnemonic_enc = encrypt(mnemonic, Buffer.from(password));
 var word13_enc = encrypt(word13, Buffer.from(password));
@@ -140,18 +124,14 @@ maxWalletId='SELECT MAX(id) AS id from wallet';
 maxAddressId='SELECT MAX(id) AS id from address';
 dropWallet = doNothingStmt;
 createWallet = doNothingStmt;
-// insertWallet = 
 dropActiveWallet = doNothingStmt;
 createActiveWallet = doNothingStmt;
-// insertActiveWallet = "INSERT INTO active_wallet VALUES("+nextWalledId+")";
 dropActiveAddress = doNothingStmt;
 createActiveAddress = doNothingStmt;
-// insertActiveAddress = ;
 dropToken = doNothingStmt;
 createToken = doNothingStmt;
 dropAddress = doNothingStmt;
 createAddress = doNothingStmt;
-// insertAddressFirstPart = ;
 break;
 default:
 // code block
@@ -215,27 +195,6 @@ db.transaction((tx) => {
 }
 
 
-// db.transaction((tx) => {
-//   tx.executeSql('DROP TABLE IF EXISTS id', [], (tx, results) => {
-//     console.log("Drop id table completed");
-//     db.transaction((tx) => {
-//       tx.executeSql(`CREATE TABLE id (
-//         table_name TEXT,
-//         next_id INTEGER
-//     )`, [], (tx, results) => {
-//         console.log("Create id table completed");
-//         db.transaction((tx) => {
-//           tx.executeSql("INSERT INTO id VALUES('wallet',1)", [], (tx, results) => {
-//             console.log("Inserts into id table completed");
-            
-//           }, errorCB);
-//         });
-//       }, errorCB);
-//     });
-//   }, errorCB);
-// });
-
-
 db.transaction((tx) => {
   tx.executeSql(dropWallet, [], (tx, results) => {
     console.log("Drop wallet table completed");
@@ -270,17 +229,6 @@ db.transaction((tx) => {
                                 db.transaction((tx) => {
                                     tx.executeSql("INSERT INTO active_address (id) VALUES('"+nextAddressId+"')", [], (tx, results) => {
                                       console.log("Insert into active address table completed");  
-                                      // setAppPw("");
-                                      // setAppPwConfirm(""); 
-                                      // setIsActive(false);
-                                      // 
-                                      
-                                    //   const resetAction = StackActions.reset({
-                                    //     index: 0,
-                                    //     actions: [NavigationActions.navigate({ routeName: 'Raddish Wallet' })],
-                                    // });
-                                    // navigation.dispatch(resetAction);
-                                    // navigation.navigate('Raddish Wallet');
                                     const pushAction = StackActions.push('Raddish Wallet');
                                   
                                   navigation.dispatch(pushAction);
@@ -307,37 +255,7 @@ db.transaction((tx) => {
                   db.transaction((tx) => {
                     tx.executeSql(createToken, [], (tx, results) => {
                       console.log("Create token table completed");
-                      // db.transaction((tx) => {
-                      //   tx.executeSql("INSERT INTO token (rri, name, symbol, decimals, logo_url) VALUES ('xrd_rr1qy5wfsfh','Radix','XRD',18,null)", [], (tx, results) => {
-                      //     console.log("Inserts into token table completed");
-                        
-
-                          // db.transaction((tx) => {
-                          //   tx.executeSql('DROP TABLE IF EXISTS wallet_x_token', [], (tx, results) => {
-                          //     console.log("Drop wallet_x_token table completed");
-                          //     db.transaction((tx) => {
-                          //       tx.executeSql(`CREATE TABLE wallet_x_token (
-                          //         id INTEGER PRIMARY KEY,
-                          //         wallet_id INTEGER,
-                          //         rri TEXT,
-                          //     enabled_flag INTEGER
-                          //     )`, [], (tx, results) => {
-                          //         console.log("Create wallet_x_token table completed");
-                                  // db.transaction((tx) => {
-                                  //   tx.executeSql('INSERT INTO wallet_x_token (wallet_id, token_id, enabled_flag) select distinct a.id, b.id, 1 from wallet a, token b', [], (tx, results) => {
-                                  //     console.log("Inserts into wallet_x_token token completed");
-                                    
-                                  //   }, errorCB);
-                                  // });
-                                  
-                          //       }, errorCB);
-                          //     });
-                          //   }, errorCB);
-                          // });
-                          
-                          
-              //           }, errorCB);
-              //         });
+                    
                     }, errorCB);
                   });
                 }, errorCB);
@@ -374,20 +292,6 @@ db.transaction((tx) => {
                           tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES ("+nextWalledId+",'My Address (#"+i.toString()+")','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"','"+enabled_flag+"')", [], (tx, results) => {
                             console.log("Insert into address table completed");
                             
-
-                                  // db.transaction((tx) => {
-            
-                                  //   tx.executeSql('SELECT * FROM address', [], (tx, results) => {
-            
-            
-                                  //     var len = results.rows.length;
-                                  //     //  console.log(results.rows.item);
-                                  //       for (let i = 0; i < len; i++) {
-                                  //     let row = results.rows.item(i);
-                                  //     console.log(row);
-                                  //       }
-                                  //     }, errorCB);
-                                  //   });
                           }, errorCB);
                         });
                      } 
@@ -525,11 +429,6 @@ const styles = StyleSheet.create({
      fontSize: 18,
      height: 44,
    },
-   separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: 0,
-  },
   title: {
     textAlign: 'center',
     marginVertical: 8,

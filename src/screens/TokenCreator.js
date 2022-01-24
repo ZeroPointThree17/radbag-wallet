@@ -1,49 +1,14 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { Keyboard, TouchableOpacity, Linking, Alert, ScrollView, Image, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
-import { List } from 'react-native-paper';
-import { ListItem, Avatar } from 'react-native-elements';
-import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
-import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
-import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { decrypt } from '../helpers/encrypt';
+import { Keyboard, TouchableOpacity, Linking, Alert, ScrollView, Image, Text, TextInput, View, StyleSheet } from 'react-native';
+import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
-import PasswordInputText from 'react-native-hide-show-password-input';
-import { catchError } from 'rxjs/operators';
-import SelectDropdown from 'react-native-select-dropdown'
-import Clipboard from '@react-native-clipboard/clipboard';
-import { Input, Icon } from 'react-native-elements';
-import { shortenAddress } from './Home';
 import IconFA5 from 'react-native-vector-icons/FontAwesome5';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import RadioForm from 'react-native-simple-radio-button';
 var Poof = require("../assets/poof.png");
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
-
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
+import { Separator } from '../helpers/jsxlib';
+import { useInterval, openCB, errorCB } from '../helpers/helpers';
 
 
 var radio_props = [
@@ -51,13 +16,6 @@ var radio_props = [
   {label: 'No', value: false }
 ];
 
-function errorCB(err) {
-  console.log("SQL Error: " + err.message);
-}
-
-function openCB() {
-  console.log("Database OPENED");
-}
 
 function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
   //  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
@@ -84,7 +42,6 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
       alert("URL part after http(s):// must not be empty")
   } else {
   var rri=""
-  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
   fetch('https://mainnet-gateway.radixdlt.com/token/derive', {
         method: 'POST',
         headers: {
@@ -121,12 +78,9 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
 }
 
 function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
-//  settknName, settknDesc,settknIconUrl, settknUrl, settknSymbol, settknIsSuppMut, settknSupply, settknRRI, 
 
 var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
 
-// alert(sourceXrdAddr+" "+ tknName+" "+  tknDesc+" "+ tknIconUrl+" "+  tknUrl+" "+  tknSymbol+" "+ tknIsSuppMut+" "+ tknSupply+" "+  rri)
-  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
   fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
         method: 'POST',
         headers: {
@@ -172,13 +126,11 @@ var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
       
         )
       }).then((response) => response.json()).then((json) => {
-        //  alert(JSON.stringify(json))
-         
+        
          if(json.code == 400 || json.code == 500){
           alert(JSON.stringify(json.message));
          }
          else{
-        // alert(JSON.stringify(json))
        
         Alert.alert(
           "Commit Transaction?",
@@ -198,12 +150,6 @@ var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
           console.error(error);
       });
 }
-
-
-
-
-
-
 
 
 function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash){
@@ -227,8 +173,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   try{
     var signature = "";
   var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-         // privatekey = decrypt(privKey_enc, Buffer.from("c"));
-  // alert("Privekey unc: "+privatekey)
   signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
 
 
@@ -237,9 +181,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-  // alert("Message: " +message + " Unsigned Txn: " + unsigned_transaction + " PubkEY: " +public_key+ " PRIVKEY: " +privKey_enc)
-  
-  // alert("Sig: "+result)
     fetch('https://mainnet-gateway.radixdlt.com/transaction/finalize', {
           method: 'POST',
           headers: {
@@ -287,32 +228,21 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 }
 
 
-
-
-
-
-
-
-
-
-
  const TokenCreator = ({route, navigation}) => {
  
-  // const { defaultSymbol, balancesMap, sourceXrdAddr, tokenMetadataObj } = route.params;
-
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
   const [sourceXrdAddr, setSourceXrdAddr] = useState();
   const [tknName, settknName] = useState();
-    const [tknDesc, settknDesc] = useState();
-      const [tknIconUrl, settknIconUrl] = useState();
-        const [tknUrl, settknUrl] = useState();
-          const [tknSymbol, settknSymbol] = useState();
-            const [tknIsSuppMut, settknIsSuppMut] = useState(true);
-              const [tknSupply, settknSupply] = useState();
-                const [txnHash, setTxHash] = useState(null);
-                const [show, setShow] = useState(false);
-                const [tknGranularity, settknGranularity] = useState(1);
+  const [tknDesc, settknDesc] = useState();
+  const [tknIconUrl, settknIconUrl] = useState();
+  const [tknUrl, settknUrl] = useState();
+  const [tknSymbol, settknSymbol] = useState();
+  const [tknIsSuppMut, settknIsSuppMut] = useState(true);
+  const [tknSupply, settknSupply] = useState();
+  const [txnHash, setTxHash] = useState(null);
+  const [show, setShow] = useState(false);
+  const [tknGranularity, settknGranularity] = useState(1);
 
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
  
@@ -370,7 +300,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         value={tknName}
         maxLength={199}
         onChangeText={value => settknName(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
       <Separator/>
@@ -389,7 +318,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         placeholderTextColor="#d3d3d3"
         value={tknDesc}
         onChangeText={value => settknDesc(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
       <Separator/>
@@ -405,7 +333,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         placeholderTextColor="#d3d3d3"
         value={tknSymbol}
         onChangeText={value => settknSymbol(value.toLowerCase())}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
       <Separator/>
@@ -422,7 +349,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         placeholderTextColor="#d3d3d3"
         value={tknIconUrl}
         onChangeText={value => settknIconUrl(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
       <Separator/>
@@ -438,7 +364,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         placeholderTextColor="#d3d3d3"
         value={tknUrl}
         onChangeText={value => settknUrl(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
       <Separator/>
@@ -476,7 +401,6 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         placeholderTextColor="#d3d3d3"
         value={tknSupply}
         onChangeText={value => settknSupply(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
       </View>
 
@@ -531,12 +455,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "flex-start"
    },
-
-   separator: {
-    marginVertical: 10,
-    borderBottomColor: '#737373',
-    borderBottomWidth: 0,
-  },
   rowStyle: {
     flexDirection: 'row',
     fontSize: 4,

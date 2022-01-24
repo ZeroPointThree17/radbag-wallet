@@ -1,13 +1,11 @@
-import React, {useRef, useState} from 'react';
-import { TouchableOpacity, ScrollView, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
-import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
+import React from 'react';
+import { TouchableOpacity, ScrollView, Text, View, StyleSheet } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
-import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
+import {showMessage} from "react-native-flash-message";
+import { Separator } from '../helpers/jsxlib';
 
-const Separator = () => (
-  <View style={styles.separator} />
-);
 
 const Receive = ({route, navigation}) => {
  
@@ -15,7 +13,6 @@ const Receive = ({route, navigation}) => {
 
   const copyToClipboard = (string) => {
     Clipboard.setString(string);
-// alert(string)
         showMessage({
   message: "Address copied to clipboard",
   type: "info",
@@ -65,12 +62,6 @@ const styles = StyleSheet.create({
     alignItems:"center",
     justifyContent: "center"
    },
-
-   separator: {
-    marginVertical: 10,
-    borderBottomColor: '#737373',
-    borderBottomWidth: 0,
-  },
       rowStyle: {
         flexDirection: 'row',
         fontSize: 4,

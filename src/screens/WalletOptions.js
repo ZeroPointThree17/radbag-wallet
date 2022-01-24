@@ -1,41 +1,11 @@
 import React, {useRef, useState, useEffect} from 'react';
 import { Alert, Keyboard, Button, Text, TextInput, ScrollView, View, StyleSheet } from 'react-native';
-import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
-import { StackActions, NavigationActions } from '@react-navigation/native';
+import {showMessage} from "react-native-flash-message";
+import { StackActions } from '@react-navigation/native';
 var SQLite = require('react-native-sqlite-storage');
+import { Separator } from '../helpers/jsxlib';
+import { useInterval, openCB, errorCB } from '../helpers/helpers';
 
-const Separator = () => (
-  <View style={styles.separator} />
-);
-
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
-
-
-function errorCB(err) {
-  console.log("SQL Error: " + err.message);
-}
-
-function openCB() {
-  console.log("Database OPENED");
-}
 
 function updateWalletName(name, walletId){
 
@@ -242,14 +212,7 @@ const styles = StyleSheet.create({
     padding: 30,
     margin: 0,
     backgroundColor: "white",
- 
    },
-
-   separator: {
-    marginVertical: 10,
-    borderBottomColor: '#737373',
-    borderBottomWidth: 0,
-  },
       rowStyle: {
         flexDirection: 'row',
         fontSize: 4,

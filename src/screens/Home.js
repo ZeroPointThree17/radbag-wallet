@@ -1,12 +1,10 @@
-import {findNodeHandle,  Switch, InteractionManager, RefreshControl, Alert, Image, Button, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
-import React, { useState,useRef, useEffect, useReducer } from 'react';
+import { RefreshControl, Image, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
 var GenericToken = require("../assets/generic_token.png");
  var SQLite = require('react-native-sqlite-storage');
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
-import  IconFoundation  from 'react-native-vector-icons/Foundation';
 import Clipboard, {useClipboard} from '@react-native-clipboard/clipboard';
-import IconFontisto from 'react-native-vector-icons/Fontisto';
 import NetInfo from "@react-native-community/netinfo";
 import { StackActions } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -15,39 +13,9 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showMessage} from "react-native-flash-message";
 import * as Progress from 'react-native-progress';
+import { Separator } from '../helpers/jsxlib';
+import { useInterval, openCB, errorCB } from '../helpers/helpers';
 
-function useInterval(callback, delay) {
-    const savedCallback = useRef();
-  
-    // Remember the latest callback.
-    useEffect(() => {
-      savedCallback.current = callback;
-    }, [callback]);
-  
-    // Set up the interval.
-    useEffect(() => {
-      function tick() {
-        savedCallback.current();
-      }
-      if (delay !== null) {
-        let id = setInterval(tick, delay);
-        return () => clearInterval(id);
-      }
-    }, [delay]);
-  }
-
-  function errorCB(err) {
-    console.log("SQL Error: " + err.message);
-  }
-  
-  function openCB() {
-    console.log("Database OPENED");
-  }
-  
-
-    const Separator = () => (
-    <View style={styles.separator} />
-    );
 
     const SeparatorBorder = () => (
     <View style={styles.separatorBorder} />
@@ -81,14 +49,10 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses, setActiveAddress,
 
         var addresses = new Map();
 
-        // walletArr.forEach(wallet_id => 
-        // {
             db.transaction((tx) => {
     
-            // alert(wallet_id.value);
             tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
 
-                //  alert(wallet_id.value)
           var len = results.rows.length;
       
             for (let i = 0; i < len; i++) {
@@ -98,21 +62,11 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses, setActiveAddress,
                     addresses.set(row.id, data);
             }
 
-
-            // addresses.forEach(el=> alert(wallet_id +" has "+ JSON.stringify(data)))
-  
             setEnabledAddresses(addresses);
             getActiveAddress(db, setActiveAddress, addresses, addressBalances, setAddressBalances);
-    //   alert(newEnabledAddresses)
-    
-  
+
           }, errorCB); 
         });
-
-    // });
-
-  
-  
 }
 
 function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
@@ -142,21 +96,6 @@ function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddress
         });
 
 }
-
-
-
-// function removeAddress(db, wallet_id, address_id,setEnabledAddresses){
-
-//     // alert("Updating addresses 0.1");
-//     db.transaction((tx) => {
-
-//         tx.executeSql("UPDATE address SET enabled_flag='0' WHERE wallet_id='"+wallet_id+"' AND id='"+address_id+"' AND enabled_flag='1'", [], (tx, results) => {
-
-//             getEnabledAddresses(wallet_id,db,setEnabledAddresses)
-
-//           }, errorCB);
-//         });
-// }
 
 
 export function shortenAddress(address){
@@ -256,8 +195,7 @@ function getActiveWallet(db,setActiveWallet,setEnabledAddresses, setActiveAddres
                 }
 
                 setActiveWallet(id);
-                //  alert("active wallet "+id)
-
+            
                 getEnabledAddresses(id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
 
         }, errorCB);
@@ -265,8 +203,6 @@ function getActiveWallet(db,setActiveWallet,setEnabledAddresses, setActiveAddres
 }
 
 function getActiveAddress(db, setActiveAddress, addresses, addressBalances, setAddressBalances){
-
-    // var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
     db.transaction((tx) => {
         tx.executeSql("SELECT id FROM active_address", [], (tx, results) => {
@@ -280,8 +216,7 @@ function getActiveAddress(db, setActiveAddress, addresses, addressBalances, setA
                 }
 
                 setActiveAddress(id);
-                //  alert("active wallet "+id)
-
+               
                 getBalances(addresses, id, addressBalances, setAddressBalances)
 
 
@@ -296,12 +231,9 @@ export class NetworkUtils {
   }}
 
    function getTokenMetadata(uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances){
-    // const isConnected = await NetworkUtils.isNetworkAvailable();
- 
+
      var rri = uniqueRRIs.pop();
-      // uniqueRRIs.forEach(rri => {
-        //    alert(rri) 
-    // if(isConnected){
+
      fetch('https://mainnet-gateway.radixdlt.com/token', {
         method: 'POST',
         headers: {
@@ -322,8 +254,6 @@ export class NetworkUtils {
         )
       }).then((response) => response.json()).then((json) => {
 
-        //  alert("BNB: "+JSON.stringify(json));
-          // activeAddressBalances
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
             
             var newBalance = new Map(newAddrBalances);
@@ -337,7 +267,6 @@ export class NetworkUtils {
             newBalance.get(activeAddress).liquid_balances.forEach( balance => {
 
                 if(balance.token_identifier.rri == rri){
-//  alert("token meta rri: "+rri)
                     balance.token_identifier['symbol'] = json.token.token_properties.symbol;
                     balance.token_identifier['icon_url'] = json.token.token_properties.icon_url;
                     balance.token_identifier['name'] = json.token.token_properties.name;
@@ -359,11 +288,6 @@ export class NetworkUtils {
       }).catch((error) => {
           console.error(error);
       });
-    // } else{
-    //     alert("No internet connection available. Please connect to the internet.");
-    // }
-
-// });
  
   }
   
@@ -371,7 +295,6 @@ export class NetworkUtils {
    
     const isConnected = await NetworkUtils.isNetworkAvailable();
  
-    //    alert(enabledAddresses.get(activeAddress).radix_address)
     if(isConnected){
     await fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
         method: 'POST',
@@ -394,43 +317,21 @@ export class NetworkUtils {
       }).then((response) => response.json()).then((json) => {
 
         console.log("GB: "+JSON.stringify(json));
-        // alert(JSON.stringify(json));
-          // activeAddressBalances
+        
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
-            // alert("GB2: "+JSON.stringify(json));
-          // alert(JSON.stringify(json.account_balances))
-                  // alert(JSON.stringify(json.account_balances))
-            //   addressBalances.set(activeAddress,json.account_balances);
               var newAddrBalances = new Map(addressBalances);
               newAddrBalances.set(activeAddress,json.account_balances);
-       
-              // setAddressBalances(newAddrBalances);
-              // alert("ACTIVE 2 "+JSON.stringify(newAddrBalances.get(activeAddress)));
-              
-            // //   alert(addressBalances);
               var rris = [];
-              rris.push(JSON.stringify(json.account_balances.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, ""));
-      
+              rris.push(JSON.stringify(json.account_balances.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "")); 
               var liquid_balances = json.account_balances.liquid_balances
-            // alert(JSON.stringify(liquid_balances))
               liquid_balances.forEach( (element) => {
                   rris.push(JSON.stringify(element.token_identifier.rri).replace(/["']/g, ""))
                }
               )
       
-            //    alert(rris)
                var uniqueRRIs = [...new Set(rris)]
       
-              //  var newAddrRRIs = new Map();
-
-// alert(uniqueRRIs)
-              //  newAddrRRIs.set(activeAddress,uniqueRRIs);
-            //    setAddressRRIs(newAddrRRIs);
-
-            // newAddrRRIs.forEach(value => alert(value))
-           
                getTokenMetadata(uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances);
-            //   setTimeout(getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs), 5000);
           }
       }).catch((error) => {
           console.error(error);
@@ -443,9 +344,7 @@ export class NetworkUtils {
 function getDDIndex(dropdownVals,activeAddress){
 
     for(var x = 0; x <dropdownVals.length ; x++){
-// alert(JSON.stringify(dropdownVals[x]))
         if(dropdownVals[x].value == activeAddress){
-            // alert(x);
             return x;
         }
     }
@@ -456,9 +355,7 @@ function getDDIndex(dropdownVals,activeAddress){
 function getWalletDDIndex(walletDropdownVals,activeWallet){
 
   for(var x = 0; x <walletDropdownVals.length ; x++){
-// alert(JSON.stringify(dropdownVals[x]))
       if(walletDropdownVals[x].value == activeWallet){
-          // alert(x);
           return x;
       }
   }
@@ -534,26 +431,18 @@ const Home = ({route, navigation}) => {
 
         useEffect(() => {
             getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
-            // getBalances(enabledAddresses, activeAddress, addressBalances, setAddressBalances, setAddressRRIs,addressRRIs);
-        }, []);
-    
-        // useEffect(() => {
-        //     getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)          // getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
-        // }, [activeAddress, enabledAddresses]);
+       }, []);
     
         useInterval(() => {
-            // getActiveAddress(db, setActiveAddress);
-            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    }, 10000);
+           getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    }, 10000);
 
-            // alert("ab1 size " + addressBalances.size)
-    var balances = new Map();
+   var balances = new Map();
     if( addressBalances.size > 0 && activeAddress != undefined ){
 
     var liquid_rdx_balance = 0;
 
     addressBalances.forEach((balance, active_address) => {console.log("INITIAL BALS ("+active_address+"): "+JSON.stringify(balance))})
     console.log(activeAddress)
-    // alert(JSON.stringify(addressBalances))
     if(!(addressBalances.get(activeAddress) == undefined)){
      
     addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  {
@@ -572,7 +461,6 @@ const Home = ({route, navigation}) => {
      
     }
 
-        // alert(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, "") + " "+ JSON.stringify(balance.value).replace(/["']/g, ""))
     );
 
    
@@ -581,7 +469,6 @@ const Home = ({route, navigation}) => {
     var stakedTokenIdentifier = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
 
 
-    //  alert(stakedAmount + " " + stakedTokenIdentifier)
         if(!(balances.get(stakedTokenIdentifier) == undefined) ){
             balances.set(stakedTokenIdentifier,[parseInt(balances.get(stakedTokenIdentifier)[0])+parseInt(stakedAmount),balances.get(stakedTokenIdentifier)[1],balances.get(stakedTokenIdentifier)[2],balances.get(stakedTokenIdentifier)[3]]);
         } else{
@@ -596,64 +483,11 @@ const Home = ({route, navigation}) => {
     }
 }
 
-//  alert("AB: "+balances.size)
-// balances.forEach((balance) => {alert(balance)})
-// dropdownVals.forEach(val=>alert(JSON.stringify(val)))
-
-
-// useEffect(() => {
-//     // alert("effect1")
-//     getTokenMetadata(addressRRIs, setTokenMetadata, tokenMetadata);
-// }, [addressRRIs]);
-
-  
-
-    //  alert("token MD: "+JSON.stringify(tokenMetadata.get(addressRRIs.get(1))))
-    
-
-    //  while(first == true){
-    //      console.log("in loop 1");
-    //      console.log("in loop 2");
-    //      console.log(first);
-    //      wait(100);
-    // }
-
-    console.log("WALLETS: "+JSON.stringify(wallets));
-
-
-//(JSON.stringify(enabledAddresses.get(activeAddress).radix_address))
-
-    // // -> "xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef"
-  
-//   *******
-//       var message = '9a25747cd03f9764de539934e1800edc8160a4978aa27b1a6fb8411a11543697'
-//       var signature = "AA";
-  
-//        signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(childkey.privateKey))
-  
-  
-//    var result=new Uint8Array(72);
-//    secp256k1.signatureExport(signature.signature,result);
-//      console.log("SIG: "+ Buffer.from(result).toString('hex'));
-//   ******
-//      <QRCode
-//      value={rdx_addr}
-//    />
-//          <Text >Radix Key: {rdx_addr} </Text>
-       
-//        <Text >Private Key: {childkey.privateKey.toString('hex')} </Text>
-//  fetchCopiedText(cpdata);
+console.log("WALLETS: "+JSON.stringify(wallets));
 
   return (
 
     <SafeAreaView style={styles.containerMain}>
-
-{/* <BlurView style={styles.blurView}
-reducedTransparencyFallbackColor="gray"
-blurType="light"
-blurAmount={20}
-/> */}
-        {/* <FlashMessage position="center" ref={mainRef}/> */}
         <ScrollView style={styles.scrollView}
         refreshControl={
             <RefreshControl
@@ -666,11 +500,9 @@ blurAmount={20}
                 
             <Separator/>
                 <View style={styles.rowStyle}>
-                {/* <BlurRootView  blurNode="myNode">
-                <BlurView  
-        blurNode="myNode" > */}
+
                 <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
-            {/* <Surface style={styles.surface}> */}
+            
             <View style={styles.rowStyle}>
 <Dropdown
          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -727,7 +559,6 @@ blurAmount={20}
             setValueAddr(item.value);
             setIsFocusAddr(true);
 
-            // alert(item)
           }}
         />
 
@@ -747,7 +578,7 @@ blurAmount={20}
 
         <Text style={{fontSize: 14, color:"white"}}>          </Text>
   
-        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance, defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, tokenMetadataObj: tokenMetadata})}>
+        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance, defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
         <Text style={{fontSize: 14, color:"white"}}> Send</Text>
@@ -767,24 +598,11 @@ blurAmount={20}
         </TouchableOpacity>
 
         </View>
-        {/* </Surface> */}
         </LinearGradient>
-
-{/* </BlurView>
-        </BlurRootView> */}
-      {/* <TouchableOpacity style={styles.button} onPress={() => alert('hi')}>
-<Icon name="add-circle-outline" size={30} color="#4F8EF7" /></TouchableOpacity> */}
-
-
-
-
-
 </View>
 
      <View style={styles.rowStyle}>
        
-
-
      <TouchableOpacity style={styles.button} onPress={() => 
 
 {
@@ -844,21 +662,13 @@ navigation.dispatch(pushAction);
 
 
 const styles = StyleSheet.create({
-    // linearGradient: {
-    //     flex: 1,
-    //     paddingLeft: 8,
-    //     paddingRight: 15,
-    //     borderRadius: 5
-    //   },
+
     surface: {
         flex: 1,
         padding: 9,
         margin: 6,
         height: 'auto',
         width: 'auto',
-        // alignItems: 'flex-start',
-        // justifyContent: 'center',
-        // elevation: 4,
         borderWidth: 0,
         borderRadius: 10,
         backgroundColor: '#4DA892',
@@ -868,9 +678,6 @@ const styles = StyleSheet.create({
         padding: 8,
         height: 'auto',
         width: 325,
-        // alignItems: 'flex-start',
-        // justifyContent: 'center',
-        // elevation: 4,
         borderWidth: 0,
         borderRadius: 10,
         backgroundColor: '#006261',
@@ -894,7 +701,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         fontSize: 4,
         alignItems: 'left',
-        // justifyContent: 'left',
         marginVertical:5
       },
       buttonText: {
@@ -978,7 +784,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
 containerStyle: {
-    //  backgroundColor: "#183A81",
      backgroundColor: "#183A81",
      color:"white"
   },
@@ -1009,15 +814,7 @@ containerStyle: {
    
     marginHorizontal: 10,
   },
-  blurView:{
-    position: "absolute",
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0
-    }
 });
-
 
 
 export default Home;

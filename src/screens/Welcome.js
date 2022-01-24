@@ -1,12 +1,8 @@
 import React from 'react';
 import {Image,SafeAreaView, Button, View, Text, StyleSheet } from 'react-native';
-const bip39 = require('bip39');
 import Svg, { Path } from "react-native-svg"
+import { Separator } from '../helpers/jsxlib';
 
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
 
 function navigateToCreateWallet(navigation){
 
@@ -114,11 +110,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 66,
     height: 58,
-  },
-  separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: 0,
   },
 });
 

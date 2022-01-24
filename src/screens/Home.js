@@ -403,19 +403,13 @@ const Home = ({route, navigation}) => {
     const [activeAddress, setActiveAddress] = useState(1);
     const [enabledAddresses, setEnabledAddresses] = useState(initialEnabledAddresses);
     const [addressRRIs, setAddressRRIs] = useState(new Map())
-    const [tokenMetadata, setTokenMetadata] = useState(new Map())
-    const [cpdata, setString] = useClipboard();
 
-
-    console.log("about to output ADDRESSES: ");
     var dropdownVals = []
-    var walletDropdownVals = []
-
-    
+    var walletDropdownVals = []  
 
     enabledAddresses.forEach((element, id)=> 
         {
-        console.log(JSON.stringify(element));
+        console.log("EnabledAddress: "+JSON.stringify(element));
         dropdownVals.push(element);
 
         }
@@ -428,7 +422,6 @@ const Home = ({route, navigation}) => {
 
     }
 )
-
         useEffect(() => {
             getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
        }, []);
@@ -441,13 +434,13 @@ const Home = ({route, navigation}) => {
 
     var liquid_rdx_balance = 0;
 
-    addressBalances.forEach((balance, active_address) => {console.log("INITIAL BALS ("+active_address+"): "+JSON.stringify(balance))})
-    console.log(activeAddress)
+    addressBalances.forEach((balance, active_address) => {console.log("INITIAL BALANCES ("+active_address+"): "+JSON.stringify(balance))})
+    console.log("Active Address ID: " + activeAddress)
     if(!(addressBalances.get(activeAddress) == undefined)){
      
     addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  {
   
-   console.log("Bs"+JSON.stringify(balance))
+   console.log("Balance: "+JSON.stringify(balance))
         balances.set(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, ""),[
             JSON.stringify(balance.value).replace(/["']/g, ""),
              JSON.stringify(balance.token_identifier.symbol).replace(/["']/g, "").toUpperCase(),
@@ -565,7 +558,6 @@ console.log("WALLETS: "+JSON.stringify(wallets));
 <Separator/>
        <Text style={{fontSize: 20, color:"white"}}>Staked: {Number(stakedAmount/1000000000000000000).toLocaleString()} XRD{"\n"}Liquid: {Number(liquid_rdx_balance/1000000000000000000).toLocaleString()} XRD</Text>
  
-
        <Separator/>
 
        <View style={styles.rowStyle}>

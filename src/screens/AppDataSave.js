@@ -3,7 +3,6 @@ const bip39 = require('bip39');
 import React, { useState } from 'react';
 let { bech32 } = require('bech32')
 import PasswordInputText from 'react-native-hide-show-password-input';
-var bcrypt = require('react-native-bcrypt');;
 var SQLite = require('react-native-sqlite-storage');
 import {encrypt} from '../helpers/encryption';
 var HDKey = require('hdkey')

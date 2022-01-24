@@ -10,7 +10,7 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { openCB, errorCB } from '../helpers/helpers';
+import { openCB, errorCB, useInterval } from '../helpers/helpers';
 
 
 function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
@@ -54,8 +54,8 @@ function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKe
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  "address": xrdAddr
-                  // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
+                  // "address": xrdAddr
+                  "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
                 },
                 "amount": {
                   "token_identifier": {
@@ -182,9 +182,129 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 }
 
+
+function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key){
+
+  var rri = rris.pop();
+  var symbolsArr = inputSymbols.slice();
+  var symbolToRRI = new Map(inputSymToRRIs);
+
+  fetch('https://mainnet-gateway.radixdlt.com/token', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(
+  
+        {
+            "network_identifier": {
+              "network": "mainnet"
+            },
+            "token_identifier": {
+              "rri": rri
+            }
+          }    
+  
+    )
+  }).then((response) => response.json()).then((json) => {
+
+    symbolsArr.push(json.token.token_properties.symbol.toUpperCase());
+    symbolToRRI.set(json.token.token_properties.symbol.toUpperCase(), rri)      
+
+
+    if(rris.length == 0){
+
+ 
+        setSymbols(symbolsArr);
+        setSymbolToRRI(symbolToRRI)
+   
+
+                var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+
+                db.transaction((tx) => {
+                  tx.executeSql("SELECT address.privatekey_enc, address.publickey FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
+                    var len = results.rows.length;
+                    var tempPrivkey_enc = "default_val";
+                    var tempPubkey = "default_val";
+                      for (let i = 0; i < len; i++) {
+                          let row = results.rows.item(i);
+                          tempPrivkey_enc = row.privatekey_enc;
+                          tempPubkey = row.publickey;
+                      }
+
+                      setPrivKey_enc(tempPrivkey_enc);
+                      setPublic_key(tempPubkey);
+
+                    });
+                  }, errorCB);
+                }
+              
+              else{
+                getTokenSymbols(rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key)
+              }
+            }
+              ).catch((error) => {
+                  console.error(error);
+              });
+          
+}
+
+
+function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key){
+   
+
+  fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(
+    
+        {
+            "network_identifier": {
+              "network": "mainnet"
+            },
+            "account_identifier": {
+              "address": sourceXrdAddr
+            }
+          }      
+    
+      )
+    }).then((response) => response.json()).then((json) => {
+
+      // alert("Get Balances call: "+JSON.stringify(json));
+      
+        if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
+
+          var balances = new Map();
+          var rris = []
+
+          json.account_balances.liquid_balances.forEach( (balance) =>{
+   
+              balances.set(balance.token_identifier.rri, balance.value);       
+              rris.push(balance.token_identifier.rri)
+          } );
+
+          setBalances(balances);
+
+         getTokenSymbols(rris, [], new Map(), setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key)
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+
+  }
+
+
+
+
+
+
  const Send = ({route, navigation}) => {
  
-  const { xrdLiquidBalance, defaultSymbol, balancesMap, sourceXrdAddr } = route.params;
+  const { defaultSymbol, sourceXrdAddr } = route.params;
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
   const [destAddr, onChangeDestAddr] = useState();
@@ -193,64 +313,33 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   const [txnHash, setTxHash] = useState(null);
   const [show, setShow] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
-  const [currentBalance, setCurrentBalance] = useState(false);
-  const [symbols, setSymbols] = useState([defaultSymbol]);
-  const [rri, setRRI] = useState();
-
- 
-  var reverseTokenMetadataMap = new Map();
+  // const [currentBalance, setCurrentBalance] = useState(false);
+  const [symbols, setSymbols] = useState([]);
+  // const [rri, setRRI] = useState();
+  const [balances, setBalances] = useState(new Map());
+  const [symbolToRRI, setSymbolToRRI] = useState(new Map());
   
 
   useEffect( () => {
 
-    var symbolsTemp = [];
-    var currentValTemp = null;
-    var currentSymbolTemp="";
-    var rriTemp="";
+    // var symbolsTemp = [];
+    // var currentValTemp = null;
+    // var currentSymbolTemp="";
+    // var rriTemp="";
 
-    balancesMap.forEach((balance, rri) => {
-
-    symbolsTemp.push(balance[1])
-    reverseTokenMetadataMap.set(balance[1], rri);
-    
-    if(balance[1] == symbol && symbol!="XRD"){
-      currentValTemp = balance[0];
-      currentSymbolTemp = balance[1];
-      rriTemp=rri;
-    } else if(balance[1] == "XRD"){
-      currentValTemp = xrdLiquidBalance;
-      currentSymbolTemp = balance[1];
-      rriTemp=rri;
-    }
-  });
-
-  setCurrentBalance(currentValTemp);
-  setSymbols(symbolsTemp);
-  onChangeSymbol(currentSymbolTemp);
-  setRRI(rriTemp);
   
-},[symbol]);
+    getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key);
+   
+    // onChangeSymbol(currentSymbolTemp);
+  
+},[]);
+
+useInterval(() => {
+  getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key);
+}, 2000);
 
 
-  var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
-
-  db.transaction((tx) => {
-    tx.executeSql("SELECT address.privatekey_enc, address.publickey FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
-      var len = results.rows.length;
-      var tempPrivkey_enc = "default_val";
-      var tempPubkey = "default_val";
-        for (let i = 0; i < len; i++) {
-            let row = results.rows.item(i);
-            tempPrivkey_enc = row.privatekey_enc;
-            tempPubkey = row.publickey;
-        }
-
-        setPrivKey_enc(tempPrivkey_enc);
-        setPublic_key(tempPubkey);
-
-      });
-    }, errorCB);
-
+// alert(defaultSymbol)
   onSuccess = e => {
     onChangeDestAddr(e.data);
     setCameraOn(false);
@@ -327,11 +416,12 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         onChangeText={value => onChangeAmount(value)}
       />
 
+{ symbols.length > 0 &&
 <SelectDropdown
  buttonStyle={{backgroundColor:"#183A81", flex:0.5, borderWidth:StyleSheet.hairlineWidth, marginRight:10}}
  buttonTextStyle={{color:"white"}}
 	data={symbols}
-  defaultValue={symbol}
+  defaultValue={defaultSymbol}
 	onSelect={(selectedItem, index) => {
 		onChangeSymbol(selectedItem)
 	}}
@@ -345,16 +435,16 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 		// if data array is an array of objects then return item.property to represent item in dropdown
 		return item
 	}}
-/>
+/> }
 </View>
-<Text style={{fontSize: 12, color:"black"}}>Current liquid balance: {Number(currentBalance/1000000000000000000).toLocaleString()} {symbol}</Text>
+<Text style={{fontSize: 12, color:"black"}}>Current liquid balance: {Number(balances.get(symbolToRRI.get(symbol))/1000000000000000000).toLocaleString()} {symbol}</Text>
 
 
 
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity style={styles.button} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
+<TouchableOpacity style={styles.button} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}}> Send</Text>

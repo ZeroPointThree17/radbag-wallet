@@ -116,7 +116,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
             <View key={rri}>
 
    <SeparatorBorder/>
-    <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance,defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+    <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
     <View style={styles.addrRowStyle}>
 
@@ -138,7 +138,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
           <View key={rri}>
 
  <SeparatorBorder/>
-  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance,defaultSymbol: balance[1], balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
   <View style={styles.addrRowStyle}>
 
@@ -577,7 +577,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
 
         <Text style={{fontSize: 14, color:"white"}}>          </Text>
   
-        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{xrdLiquidBalance:liquid_rdx_balance, defaultSymbol:"XRD", balancesMap: balances, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}>
+        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
         <Text style={{fontSize: 14, color:"white"}}> Send</Text>

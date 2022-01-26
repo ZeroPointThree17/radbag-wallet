@@ -251,8 +251,8 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
         stakeValidatorsArr.push({address: element.validator_identifier.address, delegated_stake: element.delegated_stake.value})
        });
 
-      //  alert(JSON.stringify(stakeValidatorsArr));
        setStakeValidators(stakeValidatorsArr);
+      //  alert(JSON.stringify(stakeValidatorsArr));
        setPendingStake(pendingStake)
 
        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
@@ -270,8 +270,10 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
   if(stakeValidators.length>0){
     // alert("stakeValidators: "+JSON.stringify(stakeValidators))
 
-  var validatorAddr = stakeValidators.pop().address;
-  // alert("val addr: "+validatorAddr)
+  var stakeValidator = stakeValidators.pop();
+  var validatorAddr = stakeValidator.address;
+  var validatorDelegatedStk = stakeValidator.delegated_stake;
+  //  alert("val addr: "+validatorAddr)
   var validatorData = new Map(inputMap);
 
   fetch('https://mainnet-gateway.radixdlt.com/validator', {
@@ -297,14 +299,19 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
      }
      else{
 
-        validatorData.set(validatorAddr, json.validator.properties);
+      var valProps = json.validator.properties;
+      valProps["delegated_stake"] = validatorDelegatedStk;
+
+      // alert(JSON.stringify(valProps))
+
+      validatorData.set(validatorAddr, valProps);
 
        if(stakeValidators.length==0){
-        // alert(JSON.stringify(json))
+        // validatorData.forEach((val) => {alert(JSON.stringify(val))})
      
          setValidatorData(validatorData)
 
-         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, origStakeValidators, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
          
        } else{
         getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
@@ -319,7 +326,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
 }
 
 
-function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, stakeValidators, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
+function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
  
   fetch('https://mainnet-gateway.radixdlt.com/account/unstakes', {
     method: 'POST',
@@ -362,7 +369,8 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
 
        setTotalUnstaking(totalUnstaking);
 
-       setRenderedStakeValidatorRows(renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValidators, validatorData))
+      //  validatorData.forEach((el)=> alert(JSON.stringify(el)))
+       setRenderedStakeValidatorRows(renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorData))
 
        var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -439,31 +447,32 @@ function getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked){
 
 
 
-function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValidators, validatorData){
+function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorData){
 
   // alert("stked val len: " + stakeValidators.length);
-  if( stakeValidators.length > 0  && validatorData.size > 0){
+  // if(  validatorData.size > 0){
 
       var rows = []
+      // alert(rows)
 
-      stakeValidators.forEach((validatorDetails) =>  
+      validatorData.forEach((validatorDetails, valAddr) =>  
  {
-
+// console.log(JSON.stringify(validatorDetails))
   try{
-    //  alert("Val deets: "+JSON.stringify(validatorDetails))
+      // alert("Val deets: "+JSON.stringify(validatorDetails)) 
           rows.push(
              
-          <View key={validatorDetails.address}>
+          <View key={valAddr}>
 
 
 
 <View>
     {/* <View style={styles.addrRowStyle}> */}
 
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>{validatorData.get(validatorDetails.address).name}</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>{validatorDetails.name}</Text>
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>Staked: {Number(validatorDetails.delegated_stake/1000000000000000000).toLocaleString()} XRD</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Fee: {validatorData.get(validatorDetails.address).validator_fee_percentage}%</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Addr: {shortenAddress(validatorDetails.address)}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Fee: {validatorData.validator_fee_percentage}%</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Addr: {shortenAddress(valAddr)}</Text>
 
     <View style={styles.rowStyle}>
     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(validatorDetails.address)}}>
@@ -491,7 +500,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
          
   return (rows)
 
-  }
+  // }
 
 }
 
@@ -524,6 +533,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
       const unstakeValRef = useRef();
       const unstakeAmtRef = useRef();
 
+      // stakeValidators.forEach((val)=>{alert(JSON.stringify(val))})
 
   useEffect(() => {
     getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked)
@@ -626,8 +636,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
         <Text style={{fontSize: 18, color:"black"}}> Stake</Text>
         </View>
         </TouchableOpacity>
- 
-     
+
 </View>
 </React.Fragment>
 }

@@ -495,7 +495,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = RaddishWallet/RaddishWallet.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C8P4QFZ442;
+				DEVELOPMENT_TEAM = SAJLABFP9X;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = RaddishWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -508,7 +508,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = io.raddish.RaddishMobileWallet;
 				PRODUCT_NAME = RaddishWallet;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -524,7 +524,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = RaddishWallet/RaddishWallet.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C8P4QFZ442;
+				DEVELOPMENT_TEAM = SAJLABFP9X;
 				INFOPLIST_FILE = RaddishWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -536,7 +536,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = io.raddish.RaddishMobileWallet;
 				PRODUCT_NAME = RaddishWallet;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

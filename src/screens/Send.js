@@ -13,9 +13,10 @@ import { Separator } from '../helpers/jsxlib';
 import { openCB, errorCB, useInterval } from '../helpers/helpers';
 
 
-function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
+function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
   Keyboard.dismiss; 
+
   // alert(rri)
   if(xrdAddr == undefined || xrdAddr.length==0){
     alert("Destination address is required")
@@ -31,6 +32,7 @@ function buildTxn(rri, sourceXrdAddr,xrdAddr, symbol, amount, public_key, privKe
   }
   else{
 
+  var xrdAddr = destAddr.trim();
   var amountStr = (amount * 1000000000000000000).toString();
 
 

@@ -20,7 +20,7 @@ import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard } from '.
 
 
 
-function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, xrdAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
+function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAdrr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
 
   Keyboard.dismiss; 
 
@@ -38,6 +38,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, xr
   }
   else{
 
+  var xrdAddr=destAdrr.trim();
   var amountStr = (amount * 1000000000000000000).toString();
   var jsonBody = null;
 

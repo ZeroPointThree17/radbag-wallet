@@ -574,7 +574,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {Number(currentlyLiquid/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {Number((currentlyStaked/1000000000000000000)+(pendingStake/1000000000000000000)).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {Number(currentlyStaked/1000000000000000000).toLocaleString()} XRD</Text>
      {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text> */}
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number((totalUnstaking/1000000000000000000) + (pendingUnstake/1000000000000000000)).toLocaleString()} XRD</Text>
      {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text> */}

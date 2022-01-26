@@ -657,7 +657,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Validator to unstake from:</Text>
         <TextInput ref={unstakeValRef}
-        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, height:44, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, height:44, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}

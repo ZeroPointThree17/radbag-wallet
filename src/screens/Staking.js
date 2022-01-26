@@ -1,26 +1,18 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { Keyboard, TouchableOpacity, TouchableHighlight, Linking, Alert, ScrollView, Image, Button, Text, TextInput, SectionList, View, StyleSheet } from 'react-native';
-import { List } from 'react-native-paper';
-import { ListItem, Avatar } from 'react-native-elements';
-import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
+import { Keyboard, TouchableOpacity, TouchableHighlight, Linking, Alert, ScrollView, Image, Text, TextInput, View, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
-import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
-import PasswordInputText from 'react-native-hide-show-password-input';
-import { catchError } from 'rxjs/operators';
-import SelectDropdown from 'react-native-select-dropdown'
-import { Input, Icon } from 'react-native-elements';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
-import { Separator, SeparatorBorder, SeparatorBorderMargin } from '../helpers/jsxlib';
+import { Separator, SeparatorBorderMargin } from '../helpers/jsxlib';
 import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard } from '../helpers/helpers';
 
 
-
-function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAdrr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
+function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
 
   Keyboard.dismiss; 
 
@@ -38,7 +30,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
   }
   else{
 
-  var xrdAddr=destAdrr.trim();
+  var xrdAddr=destAddr.trim();
   var amountStr = (amount * 1000000000000000000).toString();
   var jsonBody = null;
 

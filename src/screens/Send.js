@@ -18,7 +18,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
   Keyboard.dismiss; 
 
   // alert(rri)
-  if(xrdAddr == undefined || xrdAddr.length==0){
+  if(destAddr == undefined || destAddr.length==0){
     alert("Destination address is required")
   }
   else 

@@ -24,7 +24,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
 
   Keyboard.dismiss; 
 
-  if(xrdAddr == undefined || xrdAddr.length==0){
+  if(destAddr == undefined || destAddr.length==0){
     alert("Validator address is required")
   }
   else 

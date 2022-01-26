@@ -521,7 +521,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, stakeValid
       const [stakeValidators, setStakeValidators] = useState([]);
       const [validatorData, setValidatorData] = useState(new Map());
       const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
-      const [valAddr, setValAddr] = useState();
+      const [valAddr, setValAddr] = useState("rv1qt7dmsekqnrel6uxf9prqwujhn4udnu9yl9yzrlrkprmq4zrwmppvxn2gqf");
       const [stakingScreenActive, setStakingScreenActive] = useState(true);
       const [stakeAmt, setStakeAmt] = useState();
       const [unstakeAmt, setUnstakeAmt] = useState();
@@ -592,7 +592,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeValRef}
-        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, height:44, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -610,7 +610,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeAmtRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:0.5}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:0.5}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'
@@ -657,7 +657,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Validator to unstake from:</Text>
         <TextInput ref={unstakeValRef}
-        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, height:44, backgroundColor:"white", flex:1}}
+        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:1}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -676,7 +676,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={unstakeAmtRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:0.5}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:0.5}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'

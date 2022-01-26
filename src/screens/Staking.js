@@ -471,7 +471,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
 
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>{validatorDetails.name}</Text>
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>Staked: {Number(validatorDetails.delegated_stake/1000000000000000000).toLocaleString()} XRD</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Fee: {validatorData.validator_fee_percentage}%</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Fee: {validatorDetails.validator_fee_percentage}%</Text>
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Addr: {shortenAddress(valAddr)}</Text>
 
     <View style={styles.rowStyle}>
@@ -578,9 +578,10 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {Number(currentlyLiquid/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {Number(currentlyStaked/1000000000000000000).toLocaleString()} XRD</Text>
-     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text> */}
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number((totalUnstaking/1000000000000000000) + (pendingUnstake/1000000000000000000)).toLocaleString()} XRD</Text>
-     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text> */}
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text>
+     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number((totalUnstaking/1000000000000000000) + (pendingUnstake/1000000000000000000)).toLocaleString()} XRD</Text> */}
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number(totalUnstaking/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currentlyLiquid/1000000000000000000)+(currentlyStaked/1000000000000000000)).toLocaleString()} XRD</Text>
      <Separator/>
       <View style={styles.rowStyle}>
@@ -651,9 +652,10 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {Number(currentlyLiquid/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {Number(currentlyStaked/1000000000000000000).toLocaleString()} XRD</Text>
-     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text> */}
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number((totalUnstaking/1000000000000000000) + (pendingUnstake/1000000000000000000)).toLocaleString()} XRD</Text>
-     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text> */}
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text>
+     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number((totalUnstaking/1000000000000000000) + (pendingUnstake/1000000000000000000)).toLocaleString()} XRD</Text> */}
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number(totalUnstaking/1000000000000000000).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currentlyLiquid/1000000000000000000)+(currentlyStaked/1000000000000000000)).toLocaleString()} XRD</Text>
       <Separator/>
      <Separator/>

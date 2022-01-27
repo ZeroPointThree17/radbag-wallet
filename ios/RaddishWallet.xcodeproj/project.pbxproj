@@ -441,6 +441,8 @@
 			baseConfigurationReference = 3BFAB00BECFF8FE56A925F9D /* Pods-RaddishWallet-RaddishWalletTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				DEVELOPMENT_TEAM = SAJLABFP9X;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -468,7 +470,9 @@
 			baseConfigurationReference = 83393BB48D04881E4F5A95D5 /* Pods-RaddishWallet-RaddishWalletTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = SAJLABFP9X;
 				INFOPLIST_FILE = RaddishWalletTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (

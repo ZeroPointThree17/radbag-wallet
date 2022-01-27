@@ -10,7 +10,7 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { openCB, errorCB, useInterval } from '../helpers/helpers';
+import { openCB, errorCB, useInterval, shortenAddress } from '../helpers/helpers';
 
 
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
@@ -88,7 +88,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
        
         Alert.alert(
           "Commit Transaction?",
-          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD\n for a tranfer of "+amount+" "+symbol+"\n\nDo you want to commit this transaction?",
+          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD\n for a tranfer of "+amount+" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
           [
             {
               text: "Cancel",

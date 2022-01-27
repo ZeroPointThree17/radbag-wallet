@@ -82,7 +82,7 @@ LogBox.ignoreAllLogs();
       <Stack.Screen name="Receive" component={Receive} />
       <Stack.Screen name="Staking" component={Staking} />
     </Stack.Navigator>
-    <FlashMessage position="center" />
+    <FlashMessage position="center" style={{height:60}}/>
     </NavigationContainer>
   
   );

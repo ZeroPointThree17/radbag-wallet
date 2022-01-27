@@ -33,8 +33,11 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
   var xrdAddr=destAddr.trim();
   var amountStr = (amount * 1000000000000000000).toString();
   var jsonBody = null;
+  var alertWording = "";
 
-  if(actionType == "STAKE"){
+  if(actionType == "stake"){
+
+    alertWording = "to"
 
     jsonBody =
     {
@@ -64,7 +67,10 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
       },
       "disable_token_mint_and_burn": true
     };
-  } else if (actionType == "UNSTAKE"){
+  } else if (actionType == "unstake"){
+
+    alertWording = "from"
+    
     jsonBody =
     {
       "network_identifier": {
@@ -116,7 +122,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
        
         Alert.alert(
           "Commit Transaction?",
-          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD\n to stake "+amount+" XRD\n\nDo you want to commit this transaction?",
+          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD\n for this "+actionType+" action of "+amount+" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
           [
             {
               text: "Cancel",
@@ -475,13 +481,13 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Addr: {shortenAddress(valAddr)}</Text>
 
     <View style={styles.rowStyle}>
-    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(validatorDetails.address)}}>
+    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(valAddr)}}>
     < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>[Copy Address]</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(validatorDetails.address); setStakingScreenActive(false)}}>
+    <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(valAddr); setStakingScreenActive(false)}}>
     < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>  [Reduce Stake]</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(validatorDetails.address); setStakingScreenActive(true)}}>
+    <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(valAddr); setStakingScreenActive(true)}}>
     < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>  [Add to Stake]</Text>
     </TouchableOpacity>
      </View>   
@@ -630,7 +636,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      stakeValRef.current.blur();
      stakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "STAKE", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid) }}>
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid) }}>
 
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={20} color="black" />
@@ -697,7 +703,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      unstakeValRef.current.blur();
      unstakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "UNSTAKE", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid )
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid )
   }}>
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-up-circle-outline" size={20} color="black" />
@@ -710,6 +716,18 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 </React.Fragment>
 }
 
+{ show == true &&
+<React.Fragment>
+<Text
+       style={{color: 'blue', textAlign: "center"}}
+       onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
+     >
+       Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.
+     </Text>
+     <Separator/>
+     </React.Fragment>
+ }
+
 <View style={styles.container} > 
 <View >
 <Text style={{fontSize: 16, color:"black"}}>Current Stakes</Text>
@@ -719,14 +737,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 {renderedStakeValidatorRows}
 </View>
 <Separator/>
-{ show == true &&
-<Text
-       style={{color: 'blue', textAlign: "center"}}
-       onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
-     >
-       Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.
-     </Text>
- }
+
 
 <Separator/>
 <Separator/>

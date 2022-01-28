@@ -254,7 +254,7 @@ export class NetworkUtils {
 
      var rri = uniqueRRIs.pop();
 
-     fetch('https://mainnet-gateway.radixdlt.com/token', {
+     fetch('http://137.184.62.167:5208/token', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -316,7 +316,7 @@ export class NetworkUtils {
     const isConnected = await NetworkUtils.isNetworkAvailable();
  
     if(isConnected){
-    await fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
+    await fetch('http://137.184.62.167:5208/account/balances', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

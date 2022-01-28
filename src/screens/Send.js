@@ -37,7 +37,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
-  fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
+  fetch('http://137.184.62.167:5208/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -138,7 +138,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-    fetch('https://mainnet-gateway.radixdlt.com/transaction/finalize', {
+    fetch('http://137.184.62.167:5208/transaction/finalize', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -191,7 +191,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
   var symbolsArr = inputSymbols.slice();
   var symbolToRRI = new Map(inputSymToRRIs);
 
-  fetch('https://mainnet-gateway.radixdlt.com/token', {
+  fetch('http://137.184.62.167:5208/token', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -256,7 +256,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
 function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key){
    
 
-  fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
+  fetch('http://137.184.62.167:5208/account/balances', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

@@ -101,7 +101,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
     };
   }
 
-  fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
+  fetch('http://137.184.62.167:5208/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -172,7 +172,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-    fetch('https://mainnet-gateway.radixdlt.com/transaction/finalize', {
+    fetch('http://137.184.62.167:5208/transaction/finalize', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -221,7 +221,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
-  fetch('https://mainnet-gateway.radixdlt.com/account/stakes', {
+  fetch('http://137.184.62.167:5208/account/stakes', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -282,7 +282,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
   //  alert("val addr: "+validatorAddr)
   var validatorData = new Map(inputMap);
 
-  fetch('https://mainnet-gateway.radixdlt.com/validator', {
+  fetch('http://137.184.62.167:5208/validator', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -334,7 +334,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
 
 function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
  
-  fetch('https://mainnet-gateway.radixdlt.com/account/unstakes', {
+  fetch('http://137.184.62.167:5208/account/unstakes', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -406,7 +406,7 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
 
 function getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked){
    
-  fetch('https://mainnet-gateway.radixdlt.com/account/balances', {
+  fetch('http://137.184.62.167:5208/account/balances', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

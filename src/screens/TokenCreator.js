@@ -41,7 +41,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
       alert("URL part after http(s):// must not be empty")
   } else {
   var rri=""
-  fetch('https://mainnet-gateway.radixdlt.com/token/derive', {
+  fetch('http://137.184.62.167:5208/token/derive', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -79,7 +79,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tkn
 
 var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
 
-  fetch('https://mainnet-gateway.radixdlt.com/transaction/build', {
+  fetch('http://137.184.62.167:5208/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -179,7 +179,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-    fetch('https://mainnet-gateway.radixdlt.com/transaction/finalize', {
+    fetch('http://137.184.62.167:5208/transaction/finalize', {
           method: 'POST',
           headers: {
             Accept: 'application/json',

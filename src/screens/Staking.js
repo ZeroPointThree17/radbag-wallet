@@ -9,7 +9,7 @@ const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
 import { Separator, SeparatorBorderMargin } from '../helpers/jsxlib';
-import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard } from '../helpers/helpers';
+import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay } from '../helpers/helpers';
 
 
 function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
@@ -31,7 +31,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
   else{
 
   var xrdAddr=destAddr.trim();
-  var amountStr = (amount * 1000000000000000000).toString();
+  var amountStr = (BigInt(amount) * BigInt(1000000000000000000)).toString();
   var jsonBody = null;
   var alertWording = "";
 
@@ -122,7 +122,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
        
         Alert.alert(
           "Commit Transaction?",
-          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD\n for this "+actionType+" action of "+amount+" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
+          "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this "+actionType+" action of "+amount+" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
           [
             {
               text: "Cancel",
@@ -250,7 +250,7 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
       var pendingStake=0;
 
       json.pending_stakes.forEach(element => {
-        pendingStake = ((pendingStake/1000000000000000000) + (element.delegated_stake.value/1000000000000000000)) * 1000000000000000000
+        pendingStake = BigInt(pendingStake) + BigInt(element.delegated_stake.value)
        });
 
        json.stakes.forEach(element => {
@@ -379,7 +379,7 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
       var pendingUnstakes = 0
 
       json.pending_unstakes.forEach(element => {
-        pendingUnstakes = ((pendingUnstakes/1000000000000000000) + (element.unstaking_amount.value/1000000000000000000)) * 1000000000000000000
+        pendingUnstakes = BigInt(pendingUnstakes) + BigInt(element.unstaking_amount.value)
        });
 
       setPendingUnstake(pendingUnstakes);
@@ -387,7 +387,7 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
       var totalUnstaking = 0
 
        json.unstakes.forEach(element => {
-        totalUnstaking = ((totalUnstaking/1000000000000000000) + (element.unstaking_amount.value/1000000000000000000)) * 1000000000000000000
+        totalUnstaking = BigInt(totalUnstaking) + BigInt(element.unstaking_amount.value)
        });
 
        setTotalUnstaking(totalUnstaking);
@@ -493,7 +493,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
     {/* <View style={styles.addrRowStyle}> */}
 
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>{validatorDetails.name}</Text>
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>Staked: {Number(validatorDetails.delegated_stake/1000000000000000000).toLocaleString()} XRD</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>Staked: {formatNumForDisplay(validatorDetails.delegated_stake)} XRD</Text>
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Fee: {validatorDetails.validator_fee_percentage}%</Text>
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Addr: {shortenAddress(valAddr)}</Text>
 
@@ -599,13 +599,13 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
        </LinearGradient>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {Number(currentlyLiquid/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {Number(currentlyStaked/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text>
-     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number((totalUnstaking/1000000000000000000) + (pendingUnstake/1000000000000000000)).toLocaleString()} XRD</Text> */}
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number(totalUnstaking/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currentlyLiquid/1000000000000000000)+(currentlyStaked/1000000000000000000)).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {formatNumForDisplay(currentlyLiquid)} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {formatNumForDisplay(currentlyStaked)} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {formatNumForDisplay(pendingStake)} XRD</Text>
+     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {(formatNumForDisplay(totalUnstaking)) + formatNumForDisplay(pendingUnstake))).toLocaleString()} XRD</Text> */}
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {formatNumForDisplay(totalUnstaking)} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {formatNumForDisplay((isNaN(currentlyLiquid)?BigInt(0):BigInt(currentlyLiquid))+(isNaN(currentlyStaked)?BigInt(0):BigInt(currentlyStaked)))} XRD</Text>
      <Separator/>
       <View style={styles.rowStyle}>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>
@@ -673,13 +673,13 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Unstake</Text>
        <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {Number(currentlyLiquid/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {Number(currentlyStaked/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {Number(pendingStake/1000000000000000000).toLocaleString()} XRD</Text>
-     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number((totalUnstaking/1000000000000000000) + (pendingUnstake/1000000000000000000)).toLocaleString()} XRD</Text> */}
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {Number(totalUnstaking/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {Number(pendingUnstake/1000000000000000000).toLocaleString()} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {Number((currentlyLiquid/1000000000000000000)+(currentlyStaked/1000000000000000000)).toLocaleString()} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {formatNumForDisplay(currentlyLiquid)} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {formatNumForDisplay(currentlyStaked)} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {formatNumForDisplay(pendingStake)} XRD</Text>
+     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {(formatNumForDisplay(totalUnstaking)) + formatNumForDisplay(pendingUnstake))).toLocaleString()} XRD</Text> */}
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {formatNumForDisplay(totalUnstaking)} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {formatNumForDisplay((isNaN(currentlyLiquid)?BigInt(0):BigInt(currentlyLiquid))+(isNaN(currentlyStaked)?BigInt(0):BigInt(currentlyStaked)))} XRD</Text>
       <Separator/>
      <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Validator to unstake from:</Text>

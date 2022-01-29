@@ -8,7 +8,7 @@ var SQLite = require('react-native-sqlite-storage');
 import RadioForm from 'react-native-simple-radio-button';
 var Poof = require("../assets/poof.png");
 import { Separator } from '../helpers/jsxlib';
-import { useInterval, openCB, errorCB } from '../helpers/helpers';
+import { useInterval, openCB, errorCB, formatNumForDisplay } from '../helpers/helpers';
 
 
 var radio_props = [
@@ -77,7 +77,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
 
 function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
 
-var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
+var tknSupplyStr = (BigInt(tknSupply) * BigInt(1000000000000000000)).toString();
 
   fetch('http://137.184.62.167:5208/transaction/build', {
         method: 'POST',
@@ -132,7 +132,7 @@ var tknSupplyStr = (tknSupply * 1000000000000000000).toString();
        
         Alert.alert(
           "Commit Transaction?",
-          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + "\n\nDo you want to commit this transaction?",
+          "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + "\n\nDo you want to commit this transaction?",
           [
             {
               text: "Cancel",

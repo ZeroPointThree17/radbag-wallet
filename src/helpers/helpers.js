@@ -43,3 +43,22 @@ message: "Address copied to clipboard",
 type: "info",
 });
 }
+
+export function hexToBytes(hex) {
+  for (var bytes = [], c = 0; c < hex.length; c += 2)
+      bytes.push(parseInt(hex.substr(c, 2), 16));
+  return bytes;
+}
+
+export function formatNumForDisplay(number) {
+
+  var newNum = null;
+  
+  if(typeof number == 'bigint'){
+    newNum = number;
+  } else{
+    newNum = isNaN(number)?BigInt(0):BigInt(number);
+  }
+
+  return (Number((newNum*BigInt(100000))/BigInt(1000000000000000000))/100000).toLocaleString();
+}

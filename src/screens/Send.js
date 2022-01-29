@@ -10,7 +10,7 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { openCB, errorCB, useInterval, shortenAddress } from '../helpers/helpers';
+import { openCB, errorCB, useInterval, shortenAddress, formatNumForDisplay } from '../helpers/helpers';
 
 
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
@@ -33,7 +33,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
   else{
 
   var xrdAddr = destAddr.trim();
-  var amountStr = (amount * 1000000000000000000).toString();
+  var amountStr = (BigInt(amount) * BigInt(1000000000000000000)).toString();
 
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
@@ -88,7 +88,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
        
         Alert.alert(
           "Commit Transaction?",
-          "Fee will be " + json.transaction_build.fee.value/1000000000000000000 + " XRD\n for a tranfer of "+amount+" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
+          "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for a tranfer of "+amount+" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
           [
             {
               text: "Cancel",
@@ -439,7 +439,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 	}}
 /> }
 </View>
-<Text style={{fontSize: 12, color:"black"}}>Current liquid balance: {Number(balances.get(symbolToRRI.get(symbol))/1000000000000000000).toLocaleString()} {symbol}</Text>
+<Text style={{fontSize: 12, color:"black"}}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol}</Text>
 
 
 
@@ -452,12 +452,8 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         <Text style={{fontSize: 18, color:"black"}}> Send</Text>
         </View>
         </TouchableOpacity>
-              <Separator/>
-              <Separator/>
-              {/* <Text>Fee: {fee/1000000000000000000} XRD</Text>
-              <Text>Priv Key Enc: {privKey_enc}</Text>
-              <Text>Pub Key : {public_key}</Text> */}
-
+<Separator/>
+<Separator/>
 <Separator/>
 
 { show == true &&

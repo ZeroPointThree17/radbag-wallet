@@ -43,9 +43,6 @@ const Welcome = ({ navigation }) => {
 <Separator/>
 <Separator/>
 <Separator/>
-<Separator/>
-<Separator/>
-
 
 <Text>Powered by:</Text>
      <Svg

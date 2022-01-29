@@ -79,6 +79,42 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tkn
 
 var tknSupplyStr = (BigInt(tknSupply) * BigInt(1000000000000000000)).toString();
 
+var jsonBody = {
+  "network_identifier": {
+    "network": "mainnet"
+  },
+  "actions": [
+{
+  "type": "CreateTokenDefinition",
+  "token_properties": {
+    "name": tknName,
+    "description": tknDesc,
+    "icon_url": tknIconUrl,
+    "url": tknUrl,
+    "symbol": tknSymbol,
+    "is_supply_mutable": tknIsSuppMut,
+    "granularity": tknGranularity,
+    "owner": {
+      "address": sourceXrdAddr
+    }
+  },
+  "token_supply": {
+    "value": tknSupplyStr,
+    "token_identifier": {
+      "rri": rri
+    }
+  },
+  "to_account": {
+    "address": sourceXrdAddr
+  }
+}
+],
+"fee_payer": {
+"address": sourceXrdAddr
+}
+};
+
+
   fetch('http://137.184.62.167:5208/transaction/build', {
         method: 'POST',
         headers: {
@@ -86,42 +122,7 @@ var tknSupplyStr = (BigInt(tknSupply) * BigInt(1000000000000000000)).toString();
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(
-      
-          {
-            "network_identifier": {
-              "network": "mainnet"
-            },
-            "actions": [
-              {
-                "type": "CreateTokenDefinition",
-                "token_properties": {
-                  "name": tknName,
-                  "description": tknDesc,
-                  "icon_url": tknIconUrl,
-                  "url": tknUrl,
-                  "symbol": tknSymbol,
-                  "is_supply_mutable": tknIsSuppMut,
-                  "granularity": tknGranularity,
-                  "owner": {
-                    "address": sourceXrdAddr
-                  }
-                },
-                "token_supply": {
-                  "value": tknSupplyStr,
-                  "token_identifier": {
-                    "rri": rri
-                  }
-                },
-                "to_account": {
-                  "address": sourceXrdAddr
-                }
-              }
-            ],
-            "fee_payer": {
-              "address": sourceXrdAddr
-            }
-          } 
-      
+          jsonBody
         )
       }).then((response) => response.json()).then((json) => {
         
@@ -233,10 +234,10 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   const [sourceXrdAddr, setSourceXrdAddr] = useState();
   const [tknName, settknName] = useState();
   const [tknDesc, settknDesc] = useState();
-  const [tknIconUrl, settknIconUrl] = useState();
-  const [tknUrl, settknUrl] = useState();
+  const [tknIconUrl, settknIconUrl] = useState('http://');
+  const [tknUrl, settknUrl] = useState('http://');
   const [tknSymbol, settknSymbol] = useState();
-  const [tknIsSuppMut, settknIsSuppMut] = useState(true);
+  const [tknIsSuppMut, settknIsSuppMut] = useState(false);
   const [tknSupply, settknSupply] = useState();
   const [txnHash, setTxHash] = useState(null);
   const [show, setShow] = useState(false);
@@ -363,7 +364,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         onChangeText={value => settknUrl(value)}
       />
       </View>
-      <Separator/>
+      {/* <Separator/>
 
 
 
@@ -382,14 +383,13 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
           buttonSize={10}
           buttonOuterSize={20}
           buttonWrapStyle={{marginLeft: 0}}
-        />
-</View>
+        /> 
+</View>*/}
 
 <Separator/>
 
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Supply (must be a number)</Text>
      <View style={styles.rowStyle}>
- 
         <TextInput ref={tknSupplyRef}
         style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
         disabled="false"
@@ -399,8 +399,9 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         value={tknSupply}
         onChangeText={value => settknSupply(value)}
       />
-      </View>
-
+     </View>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>NOTE: Fixed supply only. Setting a mutable supply is not yet supported.</Text>
+  
       <Separator/>
       <Separator/>
       <Separator/>
@@ -428,14 +429,18 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      </Text>
  }
 
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
+    <Separator/>
   </View>
   
   </ScrollView>

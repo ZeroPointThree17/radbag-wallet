@@ -33,7 +33,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
   else{
 
   var xrdAddr = destAddr.trim();
-  var amountStr = (BigInt(amount) * BigInt(1000000000000000000)).toString();
+  var amountStr = (BigInt(amount*1000000000) * BigInt(1000000000)).toString();
 
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)

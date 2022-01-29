@@ -31,7 +31,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
   else{
 
   var xrdAddr=destAddr.trim();
-  var amountStr = (BigInt(amount) * BigInt(1000000000000000000)).toString();
+  var amountStr = (BigInt(amount*1000000000) * BigInt(1000000000)).toString();
   var jsonBody = null;
   var alertWording = "";
 
@@ -756,6 +756,14 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 <Separator/>
 
 
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
 <Separator/>
 <Separator/>
 <Separator/>

@@ -271,14 +271,38 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
 
 function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
-  var origStakeValidators = stakeValidators.slice();
   // alert("GV SL Len: "+stakeValidators.length)
+  var jsonBody = null;
+  var stakeValsPresent = true;
+
   if(stakeValidators.length>0){
     // alert("stakeValidators: "+JSON.stringify(stakeValidators))
 
   var stakeValidator = stakeValidators.pop();
   var validatorAddr = stakeValidator.address;
   var validatorDelegatedStk = stakeValidator.delegated_stake;
+  jsonBody = {
+      "network_identifier": {
+        "network": "mainnet"
+      },
+      "validator_identifier": {
+        "address": validatorAddr
+      }
+    };
+    stakeValsPresent = true;
+  } else {
+    jsonBody =
+    {
+      "network_identifier": {
+        "network": "mainnet"
+      },
+      "validator_identifier": {
+        "address": "rv1qt7dmsekqnrel6uxf9prqwujhn4udnu9yl9yzrlrkprmq4zrwmppvxn2gqf"
+      }
+    };
+
+  }
+ 
   //  alert("val addr: "+validatorAddr)
   var validatorData = new Map(inputMap);
 
@@ -289,14 +313,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(
-      {
-        "network_identifier": {
-          "network": "mainnet"
-        },
-        "validator_identifier": {
-          "address": validatorAddr
-        }
-      }
+      jsonBody
     )
   }).then((response) => response.json()).then((json) => {
    
@@ -305,12 +322,13 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
      }
      else{
 
-      var valProps = json.validator.properties;
-      valProps["delegated_stake"] = validatorDelegatedStk;
+      if(stakeValsPresent == true){
+        var valProps = json.validator.properties;
+        valProps["delegated_stake"] = validatorDelegatedStk;
+        validatorData.set(validatorAddr, valProps);
+      }
 
       // alert(JSON.stringify(valProps))
-
-      validatorData.set(validatorAddr, valProps);
 
        if(stakeValidators.length==0){
         // validatorData.forEach((val) => {alert(JSON.stringify(val))})
@@ -327,8 +345,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
       console.error(error);
   });
 
-}
- 
+
 }
 
 

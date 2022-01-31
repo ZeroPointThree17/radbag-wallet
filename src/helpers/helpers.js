@@ -68,13 +68,11 @@ export function formatNumForDisplay(number) {
   // var val = ( newNum.round(18, bigDecimal.RoundingModes.DOWN).getPrettyValue())
   var finalNum = new bigDecimal(bigDecimal.multiply(newNum.getValue(),0.000000000000000001,1800));
   //  alert(finalNum)
-  // var finalNumStr = "";
-  finalNum = finalNum.getPrettyValue().replace(/0+$/g, "").replace(/\.+$/g,"")
+  finalNum = finalNum.getPrettyValue();
 
   if( finalNum == "" ){
     finalNum = "0"
   }
-    // finalNumStr = finalNumStr.toLocaleString();
 
   return finalNum;
 }

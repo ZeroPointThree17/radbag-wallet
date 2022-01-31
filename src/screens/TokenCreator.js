@@ -6,7 +6,7 @@ import IconFA5 from 'react-native-vector-icons/FontAwesome5';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 import RadioForm from 'react-native-simple-radio-button';
-var Poof = require("../assets/poof.png");
+var GenericToken = require("../assets/generic_token.png");
 import { Separator } from '../helpers/jsxlib';
 import { useInterval, openCB, errorCB, formatNumForDisplay } from '../helpers/helpers';
 
@@ -281,8 +281,8 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   <ScrollView style={styles.scrollView}>
      <View style={styles.container} > 
 
-     <Image style={{margin: 10, width: 100, height: 100, alignSelf:'center'}}
-    source={Poof}
+     <Image style={{margin: 10, width: 85, height: 85, alignSelf:'center'}}
+    source={GenericToken}
       />
     
       <Separator/>

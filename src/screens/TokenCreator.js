@@ -9,6 +9,7 @@ import RadioForm from 'react-native-simple-radio-button';
 var GenericToken = require("../assets/generic_token.png");
 import { Separator } from '../helpers/jsxlib';
 import { useInterval, openCB, errorCB, formatNumForDisplay } from '../helpers/helpers';
+var bigDecimal = require('js-big-decimal');
 
 
 var radio_props = [
@@ -77,7 +78,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
 
 function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
 
-var tknSupplyStr = (BigInt(tknSupply) * BigInt(1000000000000000000)).toString();
+var tknSupplyStr = new bigDecimal(tknSupply).multiply(new bigDecimal(1000000000000000000)).getValue();
 
 var jsonBody = {
   "network_identifier": {

@@ -1,6 +1,7 @@
 import React, {useRef, useEffect} from 'react';
 import {showMessage} from "react-native-flash-message";
 import Clipboard from '@react-native-clipboard/clipboard';
+var bigDecimal = require('js-big-decimal');
 
 export function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -52,13 +53,28 @@ export function hexToBytes(hex) {
 
 export function formatNumForDisplay(number) {
 
+  // var x = new bigdecimal.BigDecimal("123456.123456789012345678901234567890");
+
+  //  alert(number);
   var newNum = null;
-  
-  if(typeof number == 'bigint'){
-    newNum = number;
+  // alert(typeof number)
+  if(typeof number == 'Object'){
+    newNum = isNaN(number)?new bigDecimal(0):number;
   } else{
-    newNum = isNaN(number)?BigInt(0):BigInt(number);
+    newNum = isNaN(number)?new bigDecimal(0):new bigDecimal(number);
   }
 
-  return (Number((newNum*BigInt(100000))/BigInt(1000000000000000000))/100000).toLocaleString();
+  // alert(typeof newNum)
+  // var val = ( newNum.round(18, bigDecimal.RoundingModes.DOWN).getPrettyValue())
+  var finalNum = new bigDecimal(bigDecimal.multiply(newNum.getValue(),0.000000000000000001,1800));
+  //  alert(finalNum)
+  // var finalNumStr = "";
+  finalNum = finalNum.getPrettyValue().replace(/0+$/g, "").replace(/\.+$/g,"")
+
+  if( finalNum == "" ){
+    finalNum = "0"
+  }
+    // finalNumStr = finalNumStr.toLocaleString();
+
+  return finalNum;
 }

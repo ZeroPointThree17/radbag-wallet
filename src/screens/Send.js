@@ -11,6 +11,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
 import { openCB, errorCB, useInterval, shortenAddress, formatNumForDisplay } from '../helpers/helpers';
+var bigDecimal = require('js-big-decimal');
 
 
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
@@ -33,7 +34,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
   else{
 
   var xrdAddr = destAddr.trim();
-  var amountStr = (BigInt(amount*1000000000) * BigInt(1000000000)).toString();
+  var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
 
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
@@ -284,7 +285,7 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
           var rris = []
 
           json.account_balances.liquid_balances.forEach( (balance) =>{
-   
+  //  alert(balance.value)
               balances.set(balance.token_identifier.rri, balance.value);       
               rris.push(balance.token_identifier.rri)
           } );

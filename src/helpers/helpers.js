@@ -1,6 +1,7 @@
 import React, {useRef, useEffect} from 'react';
 import {showMessage} from "react-native-flash-message";
 import Clipboard from '@react-native-clipboard/clipboard';
+import { concat } from 'react-native-reanimated';
 var bigDecimal = require('js-big-decimal');
 
 export function useInterval(callback, delay) {
@@ -53,21 +54,16 @@ export function hexToBytes(hex) {
 
 export function formatNumForDisplay(number) {
 
-  // var x = new bigdecimal.BigDecimal("123456.123456789012345678901234567890");
-
-  //  alert(number);
   var newNum = null;
-  // alert(typeof number)
+
   if(typeof number == 'Object'){
     newNum = isNaN(number)?new bigDecimal(0):number;
   } else{
     newNum = isNaN(number)?new bigDecimal(0):new bigDecimal(number);
   }
 
-  // alert(typeof newNum)
-  // var val = ( newNum.round(18, bigDecimal.RoundingModes.DOWN).getPrettyValue())
   var finalNum = new bigDecimal(bigDecimal.multiply(newNum.getValue(),0.000000000000000001,1800));
-  //  alert(finalNum)
+
   finalNum = finalNum.getPrettyValue();
 
   if( finalNum == "" ){
@@ -75,4 +71,17 @@ export function formatNumForDisplay(number) {
   }
 
   return finalNum;
+}
+
+export function formatNumForHomeDisplay(number) {
+
+  var num = new bigDecimal(formatNumForDisplay(number).replaceAll(",",""));
+  var result = num.round(4, bigDecimal.RoundingModes.DOWN).getPrettyValue(); 
+  resArry = result.split(".")
+  var resP1 = resArry[0]
+  var resP2 = resArry[1].replace(/^0+|0+$/g, "");
+
+  finalResult = resP1.concat(".", resP2).replace(/\.$/, "");;
+
+  return finalResult;
 }

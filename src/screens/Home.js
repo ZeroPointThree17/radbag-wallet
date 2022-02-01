@@ -12,7 +12,7 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay } from '../helpers/helpers';
+import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay } from '../helpers/helpers';
 
 
     const SeparatorBorder = () => (
@@ -126,7 +126,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     source={{uri: balance[3]}}
       />
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ formatNumForDisplay(balance[0]) } {balance[1]}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
     </View> 
     </TouchableOpacity>
@@ -148,7 +148,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
   source={{uri: balance[3]}}
     />
   <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
-  <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ formatNumForDisplay(balance[0]) } {balance[1]}</Text>
+  <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
   </View> 
   </TouchableOpacity>
@@ -563,7 +563,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         />
 
 <Separator/>
-       <Text style={{fontSize: 20, color:"white"}}>Staked: {formatNumForDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForDisplay(liquid_rdx_balance)} XRD</Text>
+       <Text style={{fontSize: 20, color:"white"}}>Staked: {formatNumForHomeDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForHomeDisplay(liquid_rdx_balance)} XRD</Text>
  
        <Separator/>
 

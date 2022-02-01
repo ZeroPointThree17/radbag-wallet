@@ -11,6 +11,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
 import { openCB, errorCB, useInterval, shortenAddress, formatNumForDisplay } from '../helpers/helpers';
+import { validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
 
 
@@ -34,7 +35,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
   else{
 
   var xrdAddr = destAddr.trim();
-  var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
+  var amountStr = new bigDecimal(amount.replaceAll(",","")).multiply(new bigDecimal(1000000000000000000)).getValue();
 
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
@@ -415,8 +416,18 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Amount'
         autoCapitalize='none'
         placeholderTextColor="#d3d3d3"
-         value={amount}
-        onChangeText={value => onChangeAmount(value)}
+         value={amount
+          // ==undefined?"0":amount.toLocaleString('en', { 
+          // minimumFractionDigits: 0,
+          // maximumFractionDigits: 18 })
+        }
+        onChangeText={value => {
+          
+          onChangeAmount(new bigDecimal(value.replace(/^0+/, '').replaceAll(",","")).getPrettyValue())
+
+        }
+          
+      }
       />
 
 { symbols.length > 0 &&

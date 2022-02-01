@@ -418,17 +418,17 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
         placeholder='Amount'
         autoCapitalize='none'
         placeholderTextColor="#d3d3d3"
-         value={amount
-          // ==undefined?"0":amount.toLocaleString('en', { 
-          // minimumFractionDigits: 0,
-          // maximumFractionDigits: 18 })
-        }
+         value={amount}
         onChangeText={value => {
           
-          onChangeAmount(new bigDecimal(value.replace(/^0+/, '').replaceAll(",","")).getPrettyValue())
-
-        }
+          var cleanedVal = value.replace(/^0+/, '').replaceAll(",","");
           
+          if(!isNaN(cleanedVal)){
+            onChangeAmount(new bigDecimal(cleanedVal).getPrettyValue())
+          } else{
+            onChangeAmount(value);
+          }
+        }  
       }
       />
 

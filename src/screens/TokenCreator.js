@@ -78,7 +78,9 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
 
 function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
 
-var tknSupplyStr = new bigDecimal(tknSupply).multiply(new bigDecimal(1000000000000000000)).getValue();
+  tknSupply = tknSupply.replaceAll(",","");
+
+  var tknSupplyStr = new bigDecimal(tknSupply).multiply(new bigDecimal(1000000000000000000)).getValue();
 
 var jsonBody = {
   "network_identifier": {
@@ -398,7 +400,17 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         placeholder='Token Supply'
         placeholderTextColor="#d3d3d3"
         value={tknSupply}
-        onChangeText={value => settknSupply(value)}
+        onChangeText={value => {
+
+          var cleanedVal = value.replace(/^0+/, '').replaceAll(",","");
+          
+          if(!isNaN(cleanedVal)){
+           settknSupply(new bigDecimal(cleanedVal).getPrettyValue())
+          } else{
+            settknSupply(value);
+          }
+         }
+       }
       />
      </View>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>NOTE: Fixed supply only. Setting a mutable supply is not yet supported.</Text>

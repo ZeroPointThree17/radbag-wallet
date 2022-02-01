@@ -19,6 +19,8 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 
   Keyboard.dismiss; 
 
+  amount = amount.replaceAll(",","");
+
   // alert(rri)
   if(destAddr == undefined || destAddr.length==0){
     alert("Destination address is required")
@@ -35,7 +37,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
   else{
 
   var xrdAddr = destAddr.trim();
-  var amountStr = new bigDecimal(amount.replaceAll(",","")).multiply(new bigDecimal(1000000000000000000)).getValue();
+  var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
 
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)

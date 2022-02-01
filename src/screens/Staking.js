@@ -34,7 +34,6 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
   var xrdAddr=destAddr.trim();
   var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
 
-  alert(amountStr)
   var jsonBody = null;
   var alertWording = "";
 
@@ -250,10 +249,10 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
      else{
       var stakeValidatorsArr = []
 
-      var pendingStake=0;
+      var pendingStake=new bigDecimal(0);
 
       json.pending_stakes.forEach(element => {
-        pendingStake = new bigDecimal(pendingStake).add(new bigDecimal(element.delegated_stake.value))
+        pendingStake = pendingStake.add(new bigDecimal(element.delegated_stake.value))
        });
 
        json.stakes.forEach(element => {
@@ -262,7 +261,7 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
 
        setStakeValidators(stakeValidatorsArr);
       //  alert(JSON.stringify(stakeValidatorsArr));
-       setPendingStake(pendingStake)
+       setPendingStake(pendingStake.getValue());
 
        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
     }
@@ -609,7 +608,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {(formatNumForDisplay(totalUnstaking)) + formatNumForDisplay(pendingUnstake))).toLocaleString()} XRD</Text> */}
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {formatNumForDisplay(totalUnstaking)} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {formatNumForDisplay((isNaN(currentlyLiquid)?new bigDecimal(0):new bigDecimal(currentlyLiquid))+(isNaN(currentlyStaked)?new bigDecimal(0):new bigDecimal(currentlyStaked)))} XRD</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {new bigDecimal(((new bigDecimal(formatNumForDisplay(currentlyLiquid).replaceAll(",","")).add(new bigDecimal(formatNumForDisplay(currentlyStaked).replaceAll(",","")))).getValue())).getPrettyValue()} XRD</Text>
      <Separator/>
       <View style={styles.rowStyle}>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>
@@ -683,8 +682,8 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {(formatNumForDisplay(totalUnstaking)) + formatNumForDisplay(pendingUnstake))).toLocaleString()} XRD</Text> */}
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {formatNumForDisplay(totalUnstaking)} XRD</Text>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {formatNumForDisplay((isNaN(currentlyLiquid)?new bigDecimal(0):new bigDecimal(currentlyLiquid))+(isNaN(currentlyStaked)?new bigDecimal(0):new bigDecimal(currentlyStaked)))} XRD</Text>
-      <Separator/>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {new bigDecimal(((new bigDecimal(formatNumForDisplay(currentlyLiquid).replaceAll(",","")).add(new bigDecimal(formatNumForDisplay(currentlyStaked).replaceAll(",","")))).getValue())).getPrettyValue()} XRD</Text>
+       <Separator/>
      <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Validator to unstake from:</Text>
         <TextInput ref={unstakeValRef}

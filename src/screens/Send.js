@@ -217,18 +217,18 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
     )
   }).then((response) => response.json()).then((json) => {
 
-    if(json.token.token_properties != undefined){
-     symbolsArr.push(json.token.token_properties.symbol.toUpperCase());
+    if(json.token != undefined){
+      if(rri != "xrd_rr1qy5wfsfh"){
+        symbolsArr.push(json.token.token_properties.symbol.toUpperCase());
+      }
       symbolToRRI.set(json.token.token_properties.symbol.toUpperCase(), rri)      
     }
 
     if(rris.length == 0){
 
- 
         setSymbols(symbolsArr);
         setSymbolToRRI(symbolToRRI)
    
-
                 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
                 db.transaction((tx) => {
@@ -288,7 +288,8 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
         if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
 
           var balances = new Map();
-          var rris = []
+          var rris = ["xrd_rr1qy5wfsfh"]
+          var symbols = ["XRD"]
 
           json.account_balances.liquid_balances.forEach( (balance) =>{
   //  alert(balance.value)
@@ -298,7 +299,11 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
 
           setBalances(balances);
 
-         getTokenSymbols(rris, [], new Map(), setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key)
+         initialSymbolToRRIMap = new Map();
+
+         initialSymbolToRRIMap.set("XRD","xrd_rr1qy5wfsfh")
+
+         getTokenSymbols(rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key)
         }
     }).catch((error) => {
         console.error(error);
@@ -306,10 +311,7 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
 
   }
 
-
-
-
-
+  
 
  const Send = ({route, navigation}) => {
  

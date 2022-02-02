@@ -19,7 +19,9 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 
   Keyboard.dismiss; 
 
-  amount = amount.replaceAll(",","");
+  if (amount != undefined){
+    amount = amount.replaceAll(",","");
+  }
 
   // alert(rri)
   if(destAddr == undefined || destAddr.length==0){

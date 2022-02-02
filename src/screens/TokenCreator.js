@@ -20,8 +20,10 @@ var radio_props = [
 
 function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
  
-  tknSupply = tknSupply.replaceAll(",","");
-
+  if(tknSupply != undefined){
+    tknSupply = tknSupply.replaceAll(",","");
+  }
+  
   if(tknName == undefined || tknDesc  == undefined || tknIconUrl == undefined || tknUrl == undefined || 
      tknSymbol == undefined || tknIsSuppMut == undefined || tknSupply == undefined || tknGranularity == undefined){
        alert("All fields are required")

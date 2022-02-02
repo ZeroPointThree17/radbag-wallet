@@ -217,9 +217,10 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
     )
   }).then((response) => response.json()).then((json) => {
 
-    symbolsArr.push(json.token.token_properties.symbol.toUpperCase());
-    symbolToRRI.set(json.token.token_properties.symbol.toUpperCase(), rri)      
-
+    if(json.token.token_properties != undefined){
+     symbolsArr.push(json.token.token_properties.symbol.toUpperCase());
+      symbolToRRI.set(json.token.token_properties.symbol.toUpperCase(), rri)      
+    }
 
     if(rris.length == 0){
 

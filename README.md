@@ -11,6 +11,15 @@ Features of this wallet include:
 - Ability to stake or unstake XRD to/from any validator
 - Ability to create new tokens 
 
+<p float="left">
+  <img src="src/assets/6.5-inchScreenshot1.png" width="100" />
+  <img src="src/assets/6.5-inchScreenshot2.png" width="100" /> 
+  <img src="src/assets/6.5-inchScreenshot3.png" width="100" />
+  <img src="src/assets/6.5-inchScreenshot4.png" width="100" />
+  <img src="src/assets/6.5-inchScreenshot5.png" width="100" /> 
+  <img src="src/assets/6.5-inchScreenshot6.png" width="100" />
+  <img src="src/assets/6.5-inchScreenshot7.png" width="100" />
+</p>
 
 ## Installation
 

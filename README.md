@@ -1,5 +1,8 @@
 # Raddish iOS Mobile Wallet for Radix DLT
 
+<p align="center">
+<img alight="center" src="src/assets/radish_nobackground.png" width="100" />
+</p>
 Introducing the Raddish Wallet! Raddish Wallet is the *first* iOS mobile wallet for the Radix DLT ecosystem!
 
 Features of this wallet include:
@@ -21,7 +24,19 @@ Features of this wallet include:
   <img src="src/assets/6.5-inchScreenshot7.png" width="100" />
 </p>
 
-## Installation
+## App Installation
+
+This app can be downloaded and installed on an iPhone from the Apple App Store using the link below. 
+</br>
+</br>
+<b>NOTE: </b>Due to dependence on certain cryptographic libraries, only iOS v.13.0 and above is supported!:
+</br>
+</br>
+<p align="center">
+<a href="https://apps.apple.com/us/app/raddish-wallet/id1608033916"><img src="src/assets/download-on-the-app-store-badge.png" width="150" /></a>
+</p>
+
+## Development Installation
 
 This app was created using React Native. Although React Native can be used to create both iOS and Android apps, currently only the iOS React Native app is working.
 

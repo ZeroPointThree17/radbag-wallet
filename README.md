@@ -25,7 +25,7 @@ Features of this wallet include:
 
 This app was created using React Native. Although React Native can be used to create both iOS and Android apps, currently only the iOS React Native app is working.
 
-More detailed installation instructions for come. For now, if you already have at least XCode v12.0, node.js v16.5.0, and npm v7.19.1 installed, go into the Raddish Wallet home directory and run:
+More detailed installation instructions are to come. For now, if you already have at least XCode v12.0, node.js v16.5.0, and npm v7.19.1 installed, go into the Raddish Wallet home directory and run:
 
 ```bash
 npm install

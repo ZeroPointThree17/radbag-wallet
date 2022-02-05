@@ -254,7 +254,7 @@ export class NetworkUtils {
 
      var rri = uniqueRRIs.pop();
 
-     fetch('http://137.184.62.167:5208/token', {
+     fetch('https://137.184.62.167:6208/token', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -316,7 +316,7 @@ export class NetworkUtils {
     const isConnected = await NetworkUtils.isNetworkAvailable();
  
     if(isConnected){
-    await fetch('http://137.184.62.167:5208/account/balances', {
+    await fetch('https://137.184.62.167:6208/account/balances', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

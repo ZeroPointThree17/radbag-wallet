@@ -23,7 +23,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
   if(tknSupply != undefined){
     tknSupply = tknSupply.replaceAll(",","");
   }
-  
+
   if(tknName == undefined || tknDesc  == undefined || tknIconUrl == undefined || tknUrl == undefined || 
      tknSymbol == undefined || tknIsSuppMut == undefined || tknSupply == undefined || tknGranularity == undefined){
        alert("All fields are required")
@@ -46,7 +46,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
       alert("URL part after http(s):// must not be empty")
   } else {
   var rri=""
-  fetch('http://137.184.62.167:5208/token/derive', {
+  fetch('https://137.184.62.167:6208/token/derive', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -120,7 +120,7 @@ var jsonBody = {
 };
 
 
-  fetch('http://137.184.62.167:5208/transaction/build', {
+  fetch('https://137.184.62.167:6208/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -185,7 +185,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-    fetch('http://137.184.62.167:5208/transaction/finalize', {
+    fetch('https://137.184.62.167:6208/transaction/finalize', {
           method: 'POST',
           headers: {
             Accept: 'application/json',

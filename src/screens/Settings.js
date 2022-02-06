@@ -1,25 +1,11 @@
 import React from 'react';
 import { ScrollView, Text, Image, View, StyleSheet } from 'react-native';
-import { ListItem, Avatar } from 'react-native-elements';
+import { ListItem } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
 import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 var Raddish = require("../assets/radish_nobackground.png");
 import { SeparatorBorder } from '../helpers/jsxlib';
-
-
-const list = [
-  {
-    name: 'Amy Farha',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-    subtitle: 'Vice President'
-  },
-  {
-    name: 'Chris Jackson',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-    subtitle: 'Vice Chairman'
-  },
-];
 
  const Settings = ({route, navigation}) => {
  return ( 
@@ -120,15 +106,12 @@ const list = [
 <SeparatorBorder/>
 
 
-
-
-
 </ScrollView>
 
 <View style={{flex:1,justifyContent:"center" , alignSelf:"center"}}>
 <Image style={{margin: 0, padding:20, width: 50, height: 80, alignSelf:'center'}}
     source={Raddish}/>
-    <Text style={{ alignSelf:'center'}}>Raddish Wallet v.1.0.0</Text>
+    <Text style={{ alignSelf:'center'}}>Raddish Wallet v.1.1.7</Text>
 </View>
 
  

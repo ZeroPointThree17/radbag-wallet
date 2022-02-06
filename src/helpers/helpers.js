@@ -1,7 +1,6 @@
-import React, {useRef, useEffect} from 'react';
+import {useRef, useEffect} from 'react';
 import {showMessage} from "react-native-flash-message";
 import Clipboard from '@react-native-clipboard/clipboard';
-import { concat } from 'react-native-reanimated';
 var bigDecimal = require('js-big-decimal');
 
 export function useInterval(callback, delay) {
@@ -86,3 +85,4 @@ export function formatNumForHomeDisplay(number) {
 
   return finalResult;
 }
+

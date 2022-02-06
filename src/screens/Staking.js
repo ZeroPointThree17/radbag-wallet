@@ -103,7 +103,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
     };
   }
 
-  fetch('https://137.184.62.167:6208/transaction/build', {
+  fetch('https://raddish-node.com:6208/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -174,7 +174,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-    fetch('https://137.184.62.167:6208/transaction/finalize', {
+    fetch('https://raddish-node.com:6208/transaction/finalize', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -223,7 +223,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
-  fetch('https://137.184.62.167:6208/account/stakes', {
+  fetch('https://raddish-node.com:6208/account/stakes', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -308,7 +308,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
   //  alert("val addr: "+validatorAddr)
   var validatorData = new Map(inputMap);
 
-  fetch('https://137.184.62.167:6208/validator', {
+  fetch('https://raddish-node.com:6208/validator', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -353,7 +353,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
 
 function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
  
-  fetch('https://137.184.62.167:6208/account/unstakes', {
+  fetch('https://raddish-node.com:6208/account/unstakes', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -426,7 +426,7 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
 
 function getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked){
    
-  fetch('https://137.184.62.167:6208/account/balances', {
+  fetch('https://raddish-node.com:6208/account/balances', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

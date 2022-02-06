@@ -1,11 +1,10 @@
 import { Button, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StackActions } from '@react-navigation/native';
 import CheckBox from 'react-native-check-box';
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { Separator } from '../helpers/jsxlib';
-
 
 
 function navigateAppPassword(navigation, mnemonic, word13, firstTime){
@@ -86,7 +85,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // justifyContent: 'center',
     backgroundColor: 'white',
   },
    sectionHeader: {

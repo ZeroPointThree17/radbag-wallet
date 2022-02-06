@@ -43,7 +43,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
-  fetch('https://137.184.62.167:6208/transaction/build', {
+  fetch('https://raddish-node.com:6208/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -144,7 +144,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-    fetch('https://137.184.62.167:6208/transaction/finalize', {
+    fetch('https://raddish-node.com:6208/transaction/finalize', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -197,7 +197,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
   var symbolsArr = inputSymbols.slice();
   var symbolToRRI = new Map(inputSymToRRIs);
 
-  fetch('https://137.184.62.167:6208/token', {
+  fetch('https://raddish-node.com:6208/token', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -263,7 +263,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
 function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key){
    
 
-  fetch('https://137.184.62.167:6208/account/balances', {
+  fetch('https://raddish-node.com:6208/account/balances', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

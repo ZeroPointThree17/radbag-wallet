@@ -46,7 +46,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
       alert("URL part after http(s):// must not be empty")
   } else {
   var rri=""
-  fetch('https://137.184.62.167:6208/token/derive', {
+  fetch('https://raddish-node.com:6208/token/derive', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -120,7 +120,7 @@ var jsonBody = {
 };
 
 
-  fetch('https://137.184.62.167:6208/transaction/build', {
+  fetch('https://raddish-node.com:6208/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -185,7 +185,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-    fetch('https://137.184.62.167:6208/transaction/finalize', {
+    fetch('https://raddish-node.com:6208/transaction/finalize', {
           method: 'POST',
           headers: {
             Accept: 'application/json',

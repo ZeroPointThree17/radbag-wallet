@@ -254,7 +254,7 @@ export class NetworkUtils {
 
      var rri = uniqueRRIs.pop();
 
-     fetch('https://137.184.62.167:6208/token', {
+     fetch('https://raddish-node.com:6208/token', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -316,7 +316,7 @@ export class NetworkUtils {
     const isConnected = await NetworkUtils.isNetworkAvailable();
  
     if(isConnected){
-    await fetch('https://137.184.62.167:6208/account/balances', {
+    await fetch('https://raddish-node.com:6208/account/balances', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

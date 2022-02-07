@@ -507,7 +507,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaddishWallet/RaddishWallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 9J7RQJR4ZS;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = RaddishWallet/Info.plist;
@@ -527,6 +527,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -540,7 +541,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaddishWallet/RaddishWallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 9J7RQJR4ZS;
 				INFOPLIST_FILE = RaddishWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -558,6 +559,7 @@
 				PRODUCT_NAME = RaddishWallet;
 				PROVISIONING_PROFILE_SPECIFIER = RaddishWallet;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

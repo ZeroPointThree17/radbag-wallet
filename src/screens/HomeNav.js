@@ -29,6 +29,7 @@ export default function HomeNav({route, navigation}) {
       headerTintColor: '#fff',
       headerTitleStyle: {
         fontWeight: 'bold',
+        fontFamily:"AppleSDGothicNeo-Regular"
       },
       tabBarStyle: {
         // height: 'auto',
@@ -40,7 +41,6 @@ export default function HomeNav({route, navigation}) {
         backgroundColor: '#183A81',
         position: 'absolute',
         borderTopWidth: 0,
-        
     },
     
     }}>
@@ -50,12 +50,12 @@ export default function HomeNav({route, navigation}) {
         <IconMaterial name="home" color={color} size={size} />
       ),
     }}/>
-     <Tab.Screen name="Token Creator" component={TokenCreator} options={{
+     {/* <Tab.Screen name="Token Creator" component={TokenCreator} options={{
       tabBarLabel: 'Token Creator',
       tabBarIcon: ({ color, size }) => (
         <IconFA5 name="coins" color={color} size={size} />
       ),
-    }}/>
+    }}/> */}
         <Tab.Screen name="Settings" component={SettingsNav} options={{
       tabBarLabel: 'Settings',
       tabBarIcon: ({ color, size }) => (

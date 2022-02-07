@@ -169,9 +169,10 @@ return (
             
       <View style={styles.container}> 
       <ScrollView>
-      <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center'}}>Current Wallet Name: {"\n"}{walletName}</Text>
+      <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>Current Wallet Name:</Text><Text style={{textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>{walletName}</Text>
        <Separator/>
-       <Text style={{textAlign:'left', fontWeight:'bold'}}>Enter new Wallet Name:</Text>
+       <Separator/>
+       <Text style={{textAlign:'left', fontWeight:'bold', fontFamily: 'AppleSDGothicNeo-Regular'}}>Enter new Wallet Name:</Text>
       
        <View style={styles.rowStyle}>
        <TextInput ref={walletNameRef}

@@ -23,12 +23,12 @@ const Welcome = ({ navigation }) => {
      <View style={styles.text}> 
    
  <Text style={styles.title}>Welcome to the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
- <Button
+ <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
         title="Yes - Import a Wallet"
         enabled
         onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: "true"})}
       />
- <Button
+ <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
         title="No - Create New Wallet"
         color = 'red'
         enabled
@@ -44,7 +44,7 @@ const Welcome = ({ navigation }) => {
 <Separator/>
 <Separator/>
 
-<Text>Powered by:</Text>
+<Text styles={{fontFamily: 'AppleSDGothicNeo-Regular'}}>Powered by:</Text>
      <Svg
     xmlns="http://www.w3.org/2000/svg"
     width={94}
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
    title: {
     textAlign: 'center',
     marginVertical: 8,
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   logo: {
     width: 66,

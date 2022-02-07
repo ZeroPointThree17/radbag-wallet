@@ -286,16 +286,16 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   <ScrollView style={styles.scrollView}>
      <View style={styles.container} > 
 
-     <Image style={{margin: 10, width: 85, height: 85, alignSelf:'center'}}
+     {/* <Image style={{margin: 0, width: 85, height: 85, alignSelf:'center'}}
     source={GenericToken}
-      />
+      /> */}
     
-      <Separator/>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Name:</Text>
+      {/* <Separator/> */}
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Name:</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknNameRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Name'
@@ -307,11 +307,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
  
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Description</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Description</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknDescRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth,  height: 125, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth,  height: 125, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -325,11 +325,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Symbol (must be lowercase and alphanumeric)</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Symbol (must be lowercase and alphanumeric)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknSymbolRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:50, backgroundColor:"white", flex:0.33}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:50, backgroundColor:"white", flex:0.33, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Symbol'
@@ -341,11 +341,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Separator/>
 
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Icon URL (must begin with http:// or https://)</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Icon URL (must begin with http:// or https://)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknIconURLRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Icon URL'
@@ -356,11 +356,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Project URL (must begin with http:// or https://)</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Project URL (must begin with http:// or https://)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknURLRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Project URL'
@@ -393,10 +393,10 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Token Supply (must be a number)</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Supply (must be a number)</Text>
      <View style={styles.rowStyle}>
         <TextInput ref={tknSupplyRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Supply'
@@ -415,7 +415,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
        }
       />
      </View>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>NOTE: Fixed supply only. Setting a mutable supply is not yet supported.</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>NOTE: Fixed supply only. Setting a mutable supply is not yet supported.</Text>
   
       <Separator/>
       <Separator/>
@@ -431,7 +431,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}}>
         <View style={styles.sendRowStyle}>
         <IconFA5 name="coins" size={20} color="black" />
-        <Text style={{fontSize: 18, color:"black"}}> Mint Tokens</Text>
+        <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Mint Tokens</Text>
         </View>
         </TouchableOpacity>
               <Separator/>

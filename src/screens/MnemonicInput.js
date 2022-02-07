@@ -50,7 +50,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
  return ( 
      <View style={styles.container}> 
      <Separator/>
-<Text style={styles.title, {margin: 20}}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
+<Text style={styles.title, {margin: 20, fontFamily: 'AppleSDGothicNeo-Regular'}}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
 
 <TextInput
     editable = {true}
@@ -58,7 +58,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
-      style={{height: 150, padding: 10, margin:20, marginTop:10, borderWidth:StyleSheet.hairlineWidth}}
+      style={{height: 150, padding: 10, margin:20, marginTop:10, borderWidth:StyleSheet.hairlineWidth, borderRadius: 15, fontFamily: 'AppleSDGothicNeo-Regular'}}
     />
 
  <Button style={styles.title}
@@ -72,6 +72,9 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
 
 
 const styles = StyleSheet.create({
+  title: {
+    fontFamily: 'AppleSDGothicNeo-Regular'
+  },
   text: {
     fontSize: 20,
     alignItems: 'center',

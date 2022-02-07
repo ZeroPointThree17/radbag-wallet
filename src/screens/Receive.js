@@ -13,9 +13,10 @@ const Receive = ({route, navigation}) => {
   const { xrdAddress } = route.params;
 
  return ( 
+  <View style={styles.container}> 
     <ScrollView styles={{backgroundColor:"white"}}>
       <View style={styles.container}> 
-       <Text style={{textAlign:'center', fontWeight:'bold'}}>Radix Address QR Code:</Text>
+       <Text style={{textAlign:'center', fontWeight:'bold', fontFamily:"AppleSDGothicNeo-Regular"}}>Radix Address QR Code:</Text>
        <Separator/>
 <QRCode 
      value={xrdAddress}
@@ -25,8 +26,8 @@ const Receive = ({route, navigation}) => {
    <Separator/>
    <Separator/>
    
-   <Text style={{textAlign:'center', fontWeight:'bold'}}>Radix Address:</Text>
-   <Text style={{textAlign:'center'}}>{xrdAddress}</Text>
+   <Text style={{textAlign:'center', fontWeight:'bold', fontFamily:"AppleSDGothicNeo-Regular"}}>Radix Address:</Text>
+   <Text style={{textAlign:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>{xrdAddress}</Text>
 
    <Separator/>
    <Separator/>
@@ -34,13 +35,13 @@ const Receive = ({route, navigation}) => {
    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(xrdAddress)}}>
    <View style={styles.rowStyle}>
    <IconFeather name="copy" size={20} color="black" />
-<Text> Copy address to clipboard</Text>
+<Text style={{fontFamily:"AppleSDGothicNeo-Regular"}}> Copy address to clipboard</Text>
 </View>
 </TouchableOpacity>
 
   </View>
   </ScrollView>
-
+  </View>
   )
 };
 
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    padding: 70,
+    padding: 30,
     margin: 0,
     backgroundColor: "white",
     alignItems:"center",

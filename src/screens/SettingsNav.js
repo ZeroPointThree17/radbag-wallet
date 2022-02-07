@@ -5,6 +5,8 @@ import Settings from './Settings';
 import MnemonicDisplay from './MnemonicDisplay';
 import AddressOptions from './AddressOptions';
 import WalletOptions from './WalletOptions';
+import TokenCreator from './TokenCreator';
+import AdvancedOptions from './AdvancedOptions';
 
 const Stack = createStackNavigator();
 
@@ -16,7 +18,13 @@ const SettingsNav = ({route, navigation}) => {
     <Stack.Screen name="Mnemonic Display" component={MnemonicDisplay}/>
     <Stack.Screen name="Address Options" component={AddressOptions}/>
     <Stack.Screen name="Wallet Options" component={WalletOptions}/>
-  
+    <Stack.Screen name="Advanced Options" component={AdvancedOptions}/>
+   <Stack.Screen name="Token Creator" component={TokenCreator} options={{
+      tabBarLabel: 'Token Creator',
+      tabBarIcon: ({ color, size }) => (
+        <IconFA5 name="coins" color={color} size={size} />
+      ),
+    }}/> 
   </Stack.Navigator>
 );
 };

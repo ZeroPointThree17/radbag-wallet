@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
 import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 var Raddish = require("../assets/radish_nobackground.png");
 import { SeparatorBorder } from '../helpers/jsxlib';
+import IconAnt from 'react-native-vector-icons/AntDesign';
 
  const Settings = ({route, navigation}) => {
  return ( 
@@ -35,12 +36,12 @@ import { SeparatorBorder } from '../helpers/jsxlib';
   <ListItem.Content >
   
     <ListItem.Title >
- <Text style={{fontSize:14,  color: 'black', fontWeight: 'bold', flex:1  }}>Show Mnemonic</Text>
+ <Text style={{fontSize:14,  color: 'black', fontWeight: 'bold', flex:1, fontFamily:"AppleSDGothicNeo-Regular"  }}>Show Mnemonic</Text>
 
     </ListItem.Title>
 
     <ListItem.Subtitle  >
-      <Text style={{fontSize:14,  color: 'black', flexWrap: 'wrap', flex:1 }}>Show the mnemonic phrase that you set up when you created this wallet</Text>
+      <Text style={{fontSize:14,  color: 'black', flexWrap: 'wrap', flex:1, fontFamily:"AppleSDGothicNeo-Regular" }}>Show the mnemonic phrase that you set up when you created this wallet</Text>
     </ListItem.Subtitle>
 
   </ListItem.Content>
@@ -68,10 +69,10 @@ import { SeparatorBorder } from '../helpers/jsxlib';
 >
 <IconMaterial name="pound" size={20} color="#4F8EF7"/>
   <ListItem.Content>
-    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold' }}>
+    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold', fontFamily:"AppleSDGothicNeo-Regular" }}>
       <Text>Address Options</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
+    <ListItem.Subtitle style={{fontSize:14,  color: 'black', fontFamily:"AppleSDGothicNeo-Regular" }}>
       <Text>Options for the currently selected address</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
@@ -94,10 +95,10 @@ import { SeparatorBorder } from '../helpers/jsxlib';
 >
 <IconMaterial name="wallet" size={20} color="#4F8EF7"/>
   <ListItem.Content>
-    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold' }}>
+    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold', fontFamily:"AppleSDGothicNeo-Regular" }}>
       <Text>Wallet Options</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{fontSize:14,  color: 'black' }}>
+    <ListItem.Subtitle style={{fontSize:14,  color: 'black', fontFamily:"AppleSDGothicNeo-Regular" }}>
       <Text>Options for the currently selected wallet</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
@@ -106,12 +107,45 @@ import { SeparatorBorder } from '../helpers/jsxlib';
 <SeparatorBorder/>
 
 
+
+
+
+
+<ListItem
+ onPress={() => {navigation.navigate('Advanced Options')}}
+  Component={TouchableScale}
+  friction={90} //
+  tension={100} // These props are passed to the parent component (here TouchableScale)
+  activeScale={0.95} //
+  linearGradientProps={{
+    colors: ['#ffffff', '#ffffff'],
+    start: { x: 1, y: 0 },
+    end: { x: 0.2, y: 0 },
+  }}
+  ViewComponent={LinearGradient} // Only if no expo
+>
+<IconAnt name="API" size={20} color="#4F8EF7"/>
+  <ListItem.Content>
+    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold', fontFamily:"AppleSDGothicNeo-Regular" }}>
+      <Text>Advanced Options</Text>
+    </ListItem.Title>
+    <ListItem.Subtitle style={{fontSize:14,  color: 'black', fontFamily:"AppleSDGothicNeo-Regular" }}>
+      <Text>Options for advanced users</Text>
+    </ListItem.Subtitle>
+  </ListItem.Content>
+  <ListItem.Chevron color="black" />
+</ListItem>
+<SeparatorBorder/>
+
+
+
+
 </ScrollView>
 
 <View style={{flex:1,justifyContent:"center" , alignSelf:"center"}}>
 <Image style={{margin: 0, padding:20, width: 50, height: 80, alignSelf:'center'}}
     source={Raddish}/>
-    <Text style={{ alignSelf:'center'}}>Raddish Wallet v.1.1.7</Text>
+    <Text style={{ alignSelf:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>Raddish Wallet v.1.1.7</Text>
 </View>
 
  

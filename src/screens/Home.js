@@ -125,8 +125,8 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     defaultSource={GenericToken}
     source={{uri: balance[3]}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
     </View> 
     </TouchableOpacity>
@@ -147,8 +147,8 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
   defaultSource={GenericToken}
   source={{uri: balance[3]}}
     />
-  <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>  {balance[2]}</Text>
-  <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
+  <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular" }}>  {balance[2]}</Text>
+  <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
   </View> 
   </TouchableOpacity>
@@ -562,46 +562,54 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           }}
         />
 
-<Separator/>
-       <Text style={{fontSize: 20, color:"white"}}>Staked: {formatNumForHomeDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForHomeDisplay(liquid_rdx_balance)} XRD</Text>
+       <Separator/>
+       <Text style={{fontSize: 20, color:"white", fontFamily: 'AppleSDGothicNeo-Regular'}}>Staked: {formatNumForHomeDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForHomeDisplay(liquid_rdx_balance)} XRD</Text>
  
        <Separator/>
-
        <View style={styles.rowStyle}>
+
+       <View style={styles.rowStyleHome}>
        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() => navigation.navigate('Receive',{xrdAddress: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
+     
         <IconMaterialCommunityIcons name="call-received" size={18} color="white" />
-        <Text style={{fontSize: 14, color:"white"}}> Receive</Text>
+        <Text style={{fontSize: 14, color:"white", fontFamily: 'AppleSDGothicNeo-Regular'}}> Receive</Text>
         </View>
+        
         </TouchableOpacity>
 
-        <Text style={{fontSize: 14, color:"white"}}>          </Text>
+        </View>
+        {/* <Text style={{fontSize: 14, color:"white"}}>          </Text> */}
   
+        <View style={styles.rowStyleHome}>
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
-        <Text style={{fontSize: 14, color:"white"}}> Send</Text>
+        <Text style={{fontSize: 14, color:"white", fontFamily: 'AppleSDGothicNeo-Regular'}}> Send</Text>
         </View>
         </TouchableOpacity>
+        </View>
+        {/* <Text style={{fontSize: 14, color:"white"}}>          </Text> */}
 
-        <Text style={{fontSize: 14, color:"white"}}>          </Text>
-
+        <View style={styles.rowStyleHome}>
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),
       currLiqBal: liquid_rdx_balance,
       currStaked: stakedAmount
       })}>
         <View style={styles.rowStyle}>
         <Icon name="arrow-down-circle-outline" size={20} color="white" />
-        <Text style={{fontSize: 14, color:"white"}}> Staking</Text>
+        <Text style={{fontSize: 14, color:"white", fontFamily: 'AppleSDGothicNeo-Regular'}}> Staking</Text>
         </View>
         </TouchableOpacity>
+        </View>
 
         </View>
         </LinearGradient>
 </View>
 
+<View style={{marginHorizontal:20}}>  
      <View style={styles.rowStyle}>
-       
+     <View style={styles.rowStyleHome}>  
      <TouchableOpacity style={styles.button} onPress={() => 
 
 {
@@ -612,11 +620,11 @@ navigation.dispatch(pushAction);
     }>
      <View style={styles.rowStyle}>
      <IconMaterialCommunityIcons name="application-import" size={16} color="black" />
-<Text style={styles.buttonText} > Import Wallet     </Text></View>
+<Text style={styles.buttonText} >Import Wallet</Text></View>
 </TouchableOpacity>
+</View>
 
-
-       
+<View style={styles.rowStyleHome}>  
      <TouchableOpacity style={styles.button} onPress={() => 
 
 {
@@ -628,21 +636,22 @@ navigation.dispatch(pushAction);
      <View style={styles.rowStyle}>
      <IconEntypo name="wallet" size={16} color="black" />
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={styles.buttonText} > Add Wallet     </Text></View>
+<Text style={styles.buttonText} >Add Wallet</Text></View>
 </TouchableOpacity>
-
+</View>
+<View style={styles.rowStyleHome}>  
      <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
      <View style={styles.rowStyle}>
      <IconFeather name="hash" size={16} color="black" />
 <Text style={styles.buttonText} >Add Address</Text></View>
 </TouchableOpacity> 
-
-
+</View>
+</View>
 </View>
 
 
 <View style={{margin:16}}>
-<Text>Tokens</Text>
+<Text style={{fontFamily:"AppleSDGothicNeo-Regular"}}>Tokens</Text>
 
 {renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress)}
 
@@ -671,7 +680,7 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 10,
         backgroundColor: '#4DA892',
-     
+        fontFamily: 'AppleSDGothicNeo-Regular'
       },
       surface2: {
         padding: 8,
@@ -680,41 +689,56 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 10,
         backgroundColor: '#006261',
-     
+        fontFamily: 'AppleSDGothicNeo-Regular'
       },
     rowStyle: {
         flexDirection: 'row',
         fontSize: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical:5
+        marginVertical:0,
+        fontFamily: 'AppleSDGothicNeo-Regular'
+      },
+      rowStyleHome: {
+        flexDirection: 'row',
+        fontSize: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical:5,
+        fontFamily: 'AppleSDGothicNeo-Regular',
+        flex:1
       },
       addrRowStyle: {
         flexDirection: 'row',
         fontSize: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical:0
+        marginVertical:0,
+        fontFamily: 'AppleSDGothicNeo-Regular'
       },
       rowStyleLeft: {
         flexDirection: 'row',
         fontSize: 4,
         alignItems: 'left',
-        marginVertical:5
+        marginVertical:5,
+        fontFamily: 'AppleSDGothicNeo-Regular'
       },
       buttonText: {
         fontSize: 10,
-        color:"black"
+        color:"black",
+        fontFamily: 'AppleSDGothicNeo-Regular'
       },
   text: {
     fontSize: 20,
     alignItems: 'center',
     justifyContent: 'space-around',
-    marginVertical:35
+    marginVertical:35,
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   containerMain: {
     flex: 1,
-    backgroundColor: "white"
+    backgroundColor: "white",
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
    sectionHeader: {
      paddingTop: 2,
@@ -724,11 +748,13 @@ const styles = StyleSheet.create({
      fontSize: 14,
      fontWeight: 'bold',
      backgroundColor: 'rgba(247,247,247,1.0)',
+     fontFamily: 'AppleSDGothicNeo-Regular'
    },
    item: {
      padding: 10,
      fontSize: 18,
      height: 44,
+     fontFamily: 'AppleSDGothicNeo-Regular'
    },
    separator: {
     marginVertical: 8,
@@ -745,16 +771,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
-    fontSize: 28
+    fontSize: 28,
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   title: {
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   container: {
     backgroundColor: 'white',
     padding: 16,
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   dropdown: {
     flex: 1,
@@ -767,6 +796,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 0,
     marginHorizontal: 0,
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   icon: {
     marginRight: 5,
@@ -780,25 +810,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     fontSize: 14,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
 containerStyle: {
      backgroundColor: "#183A81",
-     color:"white"
+     color:"white",
+     fontFamily: 'AppleSDGothicNeo-Regular'
   },
   placeholderStyle: {
     fontSize: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    color:"white"
+    color:"white",
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   selectedTextStyle: {
     fontSize: 14,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     textAlign: 'left',
-    color:"white"
-
+    color:"white",
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   iconStyle: {
     width: 0,
@@ -807,7 +840,8 @@ containerStyle: {
   inputSearchStyle: {
     height: 40,
     fontSize: 14,
-    color:"white"
+    color:"white",
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   scrollView: {
    

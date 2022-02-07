@@ -110,13 +110,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   mnemonic: {
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   title2: {
     textAlign: 'center',

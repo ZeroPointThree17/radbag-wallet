@@ -67,6 +67,7 @@ LogBox.ignoreAllLogs();
         headerTintColor: '#fff',
         headerTitleStyle: {
           fontWeight: 'bold',
+          fontFamily:"AppleSDGothicNeo-Regular"
         },
       }}>{ firstTimer == true
   ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} />

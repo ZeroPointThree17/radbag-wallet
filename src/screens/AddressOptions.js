@@ -155,13 +155,14 @@ const addressNameRef = useRef();
             
       <View style={styles.container}> 
       <ScrollView>
-       <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center'}}>Current Address Name: {"\n"}{addressName}</Text>
+       <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>Current Address Name:</Text><Text style={{textAlign:"center"}}>{addressName}</Text>
        <Separator/>
-       <Text style={{textAlign:'left', fontWeight:'bold'}}>Enter New Address Name:</Text>
+       <Separator/>
+       <Text style={{textAlign:'left', fontWeight:'bold', fontFamily: 'AppleSDGothicNeo-Regular'}}>Enter New Address Name:</Text>
       
        <View style={styles.rowStyle}>
        <TextInput ref={addressNameRef}
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1}}
+        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1, fontFamily: 'AppleSDGothicNeo-Regular'}}
         placeholder='Address Name'
         placeholderTextColor="#d3d3d3"
         autoCapitalize='none'
@@ -170,7 +171,7 @@ const addressNameRef = useRef();
       />
   
               </View>
-              <Button  style={{marginHorizontal: 25}}
+              <Button  style={{marginHorizontal: 25, fontFamily: 'AppleSDGothicNeo-Regular'}}
                 title="Change Address Name"
                 enabled
                 onPress={() => {addressNameRef.current.blur(); Keyboard.dismiss; updateAddresssName(newAddressName, activeAddress)}}
@@ -179,7 +180,7 @@ const addressNameRef = useRef();
    <Separator/>
    <Separator/>
 
-   <Button  color="red" style={{marginHorizontal: 25}}
+   <Button  color="red" style={{marginHorizontal: 25, fontFamily: 'AppleSDGothicNeo-Regular'}}
                 title="Remove Address"
                 enabled
                 onPress={() => removeAddress(activeAddress, walletId, navigation, setActiveAddress)}

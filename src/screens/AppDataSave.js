@@ -376,7 +376,7 @@ label='Confirm Wallet Password' />
  { !isActive
   &&
   
- <Button
+ <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
         title="Continue"
         enabled = {!isActive}
         onPress={() => {setIsActive(true); navigateHome(setIsActive,navigation, appPw, appPwConfirm, mnemonic, word13, firstTime)}}
@@ -432,6 +432,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
+    fontFamily: 'AppleSDGothicNeo-Regular'
   },
 
 });

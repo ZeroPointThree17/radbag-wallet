@@ -367,11 +367,11 @@ useInterval(() => {
    <View style={styles.container}>
      <ScrollView> 
 
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Address you are sending from:</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={addrFromRef}
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300, backgroundColor:"#d3d3d3", flex:1}}
+        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="true"
         multiline={true}
         numberOfLines={4}
@@ -390,9 +390,9 @@ useInterval(() => {
       />
       }
 <View style={styles.sendRowStyle}>
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>{"\n"}Address to send to:</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, fontFamily:"AppleSDGothicNeo-Regular"}}>{"\n"}Address to send to:</Text>
       <TouchableOpacity style={{justifyContent:'center'}} onPress={() => {setCameraOn(!cameraOn)} }>
-      <Text style={{ textAlign:'center', marginHorizontal: 0, fontSize:8}}>Scan QR</Text>
+      <Text style={{ textAlign:'center', marginHorizontal: 0, fontSize:8, fontFamily:"AppleSDGothicNeo-Regular"}}>Scan QR</Text>
   
  <IconMaterial style={{justifyContent:'center', alignSelf:'center'}} name="qrcode-scan" size={20} color="black" />
  </TouchableOpacity>
@@ -401,7 +401,7 @@ useInterval(() => {
       <View style={styles.rowStyle}>
 
 <TextInput ref={addrToRef}
-style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
+style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
         placeholder='Destination Radix Address'
         placeholderTextColor="#d3d3d3"
         value={destAddr}
@@ -416,10 +416,10 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 
 <Separator/>
 
-<Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to send:</Text>
+<Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Amount to send:</Text>
 <View style={styles.rowStyle}>
 <TextInput ref={amountRef}
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
+        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
         placeholder='Amount'
         autoCapitalize='none'
         placeholderTextColor="#d3d3d3"
@@ -439,7 +439,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 
 { symbols.length > 0 &&
 <SelectDropdown
- buttonStyle={{backgroundColor:"#183A81", flex:0.5, borderWidth:StyleSheet.hairlineWidth, marginRight:10}}
+ buttonStyle={{backgroundColor:"#183A81", flex:0.5, borderWidth:StyleSheet.hairlineWidth, marginRight:10, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
  buttonTextStyle={{color:"white"}}
 	data={symbols}
   defaultValue={defaultSymbol}
@@ -458,7 +458,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 	}}
 /> }
 </View>
-<Text style={{fontSize: 12, color:"black"}}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol}</Text>
+<Text style={{fontSize: 12, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol}</Text>
 
 
 
@@ -467,8 +467,8 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1}}
 <Separator/>
 <TouchableOpacity style={styles.button} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
         <View style={styles.sendRowStyle}>
-        <IconFeather name="send" size={20} color="black" />
-        <Text style={{fontSize: 18, color:"black"}}> Send</Text>
+        <IconFeather name="send" size={18} color="black" />
+        <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Send</Text>
         </View>
         </TouchableOpacity>
 <Separator/>

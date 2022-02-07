@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { Keyboard, TouchableOpacity, TouchableHighlight, Linking, Alert, ScrollView, Image, Text, TextInput, View, StyleSheet } from 'react-native';
+import { Button, Keyboard, TouchableOpacity, TouchableHighlight, Linking, Alert, ScrollView, Image, Text, TextInput, View, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
 
 import { decrypt } from '../helpers/encryption';
@@ -495,20 +495,20 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
 <View>
     {/* <View style={styles.addrRowStyle}> */}
 
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>{validatorDetails.name}</Text>
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start' }}>Staked: {formatNumForDisplay(validatorDetails.delegated_stake)} XRD</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Fee: {validatorDetails.validator_fee_percentage}%</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>Addr: {shortenAddress(valAddr)}</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular" }}>{validatorDetails.name}</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular" }}>Staked: {formatNumForDisplay(validatorDetails.delegated_stake)} XRD</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>Fee: {validatorDetails.validator_fee_percentage}%</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>Addr: {shortenAddress(valAddr)}</Text>
 
     <View style={styles.rowStyle}>
     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(valAddr)}}>
-    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>[Copy Address]</Text>
+    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>[Copy Address]</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(valAddr); setStakingScreenActive(false)}}>
-    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>  [Reduce Stake]</Text>
+    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>  [Reduce Stake]</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(valAddr); setStakingScreenActive(true)}}>
-    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end' }}>  [Add to Stake]</Text>
+    < Text style={{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>  [Add to Stake]</Text>
     </TouchableOpacity>
      </View>   
 
@@ -553,6 +553,8 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       const [stakingScreenActive, setStakingScreenActive] = useState(true);
       const [stakeAmt, setStakeAmt] = useState();
       const [unstakeAmt, setUnstakeAmt] = useState();
+      const [showStakingStats, setShowStakingStats] = useState(false);
+
 
       const stakeValRef = useRef();
       const stakeAmtRef = useRef();
@@ -569,51 +571,68 @@ useInterval(() => {
   getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
 }, 2000);
  
+
+const stakingStats = (showStakingStats) => {
+
+  if(showStakingStats == true){
+  return (
+    <View>
+    <Separator/>
+    <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold", fontFamily:"AppleSDGothicNeo-Regular"}}>Current Address: {currAddr}</Text>
+    <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Liquid Balance: {formatNumForDisplay(currentlyLiquid)} XRD</Text>
+    <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Staked Balance: {formatNumForDisplay(currentlyStaked)} XRD</Text>
+    <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Pending Stake Balance: {formatNumForDisplay(pendingStake)} XRD</Text>
+    {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Unstaking Balance: {(formatNumForDisplay(totalUnstaking)) + formatNumForDisplay(pendingUnstake))).toLocaleString()} XRD</Text> */}
+    <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Unstaking Balance: {formatNumForDisplay(totalUnstaking)} XRD</Text>
+    <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
+    <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Total Balance: {new bigDecimal(((new bigDecimal(formatNumForDisplay(currentlyLiquid).replaceAll(",","")).add(new bigDecimal(formatNumForDisplay(currentlyStaked).replaceAll(",","")))).getValue())).getPrettyValue()} XRD</Text>
+    <Separator/>
+    <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>    
+       <Image style={{margin: 0, width: 30, height: 50, marginBottom:4, alignSelf:'center'}}
+    source={Raddish}/>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!</Text>
+       </LinearGradient>
+
+    </View>
+  );
+  }
+}
+
+
  return ( 
   <ScrollView style={{backgroundColor:"white"}}> 
      <Separator/>
      <View style={styles.addrRowStyle}>
      <TouchableHighlight 
      activeOpacity={0.6}
-     underlayColor="#DDDDDD"
+     underlayColor="black"
      style={styles.button} onPress={() => {setStakingScreenActive(true)}}>
-  <Text style={{marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center', textDecorationLine: stakingScreenActive? 'underline' : 'none'}}>Staking</Text>
+  <Text style={{marginHorizontal: 0, fontSize:22, color:"black", textAlign:"center", alignSelf:'center', textDecorationLine: stakingScreenActive? 'underline' : 'none', fontFamily:"AppleSDGothicNeo-Regular"}}>Staking</Text>
 </TouchableHighlight>
-<Text style={{marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center'}}>    </Text>
+<Text style={{marginHorizontal: 0, fontSize:22, color:"black", textAlign:"center", alignSelf:'center'}}>    </Text>
 <TouchableHighlight 
 activeOpacity={0.6}
 underlayColor="#DDDDDD"
 style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
-  <Text style={{marginHorizontal: 0, fontSize:22, color:"blue", textAlign:"center", alignSelf:'center', textDecorationLine: stakingScreenActive? 'none' : 'underline'}}>Unstaking</Text>
+  <Text style={{marginHorizontal: 0, fontSize:22, color:"black", textAlign:"center", alignSelf:'center', textDecorationLine: stakingScreenActive? 'none' : 'underline', fontFamily:"AppleSDGothicNeo-Regular"}}>Unstaking</Text>
   </TouchableHighlight>
     </View>
 
 {stakingScreenActive && <React.Fragment>
   <View style={styles.container}>
-<Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Stake</Text>
-      
-       <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
-      
-       <Image style={{margin: 0, width: 30, height: 50, marginBottom:4, alignSelf:'center'}}
-    source={Raddish}/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center'}}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are a top validator with a low 1% fee!</Text>
-       
-     
-       </LinearGradient>
-       <Separator/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {formatNumForDisplay(currentlyLiquid)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {formatNumForDisplay(currentlyStaked)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {formatNumForDisplay(pendingStake)} XRD</Text>
-     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {(formatNumForDisplay(totalUnstaking)) + formatNumForDisplay(pendingUnstake))).toLocaleString()} XRD</Text> */}
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {formatNumForDisplay(totalUnstaking)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {new bigDecimal(((new bigDecimal(formatNumForDisplay(currentlyLiquid).replaceAll(",","")).add(new bigDecimal(formatNumForDisplay(currentlyStaked).replaceAll(",","")))).getValue())).getPrettyValue()} XRD</Text>
-     <Separator/>
+ 
+  <TouchableOpacity style={styles.appButtonContainer} onPress={ () => setShowStakingStats(!showStakingStats) }>
+  < Text style={styles.appButtonText}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
+    </TouchableOpacity>
+
+{stakingStats(showStakingStats)}
+
+
+    <Separator/>
       <View style={styles.rowStyle}>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}}>Validator Address (Default: Raddish.io):</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}>Validator Address (Default: Raddish.io):</Text>
      <Text
-       style={{color: 'blue', textAlign: "center" , fontSize:12, flex:0.5}}
+       style={{color: 'blue', textAlign: "center" , fontSize:12, flex:0.5, fontFamily:"AppleSDGothicNeo-Regular"}}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/validators')}}
      >
        [Validator List]
@@ -622,7 +641,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeValRef}
-        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:1}}
+        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -636,11 +655,11 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
       </View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to Stake (Min 90):</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Amount to Stake (Min 90):</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeAmtRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:0.5}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:0.5, borderRadius: 15}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'
@@ -659,8 +678,8 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid) }}>
 
         <View style={styles.sendRowStyle}>
-        <IconIonicons name="arrow-down-circle-outline" size={20} color="black" />
-        <Text style={{fontSize: 18, color:"black"}}> Stake</Text>
+        <IconIonicons name="arrow-down-circle-outline" size={18} color="black" />
+        <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Stake</Text>
         </View>
         </TouchableOpacity>
 
@@ -673,21 +692,16 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 {stakingScreenActive==false && <React.Fragment>
 <View style={styles.container} > 
       
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:20, fontWeight:'bold', alignSelf:'center'}}>Unstake</Text>
-       <Separator/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontWeight:"bold"}}>Current Address: {currAddr}</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Liquid Balance: {formatNumForDisplay(currentlyLiquid)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Staked Balance: {formatNumForDisplay(currentlyStaked)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Stake Balance: {formatNumForDisplay(pendingStake)} XRD</Text>
-     {/* <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {(formatNumForDisplay(totalUnstaking)) + formatNumForDisplay(pendingUnstake))).toLocaleString()} XRD</Text> */}
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Unstaking Balance: {formatNumForDisplay(totalUnstaking)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Total Balance: {new bigDecimal(((new bigDecimal(formatNumForDisplay(currentlyLiquid).replaceAll(",","")).add(new bigDecimal(formatNumForDisplay(currentlyStaked).replaceAll(",","")))).getValue())).getPrettyValue()} XRD</Text>
-       <Separator/>
+<TouchableOpacity style={styles.appButtonContainer} onPress={ () => setShowStakingStats(!showStakingStats) }>
+    < Text style={styles.appButtonText}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
+    </TouchableOpacity>
+
+       {stakingStats(showStakingStats)}
+      <Separator/>
      <Separator/>
-       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Validator to unstake from:</Text>
+       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Validator to unstake from:</Text>
         <TextInput ref={unstakeValRef}
-        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:1}}
+        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -702,11 +716,11 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12}}>Amount to Unstake:</Text>
+      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Amount to Unstake:</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={unstakeAmtRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:0.5}}
+        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:0.5, borderRadius: 15}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'
@@ -726,8 +740,8 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid )
   }}>
         <View style={styles.sendRowStyle}>
-        <IconIonicons name="arrow-up-circle-outline" size={20} color="black" />
-        <Text style={{fontSize: 18, color:"black"}}> Unstake</Text>
+        <IconIonicons name="arrow-up-circle-outline" size={18} color="black" />
+        <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Unstake</Text>
         </View>
         </TouchableOpacity>
 
@@ -750,8 +764,8 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 
 <View style={styles.container} > 
 <View >
-<Text style={{fontSize: 16, color:"black"}}>Current Stakes</Text>
-<Text style={{fontSize: 12, color:"black"}}>(excludes amounts pending and being unstaked) </Text>
+<Text style={{fontSize: 16, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}>Current Stakes</Text>
+<Text style={{fontSize: 12, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}>(excludes amounts pending and being unstaked) </Text>
 </View>
               <SeparatorBorderMargin/>
 {renderedStakeValidatorRows}
@@ -823,6 +837,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical:0
   },
+  appButtonContainer: {
+    elevation: 8,
+    backgroundColor: "#009688",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12
+  },
+  appButtonText: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "bold",
+    alignSelf: "center",
+    fontFamily:"AppleSDGothicNeo-Regular"
+  }
 });
 
 export default Staking;

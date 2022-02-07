@@ -18,7 +18,7 @@ export const SeparatorBorderMargin = () => (
 const styles = StyleSheet.create({
 
      separator: {
-      marginVertical: 10,
+      marginVertical: 8,
       borderBottomColor: '#737373',
       borderBottomWidth: 0,
     },

@@ -678,7 +678,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid) }}>
 
         <View style={styles.sendRowStyle}>
-        <IconIonicons name="arrow-down-circle-outline" size={18} color="black" />
+        <IconIonicons name="arrow-down-circle-outline" size={22} color="black" />
         <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Stake</Text>
         </View>
         </TouchableOpacity>
@@ -740,7 +740,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid )
   }}>
         <View style={styles.sendRowStyle}>
-        <IconIonicons name="arrow-up-circle-outline" size={18} color="black" />
+        <IconIonicons name="arrow-up-circle-outline" size={22} color="black" />
         <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Unstake</Text>
         </View>
         </TouchableOpacity>

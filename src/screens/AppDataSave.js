@@ -41,15 +41,15 @@ function convertbits (data, frombits, tobits, pad) {
 
 function navigateHome(setIsActive,navigation, password, confirmPassword, mnemonic, word13, firstFlag){
 
-  setIsActive(true)
-
   if(password.length == 0 || confirmPassword.length == 0 ){
     alert("Password is required");
   } 
   else if(password === confirmPassword){
 
-var mnemonic_enc = encrypt(mnemonic, Buffer.from(password));
-var word13_enc = encrypt(word13, Buffer.from(password));
+    setIsActive(true)
+
+    var mnemonic_enc = encrypt(mnemonic, Buffer.from(password));
+    var word13_enc = encrypt(word13, Buffer.from(password));
 
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);

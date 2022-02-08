@@ -379,7 +379,7 @@ label='Confirm Wallet Password' />
  <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
         title="Continue"
         enabled = {!isActive}
-        onPress={() => {setIsActive(true); navigateHome(setIsActive,navigation, appPw, appPwConfirm, mnemonic, word13, firstTime)}}
+        onPress={() => {navigateHome(setIsActive,navigation, appPw, appPwConfirm, mnemonic, word13, firstTime)}}
       />
      
   }

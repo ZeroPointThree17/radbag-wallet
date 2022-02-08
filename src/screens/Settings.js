@@ -145,7 +145,7 @@ import IconAnt from 'react-native-vector-icons/AntDesign';
 <View style={{flex:1,justifyContent:"center" , alignSelf:"center"}}>
 <Image style={{margin: 0, padding:20, width: 50, height: 80, alignSelf:'center'}}
     source={Raddish}/>
-    <Text style={{ alignSelf:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>Raddish Wallet v.1.2.0</Text>
+    <Text style={{ alignSelf:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>Raddish Wallet v.1.2.1</Text>
 </View>
 
  

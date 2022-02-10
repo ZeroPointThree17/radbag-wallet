@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, Image, View, StyleSheet } from 'react-native';
+import { RefreshControl, ScrollView, Text, Image, View, StyleSheet } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
@@ -8,13 +8,35 @@ var Raddish = require("../assets/radish_nobackground.png");
 import { SeparatorBorder } from '../helpers/jsxlib';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 
+
+function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
+    
+  setRefreshing(true);
+
+  if(parseInt(refreshCount) % 7 == 0){
+    setTKUnlock(true);
+  }
+
+  setRefreshCount(refreshCount+1);
+  setRefreshing(false);
+}
+
  const Settings = ({route, navigation}) => {
+
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshCount, setRefreshCount] = React.useState(8);
+  const [TKUnlock, setTKUnlock] = React.useState(false);
+
+
+
  return ( 
   <View style={{flex:1}}>
-     <ScrollView style={{flex:1}}> 
-
-
- 
+     <ScrollView style={{flex:1}}
+        refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock)}/>
+            }>
   <SeparatorBorder/>
 
  <ListItem
@@ -109,9 +131,7 @@ import IconAnt from 'react-native-vector-icons/AntDesign';
 
 
 
-
-
-<ListItem
+{TKUnlock && <React.Fragment><ListItem
  onPress={() => {navigation.navigate('Advanced Options')}}
   Component={TouchableScale}
   friction={90} //
@@ -123,8 +143,7 @@ import IconAnt from 'react-native-vector-icons/AntDesign';
     end: { x: 0.2, y: 0 },
   }}
   ViewComponent={LinearGradient} // Only if no expo
->
-<IconAnt name="API" size={20} color="#4F8EF7"/>
+><IconAnt name="API" size={20} color="#4F8EF7"/>
   <ListItem.Content>
     <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold', fontFamily:"AppleSDGothicNeo-Regular" }}>
       <Text>Advanced Options</Text>
@@ -134,7 +153,9 @@ import IconAnt from 'react-native-vector-icons/AntDesign';
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
-</ListItem>
+</ListItem></React.Fragment>
+ }
+
 <SeparatorBorder/>
 
 

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { Keyboard, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
+import { Keyboard, Image, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
@@ -13,7 +13,7 @@ import { Separator } from '../helpers/jsxlib';
 import { openCB, errorCB, useInterval, shortenAddress, formatNumForDisplay } from '../helpers/helpers';
 import { validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
-
+var GenericToken = require("../assets/generic_token.png");
 
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
@@ -191,11 +191,13 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 }
 
 
-function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key){
+function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames){
 
   var rri = rris.pop();
   var symbolsArr = inputSymbols.slice();
   var symbolToRRI = new Map(inputSymToRRIs);
+  var iconsMap = new Map(initialIconsMap);
+  var namesMap = new Map(initialNamesMap);
 
   fetch('https://raddish-node.com:6208/token', {
     method: 'POST',
@@ -221,13 +223,17 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
       if(rri != "xrd_rr1qy5wfsfh"){
         symbolsArr.push(json.token.token_properties.symbol.toUpperCase());
       }
-      symbolToRRI.set(json.token.token_properties.symbol.toUpperCase(), rri)      
+      symbolToRRI.set(json.token.token_properties.symbol.toUpperCase(), rri);
+      iconsMap.set(rri, json.token.token_properties.icon_url); 
+      namesMap.set(rri, json.token.token_properties.name)     
     }
 
     if(rris.length == 0){
 
         setSymbols(symbolsArr);
-        setSymbolToRRI(symbolToRRI)
+        setSymbolToRRI(symbolToRRI);
+        setIconURIs(iconsMap);
+        setTokenNames(namesMap)
    
                 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -250,7 +256,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
                 }
               
               else{
-                getTokenSymbols(rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key)
+                getTokenSymbols(rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames)
               }
             }
               ).catch((error) => {
@@ -260,7 +266,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
 }
 
 
-function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key){
+function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames){
    
 
   fetch('https://raddish-node.com:6208/account/balances', {
@@ -290,20 +296,26 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
           var balances = new Map();
           var rris = ["xrd_rr1qy5wfsfh"]
           var symbols = ["XRD"]
-
+ 
           json.account_balances.liquid_balances.forEach( (balance) =>{
-  //  alert(balance.value)
+
               balances.set(balance.token_identifier.rri, balance.value);       
               rris.push(balance.token_identifier.rri)
+              
           } );
 
           setBalances(balances);
 
-         initialSymbolToRRIMap = new Map();
-
+         var initialSymbolToRRIMap = new Map();
          initialSymbolToRRIMap.set("XRD","xrd_rr1qy5wfsfh")
 
-         getTokenSymbols(rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key)
+         var initialIconsMap = new Map();
+         initialIconsMap.set("xrd_rr1qy5wfsfh", "https://assets.radixdlt.com/icons/icon-xrd-32x32.png")
+
+         var initialNamesMap = new Map();
+         initialNamesMap.set("xrd_rr1qy5wfsfh", "Radix")
+
+         getTokenSymbols(rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames)
         }
     }).catch((error) => {
         console.error(error);
@@ -329,6 +341,8 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
   // const [rri, setRRI] = useState();
   const [balances, setBalances] = useState(new Map());
   const [symbolToRRI, setSymbolToRRI] = useState(new Map());
+  const [iconURIs, setIconURIs] = useState(new Map());
+  const [tokenNames, setTokenNames] = useState(new Map());
   
 
   useEffect( () => {
@@ -339,14 +353,14 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
     // var rriTemp="";
 
   
-    getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key);
+    getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
    
     // onChangeSymbol(currentSymbolTemp);
   
 },[]);
 
 useInterval(() => {
-  getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key);
+  getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
 }, 2000);
 
 
@@ -367,6 +381,15 @@ useInterval(() => {
    <View style={styles.container}>
      <ScrollView> 
 
+<View style={[styles.rowStyle, {alignSelf: "center"}]}>
+
+<Image style={{width: 25, height: 25}}
+    defaultSource={GenericToken}
+    source={{uri: iconURIs.get(symbolToRRI.get(symbol))}}
+      />
+  <Text style={{fontSize:21, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol})</Text>
+     </View>
+      <Separator/>
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
  

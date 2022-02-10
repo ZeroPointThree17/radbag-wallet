@@ -13,7 +13,9 @@ import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommun
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
 import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay } from '../helpers/helpers';
-
+import { ifError } from 'assert';
+var VerifiedIcon = require("../assets/check.png");
+var WarningIcon = require("../assets/alert.png");
 
     const SeparatorBorder = () => (
     <View style={styles.separatorBorder} />
@@ -102,7 +104,8 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
 
         var rows = []
         var xrdRow = []
-
+        var blackListed = "rpg_rr1q0zrguwzdze0kpqfcr7lk8lfwlx6hxx7kjf46tcava4q99dj6h";
+        var possScamToken = false;
     balances.forEach((balance, rri) =>  
 
    {
@@ -125,13 +128,20 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     defaultSource={GenericToken}
     source={{uri: balance[3]}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}</Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri)} </Text></Text>
+    {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
     </View> 
     </TouchableOpacity>
     </View>        )
       } else{
+
+        if(rri == blackListed){
+          possScamToken = true;
+        } else {
+          possScamToken = false;
+        }
 
         rows.push(
                
@@ -147,7 +157,8 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
   defaultSource={GenericToken}
   source={{uri: balance[3]}}
     />
-  <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular" }}>  {balance[2]}</Text>
+        <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri)} </Text></Text>
+    {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
   <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
   </View> 
@@ -394,7 +405,7 @@ const Home = ({route, navigation}) => {
     const onRefresh = React.useCallback(() => {
         getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
       setRefreshing(true);
-      wait(2000).then(() => setRefreshing(false));
+      wait(500).then(() => setRefreshing(false));
     }, []);
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);

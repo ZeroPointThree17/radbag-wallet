@@ -9,6 +9,10 @@ import { useInterval, openCB, errorCB } from '../helpers/helpers';
 
 function updateWalletName(name, walletId){
 
+  if(name == undefined){
+    alert("Name cannot be empty")
+  } else{
+
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
   db.transaction((tx) => {
@@ -21,7 +25,7 @@ function updateWalletName(name, walletId){
 
       });
     }, errorCB);
-    
+  }
 }
 
 
@@ -169,7 +173,7 @@ return (
             
       <View style={styles.container}> 
       <ScrollView>
-      <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>Current Wallet Name:</Text><Text style={{textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>{walletName}</Text>
+      <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>Current Wallet Name:</Text><Text style={{textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular', fontSize:20}}>{walletName}</Text>
        <Separator/>
        <Separator/>
        <Text style={{textAlign:'left', fontWeight:'bold', fontFamily: 'AppleSDGothicNeo-Regular'}}>Enter new Wallet Name:</Text>

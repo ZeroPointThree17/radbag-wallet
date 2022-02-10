@@ -9,6 +9,10 @@ import { useInterval, openCB, errorCB } from '../helpers/helpers';
 
 function updateAddresssName(name, addressId){
 
+  if(name == undefined){
+    alert("Name cannot be empty")
+  } else{
+
   var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
   db.transaction((tx) => {
@@ -19,7 +23,7 @@ function updateAddresssName(name, addressId){
           });
       });
     }, errorCB);
-    
+  }
 }
 
 
@@ -155,7 +159,7 @@ const addressNameRef = useRef();
             
       <View style={styles.container}> 
       <ScrollView>
-       <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>Current Address Name:</Text><Text style={{textAlign:"center"}}>{addressName}</Text>
+       <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>Current Address Name:</Text><Text style={{textAlign:"center", fontFamily: 'AppleSDGothicNeo-Regular', fontSize:20}}>{addressName}</Text>
        <Separator/>
        <Separator/>
        <Text style={{textAlign:'left', fontWeight:'bold', fontFamily: 'AppleSDGothicNeo-Regular'}}>Enter New Address Name:</Text>

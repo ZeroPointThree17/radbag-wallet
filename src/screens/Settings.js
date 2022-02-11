@@ -13,7 +13,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
     
   setRefreshing(true);
 
-  if(parseInt(refreshCount) % 7 == 0){
+  if(parseInt(refreshCount) % 10 == 0){
     setTKUnlock(true);
   }
 
@@ -24,7 +24,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
  const Settings = ({route, navigation}) => {
 
   const [refreshing, setRefreshing] = React.useState(false);
-  const [refreshCount, setRefreshCount] = React.useState(8);
+  const [refreshCount, setRefreshCount] = React.useState(11);
   const [TKUnlock, setTKUnlock] = React.useState(false);
 
 

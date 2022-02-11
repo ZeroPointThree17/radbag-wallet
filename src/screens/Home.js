@@ -141,7 +141,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     defaultSource={GenericToken}
     source={{uri: balance[3]}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\n   Token RRI: "+shortenAddress(rri)} </Text></Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular", paddingLeft: 10}}>{balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
@@ -170,7 +170,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
   defaultSource={GenericToken}
   source={{uri: balance[3]}}
     />
-        <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\n   Token RRI: "+shortenAddress(rri)} </Text></Text>
+        <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular", paddingLeft: 10}}>{balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
   <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
@@ -684,6 +684,11 @@ navigation.dispatch(pushAction);
         { isNaN(stakedAmount) &&
 <Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
 }
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
   </View> 
   </ScrollView>
   </SafeAreaView>
@@ -703,7 +708,7 @@ const styles = StyleSheet.create({
         width: 'auto',
         borderWidth: 0,
         borderRadius: 10,
-        backgroundColor: '#4DA892',
+        backgroundColor: '#183A81',
         fontFamily: 'AppleSDGothicNeo-Regular'
       },
       surface2: {
@@ -761,7 +766,7 @@ const styles = StyleSheet.create({
   },
   containerMain: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#183A81",
     fontFamily: 'AppleSDGothicNeo-Regular'
   },
    sectionHeader: {
@@ -868,8 +873,9 @@ containerStyle: {
     fontFamily: 'AppleSDGothicNeo-Regular'
   },
   scrollView: {
-   
-    marginHorizontal: 10,
+    backgroundColor: "white",
+    marginHorizontal: 0,
+    paddingHorizontal: 10,
   },
 });
 

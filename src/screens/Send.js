@@ -14,6 +14,8 @@ import { openCB, errorCB, useInterval, shortenAddress, last4, formatNumForDispla
 import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
+import * as Progress from 'react-native-progress';
+
 
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
@@ -400,12 +402,15 @@ useInterval(() => {
 
 <View style={[styles.rowStyle, {alignSelf: "center"}]}>
 
+{ isNaN(balances.get(symbolToRRI.get(symbol))) &&
+<Progress.Circle style={{alignSelf:"center", marginBottom:10}} size={30} indeterminate={true} />
+}
+
 <Image style={{width: 25, height: 25}}
     defaultSource={GenericToken}
     source={{uri: iconURIs.get(symbolToRRI.get(symbol))}}
       /> 
-  <Text style={{fontSize:21, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
-  
+  <Text style={{fontSize:23, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
 
      </View>
      <Text style={{color: 'black', textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular"}}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>

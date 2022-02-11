@@ -241,7 +241,7 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
       }
     )
   }).then((response) => response.json()).then((json) => {
-      // alert(JSON.stringify(json))
+      //  alert(JSON.stringify(json))
      
     if(json.code == 400 || json.code == 500){
       // alert(JSON.stringify(json.message));
@@ -275,7 +275,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
 
   // alert("GV SL Len: "+stakeValidators.length)
   var jsonBody = null;
-  var stakeValsPresent = true;
+  var stakeValsPresent = false;
 
   if(stakeValidators.length>0){
     // alert("stakeValidators: "+JSON.stringify(stakeValidators))
@@ -319,6 +319,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
     )
   }).then((response) => response.json()).then((json) => {
    
+    // alert(JSON.stringify(json));
     if(json.code == 400 || json.code == 500){
       // alert(JSON.stringify(json.message));
      }
@@ -498,7 +499,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular" }}>{validatorDetails.name}</Text>
     <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular" }}>Staked: {formatNumForDisplay(validatorDetails.delegated_stake)} XRD</Text>
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>Fee: {validatorDetails.validator_fee_percentage}%</Text>
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>Addr: {shortenAddress(valAddr)}</Text>
+    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>Address: {shortenAddress(valAddr)}</Text>
 
     <View style={styles.rowStyle}>
     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(valAddr)}}>
@@ -630,7 +631,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 
     <Separator/>
       <View style={styles.rowStyle}>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}>Validator Address (Default: Raddish.io):</Text>
+     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}>Validator Address{"\n"}(Default: Raddish.io):</Text>
      <Text
        style={{color: 'blue', textAlign: "center" , fontSize:12, flex:0.5, fontFamily:"AppleSDGothicNeo-Regular"}}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/validators')}}

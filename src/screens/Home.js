@@ -715,7 +715,10 @@ const styles = StyleSheet.create({
     surface: {
         flex: 1,
         padding: 9,
-        margin: 6,
+        marginLeft: 6,
+        marginBottom: 6,
+        marginRight: 6,
+        marginTop: 10,
         height: 'auto',
         width: 'auto',
         borderWidth: 0,

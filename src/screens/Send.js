@@ -426,6 +426,7 @@ useInterval(() => {
      <Text style={{color: 'black', textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular"}}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>
      <Text
        style={{color: 'blue', marginVertical:4, textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular", textDecorationLine: "underline"}}
+       disabled = {symbolToRRI.get(symbol) == undefined}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/tokens/'+symbolToRRI.get(symbol))}}
      >Token Details</Text>
      <Separator/>

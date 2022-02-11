@@ -12,7 +12,7 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay } from '../helpers/helpers';
+import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, last4 } from '../helpers/helpers';
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
@@ -103,14 +103,27 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
         var rows = []
-        var xrdRow = []
+        var xrdRow = []      
+        var symbolCnts = new Map();
         var blackListed = "rpg_rr1q0zrguwzdze0kpqfcr7lk8lfwlx6hxx7kjf46tcava4q99dj6h";
         var possScamToken = false;
+
+        balances.forEach((balance, rri) =>  {
+          symbolCnts.set(balance[1],0)
+        })
+
     balances.forEach((balance, rri) =>  
 
    {
 
     try{
+
+      var appendStr = ""
+      symbolCnts.set(balance[1],symbolCnts.get(balance[1])+1)
+
+      if(symbolCnts.get(balance[1]) > 1){
+        appendStr = appendStr + " ";
+      }
 
       if(rri=="xrd_rr1qy5wfsfh"){
 
@@ -128,7 +141,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     defaultSource={GenericToken}
     source={{uri: balance[3]}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri)} </Text></Text>
+    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\n   Token RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
     <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
@@ -148,7 +161,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
           <View key={rri}>
 
  <SeparatorBorder/>
-  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1] + appendStr, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
   <View style={styles.addrRowStyle}>
 
@@ -157,7 +170,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
   defaultSource={GenericToken}
   source={{uri: balance[3]}}
     />
-        <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri)} </Text></Text>
+        <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\n   Token RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
   <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 

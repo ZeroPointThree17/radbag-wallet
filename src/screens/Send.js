@@ -10,8 +10,8 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { openCB, errorCB, useInterval, shortenAddress, formatNumForDisplay } from '../helpers/helpers';
-import { validateLocaleAndSetLanguage } from 'typescript';
+import { openCB, errorCB, useInterval, shortenAddress, last4, formatNumForDisplay } from '../helpers/helpers';
+import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
 
@@ -191,13 +191,14 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 }
 
 
-function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames){
+function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts){
 
-  var rri = rris.pop();
+  var rri = rris.shift();
   var symbolsArr = inputSymbols.slice();
   var symbolToRRI = new Map(inputSymToRRIs);
   var iconsMap = new Map(initialIconsMap);
   var namesMap = new Map(initialNamesMap);
+  var updatedSymbolCnts = new Map(symbolCnts);
 
   fetch('https://raddish-node.com:6208/token', {
     method: 'POST',
@@ -220,12 +221,25 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
   }).then((response) => response.json()).then((json) => {
 
     if(json.token != undefined){
-      if(rri != "xrd_rr1qy5wfsfh"){
-        symbolsArr.push(json.token.token_properties.symbol.toUpperCase());
-      }
-      symbolToRRI.set(json.token.token_properties.symbol.toUpperCase(), rri);
-      iconsMap.set(rri, json.token.token_properties.icon_url); 
-      namesMap.set(rri, json.token.token_properties.name)     
+ 
+        var symbol = json.token.token_properties.symbol.toUpperCase();
+        var appendStr = ""
+
+        if(updatedSymbolCnts.get(symbol) != undefined){     
+          // alert(updatedSymbolCnts.get(symbol))  
+          updatedSymbolCnts.set(symbol, updatedSymbolCnts.get(symbol)+1);
+          appendStr = appendStr + " ";
+        } else{
+          updatedSymbolCnts.set(symbol,1);
+        }
+
+        if(rri != "xrd_rr1qy5wfsfh"){
+          symbolsArr.push(json.token.token_properties.symbol.toUpperCase() + appendStr)
+        }
+
+        symbolToRRI.set(json.token.token_properties.symbol.toUpperCase() + appendStr, rri);
+        iconsMap.set(rri, json.token.token_properties.icon_url); 
+        namesMap.set(rri, json.token.token_properties.name)     
     }
 
     if(rris.length == 0){
@@ -256,7 +270,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
                 }
               
               else{
-                getTokenSymbols(rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames)
+                getTokenSymbols(rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts)
               }
             }
               ).catch((error) => {
@@ -304,7 +318,7 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
               
           } );
 
-          setBalances(balances);
+        setBalances(balances);
 
          var initialSymbolToRRIMap = new Map();
          initialSymbolToRRIMap.set("XRD","xrd_rr1qy5wfsfh")
@@ -315,7 +329,10 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
          var initialNamesMap = new Map();
          initialNamesMap.set("xrd_rr1qy5wfsfh", "Radix")
 
-         getTokenSymbols(rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames)
+         var initialTokenCnts = new Map();
+         initialNamesMap.set("XRD", 1)
+
+         getTokenSymbols(rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts)
         }
     }).catch((error) => {
         console.error(error);
@@ -386,12 +403,12 @@ useInterval(() => {
 <Image style={{width: 25, height: 25}}
     defaultSource={GenericToken}
     source={{uri: iconURIs.get(symbolToRRI.get(symbol))}}
-      />
-  <Text style={{fontSize:21, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol})</Text>
+      /> 
+  <Text style={{fontSize:21, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
   
 
      </View>
-     <Text style={{color: 'black', textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular"}}>rri: {shortenAddress(symbolToRRI.get(symbol))}</Text>
+     <Text style={{color: 'black', textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular"}}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>
      <Text
        style={{color: 'blue', marginVertical:4, textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular", textDecorationLine: "underline"}}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/tokens/'+symbolToRRI.get(symbol))}}
@@ -489,7 +506,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1, fontFamily:"Ap
 	}}
 /> }
 </View>
-<Text style={{fontSize: 12, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol}</Text>
+<Text style={{fontSize: 12, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
 
 

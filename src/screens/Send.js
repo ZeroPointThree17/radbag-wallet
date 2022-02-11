@@ -388,8 +388,15 @@ useInterval(() => {
     source={{uri: iconURIs.get(symbolToRRI.get(symbol))}}
       />
   <Text style={{fontSize:21, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol})</Text>
+  
+
      </View>
-      <Separator/>
+     <Text
+       style={{color: 'blue', textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular", textDecorationLine: "underline"}}
+       onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/tokens/'+symbolToRRI.get(symbol))}}
+     >Token Details</Text>
+     <Separator/>
+   
      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
  

@@ -163,7 +163,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
 </ScrollView>
 
 
-<View style={{flex: 0.75, justifyContent:"center" , alignSelf:"center"}}>
+<View style={{flex: 0.7, justifyContent:"center" , alignSelf:"center"}}>
 <Image style={{margin: 0, padding:0, width: 50, height: 80, alignSelf:'center'}}
     source={Raddish}/>
     <Text style={{ alignSelf:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>Raddish Wallet v.1.3.0</Text>

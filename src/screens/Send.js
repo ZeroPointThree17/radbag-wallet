@@ -193,7 +193,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 }
 
 
-function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts){
+function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts, appendStr){
 
   var rri = rris.shift();
   var symbolsArr = inputSymbols.slice();
@@ -225,7 +225,6 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
     if(json.token != undefined){
  
         var symbol = json.token.token_properties.symbol.toUpperCase();
-        var appendStr = ""
 
         if(updatedSymbolCnts.get(symbol) != undefined){     
           // alert(updatedSymbolCnts.get(symbol))  
@@ -272,7 +271,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
                 }
               
               else{
-                getTokenSymbols(rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts)
+                getTokenSymbols(rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
               }
             }
               ).catch((error) => {
@@ -334,7 +333,9 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
          var initialTokenCnts = new Map();
          initialNamesMap.set("XRD", 1)
 
-         getTokenSymbols(rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts)
+        var appendStr = "";
+
+         getTokenSymbols(rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts, appendStr)
         }
     }).catch((error) => {
         console.error(error);
@@ -402,7 +403,7 @@ useInterval(() => {
 
 <View style={[styles.rowStyle, {alignSelf: "center"}]}>
 
-{ isNaN(balances.get(symbolToRRI.get(symbol))) &&
+{ symbolToRRI.get(symbol) == undefined &&
 <Progress.Circle style={{alignSelf:"center", marginBottom:10}} size={30} indeterminate={true} />
 }
 
@@ -410,7 +411,7 @@ useInterval(() => {
     defaultSource={GenericToken}
     source={{uri: iconURIs.get(symbolToRRI.get(symbol))}}
       /> 
-  <Text style={{fontSize:23, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
+  <Text style={{fontSize:20, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
 
      </View>
      <Text style={{color: 'black', textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular"}}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>

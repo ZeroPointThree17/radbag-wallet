@@ -225,20 +225,29 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
     if(json.token != undefined){
  
         var symbol = json.token.token_properties.symbol.toUpperCase();
+        var localSymbol = json.token.token_properties.symbol.toUpperCase();
 
         if(updatedSymbolCnts.get(symbol) != undefined){     
           // alert(updatedSymbolCnts.get(symbol))  
           updatedSymbolCnts.set(symbol, updatedSymbolCnts.get(symbol)+1);
-          appendStr = appendStr + " ";
+          
+            // alert(updatedSymbolCnts.get(symbol))  
+
+          for(var cnt = 0; cnt < parseInt(updatedSymbolCnts.get(symbol)); cnt++){
+            // alert(cnt)
+            localSymbol = localSymbol + " ";
+          }
+
+          //  alert(symbol)
         } else{
           updatedSymbolCnts.set(symbol,1);
         }
 
         if(rri != "xrd_rr1qy5wfsfh"){
-          symbolsArr.push(json.token.token_properties.symbol.toUpperCase() + appendStr)
+          symbolsArr.push(localSymbol)
         }
 
-        symbolToRRI.set(json.token.token_properties.symbol.toUpperCase() + appendStr, rri);
+        symbolToRRI.set(localSymbol, rri);
         iconsMap.set(rri, json.token.token_properties.icon_url); 
         namesMap.set(rri, json.token.token_properties.name)     
     }

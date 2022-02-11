@@ -107,6 +107,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
         var symbolCnts = new Map();
         var blackListed = "rpg_rr1q0zrguwzdze0kpqfcr7lk8lfwlx6hxx7kjf46tcava4q99dj6h";
         var possScamToken = false;
+        var appendStr = ""
 
         balances.forEach((balance, rri) =>  {
           symbolCnts.set(balance[1],0)
@@ -118,12 +119,23 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
 
     try{
 
-      var appendStr = ""
+      var symbol = balance[1];
+
       symbolCnts.set(balance[1],symbolCnts.get(balance[1])+1)
 
+      // alert(symbolCnts.get(balance[1]))
       if(symbolCnts.get(balance[1]) > 1){
-        appendStr = appendStr + " ";
+        appendStr = symbolCnts.get(balance[1]);
+
+        for(let cnt = 0; cnt < parseInt(symbolCnts.get(balance[1])); cnt++){
+          //  alert(cnt)
+          symbol += " "
+        }
+
       }
+
+      // alert(symbol)
+      // alert(balance[1] + "|"+symbolCnts.get(balance[1]));
 
       if(rri=="xrd_rr1qy5wfsfh"){
 
@@ -161,7 +173,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
           <View key={rri}>
 
  <SeparatorBorder/>
-  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1] + appendStr, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: symbol, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
 
   <View style={styles.addrRowStyle}>
 
@@ -170,9 +182,9 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
   defaultSource={GenericToken}
   source={{uri: balance[3]}}
     />
-        <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular", paddingLeft: 10}}>{balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
+        <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular", paddingLeft: 10}}>{balance[2]} ({symbol.trim()}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
-  <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
+  <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
 
   </View> 
   </TouchableOpacity>

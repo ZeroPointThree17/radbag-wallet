@@ -680,7 +680,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
 
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={22} color="black" />
-        <Text style={{fontSize: 20, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Stake</Text>
+        <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Stake</Text>
         </View>
         </TouchableOpacity>
 
@@ -742,7 +742,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
   }}>
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-up-circle-outline" size={22} color="black" />
-        <Text style={{fontSize: 20, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Unstake</Text>
+        <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Unstake</Text>
         </View>
         </TouchableOpacity>
 

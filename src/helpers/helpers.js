@@ -32,7 +32,16 @@ export function openCB() {
 }
 
 export function shortenAddress(address){
-  return address.substring(0, 7) +"..."+ address.substring(address.length-5, address.length) 
+
+  var shortenedAddr;
+  
+  if(address != undefined){
+    shortenedAddr = address.substring(0, 7) +"..."+ address.substring(address.length-5, address.length);
+  } else{
+    shortenedAddr = ""
+  }
+
+  return shortenedAddr;
 }
 
 

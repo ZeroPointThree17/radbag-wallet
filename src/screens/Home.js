@@ -393,7 +393,7 @@ export class NetworkUtils {
           console.error(error);
       });
     } else{
-        alert("No internet connection available. Please connect to the internet.");
+        // alert("No internet connection available. Please connect to the internet.");
     }
 }
 

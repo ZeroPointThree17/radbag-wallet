@@ -76,18 +76,18 @@ LogBox.ignoreAllLogs();
           fontFamily:"AppleSDGothicNeo-Regular"
         },
       }}>{ firstTimer == true
-  ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} />
+  ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome}  options={{ headerTitleAlign: 'center' }}/>
   :     <Stack.Screen name="Raddish Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
 
 }
      
-      <Stack.Screen name="Mnemonic" component={CreateWallet} />
-      <Stack.Screen name="Mnemonic Input" component={MnemonicInput} />
-      <Stack.Screen name="App Password" component={AppDataSave} />
+      <Stack.Screen name="Mnemonic" component={CreateWallet} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Mnemonic Input" component={MnemonicInput} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="App Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
-      <Stack.Screen name="Send" component={Send} />
-      <Stack.Screen name="Receive" component={Receive} />
-      <Stack.Screen name="Staking" component={Staking} />
+      <Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
     </Stack.Navigator>
     <FlashMessage position="center" style={{height:60}}/>
     </NavigationContainer>

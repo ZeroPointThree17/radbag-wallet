@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View } from 'react-native';
 import React from 'react';
 import Home from './Home';
 import TokenCreator from './TokenCreator';
@@ -21,6 +22,7 @@ export default function HomeNav({route, navigation}) {
  
     screenOptions={{
       headerShown: false,
+      alignSelf: 'center',
       headerTitleAlign: 'center',
       tabBarActiveTintColor: "white",
       headerStyle: {
@@ -36,6 +38,10 @@ export default function HomeNav({route, navigation}) {
       headerTitleStyle: {
         fontWeight: 'bold',
         fontFamily:"AppleSDGothicNeo-Regular"
+      },
+      headerTextStyle:{
+        textAlign:'center',
+        flexGlow: 1
       },
       tabBarStyle: {
         // height: 'auto',

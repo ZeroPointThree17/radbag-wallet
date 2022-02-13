@@ -5,7 +5,7 @@ import TouchableScale from 'react-native-touchable-scale'; // https://github.com
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
 import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 var Raddish = require("../assets/radish_nobackground.png");
-import { SeparatorBorder } from '../helpers/jsxlib';
+import { Separator, SeparatorBorder } from '../helpers/jsxlib';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 
 
@@ -167,7 +167,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
     source={Raddish}/>
     <Text style={{ alignSelf:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>Raddish Wallet v.1.3.1</Text>
 </View>
- 
+ <Separator/>
  </View>  
  )
 };

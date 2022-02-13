@@ -63,10 +63,16 @@ LogBox.ignoreAllLogs();
     <Stack.Navigator       screenOptions={{
         headerStyle: {
           backgroundColor: '#183A81',
+          alignSelf: 'center',
+          textAlign: 'center',
+          alignContent: 'center',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
           fontWeight: 'bold',
+          alignSelf: 'center',
+          textAlign: 'center',
+          alignContent: 'center',
           fontFamily:"AppleSDGothicNeo-Regular"
         },
       }}>{ firstTimer == true

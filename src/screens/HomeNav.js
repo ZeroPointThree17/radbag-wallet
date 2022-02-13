@@ -21,11 +21,13 @@ export default function HomeNav({route, navigation}) {
  
     screenOptions={{
       headerShown: false,
+      headerTitleAlign: 'center',
       tabBarActiveTintColor: "white",
       headerStyle: {
         backgroundColor: '#183A81',
         borderWidth:0,
         shadowRadius: 0,
+        textAlign:'center',
         shadowOffset: {
             height: 0,
         },

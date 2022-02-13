@@ -15,7 +15,7 @@ import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescr
 var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
 import * as Progress from 'react-native-progress';
-
+import prompt from 'react-native-prompt-android';
 
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
@@ -121,7 +121,15 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   setShow(false);
 
   var passwordStr = ""
-  Alert.prompt(
+  var promptFunc = null
+  
+  if(Platform.OS === 'ios'){
+    promptFunc = Alert.prompt;
+  } else{
+    promptFunc = prompt
+  }
+
+  promptFunc(
     "Enter wallet password",
     "Enter the wallet password to perform this transaction",
     [

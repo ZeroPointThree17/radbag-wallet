@@ -10,6 +10,7 @@ var GenericToken = require("../assets/generic_token.png");
 import { Separator } from '../helpers/jsxlib';
 import { useInterval, openCB, errorCB, formatNumForDisplay } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
+import prompt from 'react-native-prompt-android';
 
 
 var radio_props = [
@@ -161,7 +162,15 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   setShow(false);
 
   var passwordStr = ""
-  Alert.prompt(
+  var promptFunc = null
+  
+  if(Platform.OS === 'ios'){
+    promptFunc = Alert.prompt;
+  } else{
+    promptFunc = prompt
+  }
+
+  promptFunc(
     "Enter wallet password",
     "Enter the wallet password to perform this transaction",
     [

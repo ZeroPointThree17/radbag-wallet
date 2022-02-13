@@ -11,6 +11,7 @@ var Raddish = require("../assets/radish_nobackground.png");
 import { Separator, SeparatorBorderMargin } from '../helpers/jsxlib';
 import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
+import prompt from 'react-native-prompt-android';
 
 
 function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
@@ -148,7 +149,15 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   setShow(false);
 
   var passwordStr = ""
-  Alert.prompt(
+  var promptFunc = null
+  
+  if(Platform.OS === 'ios'){
+    promptFunc = Alert.prompt;
+  } else{
+    promptFunc = prompt
+  }
+
+  promptFunc(
     "Enter wallet password",
     "Enter the wallet password to perform this transaction",
     [

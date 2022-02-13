@@ -15,12 +15,13 @@ const SettingsNav = ({route, navigation}) => {
  return (
   <Stack.Navigator>
     <Stack.Screen name="Settings" component={Settings} options={{ tabBarLabel: 'Settings', headerShown: false }}/>
-    <Stack.Screen name="Mnemonic Display" component={MnemonicDisplay}/>
-    <Stack.Screen name="Address Options" component={AddressOptions}/>
-    <Stack.Screen name="Wallet Options" component={WalletOptions}/>
-    <Stack.Screen name="Advanced Options" component={AdvancedOptions}/>
+    <Stack.Screen name="Mnemonic Display" component={MnemonicDisplay} options={{ headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="Address Options" component={AddressOptions} options={{ headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="Wallet Options" component={WalletOptions} options={{ headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="Advanced Options" component={AdvancedOptions} options={{ headerTitleAlign: 'center' }}/>
    <Stack.Screen name="Token Creator" component={TokenCreator} options={{
       tabBarLabel: 'Token Creator',
+      headerTitleAlign: 'center',
       tabBarIcon: ({ color, size }) => (
         <IconFA5 name="coins" color={color} size={size} />
       ),

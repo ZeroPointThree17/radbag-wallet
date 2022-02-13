@@ -642,11 +642,11 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeValRef}
-        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+        style={{padding:8, borderWidth:1, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
-        numberOfLines={4}
+        numberOfLines={2}
         placeholder='Validator Address'
         placeholderTextColor="#d3d3d3"
         value={valAddr}
@@ -660,7 +660,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeAmtRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:0.5, borderRadius: 15}}
+        style={{padding:4, borderWidth:1, backgroundColor:"white", flex:0.5, borderRadius: 15}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'
@@ -702,11 +702,11 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <Separator/>
        <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Validator to unstake from:</Text>
         <TextInput ref={unstakeValRef}
-        style={{padding:8, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+        style={{padding:8, borderWidth:1, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
-        numberOfLines={4}
+        numberOfLines={2}
         placeholder='Validator Address'
         placeholderTextColor="#d3d3d3"
         value={valAddr}
@@ -721,7 +721,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={unstakeAmtRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, backgroundColor:"white", flex:0.5, borderRadius: 15}}
+        style={{padding:4, borderWidth:1, backgroundColor:"white", flex:0.5, borderRadius: 15}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'

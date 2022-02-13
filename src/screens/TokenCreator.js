@@ -295,7 +295,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknNameRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={{padding:4, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Name'
@@ -311,7 +311,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknDescRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth,  height: 125, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={{padding:4, borderWidth:1,  height: 125, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -329,7 +329,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknSymbolRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:50, backgroundColor:"white", flex:0.33, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={{padding:4, borderWidth:1, height:30, width:50, backgroundColor:"white", flex:0.33, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Symbol'
@@ -345,7 +345,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknIconURLRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={{padding:4, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Icon URL'
@@ -360,7 +360,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknURLRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={{padding:4, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Project URL'
@@ -396,7 +396,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Supply (must be a number)</Text>
      <View style={styles.rowStyle}>
         <TextInput ref={tknSupplyRef}
-        style={{padding:4, borderWidth:StyleSheet.hairlineWidth, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={{padding:4, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Supply'

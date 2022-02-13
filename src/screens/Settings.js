@@ -153,11 +153,10 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
-</ListItem></React.Fragment>
- }
-
+</ListItem>
 <SeparatorBorder/>
-
+</React.Fragment>
+ }
 
 
 </ScrollView>

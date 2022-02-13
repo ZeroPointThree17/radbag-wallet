@@ -1,4 +1,4 @@
-import { RefreshControl, Image, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { RefreshControl, Image, ImageBackground, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
 var GenericToken = require("../assets/generic_token.png");
  var SQLite = require('react-native-sqlite-storage');
@@ -129,7 +129,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
 
         for(let cnt = 0; cnt < parseInt(symbolCnts.get(balance[1])); cnt++){
           //  alert(cnt)
-          symbol += " "
+          symbol = " " + symbol + " ";
         }
 
       }
@@ -177,11 +177,19 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
 
   <View style={styles.addrRowStyle}>
 
-
+  <ImageBackground
+    style={{
+      width: 36,
+      height: 36
+    }}
+    source={
+      require("../assets/generic_token.png") //Indicator
+    }>
   <Image style={{width: 36, height: 36}}
   defaultSource={GenericToken}
   source={{uri: balance[3]}}
     />
+    </ImageBackground>
         <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular", paddingLeft: 10}}>{balance[2]} ({symbol.trim()}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
   <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>

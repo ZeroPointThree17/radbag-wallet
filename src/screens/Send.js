@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { Keyboard, Image, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
+import { Keyboard, Image,ImageBackground, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
@@ -235,7 +235,7 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
 
           for(var cnt = 0; cnt < parseInt(updatedSymbolCnts.get(symbol)); cnt++){
             // alert(cnt)
-            localSymbol = localSymbol + " ";
+            localSymbol = " " + localSymbol + " ";
           }
 
           //  alert(symbol)
@@ -404,7 +404,7 @@ useInterval(() => {
   const addrFromRef = useRef();
   const addrToRef = useRef();
   const amountRef = useRef();
-
+  const [error, setError]=useState(false);
 
  return ( 
    <View style={styles.container}>
@@ -415,11 +415,22 @@ useInterval(() => {
 { symbolToRRI.get(symbol) == undefined &&
 <Progress.Circle style={{alignSelf:"center", marginBottom:10}} size={30} indeterminate={true} />
 }
-
+<ImageBackground
+    style={{
+      width: 25,
+      height: 25
+    }}
+    source={
+      require("../assets/generic_token.png") //Indicator
+    }>
 <Image style={{width: 25, height: 25}}
     defaultSource={GenericToken}
-    source={{uri: iconURIs.get(symbolToRRI.get(symbol))}}
+    source={
+      {uri: iconURIs.get(symbolToRRI.get(symbol))}
+    }
+    
       /> 
+      </ImageBackground>
   <Text style={{fontSize:20, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
 
      </View>
@@ -435,10 +446,10 @@ useInterval(() => {
      <View style={styles.rowStyle}>
  
         <TextInput ref={addrFromRef}
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, height:50, width:300, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15, fontFamily:"AppleSDGothicNeo-Regular"}}
+        style={{padding:10, borderWidth:1, height:50, width:300, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="true"
         multiline={true}
-        numberOfLines={4}
+        numberOfLines={2}
         autoCapitalize='none'
         placeholder='Radix Address sending from'
         value={sourceXrdAddr}
@@ -465,14 +476,14 @@ useInterval(() => {
       <View style={styles.rowStyle}>
 
 <TextInput ref={addrToRef}
-style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
         placeholder='Destination Radix Address'
         placeholderTextColor="#d3d3d3"
         value={destAddr}
         onChangeText={value => onChangeDestAddr(value)}
         autoCapitalize='none'
         multiline={true}
-        numberOfLines={4}
+        numberOfLines={2}
       />
        <Separator/>
 
@@ -483,7 +494,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1, fontFamily:"Ap
 <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Amount to send:</Text>
 <View style={styles.rowStyle}>
 <TextInput ref={amountRef}
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+        style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
         placeholder='Amount'
         autoCapitalize='none'
         placeholderTextColor="#d3d3d3"
@@ -503,7 +514,7 @@ style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex:1, fontFamily:"Ap
 
 { symbols.length > 0 &&
 <SelectDropdown
- buttonStyle={{backgroundColor:"#183A81", flex:0.5, borderWidth:StyleSheet.hairlineWidth, marginRight:10, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+ buttonStyle={{backgroundColor:"#183A81", flex:0.5, borderWidth:1, marginRight:10, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
  buttonTextStyle={{color:"white"}}
 	data={symbols}
   defaultValue={defaultSymbol}

@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
       marginVertical: 0,
       borderTopColor: '#737373',
       borderBottomColor: '#737373',
-      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomWidth: 1,
     },
     separatorBorderMargin: {
       marginVertical: 5,

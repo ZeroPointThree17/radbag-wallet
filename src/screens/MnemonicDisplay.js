@@ -99,7 +99,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
         <PasswordInputText  style={{marginHorizontal: 25, fontFamily:"AppleSDGothicNeo-Regular" }} 
         onChangeText={(password) => setPassword( password )}
         label='Wallet Password' />
-
+        <Separator/>
         <Button  style={{marginHorizontal: 25, fontFamily:"AppleSDGothicNeo-Regular"}}
                 title="Show Mnemonic"
                 enabled
@@ -116,7 +116,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
         
         }
 
-<Separator/>
+      <Separator/>
 
         { show && 
        

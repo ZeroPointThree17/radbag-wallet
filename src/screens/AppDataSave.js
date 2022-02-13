@@ -1,6 +1,6 @@
-import { Button, ActivityIndicator, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Button, BackHandler, ActivityIndicator, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 let { bech32 } = require('bech32')
 import PasswordInputText from 'react-native-hide-show-password-input';
 var SQLite = require('react-native-sqlite-storage');
@@ -45,7 +45,7 @@ function navigateHome(setIsActive,navigation, password, confirmPassword, mnemoni
     alert("Password is required");
   } 
   else if(password === confirmPassword){
-
+    
     setIsActive(true)
 
     var mnemonic_enc = encrypt(mnemonic, Buffer.from(password));
@@ -329,7 +329,19 @@ function wait(ms){
  }
 }
 
+function handleBackButtonClick(navigation) {
+  navigation.goBack(null);
+  return true;
+}
+
 const AppDataSave = ({route, navigation}) => {
+
+  // useEffect(() => {
+  //   BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick(navigation));
+  //   return () => {
+  //     BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick(navigation));
+  //   };
+  // }, []);
 
   const { mnemonicStr, word13Str, firstTimeStr} = route.params;
   var mnemonic = JSON.stringify(mnemonicStr).replaceAll('"','');
@@ -397,7 +409,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     marginHorizontal: 75,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 1,
     padding: 10,
   },
   text: {
@@ -430,7 +442,7 @@ const styles = StyleSheet.create({
    },
   title: {
     textAlign: 'center',
-    marginVertical: 8,
+    marginVertical: 4,
     marginHorizontal: 50,
     fontFamily: 'AppleSDGothicNeo-Regular'
   },

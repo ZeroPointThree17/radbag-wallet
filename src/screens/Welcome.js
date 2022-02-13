@@ -23,11 +23,13 @@ const Welcome = ({ navigation }) => {
      <View style={styles.text}> 
    
  <Text style={styles.title}>Welcome to the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
+ <Separator/>
  <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
         title="Yes - Import a Wallet"
         enabled
         onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: "true"})}
       />
+      <Separator/>
  <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
         title="No - Create New Wallet"
         color = 'red'

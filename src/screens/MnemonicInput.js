@@ -24,7 +24,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
 
     if(bip39.validateMnemonic(words12)){
     const pushAction = StackActions.push('App Password', {
-        mnemonicStr: mnemonic,
+        mnemonicStr: words12,
         word13Str: word13,
         firstTimeStr: firstTime
       });

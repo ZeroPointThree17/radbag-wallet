@@ -43,6 +43,10 @@ function navigateHome(setIsActive,navigation, password, confirmPassword, mnemoni
 
   console.log("NAV HOME BEGIN");
 
+  navigation.addListener('beforeRemove', (e) => {
+    e.preventDefault();
+  });
+
   if(password.length == 0 || confirmPassword.length == 0 ){
     alert("Password is required");
   } 
@@ -363,11 +367,6 @@ const [appPw, setAppPw] = useState("");
 const [appPwConfirm, setAppPwConfirm] = useState("");
 const [isActive, setIsActive] = useState(false);
   
-React.useEffect(() => {
-  navigation.addListener('beforeRemove', (e) => {
-      e.preventDefault();
-  });
-}, [isActive]);
 
   return (
     <SafeAreaView style={styles.container}>

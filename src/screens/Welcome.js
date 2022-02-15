@@ -29,7 +29,7 @@ const Welcome = ({ navigation }) => {
         enabled
         onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: "true"})}
       />
-      <Separator/>
+      {Platform.OS != 'ios' && <Separator/>}
  <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
         title="No - Create New Wallet"
         color = 'red'

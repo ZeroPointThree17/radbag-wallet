@@ -188,7 +188,7 @@ return (
       />
   
               </View>
-              <Separator/>
+              {Platform.OS != 'ios' && <Separator/>}
               <Button  style={{marginHorizontal: 25}}
                 title="Change Wallet Name"
                 enabled

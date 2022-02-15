@@ -9,13 +9,18 @@ import { Separator } from '../helpers/jsxlib';
 
 function navigateAppPassword(navigation, mnemonic, word13, firstTime){
 
+  var trimmedWord13 = word13.trim();
+  if(word13.length > 0 && trimmedWord13 == ""){
+    alert("13th word cannot consist of only blanks");
+  } else {
   const pushAction = StackActions.push('App Password', {
     mnemonicStr: mnemonic,
-    word13Str: word13.trim(),
+    word13Str: trimmedWord13,
     firstTimeStr: firstTime
   });
 
 navigation.dispatch(pushAction);
+  }
 
 }
 

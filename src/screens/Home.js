@@ -129,9 +129,14 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
 
         for(let cnt = 0; cnt < parseInt(symbolCnts.get(balance[1])); cnt++){
           //  alert(cnt)
-          symbol = " " + symbol + " ";
-        }
 
+          if(Platform.OS === 'ios'){
+            symbol = symbol + " ";
+          } else{
+            symbol = " " + symbol + " ";
+          }
+          
+        }
       }
 
       // alert(symbol)

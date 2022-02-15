@@ -651,7 +651,7 @@ style={styles.button} onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeValRef}
-        style={{padding:8, borderWidth:1, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+        style={{padding:8, borderWidth:1, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15, textAlignVertical: 'top'}}
         disabled="false"
         autoCapitalize='none'
         multiline={true}

@@ -41,6 +41,8 @@ function convertbits (data, frombits, tobits, pad) {
 
 function navigateHome(setIsActive,navigation, password, confirmPassword, mnemonic, word13, firstFlag){
 
+  console.log("NAV HOME BEGIN");
+
   if(password.length == 0 || confirmPassword.length == 0 ){
     alert("Password is required");
   } 
@@ -48,13 +50,16 @@ function navigateHome(setIsActive,navigation, password, confirmPassword, mnemoni
     
     setIsActive(true)
 
+    console.log("PRE ENCRYPT");
+  
     var mnemonic_enc = encrypt(mnemonic, Buffer.from(password));
     var word13_enc = encrypt(word13, Buffer.from(password));
 
+console.log("PRE DB-OPEN");
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
-console.log("ABOUT TO LOAD TABLES")
+console.log("ABOUT TO LOAD TABLES");
 
 var doNothingStmt = "SELECT 'DO_NOTHING' as do_nothing_stmt";
 
@@ -358,6 +363,12 @@ const [appPw, setAppPw] = useState("");
 const [appPwConfirm, setAppPwConfirm] = useState("");
 const [isActive, setIsActive] = useState(false);
   
+React.useEffect(() => {
+  navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+  });
+}, [isActive]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Separator/>

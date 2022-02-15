@@ -8,13 +8,13 @@ import { Separator } from '../helpers/jsxlib';
 function navigateAppPassword(navigation, mnemonic, firstTime){
 
     if(mnemonic.length > 0){
-    mnemonic = mnemonic.replace(/\s\s+/g, ' ').replace(/(\r\n|\n|\r)/gm, "");;
+    mnemonic = mnemonic.replace(/\s\s+/g, ' ').replace(/(\r\n|\n|\r)/gm, "");
+    mnemonic = mnemonic.trim();
 
     mnemonicArr = mnemonic.split(" ");
 
     const words12sub = mnemonicArr.slice(0, 12);
     const word13sub = mnemonicArr.slice(12);
-
  
     var words12 = words12sub.join(' '); 
     var word13 = word13sub[0];
@@ -50,7 +50,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
  return ( 
      <View style={styles.container}> 
      <Separator/>
-<Text style={styles.title, {margin: 20, fontFamily: 'AppleSDGothicNeo-Regular'}}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
+<Text style={[styles.title, {margin: 20}]}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
 
 <TextInput
     editable = {true}
@@ -58,7 +58,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
-      style={{height: 150, padding: 10, margin:20, marginTop:10, borderWidth:StyleSheet.hairlineWidth, borderRadius: 15, fontFamily: 'AppleSDGothicNeo-Regular'}}
+      style={{height: 150, padding: 12, paddingTop: 12, margin:20, marginTop:10, borderWidth:1, borderRadius: 15, fontFamily: 'AppleSDGothicNeo-Regular', textAlignVertical: 'top'}}
     />
 
  <Button style={styles.title}

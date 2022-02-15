@@ -188,6 +188,7 @@ return (
       />
   
               </View>
+              <Separator/>
               <Button  style={{marginHorizontal: 25}}
                 title="Change Wallet Name"
                 enabled

@@ -18,7 +18,7 @@ import Send from './src/screens/Send';
 import Receive from './src/screens/Receive';
 import Staking from './src/screens/Staking';
 import {openCB, errorCB} from './src/helpers/helpers';
-
+import 'react-native-gesture-handler'
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -63,20 +63,14 @@ LogBox.ignoreAllLogs();
     <Stack.Navigator       screenOptions={{
         headerStyle: {
           backgroundColor: '#183A81',
-          alignSelf: 'center',
-          textAlign: 'center',
-          alignContent: 'center',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
           fontWeight: 'bold',
-          alignSelf: 'center',
-          textAlign: 'center',
-          alignContent: 'center',
           fontFamily:"AppleSDGothicNeo-Regular"
         },
       }}>{ firstTimer == true
-  ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome}  options={{ headerTitleAlign: 'center' }}/>
+  ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>
   :     <Stack.Screen name="Raddish Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
 
 }

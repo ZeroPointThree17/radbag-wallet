@@ -122,7 +122,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
   var passwordStr = ""
   var promptFunc = null
-  
+
   if(Platform.OS === 'ios'){
     promptFunc = Alert.prompt;
   } else{
@@ -243,7 +243,13 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
 
           for(var cnt = 0; cnt < parseInt(updatedSymbolCnts.get(symbol)); cnt++){
             // alert(cnt)
-            localSymbol = " " + localSymbol + " ";
+
+            if(Platform.OS === 'ios'){
+              localSymbol = localSymbol + " ";
+            } else{
+              localSymbol = " " + localSymbol + " ";
+            }
+
           }
 
           //  alert(symbol)
@@ -420,7 +426,7 @@ useInterval(() => {
 
 <View style={[styles.rowStyle, {alignSelf: "center"}]}>
 
-{ symbolToRRI.get(symbol) == undefined &&
+{ balances.size == 0 &&
 <Progress.Circle style={{alignSelf:"center", marginBottom:10}} size={30} indeterminate={true} />
 }
 <ImageBackground
@@ -454,7 +460,7 @@ useInterval(() => {
      <View style={styles.rowStyle}>
  
         <TextInput ref={addrFromRef}
-        style={{padding:10, borderWidth:1, height:50, width:300, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15, fontFamily:"AppleSDGothicNeo-Regular"}}
+        style={{padding:10, borderWidth:1, height:55, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15, fontFamily:"AppleSDGothicNeo-Regular"}}
         disabled="true"
         multiline={true}
         numberOfLines={2}
@@ -484,7 +490,7 @@ useInterval(() => {
       <View style={styles.rowStyle}>
 
 <TextInput ref={addrToRef}
-style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15, textAlignVertical: 'top'}}
         placeholder='Destination Radix Address'
         placeholderTextColor="#d3d3d3"
         value={destAddr}

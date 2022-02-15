@@ -20,6 +20,7 @@ import Staking from './src/screens/Staking';
 import {openCB, errorCB} from './src/helpers/helpers';
 import 'react-native-gesture-handler'
 
+
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
 const Stack = createStackNavigator();

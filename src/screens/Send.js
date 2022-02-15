@@ -201,7 +201,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 }
 
 
-function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts, appendStr){
+function getTokenSymbols(setGettingBalances, rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts, appendStr){
 
   var rri = rris.shift();
   var symbolsArr = inputSymbols.slice();
@@ -288,13 +288,13 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
 
                       setPrivKey_enc(tempPrivkey_enc);
                       setPublic_key(tempPubkey);
-
+                      setGettingBalances(false);
                     });
                   }, errorCB);
                 }
               
               else{
-                getTokenSymbols(rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
+                getTokenSymbols(setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
               }
             }
               ).catch((error) => {
@@ -304,8 +304,9 @@ function getTokenSymbols(rris, inputSymbols, inputSymToRRIs, setSymbols, setSymb
 }
 
 
-function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames){
+function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames){
    
+  setGettingBalances(firstTime);
 
   fetch('https://raddish-node.com:6208/account/balances', {
       method: 'POST',
@@ -358,7 +359,7 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
 
         var appendStr = "";
 
-         getTokenSymbols(rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts, appendStr)
+         getTokenSymbols(setGettingBalances, rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts, appendStr)
         }
     }).catch((error) => {
         console.error(error);
@@ -386,6 +387,7 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
   const [symbolToRRI, setSymbolToRRI] = useState(new Map());
   const [iconURIs, setIconURIs] = useState(new Map());
   const [tokenNames, setTokenNames] = useState(new Map());
+  const [gettingBalances, setGettingBalances] = useState();
   
 
   useEffect( () => {
@@ -396,15 +398,15 @@ function getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setP
     // var rriTemp="";
 
   
-    getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+    getBalances(true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
    
     // onChangeSymbol(currentSymbolTemp);
   
 },[]);
 
 useInterval(() => {
-  getBalances(sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-}, 2000);
+  getBalances(false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+}, 3500);
 
 
 // alert(defaultSymbol)
@@ -426,8 +428,8 @@ useInterval(() => {
 
 <View style={[styles.rowStyle, {alignSelf: "center"}]}>
 
-{ balances.size == 0 &&
-<Progress.Circle style={{alignSelf:"center", marginBottom:10}} size={30} indeterminate={true} />
+{ gettingBalances &&
+<Progress.Circle style={{alignSelf:"center", marginBottom:10, marginRight: 12}} size={25} indeterminate={true} />
 }
 <ImageBackground
     style={{

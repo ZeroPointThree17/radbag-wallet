@@ -19,7 +19,9 @@ export default function HomeNav({route, navigation}) {
   return (
   
     <Tab.Navigator  
- 
+    tabBarOptions={{
+      keyboardHidesTabBar: true
+   }} 
     screenOptions={{
       headerShown: false,
       alignSelf: 'center',

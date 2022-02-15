@@ -111,11 +111,11 @@ def enableProguardInReleaseBuilds = false
  * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
-
+// def useIntlJsc = false
 /**
  * Whether to enable the Hermes VM.
  *
- * This should be set on project.ext.react and mirrored here.  If it is not set
+ * This should be set on project.ext.react and that value will be read here. If it is not set
  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
@@ -130,27 +130,30 @@ def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitect
 
 android {
 
-def taskName = getGradle().getStartParameter().getTaskRequests().toString()
-
-packagingOptions {
-        pickFirst '/armeabi-v7a/libc++_shared.so'
-    pickFirst '/x86/libc++_shared.so'
-    pickFirst '/arm64-v8a/libc++_shared.so'
-    pickFirst '/x86_64/libc++_shared.so'
-    pickFirst '/x86/libjsc.so'
-    pickFirst '/armeabi-v7a/libjsc.so'
-        // For Hermes, delete all the libjsc* files
-        exclude "**/libjsc*.so"
-        if (taskName.contains("InternalDebug")) {
-            // Release libs take precedence and must be removed
-            // to allow debugging
-            exclude '**/libhermes-executor-release.so'
-        } else {
-            // Reduce size by deleting the debugger/inspector
-            exclude '**/libhermes-inspector.so'
-            exclude '**/libhermes-executor-debug.so'
-        }
-}
+// def taskName = getGradle().getStartParameter().getTaskRequests().toString()
+    packagingOptions {
+        pickFirst '**/libjsc.so'
+        pickFirst '**/libc++_shared.so'
+    }
+// packagingOptions {
+//         pickFirst '/armeabi-v7a/libc++_shared.so'
+//     pickFirst '/x86/libc++_shared.so'
+//     pickFirst '/arm64-v8a/libc++_shared.so'
+//     pickFirst '/x86_64/libc++_shared.so'
+//     pickFirst '/x86/libjsc.so'
+//     pickFirst '/armeabi-v7a/libjsc.so'
+//         // For Hermes, delete all the libjsc* files
+//         exclude "**/libjsc*.so"
+//         if (taskName.contains("InternalDebug")) {
+//             // Release libs take precedence and must be removed
+//             // to allow debugging
+//             exclude '**/libhermes-executor-release.so'
+//         } else {
+//             // Reduce size by deleting the debugger/inspector
+//             exclude '**/libhermes-inspector.so'
+//             exclude '**/libhermes-executor-debug.so'
+//         }
+// }
 
   dexOptions {
     javaMaxHeapSize "4g"
@@ -229,16 +232,20 @@ packagingOptions {
     }
 }
 
-configurations.all {
-     resolutionStrategy {
-       force "com.facebook.soloader:soloader:0.8.2"
-     }
-}
 
 dependencies {
+    implementation "com.facebook.soloader:soloader:0.8.2"
     // implementation 'com.facebook.soloader:soloader:0.9.0+'
-
+    // if (useIntlJsc) {
+    //     implementation 'org.webkit:android-jsc-intl:+'
+    // } else {
+    //     implementation 'org.webkit:android-jsc:+'
+    // }
+    
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation "org.webkit:android-jsc:+"
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
@@ -257,13 +264,28 @@ dependencies {
         exclude group:'com.facebook.flipper'
     }
 
-    if (enableHermes) {
+    // if (enableHermes) {
+    //     def hermesPath = "../../node_modules/hermes-engine/android/";
+    //     debugImplementation files(hermesPath + "hermes-debug.aar")
+    //     releaseImplementation files(hermesPath + "hermes-release.aar")
+    // } else {
+    //     implementation jscFlavor
+    // }
+
+        if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")
         releaseImplementation files(hermesPath + "hermes-release.aar")
+
     } else {
         implementation jscFlavor
     }
+
+     configurations.all {
+    resolutionStrategy {
+        force "com.facebook.soloader:soloader:0.8.2"
+    }
+}
 
 }
 

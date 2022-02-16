@@ -10,11 +10,12 @@ import { Separator } from '../helpers/jsxlib';
 function navigateAppPassword(navigation, mnemonic, word13, firstTime){
 
   var trimmedWord13 = word13.trim();
+  var trimmedMnemonic = mnemonic.trim();
   if(word13.length > 0 && trimmedWord13 == ""){
     alert("13th word cannot consist only of spaces");
   } else {
   const pushAction = StackActions.push('App Password', {
-    mnemonicStr: mnemonic,
+    mnemonicStr: trimmedMnemonic,
     word13Str: trimmedWord13,
     firstTimeStr: firstTime
   });

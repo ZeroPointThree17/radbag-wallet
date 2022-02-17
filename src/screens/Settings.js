@@ -7,6 +7,7 @@ import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 var Raddish = require("../assets/radish_nobackground.png");
 import { Separator, SeparatorBorder } from '../helpers/jsxlib';
 import IconAnt from 'react-native-vector-icons/AntDesign';
+import { getAppFont } from '../helpers/helpers';
 
 
 function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
@@ -58,12 +59,12 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
   <ListItem.Content >
   
     <ListItem.Title >
- <Text style={{fontSize:14,  color: 'black', fontWeight: 'bold', flex:1, fontFamily:"AppleSDGothicNeo-Regular"  }}>Show Mnemonic</Text>
+ <Text style={[{fontSize:14,  color: 'black', fontWeight: 'bold', flex:1  }, getAppFont("black")]}>Show Mnemonic</Text>
 
     </ListItem.Title>
 
     <ListItem.Subtitle  >
-      <Text style={{fontSize:14,  color: 'black', flexWrap: 'wrap', flex:1, fontFamily:"AppleSDGothicNeo-Regular" }}>Show the mnemonic phrase that you set up when you created this wallet</Text>
+      <Text style={[{fontSize:14,  color: 'black', flexWrap: 'wrap', flex:1 }, getAppFont("black")]}>Show the mnemonic phrase that you set up when you created this wallet</Text>
     </ListItem.Subtitle>
 
   </ListItem.Content>
@@ -91,10 +92,10 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
 >
 <IconMaterial name="pound" size={20} color="#4F8EF7"/>
   <ListItem.Content>
-    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold', fontFamily:"AppleSDGothicNeo-Regular" }}>
+    <ListItem.Title style={[{fontSize:14,  color: 'black', fontWeight: 'bold' }, getAppFont("black")]}>
       <Text>Address Options</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{fontSize:14,  color: 'black', fontFamily:"AppleSDGothicNeo-Regular" }}>
+    <ListItem.Subtitle style={[{fontSize:14,  color: 'black' }, getAppFont("black")]}>
       <Text>Options for the currently selected address</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
@@ -117,10 +118,10 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
 >
 <IconMaterial name="wallet" size={20} color="#4F8EF7"/>
   <ListItem.Content>
-    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold', fontFamily:"AppleSDGothicNeo-Regular" }}>
+    <ListItem.Title style={[{fontSize:14,  color: 'black', fontWeight: 'bold' }, getAppFont("black")]}>
       <Text>Wallet Options</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{fontSize:14,  color: 'black', fontFamily:"AppleSDGothicNeo-Regular" }}>
+    <ListItem.Subtitle style={[{fontSize:14,  color: 'black' }, getAppFont("black")]}>
       <Text>Options for the currently selected wallet</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
@@ -145,10 +146,10 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
   ViewComponent={LinearGradient} // Only if no expo
 ><IconAnt name="API" size={20} color="#4F8EF7"/>
   <ListItem.Content>
-    <ListItem.Title style={{fontSize:14,  color: 'black', fontWeight: 'bold', fontFamily:"AppleSDGothicNeo-Regular" }}>
+    <ListItem.Title style={[{fontSize:14,  color: 'black', fontWeight: 'bold' }, getAppFont("black")]}>
       <Text>Advanced Options</Text>
     </ListItem.Title>
-    <ListItem.Subtitle style={{fontSize:14,  color: 'black', fontFamily:"AppleSDGothicNeo-Regular" }}>
+    <ListItem.Subtitle style={[{fontSize:14,  color: 'black' }, getAppFont("black")]}>
       <Text>Options for advanced users</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
@@ -165,7 +166,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
 <View style={{flex: 0.7, justifyContent:"center" , alignSelf:"center"}}>
 <Image style={{margin: 0, padding:0, width: 50, height: 80, alignSelf:'center'}}
     source={Raddish}/>
-    <Text style={{ alignSelf:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>Raddish Wallet v.1.4.3</Text>
+    <Text style={[{alignSelf:'center'}, getAppFont("black")]}>Raddish Wallet v.1.5.1</Text>
 </View>
  <Separator/>
  </View>  

@@ -5,7 +5,7 @@ import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {showMessage} from "react-native-flash-message";
 import { Separator } from '../helpers/jsxlib';
-import { copyToClipboard } from '../helpers/helpers';
+import { getAppFont, copyToClipboard } from '../helpers/helpers';
 
 
 const Receive = ({route, navigation}) => {
@@ -16,7 +16,7 @@ const Receive = ({route, navigation}) => {
   <View style={styles.container}> 
     <ScrollView styles={{backgroundColor:"white"}}>
       <View style={styles.container}> 
-       <Text style={{textAlign:'center', fontWeight:'bold', fontFamily:"AppleSDGothicNeo-Regular"}}>Radix Address QR Code:</Text>
+       <Text style={[{textAlign:'center', fontWeight:'bold'}, getAppFont("black")]}>Radix Address QR Code:</Text>
        <Separator/>
 <QRCode 
      value={xrdAddress}
@@ -26,8 +26,8 @@ const Receive = ({route, navigation}) => {
    <Separator/>
    <Separator/>
    
-   <Text style={{textAlign:'center', fontWeight:'bold', fontFamily:"AppleSDGothicNeo-Regular"}}>Radix Address:</Text>
-   <Text style={{textAlign:'center', fontFamily:"AppleSDGothicNeo-Regular"}}>{xrdAddress}</Text>
+   <Text style={[{textAlign:'center', fontWeight:'bold'}, getAppFont("black")]}>Radix Address:</Text>
+   <Text style={[{textAlign:'center'}, getAppFont("black")]}>{xrdAddress}</Text>
 
    <Separator/>
    <Separator/>
@@ -35,7 +35,7 @@ const Receive = ({route, navigation}) => {
    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(xrdAddress)}}>
    <View style={styles.rowStyle}>
    <IconFeather name="copy" size={20} color="black" />
-<Text style={{fontFamily:"AppleSDGothicNeo-Regular"}}> Copy address to clipboard</Text>
+<Text style={getAppFont("black")}> Copy address to clipboard</Text>
 </View>
 </TouchableOpacity>
 

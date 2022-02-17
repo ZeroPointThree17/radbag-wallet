@@ -10,19 +10,20 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { openCB, errorCB, useInterval, shortenAddress, last4, formatNumForDisplay } from '../helpers/helpers';
+import { getAppFont, openCB, errorCB, useInterval, shortenAddress, last4, formatNumForDisplay } from '../helpers/helpers';
 import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
 import * as Progress from 'react-native-progress';
 import prompt from 'react-native-prompt-android';
 
+
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
 
   Keyboard.dismiss; 
 
   if (amount != undefined){
-    amount = amount.replaceAll(",","");
+    amount = amount.replace(/,/g, '');
   }
 
   // alert(rri)
@@ -447,22 +448,22 @@ useInterval(() => {
     
       /> 
       </ImageBackground>
-  <Text style={{fontSize:20, fontFamily:"AppleSDGothicNeo-Regular"}}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
+  <Text style={[{fontSize:20}, getAppFont("black")]}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
 
      </View>
-     <Text style={{color: 'black', textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular"}}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>
+     <Text style={[{color: 'black', textAlign: "center"}, getAppFont("black")]}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>
      <Text
-       style={{color: 'blue', marginVertical:4, textAlign: "center", fontFamily:"AppleSDGothicNeo-Regular", textDecorationLine: "underline"}}
+       style={[{marginVertical:4, textAlign: "center", textDecorationLine: "underline"}, getAppFont("blue")]}
        disabled = {symbolToRRI.get(symbol) == undefined}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/tokens/'+symbolToRRI.get(symbol))}}
      >Token Details</Text>
      <Separator/>
    
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Address you are sending from:</Text>
+     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Address you are sending from:</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={addrFromRef}
-        style={{padding:10, borderWidth:1, height:55, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15, fontFamily:"AppleSDGothicNeo-Regular"}}
+        style={[{padding:10, borderWidth:1, height:55, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15}, getAppFont("black")]}
         disabled="true"
         multiline={true}
         numberOfLines={2}
@@ -481,9 +482,9 @@ useInterval(() => {
       />
       }
 <View style={styles.sendRowStyle}>
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, fontFamily:"AppleSDGothicNeo-Regular"}}>{"\n"}Address to send to:</Text>
+      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1}, getAppFont("black")]}>{"\n"}Address to send to:</Text>
       <TouchableOpacity style={{justifyContent:'center'}} onPress={() => {setCameraOn(!cameraOn)} }>
-      <Text style={{ textAlign:'center', marginHorizontal: 0, fontSize:8, fontFamily:"AppleSDGothicNeo-Regular"}}>Scan QR</Text>
+      <Text style={[{ textAlign:'center', marginHorizontal: 0, fontSize:8}, getAppFont("black")]}>Scan QR</Text>
   
  <IconMaterial style={{justifyContent:'center', alignSelf:'center'}} name="qrcode-scan" size={20} color="black" />
  </TouchableOpacity>
@@ -492,7 +493,7 @@ useInterval(() => {
       <View style={styles.rowStyle}>
 
 <TextInput ref={addrToRef}
-style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15, textAlignVertical: 'top'}}
+style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
         placeholder='Destination Radix Address'
         placeholderTextColor="#d3d3d3"
         value={destAddr}
@@ -507,17 +508,17 @@ style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular"
 
 <Separator/>
 
-<Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Amount to send:</Text>
+<Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to send:</Text>
 <View style={styles.rowStyle}>
 <TextInput ref={amountRef}
-        style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+        style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15}, getAppFont("black")]}
         placeholder='Amount'
         autoCapitalize='none'
         placeholderTextColor="#d3d3d3"
          value={amount}
         onChangeText={value => {
           
-          var cleanedVal = value.replace(/^0+/, '').replaceAll(",","");
+          var cleanedVal = value.replace(/^0+/, '').replace(/,/g, '');
           
           if(!isNaN(cleanedVal)){
             onChangeAmount(new bigDecimal(cleanedVal).getPrettyValue())
@@ -530,7 +531,7 @@ style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular"
 
 { symbols.length > 0 &&
 <SelectDropdown
- buttonStyle={{backgroundColor:"#183A81", flex:0.5, borderWidth:1, marginRight:10, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15}}
+ buttonStyle={[{backgroundColor:"#183A81", flex:0.5, borderWidth:1, marginRight:10, borderRadius: 15}, getAppFont("black")]}
  buttonTextStyle={{color:"white"}}
 	data={symbols}
   defaultValue={defaultSymbol}
@@ -549,17 +550,17 @@ style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular"
 	}}
 /> }
 </View>
-<Text style={{fontSize: 12, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
+<Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
 
 
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity style={styles.button} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
+<TouchableOpacity onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
-        <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Send</Text>
+        <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>
         </View>
         </TouchableOpacity>
 <Separator/>
@@ -568,7 +569,7 @@ style={{padding:10, borderWidth:1, flex:1, fontFamily:"AppleSDGothicNeo-Regular"
 
 { show == true &&
 <Text
-       style={{color: 'blue', textAlign: "center"}}
+       style={[{color: 'blue', textAlign: "center"}, getAppFont("blue")]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
      >
        Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.

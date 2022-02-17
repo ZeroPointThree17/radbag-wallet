@@ -12,7 +12,7 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, last4 } from '../helpers/helpers';
+import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, last4 } from '../helpers/helpers';
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
@@ -158,9 +158,9 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     defaultSource={GenericToken}
     source={{uri: balance[3]}}
       />
-    <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular", paddingLeft: 10}}>{balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
+    <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
-    <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
+    <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end'},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
 
     </View> 
     </TouchableOpacity>
@@ -195,9 +195,9 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
   source={{uri: balance[3]}}
     />
     </ImageBackground>
-        <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular", paddingLeft: 10}}>{balance[2]} ({symbol.trim()}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
+        <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
-  <Text style={{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', fontFamily:"AppleSDGothicNeo-Regular" }}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
+  <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end'},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
 
   </View> 
   </TouchableOpacity>
@@ -554,12 +554,12 @@ console.log("WALLETS: "+JSON.stringify(wallets));
             
             <View style={styles.rowStyle}>
 <Dropdown
-         style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          containerStyle ={styles.containerStyle}
+         style={[getAppFont("white"), styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
+          selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
+          inputSearchStyle={[styles.inputSearchStyle,getAppFont("white")]}
+          iconStyle={[styles.iconStyle,getAppFont("white")]}
+          containerStyle ={[styles.containerStyle,getAppFont("white")]}
           data={walletDropdownVals}
           activeColor="#4DA892"
           search
@@ -584,12 +584,12 @@ console.log("WALLETS: "+JSON.stringify(wallets));
 </TouchableOpacity>
  </View>
 <Dropdown
-         style={[styles.dropdown, isFocusAddr && { borderColor: 'blue' }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          containerStyle ={styles.containerStyle}
+         style={[getAppFont("white"), styles.dropdown, isFocusAddr && { borderColor: 'blue' }]}
+          placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
+          selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
+          inputSearchStyle={[styles.inputSearchStyle,getAppFont("white")]}
+          iconStyle={[styles.iconStyle,getAppFont("white")]}
+          containerStyle ={[styles.containerStyle,getAppFont("white")]}
           data={dropdownVals}
           activeColor="#4DA892"
           search
@@ -612,7 +612,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         />
 
        <Separator/>
-       <Text style={{fontSize: 20, color:"white", fontFamily: 'AppleSDGothicNeo-Regular'}}>Staked: {formatNumForHomeDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForHomeDisplay(liquid_rdx_balance)} XRD</Text>
+       <Text style={[{fontSize: 20}, getAppFont("white")]}>Staked: {formatNumForHomeDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForHomeDisplay(liquid_rdx_balance)} XRD</Text>
  
        <Separator/>
        <View style={styles.rowStyle}>
@@ -622,7 +622,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <View style={styles.rowStyle}>
      
         <IconMaterialCommunityIcons name="call-received" size={18} color="white" />
-        <Text style={{fontSize: 14, color:"white", fontFamily: 'AppleSDGothicNeo-Regular'}}> Receive</Text>
+        <Text style={[{fontSize: 14}, getAppFont("white")]}> Receive</Text>
         </View>
         
         </TouchableOpacity>
@@ -634,7 +634,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
-        <Text style={{fontSize: 14, color:"white", fontFamily: 'AppleSDGothicNeo-Regular'}}> Send</Text>
+        <Text style={[{fontSize: 14}, getAppFont("white")]}>Send</Text>
         </View>
         </TouchableOpacity>
         </View>
@@ -647,7 +647,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
       })}>
         <View style={styles.rowStyle}>
         <Icon name="arrow-down-circle-outline" size={20} color="white" />
-        <Text style={{fontSize: 14, color:"white", fontFamily: 'AppleSDGothicNeo-Regular'}}> Staking</Text>
+        <Text style={[{fontSize: 14}, getAppFont("white")]}> Staking</Text>
         </View>
         </TouchableOpacity>
         </View>
@@ -659,7 +659,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
 <View style={{marginHorizontal:20}}>  
      <View style={styles.rowStyle}>
      <View style={styles.rowStyleHome}>  
-     <TouchableOpacity style={styles.button} onPress={() => 
+     <TouchableOpacity onPress={() => 
 
 {
 const pushAction = StackActions.push('Mnemonic Input', { firstTimeStr: 'false' });
@@ -669,12 +669,12 @@ navigation.dispatch(pushAction);
     }>
      <View style={styles.rowStyle}>
      <IconMaterialCommunityIcons name="application-import" size={16} color="black" />
-<Text style={styles.buttonText} >Import Wallet</Text></View>
+<Text style={[styles.buttonText, getAppFont("black")]}>Import Wallet</Text></View>
 </TouchableOpacity>
 </View>
 
 <View style={styles.rowStyleHome}>  
-     <TouchableOpacity style={styles.button} onPress={() => 
+     <TouchableOpacity onPress={() => 
 
 {
 const pushAction = StackActions.push('Mnemonic', { firstTimeStr: 'false' });
@@ -685,14 +685,14 @@ navigation.dispatch(pushAction);
      <View style={styles.rowStyle}>
      <IconEntypo name="wallet" size={16} color="black" />
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={styles.buttonText} >Add Wallet</Text></View>
+<Text style={[styles.buttonText, getAppFont("black")]}>Add Wallet</Text></View>
 </TouchableOpacity>
 </View>
 <View style={styles.rowStyleHome}>  
-     <TouchableOpacity style={styles.button} onPress={() => addAddress(activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
+     <TouchableOpacity onPress={() => addAddress(activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
      <View style={styles.rowStyle}>
      <IconFeather name="hash" size={16} color="black" />
-<Text style={styles.buttonText} >Add Address</Text></View>
+<Text style={[styles.buttonText, getAppFont("black")]} >Add Address</Text></View>
 </TouchableOpacity> 
 </View>
 </View>
@@ -700,7 +700,7 @@ navigation.dispatch(pushAction);
 
 
 <View style={{margin:16}}>
-<Text style={{fontFamily:"AppleSDGothicNeo-Regular"}}>Tokens</Text>
+<Text style={getAppFont("black")}>Tokens</Text>
 
 {renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress)}
 
@@ -737,7 +737,6 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 10,
         backgroundColor: '#183A81',
-        fontFamily: 'AppleSDGothicNeo-Regular'
       },
       surface2: {
         padding: 8,
@@ -746,7 +745,6 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 10,
         backgroundColor: '#006261',
-        fontFamily: 'AppleSDGothicNeo-Regular'
       },
     rowStyle: {
         flexDirection: 'row',
@@ -754,7 +752,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical:0,
-        fontFamily: 'AppleSDGothicNeo-Regular'
       },
       rowStyleHome: {
         flexDirection: 'row',
@@ -762,7 +759,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical:5,
-        fontFamily: 'AppleSDGothicNeo-Regular',
         flex:1
       },
       addrRowStyle: {
@@ -771,31 +767,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical:0,
-        fontFamily: 'AppleSDGothicNeo-Regular'
       },
       rowStyleLeft: {
         flexDirection: 'row',
         fontSize: 4,
         alignItems: 'left',
         marginVertical:5,
-        fontFamily: 'AppleSDGothicNeo-Regular'
       },
       buttonText: {
         fontSize: 10,
         color:"black",
-        fontFamily: 'AppleSDGothicNeo-Regular'
       },
   text: {
     fontSize: 20,
     alignItems: 'center',
     justifyContent: 'space-around',
     marginVertical:35,
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   containerMain: {
     flex: 1,
     backgroundColor: "#183A81",
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
    sectionHeader: {
      paddingTop: 2,
@@ -805,13 +796,11 @@ const styles = StyleSheet.create({
      fontSize: 14,
      fontWeight: 'bold',
      backgroundColor: 'rgba(247,247,247,1.0)',
-     fontFamily: 'AppleSDGothicNeo-Regular'
    },
    item: {
      padding: 10,
      fontSize: 18,
      height: 44,
-     fontFamily: 'AppleSDGothicNeo-Regular'
    },
    separator: {
     marginVertical: 8,
@@ -829,18 +818,15 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 50,
     fontSize: 28,
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   title: {
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   container: {
     backgroundColor: 'white',
     padding: 16,
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   dropdown: {
     flex: 1,
@@ -853,7 +839,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 0,
     marginHorizontal: 0,
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   icon: {
     marginRight: 5,
@@ -868,19 +853,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
 containerStyle: {
      backgroundColor: "#183A81",
      color:"white",
-     fontFamily: 'AppleSDGothicNeo-Regular'
   },
   placeholderStyle: {
     fontSize: 14,
     alignItems: 'center',
     justifyContent: 'center',
     color:"white",
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   selectedTextStyle: {
     fontSize: 14,
@@ -888,7 +870,6 @@ containerStyle: {
     justifyContent: 'flex-start',
     textAlign: 'left',
     color:"white",
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   iconStyle: {
     width: 0,
@@ -898,7 +879,6 @@ containerStyle: {
     height: 40,
     fontSize: 14,
     color:"white",
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   scrollView: {
     backgroundColor: "white",

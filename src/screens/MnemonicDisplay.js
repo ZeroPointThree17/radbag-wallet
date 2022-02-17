@@ -4,7 +4,7 @@ import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { Separator } from '../helpers/jsxlib';
-import { useInterval, openCB, errorCB } from '../helpers/helpers';
+import { getAppFont, useInterval, openCB, errorCB } from '../helpers/helpers';
 
 
 function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, setword13){
@@ -91,16 +91,16 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
      <View style={styles.container}> 
      <ScrollView>
       <Separator/>
-      <Text style={{fontWeight:"bold",textAlign:'center', marginHorizontal: 25, fontFamily:"AppleSDGothicNeo-Regular" }}>Selected Wallet Name:</Text><Text style={{fontFamily:"AppleSDGothicNeo-Regular", fontSize:20, textAlign:'center'}}>{walletName}</Text>
+      <Text style={[{fontWeight:"bold",textAlign:'center', marginHorizontal: 25 }, getAppFont("black")]}>Selected Wallet Name:</Text><Text style={{fontFamily:"AppleSDGothicNeo-Regular", fontSize:20, textAlign:'center'}}>{walletName}</Text>
       <Separator/>
       <Separator/>
-        <Text style={{textAlign:'center', marginHorizontal: 25, fontFamily:"AppleSDGothicNeo-Regular" }}>Enter your wallet password to display the mnemonic for this wallet.</Text>
+        <Text style={[{textAlign:'center', marginHorizontal: 25}, getAppFont("black")]}>Enter your wallet password to display the mnemonic for this wallet.</Text>
         <Separator/>
-        <PasswordInputText  style={{marginHorizontal: 25, fontFamily:"AppleSDGothicNeo-Regular" }} 
+        <PasswordInputText  style={[{marginHorizontal: 25}, getAppFont("black")]} 
         onChangeText={(password) => setPassword( password )}
         label='Wallet Password' />
         <Separator/>
-        <Button  style={{marginHorizontal: 25, fontFamily:"AppleSDGothicNeo-Regular"}}
+        <Button style={[{marginHorizontal: 25}, getAppFont("black")]}
                 title="Show Mnemonic"
                 enabled
                 onPress={() => {Keyboard.dismiss;
@@ -112,7 +112,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
 
               
               { show && 
-       <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20, fontFamily:"AppleSDGothicNeo-Regular"}}>Mnemonic Phrase:</Text> 
+       <Text style={[{textAlign:'center', marginHorizontal: 25, fontSize:20}, getAppFont("black")]}>Mnemonic Phrase:</Text> 
         
         }
 
@@ -120,7 +120,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
 
         { show && 
        
-        <Text style={{textAlign:'center', marginHorizontal: 25, fontSize:20, fontFamily:"AppleSDGothicNeo-Regular"}}>{mnemonic} {word13}</Text>
+        <Text style={[{textAlign:'center', marginHorizontal: 25, fontSize:20}, getAppFont("black")]}>{mnemonic} {word13}</Text>
         }
   </ScrollView>
   </View>)

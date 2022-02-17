@@ -57,6 +57,16 @@ export function last4(address){
   return shortenedAddr;
 }
 
+export function getAppFont(color){
+
+  var font = "";
+  if(Platform.OS === 'ios'){
+    font = "AppleSDGothicNeo-Light"
+  } else{
+    font = "Roboto-Regular"
+  }
+  return {fontFamily: font, color: color};
+}
 
 export function copyToClipboard(string)  {
   Clipboard.setString(string)
@@ -97,7 +107,7 @@ export function formatNumForDisplay(number) {
 
 export function formatNumForHomeDisplay(number) {
 
-  var num = new bigDecimal(formatNumForDisplay(number).replaceAll(",",""));
+  var num = new bigDecimal(formatNumForDisplay(number).replace(/,/g, ''));
   var result = num.round(4, bigDecimal.RoundingModes.DOWN).getPrettyValue(); 
   resArry = result.split(".")
   var resP1 = resArry[0]

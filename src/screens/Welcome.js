@@ -2,6 +2,7 @@ import React from 'react';
 import {Image,SafeAreaView, Button, View, Text, StyleSheet } from 'react-native';
 import Svg, { Path } from "react-native-svg"
 import { Separator } from '../helpers/jsxlib';
+import { getAppFont } from '../helpers/helpers';
 
 
 function navigateToCreateWallet(navigation){
@@ -22,15 +23,15 @@ const Welcome = ({ navigation }) => {
       />
      <View style={styles.text}> 
    
- <Text style={styles.title}>Welcome to the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
+ <Text style={[styles.title,getAppFont("black")]}>Welcome to the Raddish Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
  <Separator/>
- <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
+ <Button style={getAppFont("black")}
         title="Yes - Import a Wallet"
         enabled
         onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: "true"})}
       />
       {Platform.OS != 'ios' && <Separator/>}
- <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
+ <Button style={getAppFont("black")}
         title="No - Create New Wallet"
         color = 'red'
         enabled
@@ -46,7 +47,7 @@ const Welcome = ({ navigation }) => {
 <Separator/>
 <Separator/>
 
-<Text styles={{fontFamily: 'AppleSDGothicNeo-Regular'}}>Powered by:</Text>
+<Text style={getAppFont("black")}>Powered by:</Text>
      <Svg
     xmlns="http://www.w3.org/2000/svg"
     width={94}
@@ -104,8 +105,7 @@ const styles = StyleSheet.create({
    },
    title: {
     textAlign: 'center',
-    marginVertical: 8,
-    fontFamily: 'AppleSDGothicNeo-Regular'
+    marginVertical: 8
   },
   logo: {
     width: 66,

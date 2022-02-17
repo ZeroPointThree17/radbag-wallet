@@ -3,6 +3,7 @@ import { KeyboardAvoidingView,Button, Text, TextInput, View, StyleSheet } from '
 const bip39 = require('bip39');
 import { StackActions } from '@react-navigation/native';
 import { Separator } from '../helpers/jsxlib';
+import { getAppFont } from '../helpers/helpers';
 
 
 function navigateAppPassword(navigation, mnemonic, firstTime){
@@ -43,14 +44,14 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
  const MnemonicInput = ({route, navigation}) => {
 
     const { firstTimeStr } = route.params;
-    var firstTime = JSON.stringify(firstTimeStr).replaceAll('"','');
+    var firstTime = JSON.stringify(firstTimeStr).replace(/"/g, '');
 
   const [mnemonic, setMnemonic] = useState("");
   
  return ( 
      <View style={styles.container}> 
      <Separator/>
-<Text style={[styles.title, {margin: 20}]}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
+<Text style={[getAppFont("black"), {margin: 20}]}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
 
 <TextInput
     editable = {true}
@@ -58,7 +59,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
-      style={{height: 150, padding: 12, paddingTop: 12, margin:20, marginTop:10, borderWidth:1, borderRadius: 15, fontFamily: 'AppleSDGothicNeo-Regular', textAlignVertical: 'top'}}
+      style={[{height: 150, padding: 12, paddingTop: 12, margin:20, marginTop:10, borderWidth:1, borderRadius: 15, textAlignVertical: 'top'},getAppFont("black")]}
     />
 
  <Button style={styles.title}
@@ -72,9 +73,6 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
 
 
 const styles = StyleSheet.create({
-  title: {
-    fontFamily: 'AppleSDGothicNeo-Regular'
-  },
   text: {
     fontSize: 20,
     alignItems: 'center',

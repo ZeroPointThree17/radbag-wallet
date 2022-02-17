@@ -5,6 +5,7 @@ import { StackActions } from '@react-navigation/native';
 import CheckBox from 'react-native-check-box';
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { Separator } from '../helpers/jsxlib';
+import { getAppFont } from '../helpers/helpers';
 
 
 function navigateAppPassword(navigation, mnemonic, word13, firstTime){
@@ -27,9 +28,9 @@ navigation.dispatch(pushAction);
 
 const CreateWallet = ({route, navigation}) => {
 
-  const[mnemonic, setMnemonic] = useState(bip39.generateMnemonic());
-  const { firstTimeStr } = route.params;
-  var firstTime = JSON.stringify(firstTimeStr).replaceAll('"','');
+  const [mnemonic, setMnemonic] = useState(bip39.generateMnemonic());
+  const { firstTimeStr } = route?.params || {};
+  var firstTime = JSON.stringify(firstTimeStr).replace(/"/g, '');
 
 const [word13flag, setword13flag] = useState(false);
 const [word13, setword13] = useState("");
@@ -40,9 +41,9 @@ const [word13, setword13] = useState("");
     <SafeAreaView style={styles.container}>
    <Separator/>
      <View > 
-      <Text style={styles.title}>Below is your mnemonic phrase. Write it down and keep them in a safe place. DO NOT take a photo of the phrase or copy and paste it anywhere. This key holds ALL YOUR FUNDS!</Text>
+      <Text style={[styles.title,getAppFont("black")]}>Below is your mnemonic phrase. Write it down and keep them in a safe place. DO NOT take a photo of the phrase or copy and paste it anywhere. This key holds ALL YOUR FUNDS!</Text>
  <Separator/>
- <Text style={styles.mnemonic}>{mnemonic}</Text>
+ <Text style={[styles.mnemonic,getAppFont("black")]}>{mnemonic}</Text>
  <Separator/>
  
  <View style={styles.checkbox}> 
@@ -55,16 +56,16 @@ const [word13, setword13] = useState("");
     }}
     isChecked={word13flag}
 /> 
-<Text style={styles.title2}>Add 13th word?</Text>
+<Text style={[styles.title2,getAppFont("black")]}>Add 13th word?</Text>
 </View > 
 { word13flag && 
 
 <PasswordInputText 
 onChangeText={(password) => setword13( password )}
-label='13th word' style={styles.title}/>
+label='13th word' style={[styles.title,getAppFont("black")]}/>
  }
 <Separator/>
- <Button style={styles.title}
+ <Button style={[styles.title, getAppFont("black")]}
         title="Understood - Continue"
         enabled
         onPress={() => navigateAppPassword(navigation, mnemonic, word13, firstTime)}
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 8,
     marginHorizontal: 50,
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   mnemonic: {
     textAlign: 'center',
@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 50,
     fontSize: 20,
     fontWeight: "bold",
-    fontFamily: 'AppleSDGothicNeo-Regular'
   },
   title2: {
     textAlign: 'center',

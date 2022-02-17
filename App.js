@@ -1,6 +1,8 @@
 import './shim';
-import React, { useState } from 'react';
-import { StyleSheet, useColorScheme, LogBox } from 'react-native';
+import 'react-native-gesture-handler'
+import React, {useState} from 'react';
+import type {Node} from 'react';
+import { StyleSheet, Text, View, SafeAreaView, useColorScheme, LogBox } from 'react-native';
 import { NavigationContext, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 var SQLite = require('react-native-sqlite-storage');
@@ -18,12 +20,10 @@ import Send from './src/screens/Send';
 import Receive from './src/screens/Receive';
 import Staking from './src/screens/Staking';
 import {openCB, errorCB} from './src/helpers/helpers';
-import 'react-native-gesture-handler'
 
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
-const Stack = createStackNavigator();
 
 
 const App: () => Node = () => {
@@ -33,6 +33,7 @@ const App: () => Node = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const Stack = createStackNavigator();
 
 const [firstTimer, setFirstTimer] = useState(true);
 
@@ -60,8 +61,9 @@ LogBox.ignoreAllLogs();
 
   return (
 
-<NavigationContainer onReady={() => RNBootSplash.hide()}>
-    <Stack.Navigator       screenOptions={{
+//  <View><Text>ELLO</Text></View>
+ <NavigationContainer onReady={() => RNBootSplash.hide()}>
+   <Stack.Navigator screenOptions={{
         headerStyle: {
           backgroundColor: '#183A81',
         },
@@ -71,11 +73,7 @@ LogBox.ignoreAllLogs();
           fontFamily:"AppleSDGothicNeo-Regular"
         },
       }}>{ firstTimer == true
-  ?  <Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>
-  :     <Stack.Screen name="Raddish Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
-
-}
-     
+  ?<Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>:<Stack.Screen name="Raddish Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />}
       <Stack.Screen name="Mnemonic" component={CreateWallet} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Mnemonic Input" component={MnemonicInput} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="App Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
@@ -86,7 +84,9 @@ LogBox.ignoreAllLogs();
     </Stack.Navigator>
     <FlashMessage position="center" style={{height:60}}/>
     </NavigationContainer>
-  
+   
+
+
   );
 };
 

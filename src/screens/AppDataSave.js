@@ -8,7 +8,7 @@ import {encrypt} from '../helpers/encryption';
 var HDKey = require('hdkey')
 import { StackActions } from '@react-navigation/native';
 import { Separator } from '../helpers/jsxlib';
-import { openCB, errorCB } from '../helpers/helpers';
+import { getAppFont, openCB, errorCB } from '../helpers/helpers';
 
 
 function convertbits (data, frombits, tobits, pad) {
@@ -353,9 +353,9 @@ const AppDataSave = ({route, navigation}) => {
   // }, []);
 
   const { mnemonicStr, word13Str, firstTimeStr} = route.params;
-  var mnemonic = JSON.stringify(mnemonicStr).replaceAll('"','');
-  var word13 = JSON.stringify(word13Str).replaceAll('"','');
-  var firstTimeString = JSON.stringify(firstTimeStr).replaceAll('"','');
+  var mnemonic = JSON.stringify(mnemonicStr).replace(/"/g, '');
+  var word13 = JSON.stringify(word13Str).replace(/"/g, '');
+  var firstTimeString = JSON.stringify(firstTimeStr).replace(/"/g, '');
 
   var firstTime=true
   if(firstTimeString=="false"){firstTime=false}
@@ -381,16 +381,16 @@ const [isActive, setIsActive] = useState(false);
 
 { isActive
   &&
-  <Text style={styles.title}>Setting up wallet for the first time. Please wait...</Text>
+  <Text style={[styles.title,getAppFont("black")]}>Setting up wallet for the first time. Please wait...</Text>
   }
 <Separator/>
 <Separator/>
-    <Text style={styles.title}>Enter a password to protect the data in this wallet.</Text>
- <PasswordInputText style={styles.title}
+    <Text style={[styles.title,getAppFont("black")]}>Enter a password to protect the data in this wallet.</Text>
+ <PasswordInputText style={[styles.title, getAppFont("black")]}
 onChangeText={(password) => setAppPw( password )}
 label='Wallet Password' />
 
-<PasswordInputText style={styles.title}
+<PasswordInputText style={[styles.title,getAppFont("black")]}
 onChangeText={(password) => setAppPwConfirm( password )}
 label='Confirm Wallet Password' />
 
@@ -398,7 +398,7 @@ label='Confirm Wallet Password' />
  { !isActive
   &&
   
- <Button style={{fontFamily: 'AppleSDGothicNeo-Regular'}}
+ <Button style={getAppFont("black")}
         title="Continue"
         enabled = {!isActive}
         onPress={() => {navigateHome(setIsActive,navigation, appPw, appPwConfirm, mnemonic, word13, firstTime)}}
@@ -453,8 +453,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     marginVertical: 4,
-    marginHorizontal: 50,
-    fontFamily: 'AppleSDGothicNeo-Regular'
+    marginHorizontal: 50
   },
 
 });

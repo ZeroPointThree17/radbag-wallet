@@ -7,8 +7,10 @@ import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 var Raddish = require("../assets/radish_nobackground.png");
 import { SeparatorBorder } from '../helpers/jsxlib';
 import IconFA5 from 'react-native-vector-icons/FontAwesome5';
+import { getAppFont } from '../helpers/helpers';
 
- const AdvancedOptions = ({route, navigation}) => {
+
+const AdvancedOptions = ({route, navigation}) => {
  return ( 
   <View style={{flex:1}}>
      <ScrollView style={{flex:1}}> 
@@ -36,12 +38,12 @@ import IconFA5 from 'react-native-vector-icons/FontAwesome5';
   <ListItem.Content >
   
     <ListItem.Title >
- <Text style={{fontSize:14,  color: 'black', fontWeight: 'bold', flex:1, fontFamily:"AppleSDGothicNeo-Regular"  }}>Token Creator</Text>
+ <Text style={[{fontSize:14,  color: 'black', fontWeight: 'bold', flex:1 }, getAppFont("black")]}>Token Creator</Text>
 
     </ListItem.Title>
 
     <ListItem.Subtitle  >
-      <Text style={{fontSize:14,  color: 'black', flexWrap: 'wrap', flex:1, fontFamily:"AppleSDGothicNeo-Regular" }}>Mint new tokens on the Radix DLT ledger</Text>
+      <Text style={[{fontSize:14,  color: 'black', flexWrap: 'wrap', flex:1}, getAppFont("black")]}>Mint new tokens on the Radix DLT ledger</Text>
     </ListItem.Subtitle>
 
   </ListItem.Content>

@@ -8,7 +8,7 @@ var SQLite = require('react-native-sqlite-storage');
 import RadioForm from 'react-native-simple-radio-button';
 var GenericToken = require("../assets/generic_token.png");
 import { Separator } from '../helpers/jsxlib';
-import { useInterval, openCB, errorCB, formatNumForDisplay } from '../helpers/helpers';
+import { getAppFont, useInterval, openCB, errorCB, formatNumForDisplay } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
 
@@ -22,7 +22,7 @@ var radio_props = [
 function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
  
   if(tknSupply != undefined){
-    tknSupply = tknSupply.replaceAll(",","");
+    tknSupply = tknSupply.replace(/,/g, '');
   }
 
   if(tknName == undefined || tknDesc  == undefined || tknIconUrl == undefined || tknUrl == undefined || 
@@ -300,11 +300,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       /> */}
     
       {/* <Separator/> */}
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Name:</Text>
+     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Token Name:</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknNameRef}
-        style={{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Name'
@@ -316,11 +316,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
  
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Description</Text>
+      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Token Description</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknDescRef}
-        style={{padding:4, paddingLeft:10, borderWidth:1,  height: 125, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15, textAlignVertical: 'top'}}
+        style={[{padding:4, paddingLeft:10, borderWidth:1,  height: 125, width:300, backgroundColor:"white", flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -334,11 +334,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Symbol (must be lowercase and alphanumeric)</Text>
+      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Token Symbol (must be lowercase and alphanumeric)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknSymbolRef}
-        style={{padding:4, paddingLeft:10, borderWidth:1, height:30, width:50, backgroundColor:"white", flex:0.33, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:50, backgroundColor:"white", flex:0.33, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Symbol'
@@ -350,11 +350,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       <Separator/>
 
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Icon URL (must begin with http:// or https://)</Text>
+      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Token Icon URL (must begin with http:// or https://)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknIconURLRef}
-        style={{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Icon URL'
@@ -365,11 +365,11 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
       </View>
       <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Project URL (must begin with http:// or https://)</Text>
+      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Project URL (must begin with http:// or https://)</Text>
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknURLRef}
-        style={{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Project URL'
@@ -402,10 +402,10 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
 <Separator/>
 
-      <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>Token Supply (must be a number)</Text>
+      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Token Supply (must be a number)</Text>
      <View style={styles.rowStyle}>
         <TextInput ref={tknSupplyRef}
-        style={{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, fontFamily:"AppleSDGothicNeo-Regular", borderRadius: 15,}}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Supply'
@@ -413,7 +413,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         value={tknSupply}
         onChangeText={value => {
 
-          var cleanedVal = value.replace(/^0+/, '').replaceAll(",","");
+          var cleanedVal = value.replace(/^0+/, '').replace(/,/g, '');
           
           if(!isNaN(cleanedVal)){
            settknSupply(new bigDecimal(cleanedVal).getPrettyValue())
@@ -424,7 +424,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
        }
       />
      </View>
-     <Text style={{textAlign:'left', marginHorizontal: 0, fontSize:12, fontFamily:"AppleSDGothicNeo-Regular"}}>NOTE: Fixed supply only. Setting a mutable supply is not yet supported.</Text>
+     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>NOTE: Fixed supply only. Setting a mutable supply is not yet supported.</Text>
   
       <Separator/>
       <Separator/>
@@ -440,13 +440,13 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}}>
         <View style={styles.sendRowStyle}>
         <IconFA5 name="coins" size={20} color="black" />
-        <Text style={{fontSize: 18, color:"black", fontFamily:"AppleSDGothicNeo-Regular"}}> Mint Tokens</Text>
+        <Text style={{fontSize: 18, color:"black"}, getAppFont("black")}> Mint Tokens</Text>
         </View>
         </TouchableOpacity>
               <Separator/>
 { show == true &&
 <Text
-       style={{color: 'blue', textAlign: "center"}}
+       style={[{textAlign: "center"}, getAppFont("blue")]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
      >
        Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.

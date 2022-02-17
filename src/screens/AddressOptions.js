@@ -4,7 +4,7 @@ import {showMessage} from "react-native-flash-message";
 import { StackActions } from '@react-navigation/native';
 var SQLite = require('react-native-sqlite-storage');
 import { Separator } from '../helpers/jsxlib';
-import { useInterval, openCB, errorCB } from '../helpers/helpers';
+import { getAppFont, useInterval, openCB, errorCB } from '../helpers/helpers';
 
 
 function updateAddresssName(name, addressId){
@@ -159,14 +159,14 @@ const addressNameRef = useRef();
             
       <View style={styles.container}> 
       <ScrollView>
-       <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>Current Address Name:</Text><Text style={{textAlign:"center", fontFamily: 'AppleSDGothicNeo-Regular', fontSize:20}}>{addressName}</Text>
+       <Text style={[{textAlign:'left', fontWeight:'bold', textAlign:'center'},getAppFont("black")]}>Current Address Name:</Text><Text style={[{textAlign:"center", fontSize:20}, getAppFont("black")]}>{addressName}</Text>
        <Separator/>
        <Separator/>
-       <Text style={{textAlign:'left', fontWeight:'bold', fontFamily: 'AppleSDGothicNeo-Regular'}}>Enter New Address Name:</Text>
+       <Text style={[{textAlign:'left', fontWeight:'bold'}, getAppFont("black")]}>Enter New Address Name:</Text>
       
        <View style={styles.rowStyle}>
        <TextInput ref={addressNameRef}
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1, fontFamily: 'AppleSDGothicNeo-Regular'}}
+        style={[{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1},getAppFont("black")]}
         placeholder='Address Name'
         placeholderTextColor="#d3d3d3"
         autoCapitalize='none'
@@ -176,7 +176,7 @@ const addressNameRef = useRef();
   
               </View>
               {Platform.OS != 'ios' && <Separator/>}
-              <Button  style={{marginHorizontal: 25, fontFamily: 'AppleSDGothicNeo-Regular'}}
+              <Button style={[{marginHorizontal: 25}, getAppFont("black")]}
                 title="Change Address Name"
                 enabled
                 onPress={() => {addressNameRef.current.blur(); Keyboard.dismiss; updateAddresssName(newAddressName, activeAddress)}}
@@ -185,7 +185,7 @@ const addressNameRef = useRef();
    <Separator/>
    <Separator/>
 
-   <Button  color="red" style={{marginHorizontal: 25, fontFamily: 'AppleSDGothicNeo-Regular'}}
+   <Button  color="red" style={[{marginHorizontal: 25}, getAppFont("black")]}
                 title="Remove Address"
                 enabled
                 onPress={() => removeAddress(activeAddress, walletId, navigation, setActiveAddress)}

@@ -4,7 +4,7 @@ import {showMessage} from "react-native-flash-message";
 import { StackActions } from '@react-navigation/native';
 var SQLite = require('react-native-sqlite-storage');
 import { Separator } from '../helpers/jsxlib';
-import { useInterval, openCB, errorCB } from '../helpers/helpers';
+import { getAppFont, useInterval, openCB, errorCB } from '../helpers/helpers';
 
 
 function updateWalletName(name, walletId){
@@ -173,14 +173,14 @@ return (
             
       <View style={styles.container}> 
       <ScrollView>
-      <Text style={{textAlign:'left', fontWeight:'bold', textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular'}}>Current Wallet Name:</Text><Text style={{textAlign:'center', fontFamily: 'AppleSDGothicNeo-Regular', fontSize:20}}>{walletName}</Text>
+      <Text style={[{textAlign:'left', fontWeight:'bold', textAlign:'center'},getAppFont("black")]}>Current Wallet Name:</Text><Text style={[{textAlign:'center', fontSize:20}, getAppFont("black")]}>{walletName}</Text>
        <Separator/>
        <Separator/>
-       <Text style={{textAlign:'left', fontWeight:'bold', fontFamily: 'AppleSDGothicNeo-Regular'}}>Enter new Wallet Name:</Text>
+       <Text style={[{textAlign:'left', fontWeight:'bold'},getAppFont("black")]}>Enter new Wallet Name:</Text>
       
        <View style={styles.rowStyle}>
        <TextInput ref={walletNameRef}
-        style={{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1}}
+        style={[{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1}, getAppFont("black")]}
         placeholder='Wallet Name'
         placeholderTextColor="#d3d3d3"
         autoCapitalize='none'
@@ -189,7 +189,7 @@ return (
   
               </View>
               {Platform.OS != 'ios' && <Separator/>}
-              <Button  style={{marginHorizontal: 25}}
+              <Button  style={[{marginHorizontal: 25}, getAppFont("black")]}
                 title="Change Wallet Name"
                 enabled
                 onPress={() => {walletNameRef.current.blur();Keyboard.dismiss;updateWalletName(newWalletName, walletId)}}
@@ -198,7 +198,7 @@ return (
    <Separator/>
    <Separator/>
 
-   <Button  color="red" style={{marginHorizontal: 25}}
+   <Button  color="red" style={[{marginHorizontal: 25}, getAppFont("black")]}
                 title="Remove Wallet"
                 enabled
                 onPress={() => removeWallet(walletId, navigation)}

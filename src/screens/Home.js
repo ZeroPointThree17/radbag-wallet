@@ -30,7 +30,12 @@ function getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setAct
           var wallets = [];
             for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
-                var data = {label: row.name, value: row.id}
+
+                var suffix = ""
+                if(row.mnemonic_enc == "HW_WALLET"){
+                  suffix = " [HARDWARE]"
+                }
+                var data = {label: row.name + suffix, value: row.id}
                  wallets.push(data);
             }
             
@@ -662,7 +667,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
      <TouchableOpacity onPress={() => 
 
 {
-const pushAction = StackActions.push('Mnemonic Input', { firstTimeStr: 'false' });
+const pushAction = StackActions.push('Import Select', { firstTimeStr: 'false' });
 
 navigation.dispatch(pushAction);
      }

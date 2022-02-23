@@ -10,7 +10,8 @@ import { getAppFont, copyToClipboard } from '../helpers/helpers';
 
 const ImportSelect = ({route, navigation}) => {
  
-  const { xrdAddress } = route.params;
+  const { firstTimeStr } = route.params;
+  var firstTimeString = JSON.stringify(firstTimeStr).replace(/"/g, '');
 
  return ( 
   <View style={styles.container}> 
@@ -19,21 +20,19 @@ const ImportSelect = ({route, navigation}) => {
     <Button style={getAppFont("black")}
         title="Import a Wallet via Mnemonic Phrase"
         enabled
-        onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: "true"})}
+        onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: firstTimeString})}
       />
-      <Separator/>
-      <Separator/>
       {Platform.OS != 'ios' && <Separator/>}
     {Platform.OS === 'ios' && <React.Fragment><Separator/><Button style={getAppFont("black")}
         title={"Import a Hardware Wallet\nvia Ledger Nano X Bluetooth\n\n(NOTE: Ledger Nano S is not supported on iOS)"}
         enabled
-        onPress={() => navigation.navigate('Hardware Wallet USB', {firstTimeStr: "true"})}
+        onPress={() => navigation.navigate('Hardware Wallet USB', {firstTimeStr: firstTimeString})}
       /></React.Fragment>}
       {Platform.OS != 'ios' && <Separator/>}
       {Platform.OS != 'ios' && <React.Fragment><Separator/><Button style={getAppFont("black")}
         title={"Import a Hardware Wallet\n(Ledger Nano S or X via USB)"}
         enabled
-        onPress={() => navigation.navigate('Hardware Wallet USB', {firstTimeStr: "true"})}
+        onPress={() => navigation.navigate('Hardware Wallet USB', {firstTimeStr: firstTimeString})}
       /></React.Fragment>}
       
   </ScrollView>

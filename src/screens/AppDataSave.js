@@ -46,16 +46,15 @@ export function navigateHome(setIsActive,navigation, password, confirmPassword, 
 
   console.log("INPUT KEYS: "+hardwareWallletPubKeys);
 
-  if(mnemonic != "HW_WALLET"){
     navigation.addListener('beforeRemove', (e) => {
       e.preventDefault();
     });
-  }
+  
 
-  if(password.length == 0 || confirmPassword.length == 0 ){
+  if(hardwareWallletPubKeys.length==0 && (password.length == 0 || confirmPassword.length == 0 )){
     alert("Password is required");
   } 
-  else if(password === confirmPassword){
+  else if(password === confirmPassword || hardwareWallletPubKeys.length > 0){
     
     if(mnemonic != "HW_WALLET"){
     setIsActive(true)
@@ -304,7 +303,8 @@ var hdkey=""
                           var privatekey_enc ="HARDWARE_WALLET"
                           var publicKey = undefined;
                           var rdx_addr = undefined;
-                    
+                          if(i==2){enabled_flag=0};
+
                           if(hardwareWallletPubKeys.length == 0){
                             var childkey = hdkey.derive("m/44'/1022'/0'/0/"+(i-1).toString()+"'")
                             var privatekey_enc = encrypt(childkey.privateKey.toString('hex'), Buffer.from(password));
@@ -312,8 +312,7 @@ var hdkey=""
                             var readdr_bytes = Buffer.concat([Buffer.from([0x04]), childkey.publicKey]);
                             var readdr_bytes5 = convertbits(Uint8Array.from(readdr_bytes), 8, 5, true);
                             var rdx_addr = bech32.encode("rdx", readdr_bytes5);
-                        
-                          if(i==2){enabled_flag=0}
+                          
                           } else{
 
                             var publicKey = hardwareWallletPubKeys[i-1];
@@ -394,6 +393,9 @@ const [appPw, setAppPw] = useState("");
 const [appPwConfirm, setAppPwConfirm] = useState("");
 const [isActive, setIsActive] = useState(false);
   
+if(hardwareWallletPubKeyArr.length > 0){
+  navigateHome(setIsActive,navigation, appPw, appPwConfirm, mnemonic, word13, firstTime, hardwareWallletPubKeys)
+}
 
   return (
     <SafeAreaView style={styles.container}>
@@ -405,13 +407,19 @@ const [isActive, setIsActive] = useState(false);
   &&
   <ActivityIndicator />
   }
-
+{hardwareWallletPubKeys.length>0 && <React.Fragment>
+<View style={styles.rowStyle}>
+        <Text style={getAppFont("black")}>Setting up Hardware Wallet for the first time. Please wait...</Text>
+      </View>
+</React.Fragment>
+}
 { isActive
   &&
   <Text style={[styles.title,getAppFont("black")]}>Setting up wallet for the first time. Please wait...</Text>
   }
 <Separator/>
 <Separator/>
+{hardwareWallletPubKeys.length==0 && <React.Fragment>
     <Text style={[styles.title,getAppFont("black")]}>Enter a password to protect the data in this wallet.</Text>
  <PasswordInputText style={[styles.title, getAppFont("black")]}
 onChangeText={(password) => setAppPw( password )}
@@ -432,6 +440,7 @@ label='Confirm Wallet Password' />
       />
      
   }
+  </React.Fragment>}
 <Separator/>
 <Separator/>
 
@@ -482,7 +491,13 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     marginHorizontal: 50
   },
-
+  rowStyle: {
+    flexDirection: 'row',
+    fontSize: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 5
+  },
 });
 
 

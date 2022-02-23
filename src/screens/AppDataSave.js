@@ -39,25 +39,37 @@ function convertbits (data, frombits, tobits, pad) {
 }
 
 
-function navigateHome(setIsActive,navigation, password, confirmPassword, mnemonic, word13, firstFlag){
+export function navigateHome(setIsActive,navigation, password, confirmPassword, mnemonic, word13, firstFlag, hardwareWallletPubKeys){
 
+  // hardwareWallletPubKeys = [hardwareWallletPubKeys,hardwareWallletPubKeys]
   console.log("NAV HOME BEGIN");
 
-  navigation.addListener('beforeRemove', (e) => {
-    e.preventDefault();
-  });
+  console.log("INPUT KEYS: "+hardwareWallletPubKeys);
+
+  if(mnemonic != "HW_WALLET"){
+    navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+    });
+  }
 
   if(password.length == 0 || confirmPassword.length == 0 ){
     alert("Password is required");
   } 
   else if(password === confirmPassword){
     
+    if(mnemonic != "HW_WALLET"){
     setIsActive(true)
+    }
 
     console.log("PRE ENCRYPT");
   
     var mnemonic_enc = encrypt(mnemonic, Buffer.from(password));
     var word13_enc = encrypt(word13, Buffer.from(password));
+
+    if(mnemonic == "HW_WALLET"){
+      mnemonic_enc="HW_WALLET";
+      word13_enc="HW_WALLET";
+      }
 
 console.log("PRE DB-OPEN");
 
@@ -155,7 +167,7 @@ db.transaction((tx) => {
       let row = results.rows.item(i);
       if(row.do_nothing_stmt!="DO_NOTHING"){
         nextWalledId = row.id + 1;
-        // alert("Next wallet ID: " + nextWalledId)
+        console.log("Next wallet ID: " + nextWalledId)
       }
      
         }
@@ -172,7 +184,7 @@ db.transaction((tx) => {
               if(row.do_nothing_stmt!="DO_NOTHING"){
                 
                 nextAddressId = row.id + 1;
-                // alert("Next address ID: " + nextAddressId)
+                console.log("Next address ID: " + nextAddressId)
               }
 
                 }
@@ -269,12 +281,13 @@ db.transaction((tx) => {
                 }, errorCB);
               });
 
-
-
-              var seed = bip39.mnemonicToSeedSync(mnemonic,word13).toString('hex');
+var seed=""
+var hdkey=""
+ if(hardwareWallletPubKeys.length == 0){
+               seed = bip39.mnemonicToSeedSync(mnemonic,word13).toString('hex');
      
-              var hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
-              
+               hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
+ }
               
 
               db.transaction((tx) => {
@@ -287,15 +300,28 @@ db.transaction((tx) => {
                       for (let i = 1; i < 16; i++) {
                     
                         db.transaction((tx) => {
+ 
+                          var privatekey_enc ="HARDWARE_WALLET"
+                          var publicKey = undefined;
+                          var rdx_addr = undefined;
                     
-                          var childkey = hdkey.derive("m/44'/1022'/0'/0/"+(i-1).toString()+"'")
-                          var privatekey_enc = encrypt(childkey.privateKey.toString('hex'), Buffer.from(password));
-                          var publicKey = childkey.publicKey.toString('hex');
-                          var readdr_bytes = Buffer.concat([Buffer.from([0x04]), childkey.publicKey]);
-                          var readdr_bytes5 = convertbits(Uint8Array.from(readdr_bytes), 8, 5, true);
-                          var rdx_addr = bech32.encode("rdx", readdr_bytes5);
-                      
+                          if(hardwareWallletPubKeys.length == 0){
+                            var childkey = hdkey.derive("m/44'/1022'/0'/0/"+(i-1).toString()+"'")
+                            var privatekey_enc = encrypt(childkey.privateKey.toString('hex'), Buffer.from(password));
+                            var publicKey = childkey.publicKey.toString('hex');
+                            var readdr_bytes = Buffer.concat([Buffer.from([0x04]), childkey.publicKey]);
+                            var readdr_bytes5 = convertbits(Uint8Array.from(readdr_bytes), 8, 5, true);
+                            var rdx_addr = bech32.encode("rdx", readdr_bytes5);
+                        
                           if(i==2){enabled_flag=0}
+                          } else{
+
+                            var publicKey = hardwareWallletPubKeys[i-1];
+                            var readdr_bytes = Buffer.concat([Buffer.from([0x04]), Buffer.from(publicKey, "hex")]);
+                            var readdr_bytes5 = convertbits(Uint8Array.from(readdr_bytes), 8, 5, true);
+                            var rdx_addr = bech32.encode("rdx", readdr_bytes5);
+                      
+                          }
                           
                           tx.executeSql("INSERT INTO address (wallet_id,name,radix_address,publickey,privatekey_enc,enabled_flag) VALUES ("+nextWalledId+",'My Address (#"+i.toString()+")','"+rdx_addr+"','"+publicKey+"','"+privatekey_enc+"','"+enabled_flag+"')", [], (tx, results) => {
                             console.log("Insert into address table completed");
@@ -352,10 +378,11 @@ const AppDataSave = ({route, navigation}) => {
   //   };
   // }, []);
 
-  const { mnemonicStr, word13Str, firstTimeStr} = route.params;
+  const { mnemonicStr, word13Str, firstTimeStr, hardwareWallletPubKeyArr} = route.params;
   var mnemonic = JSON.stringify(mnemonicStr).replace(/"/g, '');
   var word13 = JSON.stringify(word13Str).replace(/"/g, '');
   var firstTimeString = JSON.stringify(firstTimeStr).replace(/"/g, '');
+  var hardwareWallletPubKeys = hardwareWallletPubKeyArr;
 
   var firstTime=true
   if(firstTimeString=="false"){firstTime=false}
@@ -401,7 +428,7 @@ label='Confirm Wallet Password' />
  <Button style={getAppFont("black")}
         title="Continue"
         enabled = {!isActive}
-        onPress={() => {navigateHome(setIsActive,navigation, appPw, appPwConfirm, mnemonic, word13, firstTime)}}
+        onPress={() => {navigateHome(setIsActive,navigation, appPw, appPwConfirm, mnemonic, word13, firstTime, hardwareWallletPubKeys)}}
       />
      
   }

@@ -226,6 +226,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
 }
 
 // Run this once to be able to run the application with BUCK

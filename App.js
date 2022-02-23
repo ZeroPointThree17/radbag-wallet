@@ -19,6 +19,8 @@ import MnemonicInput from './src/screens/MnemonicInput';
 import Send from './src/screens/Send';
 import Receive from './src/screens/Receive';
 import Staking from './src/screens/Staking';
+import ImportSelect from './src/screens/ImportSelect';
+import HardwareWalletUSB from './src/screens/HardwareWalletUSB';
 import {openCB, errorCB} from './src/helpers/helpers';
 
 
@@ -76,11 +78,14 @@ LogBox.ignoreAllLogs();
   ?<Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>:<Stack.Screen name="Raddish Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />}
       <Stack.Screen name="Mnemonic" component={CreateWallet} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Mnemonic Input" component={MnemonicInput} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="App Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Wallet Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
       <Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Import Select" component={ImportSelect} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Hardware Wallet USB" component={HardwareWalletUSB} options={{ headerTitleAlign: 'center' }}/>
+ 
     </Stack.Navigator>
     <FlashMessage position="center" style={{height:60}}/>
     </NavigationContainer>

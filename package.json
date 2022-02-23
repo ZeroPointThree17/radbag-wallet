@@ -8,12 +8,15 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "./node_modules/.bin/rn-nodeify --install vm,process,crypto,buffer,stream,assert,events --hack && npm i -S buffer@5",
+    "postinstall": "./node_modules/.bin/rn-nodeify --install vm,process,os,path,fs,crypto,buffer,stream,assert,events --hack && npm i -S buffer@5",
     "generate": "react-native generate-bootsplash ./src/assets/radish_nobackground.png --background-color=183A81   --logo-width=192 --assets-path=./src/assets --flavor=main"
   },
   "dependencies": {
+    "@ledgerhq/hw-transport-node-hid": "^6.24.1",
+    "@ledgerhq/react-native-hid": "^6.24.1",
     "@noble/secp256k1": "^1.4.0",
     "@open-rpc/client-js": "^1.6.2",
+    "@radixdlt/crypto": "^2.1.12",
     "@react-native-async-storage/async-storage": "^1.15.14",
     "@react-native-clipboard/clipboard": "^1.8.5",
     "@react-native-community/masked-view": "^0.1.11",
@@ -35,6 +38,7 @@
     "bigdecimal": "^0.6.1",
     "bip32": "^3.0.1",
     "bip39": "^3.0.4",
+    "bitcoinjs-lib": "^6.0.1",
     "bitcoinjs-message": "^2.2.0",
     "browserify": "^17.0.0",
     "buffer": "^5.7.1",
@@ -125,7 +129,6 @@
     "stream-browserify": "^1.0.0",
     "stringbuilder": "^0.0.11",
     "tiny-secp256k1": "^2.1.2",
-    "typescript": "^4.5.4",
     "uint256": "^1.0.8",
     "utf8": "^3.0.0",
     "vm-browserify": "^0.0.4"
@@ -134,11 +137,16 @@
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@types/jest": "^27.4.0",
+    "@types/react": "^17.0.39",
+    "@types/react-native": "^0.66.16",
+    "@types/react-test-renderer": "^17.0.1",
     "babel-jest": "^26.6.3",
     "eslint": "7.14.0",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.2",
-    "react-test-renderer": "17.0.2"
+    "react-test-renderer": "17.0.2",
+    "typescript": "^4.5.5"
   },
   "jest": {
     "preset": "react-native"

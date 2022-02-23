@@ -28,7 +28,7 @@ const Welcome = ({ navigation }) => {
  <Button style={getAppFont("black")}
         title="Yes - Import a Wallet"
         enabled
-        onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: "true"})}
+        onPress={() => navigation.navigate('Import Select', {firstTimeStr: "true"})}
       />
       {Platform.OS != 'ios' && <Separator/>}
  <Button style={getAppFont("black")}

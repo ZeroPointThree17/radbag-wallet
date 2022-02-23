@@ -10,7 +10,7 @@ import  Ionicons  from 'react-native-vector-icons/Ionicons';
 import IconFA5 from 'react-native-vector-icons/FontAwesome5';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import { Image } from 'react-native';
-
+// import HardwareWallet from './HardwareWalletUSB'
 
 const Tab = createBottomTabNavigator();
 
@@ -88,6 +88,12 @@ export default function HomeNav({route, navigation}) {
        ),
      }}/> */}
 
+      {/* <Tab.Screen name="HardwareWallet" component={HardwareWallet} options={{
+       tabBarLabel: 'HardwareWalletTest',
+       tabBarIcon: ({ color, size }) => (
+        <Ionicons name="settings-outline" color={color} size={size} />
+       ),
+     }}/> */}
 
           {/* <Tab.Screen name="Mnemonic" component={CreateWallet} /> */}
     </Tab.Navigator>

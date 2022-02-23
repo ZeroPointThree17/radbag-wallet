@@ -15,10 +15,11 @@ function navigateAppPassword(navigation, mnemonic, word13, firstTime){
   if(word13.length > 0 && trimmedWord13 == ""){
     alert("13th word cannot consist only of spaces");
   } else {
-  const pushAction = StackActions.push('App Password', {
+  const pushAction = StackActions.push('Wallet Password', {
     mnemonicStr: trimmedMnemonic,
     word13Str: trimmedWord13,
-    firstTimeStr: firstTime
+    firstTimeStr: firstTime,
+    hardwareWallletPubKeyArr: []
   });
 
 navigation.dispatch(pushAction);

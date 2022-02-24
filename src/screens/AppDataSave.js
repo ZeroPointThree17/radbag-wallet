@@ -296,7 +296,8 @@ var hdkey=""
                     tx.executeSql(createAddress, [], (tx, results) => {
                       console.log("Create address table completed");
                       var enabled_flag=1;
-                      for (let i = 1; i <= hardwareWallletPubKeys.length; i++) {
+                      var numberOfAddrs = hardwareWallletPubKeys.length == 0 ? 16 : hardwareWallletPubKeys.length + 1
+                      for (let i = 1; i < numberOfAddrs; i++) {
                     
                         db.transaction((tx) => {
  

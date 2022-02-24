@@ -24,10 +24,11 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
     }
 
     if(bip39.validateMnemonic(words12)){
-    const pushAction = StackActions.push('App Password', {
+    const pushAction = StackActions.push('Wallet Password', {
         mnemonicStr: words12,
         word13Str: word13,
-        firstTimeStr: firstTime
+        firstTimeStr: firstTime,
+        hardwareWallletPubKeyArr: []
       });
     
     navigation.dispatch(pushAction);

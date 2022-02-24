@@ -19,6 +19,9 @@ import prompt from 'react-native-prompt-android';
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import TransportHid from '@ledgerhq/react-native-hid';
 import { HDPathRadix } from '@radixdlt/crypto'
+import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
+import { Transaction } from '@radixdlt/tx-parser'
+
 
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW){
 
@@ -159,26 +162,64 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
       // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
       const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
       // alert("AFTER HD CREATE: " + hdpath)
-      var signAPDURequest = RadixAPDU.doSignHash({
-        path: hdpath,
-        hashToSign: unsigned_transaction,
-      })
+      // var signAPDURequest = RadixAPDU.doSignHash({
+      //   path: hdpath,
+      //   hashToSign: unsigned_transaction,
+      // })
+
+      const displayInstructionContentsOnLedgerDevice = true
+      const displayTXSummaryOnLedgerDevice = true
+  
+      const subs = new Subscription()
+  
+      const transactionRes = Transaction.fromBuffer(
+        Buffer.from(unsigned_transaction, 'hex'),
+      )
+      if (transactionRes.isErr()) {
+        const errMsg = `Failed to parse tx, underlying error: ${msgFromError(
+          transactionRes.error,
+        )}`
+        log.error(errMsg)
+        return throwError(() => hardwareError(errMsg))
+      }
+      const transaction = transactionRes.value
+      const instructions = transaction.instructions
+      const numberOfInstructions = instructions.length
+  
+      const sendInstructionSubject = new Subject<InstructionT>()
+      const resultBufferFromLedgerSubject = new Subject<Buffer>()
+      const outputSubject = new Subject<SignTXOutput>()
+  
+      const maxBytesPerExchange = 255
+
+
+      var signAPDURequest = RadixAPDU.signTX();
 
       // alert(signAPDURequest.cla + " " + signAPDURequest.ins + " " + signAPDURequest.p1 + " " + signAPDURequest.p2 + " " + signAPDURequest.data)
-      const devices = TransportHid.list();
+      TransportHid.list().then((devices) => {
+
 
       if (!devices[0]) {
         alert("No device found.")
         // throw new Error('No device found.')
       } else {
         alert("BEFORE TRANSPORT CREATE")
-        const transport = TransportHid.create()
-        alert("AFTER TRANSPORT CREATE")
-        const result = transport.send(signAPDURequest.cla, signAPDURequest.ins, signAPDURequest.p1, signAPDURequest.p2, signAPDURequest.data, signAPDURequest.requiredResponseStatusCodeFromDevice)
-
-        alert("sig hex" + result.toString("hex"))
-        finalSig = result.toString("hex");
+        TransportHid.create().then((transport) => {
+          alert("AFTER TRANSPORT CREATE")
+          transport.send(signAPDURequest.cla, signAPDURequest.ins, signAPDURequest.p1, signAPDURequest.p2, signAPDURequest.data, signAPDURequest.requiredResponseStatusCodeFromDevice).then((result) => {
+  
+          alert("sig hex" + result.toString("hex"))
+          console.log("sig hex: " + result.toString("hex"))
+          console.log("public_key: " + public_key)
+          console.log("unsigned_transaction: " + unsigned_transaction)
+          finalSig = result.toString("hex");
+          })
+        })
       }
+    })
+
+
+      // expected output: "Success!"
 
       // signAPDURequest.
   } else{

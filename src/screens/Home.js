@@ -103,7 +103,7 @@ function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddress
 }
 
 
-function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress){
+function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
@@ -154,7 +154,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
             <View key={rri}>
 
    <SeparatorBorder/>
-    <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+    <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHW: isHW})}}>
 
     <View style={styles.addrRowStyle}>
 
@@ -183,7 +183,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
           <View key={rri}>
 
  <SeparatorBorder/>
-  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: symbol, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}}>
+  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: symbol, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHW: isHW})}}>
 
   <View style={styles.addrRowStyle}>
 
@@ -470,6 +470,8 @@ const Home = ({route, navigation}) => {
 
     var dropdownVals = []
     var walletDropdownVals = []  
+ 
+    // walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)]
 
     enabledAddresses.forEach((element, id)=> 
         {
@@ -539,6 +541,9 @@ const Home = ({route, navigation}) => {
         }
     }
 }
+
+var isHW = walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)] == undefined? false : walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)].label.endsWith("[HARDWARE]")
+// alert(isHW)
 
 console.log("WALLETS: "+JSON.stringify(wallets));
 
@@ -636,7 +641,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         {/* <Text style={{fontSize: 14, color:"white"}}>          </Text> */}
   
         <View style={styles.rowStyleHome}>
-        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address})}>
+        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHW: isHW})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
         <Text style={[{fontSize: 14}, getAppFont("white")]}>Send</Text>
@@ -707,7 +712,7 @@ navigation.dispatch(pushAction);
 <View style={{margin:16}}>
 <Text style={getAppFont("black")}>Tokens</Text>
 
-{renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress)}
+{renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress))}
 
 </View> 
         <Separator/>

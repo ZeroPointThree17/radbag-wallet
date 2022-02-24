@@ -83,7 +83,7 @@ export const sendAPDU = async (
     var finalResult = "BLANK"
     const devices = await TransportHid.list()
     if (!devices[0]) {
-      // Alert.alert("No device found.")
+      Alert.alert("No device found.")
       // throw new Error('No device found.')
     } else {
       // Alert.alert("A device was found!")
@@ -207,6 +207,10 @@ function sendToHWWallet(navigation, firstTimeString) {
       verifyAddressOnly: false,
       path: path00H
     }
+
+    // var shin: APDUDoSignHashInput()
+
+    RadixAPDU.doSignHash
 
     publicKeyInputs.push([
       RadixAPDU.getPublicKey(pkin).cla,

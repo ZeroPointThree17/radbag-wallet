@@ -16,9 +16,11 @@ var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
 import * as Progress from 'react-native-progress';
 import prompt from 'react-native-prompt-android';
+import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
+import TransportHid from '@ledgerhq/react-native-hid';
+import { HDPathRadix } from '@radixdlt/crypto'
 
-
-function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash){
+function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW){
 
   Keyboard.dismiss; 
 
@@ -65,8 +67,8 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  "address": xrdAddr
-                  // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
+                  // "address": xrdAddr
+                  "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
                 },
                 "amount": {
                   "token_identifier": {
@@ -104,7 +106,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash) }
+            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW) }
           ]
         );
 
@@ -117,8 +119,13 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 }
 
 
-function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash){
+// async function submitTxn(){
 
+
+  export const submitTxn = async (
+    message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW
+  
+  ) => {
   setShow(false);
 
   var passwordStr = ""
@@ -144,6 +151,38 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         onPress: password => {
 
   try{
+
+    var finalSig = ""
+    // alert("IS HARDWARE: " +isHW)
+
+    if(isHW){
+      // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
+      const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
+      // alert("AFTER HD CREATE: " + hdpath)
+      var signAPDURequest = RadixAPDU.doSignHash({
+        path: hdpath,
+        hashToSign: unsigned_transaction,
+      })
+
+      // alert(signAPDURequest.cla + " " + signAPDURequest.ins + " " + signAPDURequest.p1 + " " + signAPDURequest.p2 + " " + signAPDURequest.data)
+      const devices = TransportHid.list();
+
+      if (!devices[0]) {
+        alert("No device found.")
+        // throw new Error('No device found.')
+      } else {
+        alert("BEFORE TRANSPORT CREATE")
+        const transport = TransportHid.create()
+        alert("AFTER TRANSPORT CREATE")
+        const result = transport.send(signAPDURequest.cla, signAPDURequest.ins, signAPDURequest.p1, signAPDURequest.p2, signAPDURequest.data, signAPDURequest.requiredResponseStatusCodeFromDevice)
+
+        alert("sig hex" + result.toString("hex"))
+        finalSig = result.toString("hex");
+      }
+
+      // signAPDURequest.
+  } else{
+
     var signature = "";
   var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
@@ -152,9 +191,13 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
 
   var result=new Uint8Array(72);
   secp256k1.signatureExport(signature.signature,result);
+
+
+   finalSig = Buffer.from(result).toString('hex');
   
-  var finalSig = Buffer.from(result).toString('hex');
+}
   
+
     fetch('https://raddish-node.com:6208/transaction/finalize', {
           method: 'POST',
           headers: {
@@ -372,7 +415,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
 
  const Send = ({route, navigation}) => {
  
-  const { defaultSymbol, sourceXrdAddr } = route.params;
+  const { defaultSymbol, sourceXrdAddr, hdpathIndex, isHW } = route.params;
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
   const [destAddr, onChangeDestAddr] = useState();
@@ -389,10 +432,9 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [iconURIs, setIconURIs] = useState(new Map());
   const [tokenNames, setTokenNames] = useState(new Map());
   const [gettingBalances, setGettingBalances] = useState();
-  
+
 
   useEffect( () => {
-
     // var symbolsTemp = [];
     // var currentValTemp = null;
     // var currentSymbolTemp="";
@@ -557,7 +599,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash)}}>
+<TouchableOpacity onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>

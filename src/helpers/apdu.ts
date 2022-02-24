@@ -12,6 +12,7 @@ import {
     radixCLA,
 } from './_types'
 
+
 // ##### Follows https://github.com/radixdlt/radixdlt-ledger-app/blob/main/APDUSPEC.md #####
 
 const hdPathComponentsToBuffer = (hdPath: HDPathRadixT): Buffer => {
@@ -129,15 +130,18 @@ type APDUDoSignHashInput = WithPath &
         hashToSign: Buffer
     }>
 
-const doSignHash = (input: APDUDoSignHashInput): RadixAPDUT => {
+const doSignHash = (input: any): RadixAPDUT => {
+    console.log("A: " + input.hashToSign.length)
     const pathData = hdPathToBuffer(input.path)
     const hashLenBuf = Buffer.alloc(1)
     const hashedMessageByteCount = input.hashToSign.length
-    hashLenBuf.writeUInt8(hashedMessageByteCount)
-    const hashData = Buffer.concat([hashLenBuf, input.hashToSign])
-
+    console.log("B")
+    hashLenBuf.writeUInt8(hashedMessageByteCount.toString(16))
+    console.log("C")
+    const hashData = Buffer.concat([hashLenBuf, Buffer.from(input.hashToSign)])
+    console.log("D")
     const data = Buffer.concat([pathData, hashData])
-
+    console.log("E")
     return makeAPDU({
         ins: LedgerInstruction.DO_SIGN_HASH,
         data,

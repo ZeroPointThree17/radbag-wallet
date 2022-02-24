@@ -21,6 +21,62 @@ import TransportHid from '@ledgerhq/react-native-hid';
 import { HDPathRadix } from '@radixdlt/crypto'
 import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
 import { Transaction } from '@radixdlt/tx-parser'
+import { InstructionT } from '@radixdlt/tx-parser'
+import {
+	GetPublicKeyInput,
+	HardwareSigningKeyT,
+	HardwareWalletT,
+	HardwareWalletWithoutSK,
+	KeyExchangeInput,
+	path000H,
+	SemVerT,
+	SignHashInput,
+	SemVer,
+	signingKeyWithHardWareWallet,
+	SignTransactionInput,
+	SignTXOutput,
+} from '@radixdlt/hardware-wallet'
+import { log, BufferReader } from '@radixdlt/util'
+
+
+const parseSignatureFromLedger = (
+  buf,
+) => {
+  // Response `buf`: pub_key_len (1) || pub_key (var) || chain_code_len (1) || chain_code (var)
+  const bufferReader = BufferReader.create(buf)
+
+  const signatureDERlengthResult = bufferReader.readNextBuffer(1)
+  if (signatureDERlengthResult.isErr()) {
+    const errMsg = `Failed to parse length of signature from response buffer: ${msgFromError(
+      signatureDERlengthResult.error,
+    )}`
+    log.error(errMsg)
+    return err(hardwareError(errMsg))
+  }
+  const signatureDERlength = signatureDERlengthResult.value.readUIntBE(
+    0,
+    1,
+  )
+  const signatureDERBytesResult = bufferReader.readNextBuffer(
+    signatureDERlength,
+  )
+
+  if (signatureDERBytesResult.isErr()) {
+    const errMsg = `Failed to parse Signature DER bytes from response buffer: ${msgFromError(
+      signatureDERBytesResult.error,
+    )}`
+    log.error(errMsg)
+    return err(hardwareError(errMsg))
+  }
+  const signatureDERBytes = signatureDERBytesResult.value
+
+  // We ignore remaining bytes, being: `Signature.V (1)`
+
+  return Signature.fromDER(signatureDERBytes).map(signature => ({
+    signature,
+    remainingBytes: bufferReader.remainingBytes(),
+  }))
+}
 
 
 function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW){
@@ -125,6 +181,37 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 // async function submitTxn(){
 
 
+  function transport_send(transport, apdus){
+
+    var currApdu = apdus.shift();
+    if(apdus.length == 0){
+      transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
+        
+        console.log("INSIDE RESULTS: "+result.toString('hex'))
+        const parsedResult = parseSignatureFromLedger(result)
+        console.log("INSIDE RESULTS2")
+        const signature = parsedResult.value.signature
+        console.log("INSIDE RESULTS3")
+        const remainingBytes = parsedResult.value.remainingBytes
+        console.log("INSIDE RESULTS4")
+        const signatureV = remainingBytes.readUInt8(0)
+        console.log("INSIDE RESULTS5")
+        console.log(`Signature: ${signature}`)
+        console.log(`Signature V: ${signatureV}`)
+        alert(`Signature: ${signature}`)
+        alert(`Signature V: ${signatureV}`)
+
+        
+        var finalSig = signature;
+      })
+    } else{
+       transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
+        transport_send(transport, apdus)
+      })
+    }
+  }
+  
+
   export const submitTxn = async (
     message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW
   
@@ -167,11 +254,6 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
       //   hashToSign: unsigned_transaction,
       // })
 
-      const displayInstructionContentsOnLedgerDevice = true
-      const displayTXSummaryOnLedgerDevice = true
-  
-      const subs = new Subscription()
-  
       const transactionRes = Transaction.fromBuffer(
         Buffer.from(unsigned_transaction, 'hex'),
       )
@@ -186,14 +268,16 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
       const instructions = transaction.instructions
       const numberOfInstructions = instructions.length
   
-      const sendInstructionSubject = new Subject<InstructionT>()
-      const resultBufferFromLedgerSubject = new Subject<Buffer>()
-      const outputSubject = new Subject<SignTXOutput>()
-  
-      const maxBytesPerExchange = 255
+      alert("numberOfInstructions: "+numberOfInstructions)
 
+     var apdu1 =  RadixAPDU.signTX.initialSetup({
+        path: hdpath,
+        txByteCount: unsigned_transaction.length / 2, // 2 hex chars per byte
+        numberOfInstructions,
+        // nonNativeTokenRriHRP: input.nonXrdHRP,
+    })
 
-      var signAPDURequest = RadixAPDU.signTX();
+   
 
       // alert(signAPDURequest.cla + " " + signAPDURequest.ins + " " + signAPDURequest.p1 + " " + signAPDURequest.p2 + " " + signAPDURequest.data)
       TransportHid.list().then((devices) => {
@@ -206,14 +290,33 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
         alert("BEFORE TRANSPORT CREATE")
         TransportHid.create().then((transport) => {
           alert("AFTER TRANSPORT CREATE")
-          transport.send(signAPDURequest.cla, signAPDURequest.ins, signAPDURequest.p1, signAPDURequest.p2, signAPDURequest.data, signAPDURequest.requiredResponseStatusCodeFromDevice).then((result) => {
+          transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
   
-          alert("sig hex" + result.toString("hex"))
-          console.log("sig hex: " + result.toString("hex"))
-          console.log("public_key: " + public_key)
-          console.log("unsigned_transaction: " + unsigned_transaction)
-          finalSig = result.toString("hex");
-          })
+
+            var apdus = []
+      while( instructions.length > 0){
+
+            const instructionToSend = instructions.shift() // "pop first"
+
+            const instructionBytes = instructionToSend.toBuffer();
+
+            const displayInstructionContentsOnLedgerDevice = true
+            const displayTXSummaryOnLedgerDevice = true
+
+            var apdu2 =  RadixAPDU.signTX.singleInstruction({
+              instructionBytes,
+              isLastInstruction: instructions.length==0?true:false,
+              displayInstructionContentsOnLedgerDevice,
+              displayTXSummaryOnLedgerDevice,
+            })
+            apdus.push(apdu2)
+          }
+            
+
+            transport_send(transport, apdus);
+
+      // }
+        })
         })
       }
     })

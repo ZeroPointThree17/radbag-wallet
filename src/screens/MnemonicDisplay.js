@@ -94,6 +94,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
       <Text style={[{fontWeight:"bold",textAlign:'center', marginHorizontal: 25 }, getAppFont("black")]}>Selected Wallet Name:</Text><Text style={{fontFamily:"AppleSDGothicNeo-Regular", fontSize:20, textAlign:'center'}}>{walletName}</Text>
       <Separator/>
       <Separator/>
+      { mnemonic_enc != "HW_WALLET" && <React.Fragment>
         <Text style={[{textAlign:'center', marginHorizontal: 25}, getAppFont("black")]}>Enter your wallet password to display the mnemonic for this wallet.</Text>
         <Separator/>
         <PasswordInputText  style={[{marginHorizontal: 25}, getAppFont("black")]} 
@@ -106,11 +107,18 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
                 onPress={() => {Keyboard.dismiss;
                   showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13)}}
               />
+
+          </React.Fragment>
+      }
+
+        { mnemonic_enc == "HW_WALLET" && <React.Fragment>
+          <Text>Mnemonic not visible when using a hardware wallet.</Text>
+              </React.Fragment>
+         }
               <Separator/>
               <Separator/>
               <Separator/>
 
-              
               { show && 
        <Text style={[{textAlign:'center', marginHorizontal: 25, fontSize:20}, getAppFont("black")]}>Mnemonic Phrase:</Text> 
         

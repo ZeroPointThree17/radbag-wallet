@@ -23,11 +23,12 @@ const ImportSelect = ({route, navigation}) => {
         onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: firstTimeString})}
       />
       {Platform.OS != 'ios' && <Separator/>}
-    {Platform.OS === 'ios' && <React.Fragment><Separator/><Button style={getAppFont("black")}
-        title={"Import a Hardware Wallet\nvia Ledger Nano X Bluetooth\n\n(NOTE: Ledger Nano S is not supported on iOS)"}
-        enabled
-        onPress={() => navigation.navigate('Hardware Wallet USB', {firstTimeStr: firstTimeString})}
-      /></React.Fragment>}
+    {Platform.OS === 'ios' && <React.Fragment><Separator/>
+    
+    <TouchableOpacity onPress={ () => navigation.push('Hardware Wallet USB', {firstTimeStr: firstTimeString})}>
+
+    <Text>Import a Hardware Wallet\nvia Ledger Nano X Bluetooth\n\n(NOTE: Ledger Nano S is not supported on iOS)"</Text>
+        </TouchableOpacity></React.Fragment>}
       {Platform.OS != 'ios' && <Separator/>}
       {Platform.OS != 'ios' && <React.Fragment><Separator/><Button style={getAppFont("black")}
         title={"Import a Hardware Wallet\n(Ledger Nano S or X via USB)"}

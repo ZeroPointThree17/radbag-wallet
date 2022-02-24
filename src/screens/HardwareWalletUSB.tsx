@@ -145,7 +145,7 @@ export const sendAPDU = async (
     mnemonicStr: "HW_WALLET",
     word13Str: "HW_WALLET",
     firstTimeStr: firstTimeString,
-    hardwareWallletPubKeyArr: publicKeys
+    hardwareWallletPubKeyArr: ["036b7673ebece31c881a742912b07f24d415810d98b395bdd42d566b8202603265"]
   });
 
   navigation.dispatch(pushAction);
@@ -154,7 +154,7 @@ export const sendAPDU = async (
 }
 
 function sendToHWWallet(navigation, firstTimeString) {
-
+  console.log("In send to hw")
   // var bip32comp1: BIP32PathComponentT =
   //   { index: 0x8000002c, isHardened: true, toString: () => "44'", level: 1, name: "purpose", value: () => 44 }
 
@@ -226,6 +226,7 @@ function sendToHWWallet(navigation, firstTimeString) {
 
 const HardwareWalletUSB = ({ route, navigation }) => {
 
+  console.log("In send to hw 0")
   const { firstTimeStr } = route.params;
   var firstTimeString = JSON.stringify(firstTimeStr).replace(/"/g, '');
 

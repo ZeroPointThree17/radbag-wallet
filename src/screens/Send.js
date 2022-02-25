@@ -187,25 +187,29 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
     if(apdus.length == 0){
       transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
         
-        console.log("INSIDE RESULTS: "+result.toString('hex'))
-        const parsedResult = parseSignatureFromLedger(result)
-        console.log("INSIDE RESULTS2")
-        const signature = parsedResult.value.signature
-        console.log("INSIDE RESULTS3")
-        const remainingBytes = parsedResult.value.remainingBytes
-        console.log("INSIDE RESULTS4")
-        const signatureV = remainingBytes.readUInt8(0)
-        console.log("INSIDE RESULTS5")
-        console.log(`Signature: ${signature}`)
-        console.log(`Signature V: ${signatureV}`)
-        alert(`Signature: ${signature}`)
-        alert(`Signature V: ${signatureV}`)
+
+        var sig = result.slice(1,result.length-2).toString('hex');
+
+        console.log("INSIDE RESULTS FINAL: "+sig)
+        // const parsedResult = parseSignatureFromLedger(result)
+        // console.log("INSIDE RESULTS2")
+        // const signature = parsedResult.value.signature
+        // console.log("INSIDE RESULTS3")
+        // const remainingBytes = parsedResult.value.remainingBytes
+        // console.log("INSIDE RESULTS4")
+        // const signatureV = remainingBytes.readUInt8(0)
+        // console.log("INSIDE RESULTS5")
+        // console.log(`Signature: ${signature}`)
+        // console.log(`Signature V: ${signatureV}`)
+        // alert(`Signature: ${signature}`)
+        // alert(`Signature V: ${signatureV}`)
 
         
         var finalSig = signature;
       })
     } else{
        transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
+        console.log("INSIDE RESULTS: "+result.toString('hex'))
         transport_send(transport, apdus)
       })
     }
@@ -243,6 +247,8 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
   try{
 
     var finalSig = ""
+
+    console.log("unsigned_transaction: "+unsigned_transaction)
     // alert("IS HARDWARE: " +isHW)
 
     if(isHW){
@@ -298,10 +304,11 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 
             const instructionToSend = instructions.shift() // "pop first"
 
+            console.log("INSTRUCTIONS: "+instructions)
             const instructionBytes = instructionToSend.toBuffer();
 
-            const displayInstructionContentsOnLedgerDevice = true
-            const displayTXSummaryOnLedgerDevice = true
+            const displayInstructionContentsOnLedgerDevice = false
+            const displayTXSummaryOnLedgerDevice = false
 
             var apdu2 =  RadixAPDU.signTX.singleInstruction({
               instructionBytes,

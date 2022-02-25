@@ -208,10 +208,6 @@ function sendToHWWallet(navigation, firstTimeString) {
       path: path00H
     }
 
-    // var shin: APDUDoSignHashInput()
-
-    RadixAPDU.doSignHash
-
     publicKeyInputs.push([
       RadixAPDU.getPublicKey(pkin).cla,
       RadixAPDU.getPublicKey(pkin).ins,

@@ -79,9 +79,10 @@ const parseSignatureFromLedger = (
 }
 
 
-function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW){
+function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW){
 
   Keyboard.dismiss; 
+  setSubmitEnabled(false);
 
   if (amount != undefined){
     amount = amount.replace(/,/g, '');
@@ -165,7 +166,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW) }
+            { text: "OK", onPress: () => submitTxn(setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW) }
           ]
         );
 
@@ -181,16 +182,24 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 // async function submitTxn(){
 
 
-  function transport_send(transport, apdus){
+  function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash){
 
     var currApdu = apdus.shift();
     if(apdus.length == 0){
-      transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
+
+      alert("Please sign this transaction on the device to finalize");
+
+       transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
         
+        var finalSig = result.slice(1,result.length-2).toString('hex');
+        console.log("INSIDE RESULTS FINAL: "+finalSig)
 
-        var sig = result.slice(1,result.length-2).toString('hex');
+        if(finalSig.length < 10){
+          alert("Transaction not confirmed.")
+        } else{
+          alert("Transaction confirmed.")
 
-        console.log("INSIDE RESULTS FINAL: "+sig)
+          finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
         // const parsedResult = parseSignatureFromLedger(result)
         // console.log("INSIDE RESULTS2")
         // const signature = parsedResult.value.signature
@@ -204,20 +213,19 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
         // alert(`Signature: ${signature}`)
         // alert(`Signature V: ${signatureV}`)
 
-        
-        var finalSig = signature;
+        }
       })
     } else{
        transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
         console.log("INSIDE RESULTS: "+result.toString('hex'))
-        transport_send(transport, apdus)
+        transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash)
       })
     }
   }
   
 
   export const submitTxn = async (
-    message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW
+    setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW
   
   ) => {
   setShow(false);
@@ -231,6 +239,7 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
     promptFunc = prompt
   }
 
+  if(isHW == false){
   promptFunc(
     "Enter wallet password",
     "Enter the wallet password to perform this transaction",
@@ -251,88 +260,11 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
     console.log("unsigned_transaction: "+unsigned_transaction)
     // alert("IS HARDWARE: " +isHW)
 
-    if(isHW){
-      // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
-      const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
-      // alert("AFTER HD CREATE: " + hdpath)
-      // var signAPDURequest = RadixAPDU.doSignHash({
-      //   path: hdpath,
-      //   hashToSign: unsigned_transaction,
-      // })
-
-      const transactionRes = Transaction.fromBuffer(
-        Buffer.from(unsigned_transaction, 'hex'),
-      )
-      if (transactionRes.isErr()) {
-        const errMsg = `Failed to parse tx, underlying error: ${msgFromError(
-          transactionRes.error,
-        )}`
-        log.error(errMsg)
-        return throwError(() => hardwareError(errMsg))
-      }
-      const transaction = transactionRes.value
-      const instructions = transaction.instructions
-      const numberOfInstructions = instructions.length
-  
-      alert("numberOfInstructions: "+numberOfInstructions)
-
-     var apdu1 =  RadixAPDU.signTX.initialSetup({
-        path: hdpath,
-        txByteCount: unsigned_transaction.length / 2, // 2 hex chars per byte
-        numberOfInstructions,
-        // nonNativeTokenRriHRP: input.nonXrdHRP,
-    })
-
-   
-
-      // alert(signAPDURequest.cla + " " + signAPDURequest.ins + " " + signAPDURequest.p1 + " " + signAPDURequest.p2 + " " + signAPDURequest.data)
-      TransportHid.list().then((devices) => {
-
-
-      if (!devices[0]) {
-        alert("No device found.")
-        // throw new Error('No device found.')
-      } else {
-        alert("BEFORE TRANSPORT CREATE")
-        TransportHid.create().then((transport) => {
-          alert("AFTER TRANSPORT CREATE")
-          transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
-  
-
-            var apdus = []
-      while( instructions.length > 0){
-
-            const instructionToSend = instructions.shift() // "pop first"
-
-            console.log("INSTRUCTIONS: "+instructions)
-            const instructionBytes = instructionToSend.toBuffer();
-
-            const displayInstructionContentsOnLedgerDevice = false
-            const displayTXSummaryOnLedgerDevice = false
-
-            var apdu2 =  RadixAPDU.signTX.singleInstruction({
-              instructionBytes,
-              isLastInstruction: instructions.length==0?true:false,
-              displayInstructionContentsOnLedgerDevice,
-              displayTXSummaryOnLedgerDevice,
-            })
-            apdus.push(apdu2)
-          }
-            
-
-            transport_send(transport, apdus);
-
-      // }
-        })
-        })
-      }
-    })
-
-
+ 
       // expected output: "Success!"
 
       // signAPDURequest.
-  } else{
+
 
     var signature = "";
   var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
@@ -346,44 +278,9 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
 
    finalSig = Buffer.from(result).toString('hex');
   
-}
-  
+   finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
-    fetch('https://raddish-node.com:6208/transaction/finalize', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(
-        
-            {
-              "network_identifier": {
-                "network": "mainnet"
-              },
-              "unsigned_transaction": unsigned_transaction,
-              "signature": {
-                "public_key": {
-                  "hex": public_key
-                },
-                "bytes": finalSig
-              },
-              "submit": true
-            }
-        
-          )
-        }).then((response) => response.json()).then((json) => {
-  
-         var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
-        
-         Keyboard.dismiss; 
-         setShow(true);
-         setTxHash(txnHash);
-  
-        }).catch((error) => {
-            console.error(error);
-        });  
-} catch(err){
+  } catch(err){
     alert("Password incorrect")
   }
   
@@ -393,6 +290,128 @@ function buildTxn(rri, sourceXrdAddr, destAddr, symbol, amount, public_key, priv
     "secure-text"
   );
 
+  } else{
+
+         alert("Please confirm this transaction on the device");
+
+        // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
+        const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
+        // alert("AFTER HD CREATE: " + hdpath)
+        // var signAPDURequest = RadixAPDU.doSignHash({
+        //   path: hdpath,
+        //   hashToSign: unsigned_transaction,
+        // })
+  
+        const transactionRes = Transaction.fromBuffer(
+          Buffer.from(unsigned_transaction, 'hex'),
+        )
+        if (transactionRes.isErr()) {
+          const errMsg = `Failed to parse tx, underlying error: ${msgFromError(
+            transactionRes.error,
+          )}`
+          log.error(errMsg)
+          return throwError(() => hardwareError(errMsg))
+        }
+        const transaction = transactionRes.value
+        const instructions = transaction.instructions
+        const numberOfInstructions = instructions.length
+    
+        // alert("numberOfInstructions: "+numberOfInstructions)
+  
+       var apdu1 =  RadixAPDU.signTX.initialSetup({
+          path: hdpath,
+          txByteCount: unsigned_transaction.length / 2, // 2 hex chars per byte
+          numberOfInstructions,
+          // nonNativeTokenRriHRP: input.nonXrdHRP,
+      })
+  
+     
+  
+        // alert(signAPDURequest.cla + " " + signAPDURequest.ins + " " + signAPDURequest.p1 + " " + signAPDURequest.p2 + " " + signAPDURequest.data)
+        TransportHid.list().then((devices) => {
+  
+  
+        if (!devices[0]) {
+          alert("No device found.")
+          // throw new Error('No device found.')
+        } else {
+          // alert("BEFORE TRANSPORT CREATE")
+          TransportHid.create().then((transport) => {
+            // alert("AFTER TRANSPORT CREATE")
+            transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
+    
+  
+              var apdus = []
+        while( instructions.length > 0){
+  
+              const instructionToSend = instructions.shift() // "pop first"
+  
+              console.log("INSTRUCTIONS: "+instructions)
+              const instructionBytes = instructionToSend.toBuffer();
+  
+              const displayInstructionContentsOnLedgerDevice = false
+              const displayTXSummaryOnLedgerDevice = false
+  
+              var apdu2 =  RadixAPDU.signTX.singleInstruction({
+                instructionBytes,
+                isLastInstruction: instructions.length==0?true:false,
+                displayInstructionContentsOnLedgerDevice,
+                displayTXSummaryOnLedgerDevice,
+              })
+              apdus.push(apdu2)
+            }
+              
+              transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
+  
+        // }
+          })
+          })
+        }
+      })
+  
+  
+  }
+}
+  
+
+  
+
+function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
+  fetch('https://raddish-node.com:6208/transaction/finalize', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(
+  
+      {
+        "network_identifier": {
+          "network": "mainnet"
+        },
+        "unsigned_transaction": unsigned_transaction,
+        "signature": {
+          "public_key": {
+            "hex": public_key
+          },
+          "bytes": finalSig
+        },
+        "submit": true
+      }
+  
+    )
+  }).then((response) => response.json()).then((json) => {
+
+   var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
+  
+   Keyboard.dismiss; 
+   setShow(true);
+   setTxHash(txnHash);
+   setSubmitEnabled(true);
+
+  }).catch((error) => {
+      console.error(error);
+  });  
 }
 
 
@@ -583,7 +602,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [iconURIs, setIconURIs] = useState(new Map());
   const [tokenNames, setTokenNames] = useState(new Map());
   const [gettingBalances, setGettingBalances] = useState();
-
+  const [submitEnabled, setSubmitEnabled] = useState(true);
 
   useEffect( () => {
     // var symbolsTemp = [];
@@ -750,7 +769,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW)}}>
+<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>

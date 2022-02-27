@@ -18,6 +18,7 @@ import * as Progress from 'react-native-progress';
 import prompt from 'react-native-prompt-android';
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import TransportHid from '@ledgerhq/react-native-hid';
+import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import { HDPathRadix } from '@radixdlt/crypto'
 import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
 import { Transaction } from '@radixdlt/tx-parser'
@@ -179,6 +180,39 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
 }
 
 
+ 
+// function deviceAdditiondevice => ({ devices }) => ({
+
+
+//   return devices: devices.some(i => i.id === device.id)
+//     ? devices
+//     : devices.concat(device)
+//   // }
+// });
+
+
+ function startScan( setBluetoothHWDescriptor) {
+
+
+  // this.setState({ refreshing: true });
+  new Observable(TransportBLE.listen).subscribe({
+    complete: () => {
+      // this.setState({ refreshing: false });
+    },
+    next: e => {
+      // alert(JSON.stringify(e.descriptor))
+      if (e.type === "add") {
+        if(e.descriptor != undefined){
+        setBluetoothHWDescriptor(JSON.stringify(e.descriptor));
+        }
+      }
+      // NB there is no "remove" case in BLE.
+    },
+    error: error => {
+      // this.setState({ error, refreshing: false });
+    }
+  });
+};
 // async function submitTxn(){
 
 
@@ -603,6 +637,8 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [tokenNames, setTokenNames] = useState(new Map());
   const [gettingBalances, setGettingBalances] = useState();
   const [submitEnabled, setSubmitEnabled] = useState(true);
+  const [bluetoothHWDescriptor, setBluetoothHWDescriptor] = useState();
+
 
   useEffect( () => {
     // var symbolsTemp = [];
@@ -610,14 +646,17 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
     // var currentSymbolTemp="";
     // var rriTemp="";
 
-  
     getBalances(true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
    
     // onChangeSymbol(currentSymbolTemp);
+
+    startScan( setBluetoothHWDescriptor);
+    // alert(bluetoothHWDescriptor)
   
 },[]);
 
 useInterval(() => {
+
   getBalances(false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
 }, 3500);
 
@@ -765,7 +804,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
 
-
+<Text>{bluetoothHWDescriptor == undefined ? " " : bluetoothHWDescriptor}</Text>
 <Separator/>
 <Separator/>
 <Separator/>

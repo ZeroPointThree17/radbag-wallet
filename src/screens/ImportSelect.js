@@ -25,7 +25,7 @@ const ImportSelect = ({route, navigation}) => {
       {Platform.OS != 'ios' && <Separator/>}
     {Platform.OS === 'ios' && <React.Fragment><Separator/>
     
-    <TouchableOpacity onPress={ () => navigation.push('Hardware Wallet USB', {firstTimeStr: firstTimeString})}>
+    <TouchableOpacity onPress={ () => navigation.push('Hardware Wallet USB', {firstTimeStr: firstTimeString, isBluetooth:"true"})}>
 
     <Text>Import a Hardware Wallet\nvia Ledger Nano X Bluetooth\n\n(NOTE: Ledger Nano S is not supported on iOS)"</Text>
         </TouchableOpacity></React.Fragment>}
@@ -33,7 +33,14 @@ const ImportSelect = ({route, navigation}) => {
       {Platform.OS != 'ios' && <React.Fragment><Separator/><Button style={getAppFont("black")}
         title={"Import a Hardware Wallet\n(Ledger Nano S or X via USB)"}
         enabled
-        onPress={() => navigation.navigate('Hardware Wallet USB', {firstTimeStr: firstTimeString})}
+        onPress={() => navigation.navigate('Hardware Wallet USB', {firstTimeStr: firstTimeString, isBluetooth:"false"})}
+      /></React.Fragment>}
+      
+      {Platform.OS != 'ios' && <Separator/>}
+      {Platform.OS != 'ios' && <React.Fragment><Separator/><Button style={getAppFont("black")}
+        title={"Import a Hardware Wallet\n(Ledger Nano S or X via Bluetooth)"}
+        enabled
+        onPress={() => navigation.navigate('Hardware Wallet USB', {firstTimeStr: firstTimeString, isBluetooth:"true"})}
       /></React.Fragment>}
       
   </ScrollView>

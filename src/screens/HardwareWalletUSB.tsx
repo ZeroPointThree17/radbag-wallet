@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { Alert, TouchableOpacity, ScrollView, Text, View, StyleSheet, ImagePropTypes } from 'react-native';
+import {
+  Alert, TouchableOpacity, ScrollView, Text, View, StyleSheet, ImagePropTypes, Platform,
+  PermissionsAndroid
+} from "react-native";
 import TransportHid from '@ledgerhq/react-native-hid';
+import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import { getAppFont, copyToClipboard } from '../helpers/helpers';
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import { PublicKey, HDPathRadix, HDPathRadixT, BIP32PathComponentT } from '@radixdlt/crypto'
 import { numberLiteralTypeAnnotation } from '@babel/types';
 import { StackActions } from '@react-navigation/native';
 import { navigateHome } from './AppDataSave';
+import { Observable } from "rxjs";
 import {
   msgFromError,
   readBuffer,
@@ -58,10 +63,11 @@ function splitPath(path: string): number[] {
 export const sendAPDU = async (
   navigation: any,
   publicKeyInputs: any[],
-  firstTimeString: string
+  firstTimeString: string,
+  isBluetoothString: string
 
 ) => {
-
+  console.log("In send to hw3")
   // var publicKeys = ["04f4f40a5a387388652998c19f1c63de76ff3cd4a6faacb11b383456c5196ec2d3"];
   var publicKeys: string[] = [];
   for (var x = 0; x < 15; x++) {
@@ -81,17 +87,88 @@ export const sendAPDU = async (
 
     // Alert.alert(cla + " " + ins + " " + p1 + " " + p2 + " " + data + " " + statusList)
     var finalResult = "BLANK"
-    const devices = await TransportHid.list()
+    var devices = [];
+    console.log("In send to hw 4")
+    if (isBluetoothString == "true") {
+      console.log("In send to hw 5.1")
+
+      if (Platform.OS === "android") {
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+        );
+
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+      }
+
+      // const granted = await PermissionsAndroid.request(
+      //   PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION, {
+      //   title: 'Location permission for bluetooth scanning',
+      //   message: 'wahtever',
+      //   buttonNeutral: 'Ask Me Later',
+      //   buttonNegative: 'Cancel',
+      //   buttonPositive: 'OK',
+      // },
+      // );
+
+      // if (Platform.OS === "android" && Platform.Version >= 23) {
+      //   // Scanning: Checking permissions...
+      //   const enabled = yield call(PermissionsAndroid.check, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      //   if (!enabled) {
+      //     // Scanning: Permissions disabled, showing...
+      //     const granted = yield call(PermissionsAndroid.request, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      //     if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+      //       // Scanning: Permissions not granted, aborting...
+      //       return;
+      //     }
+      //   }
+      // }
+
+      const subscription = TransportBLE.observeState({
+        next: e => Alert.alert(e.available + ""),
+        complete: () => { },
+        error: () => { }
+      });
+
+      const subscription2 = new Observable(TransportBLE.listen).subscribe({
+        complete: () => {
+          Alert.alert("COMPLETE")
+          // this.setState({ refreshing: false });
+          console.log("In send to hw 5.1.2.1")
+        },
+        next: e => {
+          console.log("In send to hw 5.1.2.2.0")
+          if (e.type === "add") {
+            const device = e.descriptor;
+            Alert.alert(device);
+            console.log("In send to hw 5.1.2.2")
+          }
+        },
+        error: error => {
+          // this.setState({ error, refreshing: false });
+          console.log("In send to hw 5.1.2.3: " + error)
+        }
+
+      })
+      console.log("In send to hw 5.1.3")
+    } else {
+      console.log("In send to hw 5.2")
+      devices = await TransportHid.list()
+    }
+
     if (!devices[0]) {
       Alert.alert("No device found.")
       // throw new Error('No device found.')
     } else {
       // Alert.alert("A device was found!")
-
+      console.log("In send to hw 6")
       const transport = await TransportHid.create()
+      console.log("In send to hw 7")
       // Alert.alert("AFTER TRANSPORT CREATE")
       const result = await transport.send(cla, ins, p1, p2, data, statusList)
       // Alert.alert("AFTER TRANSPORT SEND")
+      console.log("In send to hw 8")
       transport.close()
       console.log("RESULT_HEX: " + result.toString("hex"));
       // Alert.alert("AFTER TRANSPORT CLOSE")
@@ -134,6 +211,17 @@ export const sendAPDU = async (
       console.log("PKPK: " + publicKeyFinal);
 
       // return publicKeyFinal;
+
+      const pushAction = StackActions.push('Wallet Password', {
+        mnemonicStr: "HW_WALLET",
+        word13Str: "HW_WALLET",
+        firstTimeStr: firstTimeString,
+        hardwareWallletPubKeyArr: publicKeys
+      });
+
+      navigation.dispatch(pushAction);
+      // navigateHome(setIsActive, navigation, "a", "a", "HW_WALLET", "HW_WALLET", "false", publicKeys);
+
     }
 
 
@@ -141,19 +229,10 @@ export const sendAPDU = async (
   }
 
 
-  const pushAction = StackActions.push('Wallet Password', {
-    mnemonicStr: "HW_WALLET",
-    word13Str: "HW_WALLET",
-    firstTimeStr: firstTimeString,
-    hardwareWallletPubKeyArr: ["036b7673ebece31c881a742912b07f24d415810d98b395bdd42d566b8202603265"]
-  });
-
-  navigation.dispatch(pushAction);
-  // navigateHome(setIsActive, navigation, "a", "a", "HW_WALLET", "HW_WALLET", "false", publicKeys);
 
 }
 
-function sendToHWWallet(navigation, firstTimeString) {
+function sendToHWWallet(navigation, firstTimeString, isBluetoothString) {
   console.log("In send to hw")
   // var bip32comp1: BIP32PathComponentT =
   //   { index: 0x8000002c, isHardened: true, toString: () => "44'", level: 1, name: "purpose", value: () => 44 }
@@ -220,17 +299,19 @@ function sendToHWWallet(navigation, firstTimeString) {
   sendAPDU(
     navigation,
     publicKeyInputs,
-    firstTimeString
+    firstTimeString,
+    isBluetoothString
   );
 }
 
 const HardwareWalletUSB = ({ route, navigation }) => {
 
   console.log("In send to hw 0")
-  const { firstTimeStr } = route.params;
+  const { firstTimeStr, isBluetooth } = route.params;
   var firstTimeString = JSON.stringify(firstTimeStr).replace(/"/g, '');
+  var isBluetoothString = JSON.stringify(isBluetooth).replace(/"/g, '');
 
-  sendToHWWallet(navigation, firstTimeString);
+  sendToHWWallet(navigation, firstTimeString, isBluetoothString);
 
   return (
     <View style={styles.container}>

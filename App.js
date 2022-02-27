@@ -21,6 +21,7 @@ import Receive from './src/screens/Receive';
 import Staking from './src/screens/Staking';
 import ImportSelect from './src/screens/ImportSelect';
 import HardwareWalletUSB from './src/screens/HardwareWalletUSB';
+import HardwareWalletBluetooth from './src/screens/HardwareWalletBluetooth';
 import {openCB, errorCB} from './src/helpers/helpers';
 
 
@@ -85,6 +86,7 @@ LogBox.ignoreAllLogs();
       <Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Import Select" component={ImportSelect} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Hardware Wallet USB" component={HardwareWalletUSB} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Hardware Wallet Bluetooth" component={HardwareWalletBluetooth} options={{ headerTitleAlign: 'center' }}/>
  
     </Stack.Navigator>
     <FlashMessage position="center" style={{height:60}}/>

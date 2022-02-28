@@ -191,8 +191,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
 // });
 
 
- function startScan( setBluetoothHWDescriptor) {
-
+ function startScan(setBluetoothHWDescriptor) {
 
   // this.setState({ refreshing: true });
   new Observable(TransportBLE.listen).subscribe({
@@ -804,7 +803,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
 
-<Text>{bluetoothHWDescriptor == undefined ? " " : bluetoothHWDescriptor}</Text>
+<Text>{bluetoothHWDescriptor == undefined ? " " : JSON.parse(bluetoothHWDescriptor).id}</Text>
 <Separator/>
 <Separator/>
 <Separator/>

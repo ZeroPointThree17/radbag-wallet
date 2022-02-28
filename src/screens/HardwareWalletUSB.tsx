@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Alert, TouchableOpacity, ScrollView, Text, View, StyleSheet, ImagePropTypes, Platform,
+  Alert, Button, TouchableOpacity, ScrollView, Text, View, StyleSheet, ImagePropTypes, Platform,
   PermissionsAndroid
 } from "react-native";
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -64,7 +64,8 @@ export const sendAPDU = async (
   navigation: any,
   publicKeyInputs: any[],
   firstTimeString: string,
-  isBluetoothString: string
+  isBluetoothString: string,
+  bluetoothHWDescriptor: any
 
 ) => {
   console.log("In send to hw3")
@@ -89,81 +90,28 @@ export const sendAPDU = async (
     var finalResult = "BLANK"
     var devices = [];
     console.log("In send to hw 4")
-    if (isBluetoothString == "true") {
-      console.log("In send to hw 5.1")
+    // if (isBluetoothString == "true") {
+    console.log("In send to hw 5.1")
 
-      if (Platform.OS === "android") {
-        await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
-        );
 
-        await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
-      }
-
-      // const granted = await PermissionsAndroid.request(
-      //   PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION, {
-      //   title: 'Location permission for bluetooth scanning',
-      //   message: 'wahtever',
-      //   buttonNeutral: 'Ask Me Later',
-      //   buttonNegative: 'Cancel',
-      //   buttonPositive: 'OK',
-      // },
-      // );
-
-      // if (Platform.OS === "android" && Platform.Version >= 23) {
-      //   // Scanning: Checking permissions...
-      //   const enabled = yield call(PermissionsAndroid.check, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-      //   if (!enabled) {
-      //     // Scanning: Permissions disabled, showing...
-      //     const granted = yield call(PermissionsAndroid.request, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-      //     if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      //       // Scanning: Permissions not granted, aborting...
-      //       return;
-      //     }
-      //   }
-      // }
-
-      const subscription = TransportBLE.observeState({
-        next: e => Alert.alert(e.available + ""),
-        complete: () => { },
-        error: () => { }
-      });
-
-      const subscription2 = new Observable(TransportBLE.listen).subscribe({
-        complete: () => {
-          Alert.alert("COMPLETE")
-          // this.setState({ refreshing: false });
-          console.log("In send to hw 5.1.2.1")
-        },
-        next: e => {
-          console.log("In send to hw 5.1.2.2.0")
-          if (e.type === "add") {
-            const device = e.descriptor;
-            Alert.alert(device);
-            console.log("In send to hw 5.1.2.2")
-          }
-        },
-        error: error => {
-          // this.setState({ error, refreshing: false });
-          console.log("In send to hw 5.1.2.3: " + error)
-        }
-
-      })
-      console.log("In send to hw 5.1.3")
-    } else {
+    if (bluetoothHWDescriptor == undefined) {
       console.log("In send to hw 5.2")
       devices = await TransportHid.list()
     }
 
-    if (!devices[0]) {
+    if (!devices[0] && bluetoothHWDescriptor == undefined) {
       Alert.alert("No device found.")
       // throw new Error('No device found.')
     } else {
       // Alert.alert("A device was found!")
       console.log("In send to hw 6")
-      const transport = await TransportHid.create()
+      var transport = undefined;
+      if (bluetoothHWDescriptor == undefined) {
+        transport = await TransportHid.create()
+      } else {
+        transport = await TransportBLE.open(JSON.parse(bluetoothHWDescriptor).id);
+      }
+
       console.log("In send to hw 7")
       // Alert.alert("AFTER TRANSPORT CREATE")
       const result = await transport.send(cla, ins, p1, p2, data, statusList)
@@ -232,7 +180,7 @@ export const sendAPDU = async (
 
 }
 
-function sendToHWWallet(navigation, firstTimeString, isBluetoothString) {
+function sendToHWWallet(navigation, firstTimeString, isBluetoothString, bluetoothHWDescriptor) {
   console.log("In send to hw")
   // var bip32comp1: BIP32PathComponentT =
   //   { index: 0x8000002c, isHardened: true, toString: () => "44'", level: 1, name: "purpose", value: () => 44 }
@@ -300,9 +248,51 @@ function sendToHWWallet(navigation, firstTimeString, isBluetoothString) {
     navigation,
     publicKeyInputs,
     firstTimeString,
-    isBluetoothString
+    isBluetoothString,
+    bluetoothHWDescriptor
   );
 }
+
+
+
+
+async function startScan(setBluetoothHWDescriptor: any, bluetoothHWDescriptor: any) {
+
+  // if (Platform.OS === "android") {
+  //   await PermissionsAndroid.request(
+  //     PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+  //   );
+  // }
+
+  // let previousAvailable = false;
+  // new Observable(TransportBLE.observeState).subscribe(e => {
+  //   if (e.available !== previousAvailable) {
+  //     previousAvailable = e.available;
+  //     if (e.available) {
+  //       this.reload();
+  //     }
+  //   }
+  // });
+
+  // this.setState({ refreshing: true });
+  new Observable(TransportBLE.listen).subscribe({
+    complete: () => {
+      // this.setState({ refreshing: false });
+    },
+    next: e => {
+      // alert(JSON.stringify(e.descriptor))
+      if (e.type === "add") {
+        if (bluetoothHWDescriptor == undefined) {
+          setBluetoothHWDescriptor(JSON.stringify(e.descriptor));
+        }
+      }
+      // NB there is no "remove" case in BLE.
+    },
+    error: error => {
+      // this.setState({ error, refreshing: false });
+    }
+  });
+};
 
 const HardwareWalletUSB = ({ route, navigation }) => {
 
@@ -310,16 +300,43 @@ const HardwareWalletUSB = ({ route, navigation }) => {
   const { firstTimeStr, isBluetooth } = route.params;
   var firstTimeString = JSON.stringify(firstTimeStr).replace(/"/g, '');
   var isBluetoothString = JSON.stringify(isBluetooth).replace(/"/g, '');
+  const [bluetoothHWDescriptor, setBluetoothHWDescriptor] = useState();
+  const [isLoading, setIsLoading] = useState();
 
-  sendToHWWallet(navigation, firstTimeString, isBluetoothString);
+
+  useEffect(() => {
+
+
+
+    startScan(setBluetoothHWDescriptor, bluetoothHWDescriptor);
+    sendToHWWallet(navigation, firstTimeString, isBluetoothString, bluetoothHWDescriptor);
+
+
+
+  }, []);
+
+
 
   return (
     <View style={styles.container}>
 
 
-      <View style={styles.rowStyle}>
+      {isLoading == true && <React.Fragment><View style={styles.rowStyle}>
         <Text style={getAppFont("black")}>Loading Hardware Wallet...</Text>
       </View>
+      </React.Fragment>}
+
+      {isLoading == false && <React.Fragment><View style={styles.rowStyle}>
+        <Text style={getAppFont("black")}>Loading Hardware Wallet failed. Ensure device is plugged in or that Location tracking and Bluetooth persomissions are enabled for Bluetooth connections.</Text>
+        <Button style={getAppFont("black")}
+          title="Click here to try again"
+          enabled
+          onPress={() =>
+            sendToHWWallet(navigation, firstTimeString, isBluetoothString, bluetoothHWDescriptor)
+          }
+        />
+      </View>
+      </React.Fragment>}
       {/* <TouchableOpacity onPress={() => {
 
 

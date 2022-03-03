@@ -4,6 +4,8 @@ import DeviceSelectionScreen from "./DeviceSelectionScreen";
 import ShowAddressScreen from "./ShowAddressScreen";
 
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
+import { isJSDocLinkPlain } from "typescript";
+var serialize = require('serialize-javascript');
 
 // This is helpful if you want to see BLE logs. (only to use in dev mode)
 
@@ -13,6 +15,13 @@ class HardwareWalletBluetooth extends Component {
   };
 
   onSelectDevice = async device => {
+
+    var ser = serialize(
+        device
+    );
+
+    // console.log("DEVICE ID: " + ser);
+    console.log("PROD ID: " + JSON.stringify(device));
     const transport = await TransportBLE.open(device);
     transport.on("disconnect", () => {
       // Intentionally for the sake of simplicity we use a transport local state

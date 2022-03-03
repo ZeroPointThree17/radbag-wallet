@@ -1,4 +1,8 @@
 import {useRef, useEffect} from 'react';
+import { Platform, PermissionsAndroid} from "react-native";
+import { Observable } from "rxjs";
+import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
+import TransportHid from '@ledgerhq/react-native-hid';
 import {showMessage} from "react-native-flash-message";
 import Clipboard from '@react-native-clipboard/clipboard';
 var bigDecimal = require('js-big-decimal');
@@ -118,3 +122,59 @@ export function formatNumForHomeDisplay(number) {
   return finalResult;
 }
 
+
+export async function startScan(setTransport) {
+
+  if (Platform.OS === "android") {
+    await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+    );
+  }
+
+  if (Platform.OS === "android") {
+    await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+    );
+  }
+
+  new Observable(TransportBLE.listen).subscribe({
+    complete: () => {
+      // alert("complete")
+      // this.setState({ refreshing: false });
+    },
+    next: e => {
+      // Alert.alert(JSON.stringify(e.descriptor))
+      if (e.type === "add") {
+        // alert(JSON.stringify(e.descriptor))
+        TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
+
+      }
+      // NB there is no "remove" case in BLE.
+    },
+    error: error => {
+      // alert("error: " + error)
+      // this.setState({ error, refreshing: false });
+    }
+  });
+};
+
+export async function getUSB(setTransport) {
+
+  var devices = await TransportHid.list();
+
+  if (!devices[0]) {
+    // Alert.alert("No device found.")
+    // throw new Error('No device found.')
+  } else {
+    // Alert.alert("A device was found!")
+    console.log("In send to hw 6")
+
+
+    console.log("In send to hw 6.1")
+
+    var transport = await TransportHid.create()
+
+    setTransport(transport)
+
+  }
+}

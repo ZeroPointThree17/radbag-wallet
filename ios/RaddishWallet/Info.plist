@@ -48,10 +48,6 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Please point the camera at a QR code</string>
-	<key>NSBluetoothAlwaysUsageDescription</string>
-	<string/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

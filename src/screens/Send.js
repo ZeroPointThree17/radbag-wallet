@@ -10,7 +10,7 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, openCB, errorCB, useInterval, shortenAddress, last4, formatNumForDisplay } from '../helpers/helpers';
+import { getAppFont, openCB, errorCB, useInterval, shortenAddress, last4, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
 import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
@@ -80,7 +80,7 @@ const parseSignatureFromLedger = (
 }
 
 
-function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW){
+function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport){
 
   Keyboard.dismiss; 
   setSubmitEnabled(false);
@@ -167,7 +167,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW) }
+            { text: "OK", onPress: () => submitTxn(setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport) }
           ]
         );
 
@@ -180,39 +180,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
 }
 
 
- 
-// function deviceAdditiondevice => ({ devices }) => ({
 
-
-//   return devices: devices.some(i => i.id === device.id)
-//     ? devices
-//     : devices.concat(device)
-//   // }
-// });
-
-
- function startScan(setBluetoothHWDescriptor) {
-
-  // this.setState({ refreshing: true });
-  new Observable(TransportBLE.listen).subscribe({
-    complete: () => {
-      // this.setState({ refreshing: false });
-    },
-    next: e => {
-      // alert(JSON.stringify(e.descriptor))
-      if (e.type === "add") {
-        if(e.descriptor != undefined){
-        setBluetoothHWDescriptor(JSON.stringify(e.descriptor));
-        }
-      }
-      // NB there is no "remove" case in BLE.
-    },
-    error: error => {
-      // this.setState({ error, refreshing: false });
-    }
-  });
-};
-// async function submitTxn(){
 
 
   function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash){
@@ -258,7 +226,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
   
 
   export const submitTxn = async (
-    setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW
+    setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport
   
   ) => {
   setShow(false);
@@ -325,6 +293,10 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
 
   } else{
 
+    if(transport == undefined){
+      alert("Please open the hardware wallet and the Radix app in the wallet first")
+    } else{
+
          alert("Please confirm this transaction on the device");
 
         // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
@@ -358,21 +330,12 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
           // nonNativeTokenRriHRP: input.nonXrdHRP,
       })
   
-     
+     console.log("BEFORE SEND HW")
   
-        // alert(signAPDURequest.cla + " " + signAPDURequest.ins + " " + signAPDURequest.p1 + " " + signAPDURequest.p2 + " " + signAPDURequest.data)
-        TransportHid.list().then((devices) => {
-  
-  
-        if (!devices[0]) {
-          alert("No device found.")
-          // throw new Error('No device found.')
-        } else {
-          // alert("BEFORE TRANSPORT CREATE")
-          TransportHid.create().then((transport) => {
-            // alert("AFTER TRANSPORT CREATE")
             transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
-    
+      
+              console.log("AFTER SEND HW")
+  
   
               var apdus = []
         while( instructions.length > 0){
@@ -392,20 +355,19 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
                 displayTXSummaryOnLedgerDevice,
               })
               apdus.push(apdu2)
-            }
+        }
               
               transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
-  
-        // }
-          })
+
           })
         }
-      })
+      }
+        }
+    
   
   
-  }
-}
   
+
 
   
 
@@ -637,6 +599,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [gettingBalances, setGettingBalances] = useState();
   const [submitEnabled, setSubmitEnabled] = useState(true);
   const [bluetoothHWDescriptor, setBluetoothHWDescriptor] = useState();
+  const [transport, setTransport] = useState();
 
 
   useEffect( () => {
@@ -649,19 +612,24 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
    
     // onChangeSymbol(currentSymbolTemp);
 
-    startScan( setBluetoothHWDescriptor);
+    // startScan( setBluetoothHWDescriptor);
     // alert(bluetoothHWDescriptor)
   
 },[]);
 
 useInterval(() => {
 
+  if(transport == undefined){
+    startScan(setTransport);
+    getUSB(setTransport);
+  }
+
   getBalances(false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
 }, 3500);
 
 
 // alert(defaultSymbol)
-  onSuccess = e => {
+  const onSuccess = e => {
     onChangeDestAddr(e.data);
     setCameraOn(false);
   };
@@ -807,7 +775,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW)}}>
+<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>

@@ -5,7 +5,7 @@ import {
 } from "react-native";
 import TransportHid from '@ledgerhq/react-native-hid';
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
-import { getAppFont, copyToClipboard } from '../helpers/helpers';
+import { getAppFont, useInterval, startScan, getUSB } from '../helpers/helpers';
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import { PublicKey, HDPathRadix, HDPathRadixT, BIP32PathComponentT } from '@radixdlt/crypto'
 import { numberLiteralTypeAnnotation } from '@babel/types';
@@ -65,7 +65,7 @@ export const sendAPDU = async (
   publicKeyInputs: any[],
   firstTimeString: string,
   isBluetoothString: string,
-  bluetoothHWDescriptor: any
+  transport: any
 
 ) => {
   console.log("In send to hw3")
@@ -94,22 +94,21 @@ export const sendAPDU = async (
     console.log("In send to hw 5.1")
 
 
-    if (bluetoothHWDescriptor == undefined) {
+    if (transport == undefined) {
       console.log("In send to hw 5.2")
       devices = await TransportHid.list()
     }
 
-    if (!devices[0] && bluetoothHWDescriptor == undefined) {
+    if (!devices[0] && transport == undefined) {
       Alert.alert("No device found.")
       // throw new Error('No device found.')
     } else {
       // Alert.alert("A device was found!")
       console.log("In send to hw 6")
-      var transport = undefined;
-      if (bluetoothHWDescriptor == undefined) {
+
+      if (transport == undefined) {
+        console.log("In send to hw 6.1")
         transport = await TransportHid.create()
-      } else {
-        transport = await TransportBLE.open(JSON.parse(bluetoothHWDescriptor).id);
       }
 
       console.log("In send to hw 7")
@@ -160,28 +159,30 @@ export const sendAPDU = async (
 
       // return publicKeyFinal;
 
-      const pushAction = StackActions.push('Wallet Password', {
-        mnemonicStr: "HW_WALLET",
-        word13Str: "HW_WALLET",
-        firstTimeStr: firstTimeString,
-        hardwareWallletPubKeyArr: publicKeys
-      });
 
-      navigation.dispatch(pushAction);
+
       // navigateHome(setIsActive, navigation, "a", "a", "HW_WALLET", "HW_WALLET", "false", publicKeys);
 
     }
 
 
-
   }
 
+  const pushAction = StackActions.push('Wallet Password', {
+    mnemonicStr: "HW_WALLET",
+    word13Str: "HW_WALLET",
+    firstTimeStr: firstTimeString,
+    hardwareWallletPubKeyArr: publicKeys
+  });
+
+  navigation.dispatch(pushAction);
 
 
 }
 
-function sendToHWWallet(navigation, firstTimeString, isBluetoothString, bluetoothHWDescriptor) {
+function sendToHWWallet(navigation, firstTimeString, isBluetoothString, transport) {
   console.log("In send to hw")
+  console.log("Transport: " + transport)
   // var bip32comp1: BIP32PathComponentT =
   //   { index: 0x8000002c, isHardened: true, toString: () => "44'", level: 1, name: "purpose", value: () => 44 }
 
@@ -249,50 +250,68 @@ function sendToHWWallet(navigation, firstTimeString, isBluetoothString, bluetoot
     publicKeyInputs,
     firstTimeString,
     isBluetoothString,
-    bluetoothHWDescriptor
+    transport
   );
 }
 
 
 
 
-async function startScan(setBluetoothHWDescriptor: any, bluetoothHWDescriptor: any) {
+// async function startScan(setTransport: any) {
 
-  // if (Platform.OS === "android") {
-  //   await PermissionsAndroid.request(
-  //     PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
-  //   );
-  // }
+//   if (Platform.OS === "android") {
+//     await PermissionsAndroid.request(
+//       PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+//     );
+//   }
 
-  // let previousAvailable = false;
-  // new Observable(TransportBLE.observeState).subscribe(e => {
-  //   if (e.available !== previousAvailable) {
-  //     previousAvailable = e.available;
-  //     if (e.available) {
-  //       this.reload();
-  //     }
-  //   }
-  // });
+//   if (Platform.OS === "android") {
+//     await PermissionsAndroid.request(
+//       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+//     );
+//   }
 
-  // this.setState({ refreshing: true });
-  new Observable(TransportBLE.listen).subscribe({
-    complete: () => {
-      // this.setState({ refreshing: false });
-    },
-    next: e => {
-      // alert(JSON.stringify(e.descriptor))
-      if (e.type === "add") {
-        if (bluetoothHWDescriptor == undefined) {
-          setBluetoothHWDescriptor(JSON.stringify(e.descriptor));
-        }
-      }
-      // NB there is no "remove" case in BLE.
-    },
-    error: error => {
-      // this.setState({ error, refreshing: false });
-    }
-  });
-};
+//   new Observable(TransportBLE.listen).subscribe({
+//     complete: () => {
+//       // Alert.alert("complete")
+//       // this.setState({ refreshing: false });
+//     },
+//     next: e => {
+//       // Alert.alert(JSON.stringify(e.descriptor))
+//       if (e.type === "add") {
+
+//         TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
+
+//       }
+//       // NB there is no "remove" case in BLE.
+//     },
+//     error: error => {
+//       // Alert.alert("error: " + error)
+//       // this.setState({ error, refreshing: false });
+//     }
+//   });
+// };
+
+// async function getUSB(setTransport) {
+
+//   var devices = await TransportHid.list();
+
+//   if (!devices[0]) {
+//     // Alert.alert("No device found.")
+//     // throw new Error('No device found.')
+//   } else {
+//     // Alert.alert("A device was found!")
+//     console.log("In send to hw 6")
+
+
+//     console.log("In send to hw 6.1")
+
+//     var transport = await TransportHid.create()
+
+//     setTransport(transport)
+
+//   }
+// }
 
 const HardwareWalletUSB = ({ route, navigation }) => {
 
@@ -302,18 +321,25 @@ const HardwareWalletUSB = ({ route, navigation }) => {
   var isBluetoothString = JSON.stringify(isBluetooth).replace(/"/g, '');
   const [bluetoothHWDescriptor, setBluetoothHWDescriptor] = useState();
   const [isLoading, setIsLoading] = useState();
-
-
-  useEffect(() => {
-
-
-
-    startScan(setBluetoothHWDescriptor, bluetoothHWDescriptor);
-    sendToHWWallet(navigation, firstTimeString, isBluetoothString, bluetoothHWDescriptor);
+  const [transport, setTransport] = useState();
 
 
 
-  }, []);
+  useInterval(() => {
+
+    if (transport == undefined) {
+      startScan(setTransport);
+      getUSB(setTransport);
+    }
+  }, 3500);
+
+
+
+
+  if (transport != undefined) {
+    sendToHWWallet(navigation, firstTimeString, isBluetoothString, transport);
+  }
+
 
 
 
@@ -321,6 +347,7 @@ const HardwareWalletUSB = ({ route, navigation }) => {
     <View style={styles.container}>
 
 
+      <Text style={getAppFont("black")}>Loading Hardware Wallet...</Text>
       {isLoading == true && <React.Fragment><View style={styles.rowStyle}>
         <Text style={getAppFont("black")}>Loading Hardware Wallet...</Text>
       </View>

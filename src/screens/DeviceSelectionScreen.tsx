@@ -90,8 +90,8 @@ class DeviceSelectionScreen extends Component {
   };
 
   renderItem = ({ item }: { item }) => {
-    // return <DeviceItem device={item} onSelect={this.onSelectDevice} />;
-    return <Text>nothing</Text>
+    return <DeviceItem device={item} onSelect={this.onSelectDevice} />;
+    // return <Text>nothing</Text>
   };
 
   ListHeader = () => {
@@ -115,18 +115,18 @@ class DeviceSelectionScreen extends Component {
     const { devices, error, refreshing } = this.state;
 
     return (
-      // <FlatList
-      //   extraData={error}
-      //   style={styles.list}
-      //   data={devices}
-      //   renderItem={this.renderItem}
-      //   keyExtractor={this.keyExtractor}
-      //   ListHeaderComponent={this.ListHeader}
-      //   onRefresh={this.reload}
-      //   refreshing={refreshing}
-      // />
+      <FlatList
+        extraData={error}
+        style={styles.list}
+        data={devices}
+        renderItem={this.renderItem}
+        keyExtractor={this.keyExtractor}
+        ListHeaderComponent={this.ListHeader}
+        onRefresh={this.reload}
+        refreshing={refreshing}
+      />
 
-      <Text>{devices[0] == undefined ? " " : devices[0].serviceUUIDs[0]}</Text>
+      // <Text>{devices[0] == undefined ? " " : devices[0].serviceUUIDs[0]}</Text>
     );
   }
 }

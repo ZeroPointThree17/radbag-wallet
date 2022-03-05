@@ -25,7 +25,10 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
     tknSupply = tknSupply.replace(/,/g, '');
   }
 
-  if(tknName == undefined || tknDesc  == undefined || tknIconUrl == undefined || tknUrl == undefined || 
+  if(privKey_enc == "HARDWARE_WALLET"){
+    alert("Minting tokens from a hardware wallet is currently not allowed.")
+  }
+  else if(tknName == undefined || tknDesc  == undefined || tknIconUrl == undefined || tknUrl == undefined || 
      tknSymbol == undefined || tknIsSuppMut == undefined || tknSupply == undefined || tknGranularity == undefined){
        alert("All fields are required")
      }

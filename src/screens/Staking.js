@@ -9,9 +9,14 @@ const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
 import { Separator, SeparatorBorderMargin } from '../helpers/jsxlib';
-import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay } from '../helpers/helpers';
+import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
+import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
+import { HDPathRadix } from '@radixdlt/crypto'
+import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
+import { Transaction } from '@radixdlt/tx-parser'
+import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 
 
 function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled){
@@ -228,7 +233,7 @@ function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSi
 
 
 
-function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled){
+async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled){
 
   setShow(false);
 

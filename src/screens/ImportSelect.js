@@ -33,17 +33,11 @@ const ImportSelect = ({route, navigation}) => {
       }
       {Platform.OS != 'ios' && <Separator/>}
       {Platform.OS != 'ios' && <React.Fragment><Separator/><Button style={getAppFont("black")}
-        title={"Import a Hardware Wallet\n(Ledger Nano S or X via USB)"}
+        title={"Import a Hardware Wallet\n(Ledger Nano S or X\nvia USB or Bluetooth)"}
         enabled
         onPress={() => navigation.push('Hardware Wallet', {firstTimeStr: firstTimeString, isBluetooth:"false"})}
       /></React.Fragment>}
       
-      {Platform.OS != 'ios' && <Separator/>}
-      {Platform.OS != 'ios' && <React.Fragment><Separator/><Button style={getAppFont("black")}
-        title={"Import a Hardware Wallet\n(Ledger Nano S or X via Bluetooth)"}
-        enabled
-        onPress={() => navigation.push('Hardware Wallet', {firstTimeStr: firstTimeString, isBluetooth:"true"})}
-      /></React.Fragment>}
       
   </ScrollView>
   </View>

@@ -348,9 +348,9 @@ const HardwareWallet = ({ route, navigation }) => {
     <View style={styles.container}>
 
 
-      <Text style={getAppFont("black")}>Loading Hardware Wallet...</Text>
+      <Text style={getAppFont("black")}>Please connect hardware wallet...</Text>
       {isLoading == true && <React.Fragment><View style={styles.rowStyle}>
-        <Text style={getAppFont("black")}>Loading Hardware Wallet...</Text>
+        <Text style={getAppFont("black")}>Please connect hardware wallet...</Text>
       </View>
       </React.Fragment>}
 

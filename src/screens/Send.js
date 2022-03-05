@@ -80,7 +80,7 @@ const parseSignatureFromLedger = (
 }
 
 
-function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport){
+function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
 
   Keyboard.dismiss; 
   setSubmitEnabled(false);
@@ -167,7 +167,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport) }
+            { text: "OK", onPress: () => submitTxn(setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID) }
           ]
         );
 
@@ -196,9 +196,9 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
         console.log("INSIDE RESULTS FINAL: "+finalSig)
 
         if(finalSig.length < 10){
-          alert("Transaction not confirmed.")
+          alert("Transaction not submitted.")
         } else{
-          alert("Transaction confirmed.")
+          alert("Transaction submitted.")
 
           finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
         // const parsedResult = parseSignatureFromLedger(result)
@@ -226,7 +226,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
   
 
   export const submitTxn = async (
-    setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport
+    setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID
   
   ) => {
   setShow(false);
@@ -293,10 +293,13 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
 
   } else{
 
-    if(transport == undefined){
+    if(transport == undefined && deviceID == undefined){
       alert("Please open the hardware wallet and the Radix app in the wallet first")
     } else{
 
+      if(deviceID != undefined){
+        transport = await TransportBLE.open(deviceID);
+      }
          alert("Please confirm this transaction on the device");
 
         // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
@@ -332,6 +335,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
   
      console.log("BEFORE SEND HW")
   
+     
             transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
       
               console.log("AFTER SEND HW")
@@ -600,6 +604,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [submitEnabled, setSubmitEnabled] = useState(true);
   const [bluetoothHWDescriptor, setBluetoothHWDescriptor] = useState();
   const [transport, setTransport] = useState();
+  const [deviceID, setDeviceID] = useState();
 
 
   useEffect( () => {
@@ -620,7 +625,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
 useInterval(() => {
 
   if(transport == undefined){
-    startScan(setTransport);
+    startScan(setTransport, setDeviceID);
     getUSB(setTransport);
   }
 
@@ -775,7 +780,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport)}}>
+<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>

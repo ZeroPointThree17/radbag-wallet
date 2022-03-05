@@ -123,7 +123,7 @@ export function formatNumForHomeDisplay(number) {
 }
 
 
-export async function startScan(setTransport) {
+export async function startScan(setTransport, setDeviceID) {
 
   if (Platform.OS === "android") {
     await PermissionsAndroid.request(
@@ -146,8 +146,8 @@ export async function startScan(setTransport) {
       // Alert.alert(JSON.stringify(e.descriptor))
       if (e.type === "add") {
         // alert(JSON.stringify(e.descriptor))
+        setDeviceID(e.descriptor.id)
         TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
-
       }
       // NB there is no "remove" case in BLE.
     },

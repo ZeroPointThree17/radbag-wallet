@@ -322,13 +322,14 @@ const HardwareWalletUSB = ({ route, navigation }) => {
   const [bluetoothHWDescriptor, setBluetoothHWDescriptor] = useState();
   const [isLoading, setIsLoading] = useState();
   const [transport, setTransport] = useState();
+  const [deviceID, setDeviceID] = useState();
 
 
 
   useInterval(() => {
 
     if (transport == undefined) {
-      startScan(setTransport);
+      startScan(setTransport, setDeviceID);
       getUSB(setTransport);
     }
   }, 3500);

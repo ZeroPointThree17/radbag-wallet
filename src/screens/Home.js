@@ -651,9 +651,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         {/* <Text style={{fontSize: 14, color:"white"}}>          </Text> */}
 
         <View style={styles.rowStyleHome}>
-        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),
-      currLiqBal: liquid_rdx_balance,
-      currStaked: stakedAmount
+        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHW: isHW
       })}>
         <View style={styles.rowStyle}>
         <Icon name="arrow-down-circle-outline" size={20} color="white" />

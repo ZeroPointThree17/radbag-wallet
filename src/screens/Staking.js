@@ -14,7 +14,7 @@ var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
 
 
-function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid){
+function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled){
 
   Keyboard.dismiss; 
 
@@ -132,7 +132,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid) }
+            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled) }
           ]
         );
 
@@ -144,7 +144,91 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
 }
 
 
-function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid){
+
+function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash){
+
+  var currApdu = apdus.shift();
+  if(apdus.length == 0){
+
+    alert("Please sign this transaction on the device to finalize");
+
+     transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
+      
+      var finalSig = result.slice(1,result.length-2).toString('hex');
+      console.log("INSIDE RESULTS FINAL: "+finalSig)
+
+      if(finalSig.length < 10){
+        alert("Transaction not submitted.")
+      } else{
+        alert("Transaction submitted.")
+
+        finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
+      // const parsedResult = parseSignatureFromLedger(result)
+      // console.log("INSIDE RESULTS2")
+      // const signature = parsedResult.value.signature
+      // console.log("INSIDE RESULTS3")
+      // const remainingBytes = parsedResult.value.remainingBytes
+      // console.log("INSIDE RESULTS4")
+      // const signatureV = remainingBytes.readUInt8(0)
+      // console.log("INSIDE RESULTS5")
+      // console.log(`Signature: ${signature}`)
+      // console.log(`Signature V: ${signatureV}`)
+      // alert(`Signature: ${signature}`)
+      // alert(`Signature V: ${signatureV}`)
+
+      }
+    })
+  } else{
+     transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
+      console.log("INSIDE RESULTS: "+result.toString('hex'))
+      transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash)
+    })
+  }
+}
+
+
+function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
+  
+  fetch('https://raddish-node.com:6208/transaction/finalize', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(
+  
+      {
+        "network_identifier": {
+          "network": "mainnet"
+        },
+        "unsigned_transaction": unsigned_transaction,
+        "signature": {
+          "public_key": {
+            "hex": public_key
+          },
+          "bytes": finalSig
+        },
+        "submit": true
+      }
+  
+    )
+  }).then((response) => response.json()).then((json) => {
+
+   var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
+  
+   Keyboard.dismiss;
+   setShow(true);
+   setTxHash(txnHash);
+   setSubmitEnabled(true);
+
+  }).catch((error) => {
+      console.error(error);
+  }); 
+}
+
+
+
+function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled){
 
   setShow(false);
 
@@ -156,6 +240,8 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   } else{
     promptFunc = prompt
   }
+
+  if(isHW == false){
 
   promptFunc(
     "Enter wallet password",
@@ -171,6 +257,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
         onPress: password => {
 
   try{
+
     var signature = "";
   var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
          // privatekey = decrypt(privKey_enc, Buffer.from("c"));
@@ -182,41 +269,10 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   secp256k1.signatureExport(signature.signature,result);
   
   var finalSig = Buffer.from(result).toString('hex');
-  
-    fetch('https://raddish-node.com:6208/transaction/finalize', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(
-        
-            {
-              "network_identifier": {
-                "network": "mainnet"
-              },
-              "unsigned_transaction": unsigned_transaction,
-              "signature": {
-                "public_key": {
-                  "hex": public_key
-                },
-                "bytes": finalSig
-              },
-              "submit": true
-            }
-        
-          )
-        }).then((response) => response.json()).then((json) => {
-  
-         var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
-        
-         Keyboard.dismiss;
-         setShow(true);
-         setTxHash(txnHash);
-  
-        }).catch((error) => {
-            console.error(error);
-        });  
+
+  finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
+
+   
 } catch(err){
     alert("Password incorrect")
   }
@@ -227,7 +283,84 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
     "secure-text"
   );
 
+} else{
+    
+  if(transport == undefined && deviceID == undefined){
+    alert("Please open the hardware wallet and the Radix app in the wallet first")
+  } else{
+
+    if(deviceID != undefined){
+      transport = await TransportBLE.open(deviceID);
+    }
+       alert("Please confirm this transaction on the device");
+
+      // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
+      const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
+      // alert("AFTER HD CREATE: " + hdpath)
+      // var signAPDURequest = RadixAPDU.doSignHash({
+      //   path: hdpath,
+      //   hashToSign: unsigned_transaction,
+      // })
+
+      const transactionRes = Transaction.fromBuffer(
+        Buffer.from(unsigned_transaction, 'hex'),
+      )
+      if (transactionRes.isErr()) {
+        const errMsg = `Failed to parse tx, underlying error: ${msgFromError(
+          transactionRes.error,
+        )}`
+        log.error(errMsg)
+        return throwError(() => hardwareError(errMsg))
+      }
+      const transaction = transactionRes.value
+      const instructions = transaction.instructions
+      const numberOfInstructions = instructions.length
+  
+      // alert("numberOfInstructions: "+numberOfInstructions)
+
+     var apdu1 =  RadixAPDU.signTX.initialSetup({
+        path: hdpath,
+        txByteCount: unsigned_transaction.length / 2, // 2 hex chars per byte
+        numberOfInstructions,
+        // nonNativeTokenRriHRP: input.nonXrdHRP,
+    })
+
+   console.log("BEFORE SEND HW")
+
+   
+          transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
+    
+            console.log("AFTER SEND HW")
+
+
+            var apdus = []
+      while( instructions.length > 0){
+
+            const instructionToSend = instructions.shift() // "pop first"
+
+            console.log("INSTRUCTIONS: "+instructions)
+            const instructionBytes = instructionToSend.toBuffer();
+
+            const displayInstructionContentsOnLedgerDevice = false
+            const displayTXSummaryOnLedgerDevice = false
+
+            var apdu2 =  RadixAPDU.signTX.singleInstruction({
+              instructionBytes,
+              isLastInstruction: instructions.length==0?true:false,
+              displayInstructionContentsOnLedgerDevice,
+              displayTXSummaryOnLedgerDevice,
+            })
+            apdus.push(apdu2)
+      }
+            
+            transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
+
+        })
+      }
 }
+}
+
+
 
 
 function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
@@ -543,7 +676,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
 
  const Staking = ({route, navigation}) => {
  
-      const { currAddr } = route.params;
+      const { currAddr, hdpathIndex, isHW } = route.params;
 
       const [privKey_enc, setPrivKey_enc] = useState();
       const [public_key, setPublic_key] = useState();
@@ -564,7 +697,9 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       const [stakeAmt, setStakeAmt] = useState();
       const [unstakeAmt, setUnstakeAmt] = useState();
       const [showStakingStats, setShowStakingStats] = useState(false);
-
+      const [transport, setTransport] = useState();
+      const [deviceID, setDeviceID] = useState();
+      const [submitEnabled, setSubmitEnabled] = useState(true);
 
       const stakeValRef = useRef();
       const stakeAmtRef = useRef();
@@ -579,6 +714,11 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
 
 useInterval(() => {
   getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+  
+  if (transport == undefined) {
+    startScan(setTransport, setDeviceID);
+    getUSB(setTransport);
+  }
 }, 2000);
  
 
@@ -685,7 +825,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      stakeValRef.current.blur();
      stakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid) }}>
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled) }}>
 
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={22} color="black" />
@@ -747,7 +887,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      unstakeValRef.current.blur();
      unstakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid )
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled )
   }}>
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-up-circle-outline" size={22} color="black" />

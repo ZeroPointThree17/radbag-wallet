@@ -313,7 +313,7 @@ function sendToHWWallet(navigation, firstTimeString, isBluetoothString, transpor
 //   }
 // }
 
-const HardwareWalletUSB = ({ route, navigation }) => {
+const HardwareWallet = ({ route, navigation }) => {
 
   console.log("In send to hw 0")
   const { firstTimeStr, isBluetooth } = route.params;
@@ -414,4 +414,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HardwareWalletUSB;
+export default HardwareWallet;

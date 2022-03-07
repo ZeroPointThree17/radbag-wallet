@@ -18,8 +18,8 @@ import {
   toObservableFromResult,
 } from '@radixdlt/util'
 import { err, Result } from 'neverthrow'
-
-
+import * as Progress from 'react-native-progress';
+import { Separator } from '../helpers/jsxlib';
 
 function even_or_odd_prefix(N: any) {
   let len = N.length;
@@ -65,7 +65,8 @@ export const sendAPDU = async (
   publicKeyInputs: any[],
   firstTimeString: string,
   isBluetoothString: string,
-  transport: any
+  transport: any,
+  usbConn: any
 
 ) => {
   console.log("In send to hw3")
@@ -88,85 +89,85 @@ export const sendAPDU = async (
 
     // Alert.alert(cla + " " + ins + " " + p1 + " " + p2 + " " + data + " " + statusList)
     var finalResult = "BLANK"
-    var devices = [];
+    // var devices = [];
     console.log("In send to hw 4")
     // if (isBluetoothString == "true") {
     console.log("In send to hw 5.1")
 
 
-    if (transport == undefined) {
-      console.log("In send to hw 5.2")
-      devices = await TransportHid.list()
+    // if (transport == undefined) {
+    console.log("In send to hw 5.2")
+    // devices = await TransportHid.list()
+    // }
+
+    // if (!devices[0] && transport == undefined) {
+    //   Alert.alert("No device found.")
+    //   // throw new Error('No device found.')
+    // } else {
+    // Alert.alert("A device was found!")
+    console.log("In send to hw 6")
+
+    // if (transport == undefined) {
+    //   console.log("In send to hw 6.1")
+    if (usbConn == true) {
+      transport = await TransportHid.create()
     }
+    // }
 
-    if (!devices[0] && transport == undefined) {
-      Alert.alert("No device found.")
-      // throw new Error('No device found.')
-    } else {
-      // Alert.alert("A device was found!")
-      console.log("In send to hw 6")
-
-      if (transport == undefined) {
-        console.log("In send to hw 6.1")
-        transport = await TransportHid.create()
-      }
-
-      console.log("In send to hw 7")
-      // Alert.alert("AFTER TRANSPORT CREATE")
-      const result = await transport.send(cla, ins, p1, p2, data, statusList)
-      // Alert.alert("AFTER TRANSPORT SEND")
-      console.log("In send to hw 8")
-      transport.close()
-      console.log("RESULT_HEX: " + result.toString("hex"));
-      // Alert.alert("AFTER TRANSPORT CLOSE")
-      // const publicKeyLength = result[0];
-      // var pubkey = result.slice(1, 1 + publicKeyLength).toString("hex")
-      // publicKeys.push(pubkey)
+    console.log("In send to hw 7")
+    // Alert.alert("AFTER TRANSPORT CREATE")
+    const result = await transport.send(cla, ins, p1, p2, data, statusList)
+    // Alert.alert("AFTER TRANSPORT SEND")
+    console.log("In send to hw 8")
+    transport.close()
+    console.log("RESULT_HEX: " + result.toString("hex"));
+    // Alert.alert("AFTER TRANSPORT CLOSE")
+    // const publicKeyLength = result[0];
+    // var pubkey = result.slice(1, 1 + publicKeyLength).toString("hex")
+    // publicKeys.push(pubkey)
 
 
-      // Response `buf`: pub_key_len (1) || pub_key (var) || chain_code_len (1) || chain_code (var)
-      const readNextBuffer = readBuffer(result)
+    // Response `buf`: pub_key_len (1) || pub_key (var) || chain_code_len (1) || chain_code (var)
+    const readNextBuffer = readBuffer(result)
 
-      const publicKeyLengthResult = readNextBuffer(1)
-      if (publicKeyLengthResult.isErr()) {
-        const errMsg = `Failed to parse length of public key from response buffer: ${msgFromError(
-          publicKeyLengthResult.error,
-        )}`
-        console.error(errMsg)
-        // return throwError(() => hardwareError(errMsg))
-      }
-      const publicKeyLength = publicKeyLengthResult.value.readUIntBE(
-        0,
-        1,
-      )
-      const publicKeyBytesResult = readNextBuffer(
-        publicKeyLength,
-      )
-
-      if (publicKeyBytesResult.isErr()) {
-        const errMsg = `Failed to parse public key bytes from response buffer: ${msgFromError(
-          publicKeyBytesResult.error,
-        )}`
-        console.error(errMsg)
-        // return throwError(() => hardwareError(errMsg))
-      }
-      const publicKeyBytes = publicKeyBytesResult.value
-
-      var publicKeyFinal = even_or_odd_prefix(publicKeyBytes.toString('hex').substring(66)) + publicKeyBytes.toString('hex').substring(2, 66);
-      publicKeys.push(publicKeyFinal)
-      // PublicKey.fromBuffer(publicKeyBytes).toString(true)
-      console.log("PKPK: " + publicKeyFinal);
-
-      // return publicKeyFinal;
-
-
-
-      // navigateHome(setIsActive, navigation, "a", "a", "HW_WALLET", "HW_WALLET", "false", publicKeys);
-
+    const publicKeyLengthResult = readNextBuffer(1)
+    if (publicKeyLengthResult.isErr()) {
+      const errMsg = `Failed to parse length of public key from response buffer: ${msgFromError(
+        publicKeyLengthResult.error,
+      )}`
+      console.error(errMsg)
+      // return throwError(() => hardwareError(errMsg))
     }
+    const publicKeyLength = publicKeyLengthResult.value.readUIntBE(
+      0,
+      1,
+    )
+    const publicKeyBytesResult = readNextBuffer(
+      publicKeyLength,
+    )
 
+    if (publicKeyBytesResult.isErr()) {
+      const errMsg = `Failed to parse public key bytes from response buffer: ${msgFromError(
+        publicKeyBytesResult.error,
+      )}`
+      console.error(errMsg)
+      // return throwError(() => hardwareError(errMsg))
+    }
+    const publicKeyBytes = publicKeyBytesResult.value
+
+    var publicKeyFinal = even_or_odd_prefix(publicKeyBytes.toString('hex').substring(66)) + publicKeyBytes.toString('hex').substring(2, 66);
+    publicKeys.push(publicKeyFinal)
+    // PublicKey.fromBuffer(publicKeyBytes).toString(true)
+    console.log("PKPK: " + publicKeyFinal);
+
+    // return publicKeyFinal;
+
+
+
+    // navigateHome(setIsActive, navigation, "a", "a", "HW_WALLET", "HW_WALLET", "false", publicKeys);
 
   }
+
 
   const pushAction = StackActions.push('Wallet Password', {
     mnemonicStr: "HW_WALLET",
@@ -180,7 +181,7 @@ export const sendAPDU = async (
 
 }
 
-function sendToHWWallet(navigation, firstTimeString, isBluetoothString, transport) {
+function sendToHWWallet(navigation, firstTimeString, isBluetoothString, transport, usbConn) {
   console.log("In send to hw")
   console.log("Transport: " + transport)
   // var bip32comp1: BIP32PathComponentT =
@@ -250,7 +251,8 @@ function sendToHWWallet(navigation, firstTimeString, isBluetoothString, transpor
     publicKeyInputs,
     firstTimeString,
     isBluetoothString,
-    transport
+    transport,
+    usbConn
   );
 }
 
@@ -323,6 +325,8 @@ const HardwareWallet = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState();
   const [transport, setTransport] = useState();
   const [deviceID, setDeviceID] = useState();
+  const [usbConn, setUsbConn] = useState(false);
+
 
 
 
@@ -330,7 +334,7 @@ const HardwareWallet = ({ route, navigation }) => {
 
     if (transport == undefined) {
       startScan(setTransport, setDeviceID);
-      getUSB(setTransport);
+      getUSB(setTransport, setUsbConn);
     }
   }, 3500);
 
@@ -338,7 +342,7 @@ const HardwareWallet = ({ route, navigation }) => {
 
 
   if (transport != undefined) {
-    sendToHWWallet(navigation, firstTimeString, isBluetoothString, transport);
+    sendToHWWallet(navigation, firstTimeString, isBluetoothString, transport, usbConn);
   }
 
 
@@ -346,50 +350,9 @@ const HardwareWallet = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-
-
-      <Text style={getAppFont("black")}>Please connect hardware wallet...</Text>
-      {isLoading == true && <React.Fragment><View style={styles.rowStyle}>
-        <Text style={getAppFont("black")}>Please connect hardware wallet...</Text>
-      </View>
-      </React.Fragment>}
-
-      {isLoading == false && <React.Fragment><View style={styles.rowStyle}>
-        <Text style={getAppFont("black")}>Loading Hardware Wallet failed. Ensure device is plugged in or that Location tracking and Bluetooth persomissions are enabled for Bluetooth connections.</Text>
-        <Button style={getAppFont("black")}
-          title="Click here to try again"
-          enabled
-          onPress={() =>
-            sendToHWWallet(navigation, firstTimeString, isBluetoothString, bluetoothHWDescriptor)
-          }
-        />
-      </View>
-      </React.Fragment>}
-      {/* <TouchableOpacity onPress={() => {
-
-
-
-
-
-
-
-        // var res = sendAPDU(
-        //   1,
-        //   1,
-        //   0,
-        //   0,
-        //   Buffer.from("d"),
-        //   undefined
-        // )
-
-        // Alert.alert(res)
-      }}>
-        <View style={styles.rowStyle}>
-          <Text style={getAppFont("black")}>See HW Wallet presence</Text>
-        </View>
-      </TouchableOpacity> */}
-
-
+      <Text style={getAppFont("black")}>Please connect hardware wallet. If connected, please wait 30 seconds for connection to be established.</Text>
+      <Separator />
+      <Progress.Circle style={{ alignSelf: "center" }} size={30} indeterminate={true} />
     </View>
   )
 };

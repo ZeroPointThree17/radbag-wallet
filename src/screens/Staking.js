@@ -19,7 +19,7 @@ import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 
 
-function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled){
+function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){
 
   Keyboard.dismiss; 
 
@@ -137,7 +137,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled) }
+            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn) }
           ]
         );
 
@@ -233,7 +233,7 @@ function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSi
 
 
 
-async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled){
+async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){
 
   setShow(false);
 
@@ -290,6 +290,10 @@ async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, se
 
 } else{
     
+  if (usbConn == true) {
+    transport = await TransportHid.create()
+  }
+  
   if(transport == undefined && deviceID == undefined){
     alert("Please open the hardware wallet and the Radix app in the wallet first")
   } else{
@@ -705,6 +709,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       const [transport, setTransport] = useState();
       const [deviceID, setDeviceID] = useState();
       const [submitEnabled, setSubmitEnabled] = useState(true);
+      const [usbConn, setUsbConn] = useState(false);
 
       const stakeValRef = useRef();
       const stakeAmtRef = useRef();
@@ -722,7 +727,7 @@ useInterval(() => {
   
   if (transport == undefined) {
     startScan(setTransport, setDeviceID);
-    getUSB(setTransport);
+    getUSB(setTransport, setUsbConn);
   }
 }, 2000);
  
@@ -830,7 +835,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      stakeValRef.current.blur();
      stakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled) }}>
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn) }}>
 
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={22} color="black" />

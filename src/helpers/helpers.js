@@ -1,5 +1,5 @@
 import {useRef, useEffect} from 'react';
-import { Platform, PermissionsAndroid} from "react-native";
+import { Alert, Platform, PermissionsAndroid} from "react-native";
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -125,6 +125,7 @@ export function formatNumForHomeDisplay(number) {
 
 export async function startScan(setTransport, setDeviceID) {
 
+  // alert("starting scan")
   if (Platform.OS === "android") {
     await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
@@ -137,6 +138,20 @@ export async function startScan(setTransport, setDeviceID) {
     );
   }
 
+  if (Platform.OS === "android") {
+    await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+    );
+  }
+
+  if (Platform.OS === "android") {
+    await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN
+    );
+}
+
+
+
   new Observable(TransportBLE.listen).subscribe({
     complete: () => {
       // alert("complete")
@@ -145,25 +160,25 @@ export async function startScan(setTransport, setDeviceID) {
     next: e => {
       // Alert.alert(JSON.stringify(e.descriptor))
       if (e.type === "add") {
-        // alert(JSON.stringify(e.descriptor))
+        //  alert(JSON.stringify(e.descriptor))
         setDeviceID(e.descriptor.id)
         TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
       }
       // NB there is no "remove" case in BLE.
     },
     error: error => {
-      // alert("error: " + error)
+      alert("error: " + error)
       // this.setState({ error, refreshing: false });
     }
   });
 };
 
-export async function getUSB(setTransport) {
+export async function getUSB(setTransport, setUsbConn) {
 
   var devices = await TransportHid.list();
 
   if (!devices[0]) {
-    // Alert.alert("No device found.")
+     console.log("No device found.")
     // throw new Error('No device found.')
   } else {
     // Alert.alert("A device was found!")
@@ -174,6 +189,7 @@ export async function getUSB(setTransport) {
 
     var transport = await TransportHid.create()
 
+    setUsbConn(true);
     setTransport(transport)
 
   }

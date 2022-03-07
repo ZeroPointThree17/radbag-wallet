@@ -25,7 +25,7 @@ const ImportSelect = ({route, navigation}) => {
       {Platform.OS != 'ios' && <Separator/>}
     {Platform.OS === 'ios' && <React.Fragment><Separator/>
     <Button style={getAppFont("black")}
-        title={"Import a Hardware Wallet\nvia Ledger Nano X Bluetooth\n\n(NOTE: Ledger Nano S is not supported on iOS)"}
+        title={"Import a Hardware Wallet\nvia Ledger Nano X Bluetooth\n\n(NOTE: Ledger Nano S and USB connections are not supported on iOS)"}
         enabled
         onPress={() => navigation.push('Hardware Wallet', {firstTimeStr: firstTimeString, isBluetooth:"true"})}
       />

@@ -40,47 +40,7 @@ import {
 import { log, BufferReader } from '@radixdlt/util'
 
 
-const parseSignatureFromLedger = (
-  buf,
-) => {
-  // Response `buf`: pub_key_len (1) || pub_key (var) || chain_code_len (1) || chain_code (var)
-  const bufferReader = BufferReader.create(buf)
-
-  const signatureDERlengthResult = bufferReader.readNextBuffer(1)
-  if (signatureDERlengthResult.isErr()) {
-    const errMsg = `Failed to parse length of signature from response buffer: ${msgFromError(
-      signatureDERlengthResult.error,
-    )}`
-    log.error(errMsg)
-    return err(hardwareError(errMsg))
-  }
-  const signatureDERlength = signatureDERlengthResult.value.readUIntBE(
-    0,
-    1,
-  )
-  const signatureDERBytesResult = bufferReader.readNextBuffer(
-    signatureDERlength,
-  )
-
-  if (signatureDERBytesResult.isErr()) {
-    const errMsg = `Failed to parse Signature DER bytes from response buffer: ${msgFromError(
-      signatureDERBytesResult.error,
-    )}`
-    log.error(errMsg)
-    return err(hardwareError(errMsg))
-  }
-  const signatureDERBytes = signatureDERBytesResult.value
-
-  // We ignore remaining bytes, being: `Signature.V (1)`
-
-  return Signature.fromDER(signatureDERBytes).map(signature => ({
-    signature,
-    remainingBytes: bufferReader.remainingBytes(),
-  }))
-}
-
-
-function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
+function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
 
   Keyboard.dismiss; 
   setSubmitEnabled(false);
@@ -167,7 +127,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID) }
+            { text: "OK", onPress: () => submitTxn(usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID) }
           ]
         );
 
@@ -226,7 +186,7 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
   
 
   export const submitTxn = async (
-    setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID
+    usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID
   
   ) => {
   setShow(false);
@@ -292,6 +252,10 @@ function buildTxn(setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount
   );
 
   } else{
+
+    if (usbConn == true) {
+      transport = await TransportHid.create()
+    }
 
     if(transport == undefined && deviceID == undefined){
       alert("Please open the hardware wallet and the Radix app in the wallet first")
@@ -605,6 +569,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [bluetoothHWDescriptor, setBluetoothHWDescriptor] = useState();
   const [transport, setTransport] = useState();
   const [deviceID, setDeviceID] = useState();
+  const [usbConn, setUsbConn] = useState(false);
 
 
   useEffect( () => {
@@ -626,7 +591,7 @@ useInterval(() => {
 
   if(transport == undefined){
     startScan(setTransport, setDeviceID);
-    getUSB(setTransport);
+    getUSB(setTransport, setUsbConn);
   }
 
   getBalances(false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
@@ -780,7 +745,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID)}}>
+<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>

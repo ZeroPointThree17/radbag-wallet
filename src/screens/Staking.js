@@ -153,6 +153,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
 function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash){
 
   var currApdu = apdus.shift();
+
   if(apdus.length == 0){
 
     alert("Please sign this transaction on the device to finalize");
@@ -165,7 +166,7 @@ function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction
       if(finalSig.length < 10){
         alert("Transaction not submitted.")
       } else{
-        alert("Transaction submitted.")
+        alert("Transaction submitted. "+finalSig)
 
         finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
       // const parsedResult = parseSignatureFromLedger(result)
@@ -194,6 +195,8 @@ function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction
 
 function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
   
+alert(unsigned_transaction +" "+public_key+" "+ finalSig)
+
   fetch('https://raddish-node.com:6208/transaction/finalize', {
     method: 'POST',
     headers: {
@@ -218,7 +221,7 @@ function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSi
   
     )
   }).then((response) => response.json()).then((json) => {
-
+alert(JSON.stringify(json))
    var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
   
    Keyboard.dismiss;
@@ -301,7 +304,6 @@ async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, se
     if(deviceID != undefined){
       transport = await TransportBLE.open(deviceID);
     }
-       alert("Please confirm this transaction on the device");
 
       // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
       const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
@@ -336,13 +338,16 @@ async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, se
 
    console.log("BEFORE SEND HW")
 
-   
+
           transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
     
+            alert("Please confirm this transaction on the device.");
+
             console.log("AFTER SEND HW")
 
 
             var apdus = []
+
       while( instructions.length > 0){
 
             const instructionToSend = instructions.shift() // "pop first"
@@ -364,10 +369,13 @@ async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, se
             
             transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
 
-        })
+        }).catch((error) => {
+        alert("Please open the hardware wallet and the Radix app in the wallet first")
+      })
       }
+    }
 }
-}
+
 
 
 

@@ -263,7 +263,6 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
       if(deviceID != undefined){
         transport = await TransportBLE.open(deviceID);
       }
-         alert("Please confirm this transaction on the device");
 
         // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
         const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
@@ -303,10 +302,12 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
      
             transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
       
+              alert("Please confirm this transaction on the device");
+
               console.log("AFTER SEND HW")
   
-  
               var apdus = []
+
         while( instructions.length > 0){
   
               const instructionToSend = instructions.shift() // "pop first"
@@ -328,6 +329,8 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
               
               transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
 
+          }).catch((error) => {
+            alert("Please open the hardware wallet and the Radix app in the wallet first")
           })
         }
       }

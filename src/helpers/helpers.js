@@ -160,14 +160,14 @@ export async function startScan(setTransport, setDeviceID) {
     next: e => {
       // Alert.alert(JSON.stringify(e.descriptor))
       if (e.type === "add") {
-        //  alert(JSON.stringify(e.descriptor))
+        //  Alert.alert(JSON.stringify(e.descriptor))
         setDeviceID(e.descriptor.id)
         TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
       }
       // NB there is no "remove" case in BLE.
     },
     error: error => {
-      alert("error: " + error)
+      Alert.alert("error: " + error)
       // this.setState({ error, refreshing: false });
     }
   });

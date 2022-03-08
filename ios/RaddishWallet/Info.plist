@@ -69,6 +69,8 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Needed to connect to a hardware wallet</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

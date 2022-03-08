@@ -685,7 +685,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
 
  const Staking = ({route, navigation}) => {
  
-      const { currAddr, hdpathIndex, isHW } = route.params;
+      const { currAddr, hdpathIndex, isHWBool } = route.params;
 
       const [privKey_enc, setPrivKey_enc] = useState();
       const [public_key, setPublic_key] = useState();
@@ -836,14 +836,14 @@ onPress={() => {setStakingScreenActive(false)}}>
      stakeValRef.current.blur();
      stakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn) }}>
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled, usbConn) }}>
 
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={22} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Stake</Text>
         </View>
         </TouchableOpacity>
-        {isHW==true && <React.Fragment><Separator/><Separator/>
+        {isHWBool==true && <React.Fragment><Separator/><Separator/>
         <Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 </View>
 </React.Fragment>
@@ -899,14 +899,14 @@ onPress={() => {setStakingScreenActive(false)}}>
      unstakeValRef.current.blur();
      unstakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled )
+     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled )
   }}>
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-up-circle-outline" size={22} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Unstake</Text>
         </View>
         </TouchableOpacity>
-        {isHW==true && <React.Fragment><Separator/><Separator/>
+        {isHWBool==true && <React.Fragment><Separator/><Separator/>
         <Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 </View>
 

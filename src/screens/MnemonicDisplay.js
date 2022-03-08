@@ -112,7 +112,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
       }
 
         { mnemonic_enc == "HW_WALLET" && <React.Fragment>
-          <Text>Mnemonic not visible when using a hardware wallet.</Text>
+          <Text style={[{textAlign:'center', marginHorizontal: 25, fontSize:20}, getAppFont("black")]}>Mnemonic not visible when using a hardware wallet.</Text>
               </React.Fragment>
          }
               <Separator/>

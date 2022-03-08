@@ -548,7 +548,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
 
  const Send = ({route, navigation}) => {
  
-  const { defaultSymbol, sourceXrdAddr, hdpathIndex, isHW } = route.params;
+  const { defaultSymbol, sourceXrdAddr, hdpathIndex, isHWBool } = route.params;
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
   const [destAddr, onChangeDestAddr] = useState();
@@ -742,13 +742,13 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 </View>
 <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
-{isHW==true && <React.Fragment><Separator/><Separator/>
+{isHWBool==true && <React.Fragment><Separator/><Separator/>
 <Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID)}}>
+<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>

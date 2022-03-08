@@ -21,7 +21,7 @@ var WarningIcon = require("../assets/alert.png");
     <View style={styles.separatorBorder} />
     );
 
-function getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances) {
+function getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances) {
 
     db.transaction((tx) => {
 
@@ -34,6 +34,9 @@ function getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setAct
                 var suffix = ""
                 if(row.mnemonic_enc == "HW_WALLET"){
                   suffix = " [HARDWARE]"
+                  setIsHW(true);
+                } else{
+                  setIsHW(false);
                 }
                 var data = {label: row.name + suffix, value: row.id}
                  wallets.push(data);
@@ -92,7 +95,7 @@ function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddress
             db.transaction((tx) => {
                 tx.executeSql("UPDATE address SET enabled_flag=1 WHERE wallet_id='"+wallet_id+"' AND id='"+next_id+"'", [], (tx, results) => {
                   
-                  updateActiveAddress(db, next_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+                  updateActiveAddress(setIsHW, db, next_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
 
                   }, errorCB);
                 });
@@ -240,7 +243,7 @@ function updateActiveWallet(wallet_id, setWallets, setActiveWallet, setEnabledAd
                     address_id = row.id;
                 }
 
-                updateActiveAddress(db, address_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+                updateActiveAddress(setIsHW, db, address_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
 
             }, errorCB);
     }); 
@@ -248,10 +251,10 @@ function updateActiveWallet(wallet_id, setWallets, setActiveWallet, setEnabledAd
 }); 
 }
 
-export function updateActiveAddress(db, address_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
+export function updateActiveAddress(setIsHW, db, address_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
     db.transaction((tx) => {
         tx.executeSql("UPDATE active_address set id = '"+address_id+"'", [], (tx, results) => {
-            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+            getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
         }, errorCB);
     }); 
 }
@@ -446,7 +449,7 @@ const Home = ({route, navigation}) => {
     const [refreshing, setRefreshing] = React.useState(false);
 
     const onRefresh = React.useCallback(() => {
-        getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+        getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
       setRefreshing(true);
       wait(500).then(() => setRefreshing(false));
     }, []);
@@ -467,6 +470,7 @@ const Home = ({route, navigation}) => {
     const [activeAddress, setActiveAddress] = useState(1);
     const [enabledAddresses, setEnabledAddresses] = useState(initialEnabledAddresses);
     const [addressRRIs, setAddressRRIs] = useState(new Map())
+    const [isHW, setIsHW] = useState()
 
     var dropdownVals = []
     var walletDropdownVals = []  
@@ -489,11 +493,14 @@ const Home = ({route, navigation}) => {
     }
 )
         useEffect(() => {
-            getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+          getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
        }, []);
-    
+
+
         useInterval(() => {
-           getWallets(db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    }, 10000);
+          getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
+        }, 10000);
+        
 
    var balances = new Map();
     if( addressBalances.size > 0 && activeAddress != undefined ){
@@ -542,8 +549,7 @@ const Home = ({route, navigation}) => {
     }
 }
 
-var isHW = walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)] == undefined? false : walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)].label.endsWith("[HARDWARE]")
-// alert(isHW)
+//  alert(isHW)
 
 console.log("WALLETS: "+JSON.stringify(wallets));
 
@@ -613,7 +619,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           onFocus={() => setIsFocusAddr(true)}
           onBlur={() => setIsFocusAddr(false)}
           onChange={item => {
-            updateActiveAddress(db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+            updateActiveAddress(setIsHW, db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
            setLabelAddr(item.label);
             setValueAddr(item.value);
             setIsFocusAddr(true);
@@ -644,7 +650,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHW: isHW})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
-        <Text style={[{fontSize: 14}, getAppFont("white")]}>Send</Text>
+        <Text style={[{fontSize: 14}, getAppFont("white")]}> Send</Text>
         </View>
         </TouchableOpacity>
         </View>

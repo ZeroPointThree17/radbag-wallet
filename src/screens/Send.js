@@ -88,8 +88,8 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  // "address": xrdAddr
-                  "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+                  "address": xrdAddr
+                  // "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
                 },
                 "amount": {
                   "token_identifier": {
@@ -200,7 +200,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     promptFunc = prompt
   }
 
-  if(isHW == false){
+  if(isHW != true){
   promptFunc(
     "Enter wallet password",
     "Enter the wallet password to perform this transaction",
@@ -258,7 +258,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     }
 
     if(transport == undefined && deviceID == undefined){
-      alert("Please open the hardware wallet and the Radix app in the wallet first")
+      alert("Please open the Radix app in the hardware wallet first")
     } else{
 
       if(deviceID != undefined){
@@ -330,7 +330,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
           })
         }
       }
-        }
+    }
     
   
   
@@ -569,8 +569,10 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [bluetoothHWDescriptor, setBluetoothHWDescriptor] = useState();
   const [transport, setTransport] = useState();
   const [deviceID, setDeviceID] = useState();
+  const [deviceName, setDeviceName] = useState("Looking for device...");
   const [usbConn, setUsbConn] = useState(false);
 
+  // alert(isHW)
 
   useEffect( () => {
     // var symbolsTemp = [];
@@ -590,8 +592,8 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
 useInterval(() => {
 
   if(transport == undefined){
-    startScan(setTransport, setDeviceID);
-    getUSB(setTransport, setUsbConn);
+    startScan(setTransport, setDeviceID, setDeviceName);
+    getUSB(setTransport, setUsbConn, setDeviceName);
   }
 
   getBalances(false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
@@ -740,8 +742,9 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 </View>
 <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
+{isHW==true && <React.Fragment><Separator/><Separator/>
+<Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 
-<Text>{bluetoothHWDescriptor == undefined ? " " : JSON.parse(bluetoothHWDescriptor).id}</Text>
 <Separator/>
 <Separator/>
 <Separator/>

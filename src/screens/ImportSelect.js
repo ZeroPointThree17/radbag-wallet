@@ -15,7 +15,7 @@ const ImportSelect = ({route, navigation}) => {
 
  return ( 
   <View style={styles.container}> 
-    <ScrollView styles={{backgroundColor:"white"}}>
+    {/* <ScrollView styles={{justifyContent: "center", alignItems:"center", backgroundColor:"white"}}> */}
 
     <Button style={getAppFont("black")}
         title="Import a Wallet via Mnemonic Phrase"
@@ -25,10 +25,13 @@ const ImportSelect = ({route, navigation}) => {
       {Platform.OS != 'ios' && <Separator/>}
     {Platform.OS === 'ios' && <React.Fragment><Separator/>
     <Button style={getAppFont("black")}
-        title={"Import a Hardware Wallet\nvia Ledger Nano X Bluetooth\n\n(NOTE: Ledger Nano S and USB connections are not supported on iOS)"}
+        title={"Import a Hardware Wallet via Ledger Nano X Bluetooth"}
         enabled
         onPress={() => navigation.push('Hardware Wallet', {firstTimeStr: firstTimeString, isBluetooth:"true"})}
       />
+      <Separator/>
+      <Separator/>
+      <Text>NOTE: Ledger Nano S and USB connections are not supported on iOS</Text>
       </React.Fragment>
       }
       {Platform.OS != 'ios' && <Separator/>}
@@ -39,7 +42,7 @@ const ImportSelect = ({route, navigation}) => {
       /></React.Fragment>}
       
       
-  </ScrollView>
+  {/* </ScrollView> */}
   </View>
   )
 };

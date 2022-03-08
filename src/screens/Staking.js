@@ -246,7 +246,7 @@ async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, se
     promptFunc = prompt
   }
 
-  if(isHW == false){
+  if(isHW != true){
 
   promptFunc(
     "Enter wallet password",
@@ -710,6 +710,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       const [deviceID, setDeviceID] = useState();
       const [submitEnabled, setSubmitEnabled] = useState(true);
       const [usbConn, setUsbConn] = useState(false);
+      const [deviceName, setDeviceName] = useState("Looking for device...");
 
       const stakeValRef = useRef();
       const stakeAmtRef = useRef();
@@ -726,8 +727,8 @@ useInterval(() => {
   getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
   
   if (transport == undefined) {
-    startScan(setTransport, setDeviceID);
-    getUSB(setTransport, setUsbConn);
+    startScan(setTransport, setDeviceID, setDeviceName);
+    getUSB(setTransport, setUsbConn, setDeviceName);
   }
 }, 2000);
  
@@ -842,7 +843,8 @@ onPress={() => {setStakingScreenActive(false)}}>
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Stake</Text>
         </View>
         </TouchableOpacity>
-
+        {isHW==true && <React.Fragment><Separator/><Separator/>
+        <Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 </View>
 </React.Fragment>
 }
@@ -904,7 +906,8 @@ onPress={() => {setStakingScreenActive(false)}}>
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Unstake</Text>
         </View>
         </TouchableOpacity>
-
+        {isHW==true && <React.Fragment><Separator/><Separator/>
+        <Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 </View>
 
 </React.Fragment>

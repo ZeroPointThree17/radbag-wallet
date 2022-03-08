@@ -123,7 +123,7 @@ export function formatNumForHomeDisplay(number) {
 }
 
 
-export async function startScan(setTransport, setDeviceID) {
+export async function startScan(setTransport, setDeviceID, setDeviceName) {
 
   // alert("starting scan")
   if (Platform.OS === "android") {
@@ -162,6 +162,7 @@ export async function startScan(setTransport, setDeviceID) {
       if (e.type === "add") {
         //  Alert.alert(JSON.stringify(e.descriptor))
         setDeviceID(e.descriptor.id)
+        setDeviceName(e.descriptor.name)
         TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
       }
       // NB there is no "remove" case in BLE.
@@ -173,7 +174,7 @@ export async function startScan(setTransport, setDeviceID) {
   });
 };
 
-export async function getUSB(setTransport, setUsbConn) {
+export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 
   var devices = await TransportHid.list();
 
@@ -189,6 +190,7 @@ export async function getUSB(setTransport, setUsbConn) {
 
     var transport = await TransportHid.create()
 
+    setDeviceName(devices[0].name)
     setUsbConn(true);
     setTransport(transport)
 

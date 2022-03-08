@@ -21,6 +21,7 @@ import { err, Result } from 'neverthrow'
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
 
+
 function even_or_odd_prefix(N: any) {
   let len = N.length;
 
@@ -42,24 +43,6 @@ function even_or_odd_prefix(N: any) {
 }
 
 
-
-
-function splitPath(path: string): number[] {
-  const result: number[] = [];
-  const components = path.split("/");
-  components.forEach((element) => {
-    let number = parseInt(element, 10);
-    if (isNaN(number)) {
-      return; // FIXME shouldn't it throws instead?
-    }
-    if (element.length > 1 && element[element.length - 1] === "'") {
-      number += 0x80000000;
-    }
-    result.push(number);
-  });
-  return result;
-}
-
 export const sendAPDU = async (
   navigation: any,
   publicKeyInputs: any[],
@@ -70,7 +53,7 @@ export const sendAPDU = async (
 
 ) => {
   console.log("In send to hw3")
-  // var publicKeys = ["04f4f40a5a387388652998c19f1c63de76ff3cd4a6faacb11b383456c5196ec2d3"];
+
   var publicKeys: string[] = [];
   for (var x = 0; x < 15; x++) {
 
@@ -80,35 +63,9 @@ export const sendAPDU = async (
     var p2 = publicKeyInputs[x][3];
     var data = publicKeyInputs[x][4];
     var statusList = publicKeyInputs[x][5];
-    // const paths = splitPath("m/44'/1022'/0'/0/" + x + "");
-    // const buffer = Buffer.alloc(1 + paths.length * 4);
-    // buffer[0] = paths.length;
-    // paths.forEach((element, index) => {
-    //   buffer.writeUInt32BE(element, 1 + 4 * index);
-    // });
 
-    // Alert.alert(cla + " " + ins + " " + p1 + " " + p2 + " " + data + " " + statusList)
     var finalResult = "BLANK"
-    // var devices = [];
-    console.log("In send to hw 4")
-    // if (isBluetoothString == "true") {
-    console.log("In send to hw 5.1")
 
-
-    // if (transport == undefined) {
-    console.log("In send to hw 5.2")
-    // devices = await TransportHid.list()
-    // }
-
-    // if (!devices[0] && transport == undefined) {
-    //   Alert.alert("No device found.")
-    //   // throw new Error('No device found.')
-    // } else {
-    // Alert.alert("A device was found!")
-    console.log("In send to hw 6")
-
-    // if (transport == undefined) {
-    //   console.log("In send to hw 6.1")
     if (usbConn == true) {
       transport = await TransportHid.create()
     }
@@ -122,10 +79,6 @@ export const sendAPDU = async (
     transport.close()
     console.log("RESULT_HEX: " + result.toString("hex"));
     // Alert.alert("AFTER TRANSPORT CLOSE")
-    // const publicKeyLength = result[0];
-    // var pubkey = result.slice(1, 1 + publicKeyLength).toString("hex")
-    // publicKeys.push(pubkey)
-
 
     // Response `buf`: pub_key_len (1) || pub_key (var) || chain_code_len (1) || chain_code (var)
     const readNextBuffer = readBuffer(result)
@@ -157,14 +110,8 @@ export const sendAPDU = async (
 
     var publicKeyFinal = even_or_odd_prefix(publicKeyBytes.toString('hex').substring(66)) + publicKeyBytes.toString('hex').substring(2, 66);
     publicKeys.push(publicKeyFinal)
-    // PublicKey.fromBuffer(publicKeyBytes).toString(true)
     console.log("PKPK: " + publicKeyFinal);
 
-    // return publicKeyFinal;
-
-
-
-    // navigateHome(setIsActive, navigation, "a", "a", "HW_WALLET", "HW_WALLET", "false", publicKeys);
 
   }
 
@@ -184,47 +131,8 @@ export const sendAPDU = async (
 function sendToHWWallet(navigation, firstTimeString, isBluetoothString, transport, usbConn) {
   console.log("In send to hw")
   console.log("Transport: " + transport)
-  // var bip32comp1: BIP32PathComponentT =
-  //   { index: 0x8000002c, isHardened: true, toString: () => "44'", level: 1, name: "purpose", value: () => 44 }
-
-  // var bip32comp2: BIP32PathComponentT =
-  //   { index: 0x80000218, isHardened: true, toString: () => "1022'", level: 2, name: "coin type", value: () => 1022 }
-
-  // var bip32comp3: BIP32PathComponentT =
-  //   { index: 0x0, isHardened: true, toString: () => "0'", level: 3, name: "account", value: () => 0 }
-
-  // var bip32comp4: BIP32PathComponentT =
-  //   { index: 0x0, isHardened: true, toString: () => "0'", level: 4, name: "change", value: () => 0 }
-
-  // var bip32comp5: BIP32PathComponentT =
-  //   { index: 0x0, isHardened: false, toString: () => "0", level: 5, name: "address index", value: () => 0 }
-
-  // var radPath: HDPathRadixT = {
-
-  //   pathComponents: [bip32comp1, bip32comp2, bip32comp3, bip32comp4, bip32comp5],
-  //   equals: () => true,
-  //   purpose: { index: 0x8000002c, isHardened: true, toString: () => "44'", level: 1, name: "purpose", value: () => 44 },
-  //   coinType: { index: 0x80000218, isHardened: true, toString: () => "1022'", level: 2, name: "coin type", value: () => 1022 },
-  //   account: { index: 0x0, isHardened: true, toString: () => "0'", level: 3, name: "account", value: () => 0 },
-  //   change: { index: 0x0, isHardened: true, toString: () => "0'", level: 4, name: "change", value: () => 0 },
-  //   addressIndex: { index: 0x0, isHardened: false, toString: () => "0", level: 5, name: "address index", value: () => 0 },
-
-  // }
-
-  // Alert.alert(radPath.pathComponents.toString())
-
-
-  // RadixAPDU.getPublicKey(pkin);
-
-  // RadixAPDU.getPublicKey(pkin).cla,
-  // RadixAPDU.getPublicKey(pkin).ins,
-  // RadixAPDU.getPublicKey(pkin).p1,
-  // RadixAPDU.getPublicKey(pkin).p2,
-  // RadixAPDU.getPublicKey(pkin).data,
-  // RadixAPDU.getPublicKey(pkin).requiredResponseStatusCodeFromDevice
 
   var publicKeyInputs: any[] = [];
-
 
   for (var x = 0; x < 15; x++) {
 
@@ -257,64 +165,6 @@ function sendToHWWallet(navigation, firstTimeString, isBluetoothString, transpor
 }
 
 
-
-
-// async function startScan(setTransport: any) {
-
-//   if (Platform.OS === "android") {
-//     await PermissionsAndroid.request(
-//       PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
-//     );
-//   }
-
-//   if (Platform.OS === "android") {
-//     await PermissionsAndroid.request(
-//       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-//     );
-//   }
-
-//   new Observable(TransportBLE.listen).subscribe({
-//     complete: () => {
-//       // Alert.alert("complete")
-//       // this.setState({ refreshing: false });
-//     },
-//     next: e => {
-//       // Alert.alert(JSON.stringify(e.descriptor))
-//       if (e.type === "add") {
-
-//         TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
-
-//       }
-//       // NB there is no "remove" case in BLE.
-//     },
-//     error: error => {
-//       // Alert.alert("error: " + error)
-//       // this.setState({ error, refreshing: false });
-//     }
-//   });
-// };
-
-// async function getUSB(setTransport) {
-
-//   var devices = await TransportHid.list();
-
-//   if (!devices[0]) {
-//     // Alert.alert("No device found.")
-//     // throw new Error('No device found.')
-//   } else {
-//     // Alert.alert("A device was found!")
-//     console.log("In send to hw 6")
-
-
-//     console.log("In send to hw 6.1")
-
-//     var transport = await TransportHid.create()
-
-//     setTransport(transport)
-
-//   }
-// }
-
 const HardwareWallet = ({ route, navigation }) => {
 
   console.log("In send to hw 0")
@@ -326,15 +176,14 @@ const HardwareWallet = ({ route, navigation }) => {
   const [transport, setTransport] = useState();
   const [deviceID, setDeviceID] = useState();
   const [usbConn, setUsbConn] = useState(false);
-
-
+  const [deviceName, setDeviceName] = useState("Looking for device...");
 
 
   useInterval(() => {
 
     if (transport == undefined) {
-      startScan(setTransport, setDeviceID);
-      getUSB(setTransport, setUsbConn);
+      startScan(setTransport, setDeviceID, setDeviceName);
+      getUSB(setTransport, setUsbConn, setDeviceName);
     }
   }, 3500);
 
@@ -347,10 +196,10 @@ const HardwareWallet = ({ route, navigation }) => {
 
 
 
-
   return (
     <View style={styles.container}>
-      <Text style={getAppFont("black")}>Please connect hardware wallet. If connected, please wait 30 seconds for connection to be established.</Text>
+      <Text style={[getAppFont("black"), { textAlign: "center" }]}>Please connect hardware wallet and open the Radix app in the wallet. If connected, please wait 30 seconds for the connection to be established.</Text>
+      <Separator />
       <Separator />
       <Progress.Circle style={{ alignSelf: "center" }} size={30} indeterminate={true} />
     </View>

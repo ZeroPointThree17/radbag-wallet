@@ -226,7 +226,7 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
 }
 
 
-function updateActiveWallet(wallet_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
+function updateActiveWallet(setIsHW, wallet_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
 
     var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -589,7 +589,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            updateActiveWallet(item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+            updateActiveWallet(setIsHW, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
            setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);

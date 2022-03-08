@@ -218,18 +218,11 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     var finalSig = ""
 
     console.log("unsigned_transaction: "+unsigned_transaction)
-    // alert("IS HARDWARE: " +isHW)
-
- 
-      // expected output: "Success!"
-
-      // signAPDURequest.
-
 
     var signature = "";
-  var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+    var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
-  signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
+    signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
 
 
   var result=new Uint8Array(72);
@@ -264,13 +257,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
         transport = await TransportBLE.open(deviceID);
       }
 
-        // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
         const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
-        // alert("AFTER HD CREATE: " + hdpath)
-        // var signAPDURequest = RadixAPDU.doSignHash({
-        //   path: hdpath,
-        //   hashToSign: unsigned_transaction,
-        // })
   
         const transactionRes = Transaction.fromBuffer(
           Buffer.from(unsigned_transaction, 'hex'),
@@ -286,8 +273,6 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
         const instructions = transaction.instructions
         const numberOfInstructions = instructions.length
     
-        // alert("numberOfInstructions: "+numberOfInstructions)
-  
        var rri_prefix = rri.split('_')[0];
 
        var apdu1 =  RadixAPDU.signTX.initialSetup({

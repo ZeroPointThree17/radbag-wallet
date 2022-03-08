@@ -48,55 +48,67 @@ function removeAddress(addressId, walletId, navigation,setActiveAddress){
   }
     else{
 
-      Alert.alert(
-        "Remove address",
-        "Are you sure you want to remove this address from this wallet?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel"
-          },
-          { text: "Yes", onPress: () => {
-
-  db.transaction((tx) => {
-    tx.executeSql("UPDATE address SET enabled_flag=0 WHERE id="+addressId, [], (tx, results) => {
-
       db.transaction((tx) => {
-        tx.executeSql("SELECT MAX(id) AS id from address WHERE enabled_flag=1 and wallet_id="+walletId, [], (tx, results) => {
-    
-          var len = results.rows.length;
 
-          var maxAddressId=0;
-      for (let i = 0; i < len; i++) {
-          let row = results.rows.item(i);
+        tx.executeSql("SELECT * FROM wallet where id = "+walletId, [], (tx, results) => {
+  
+                let row = results.rows.item(0);
 
-          maxAddressId = row.id
-      }
-
-      db.transaction((tx) => {
-        tx.executeSql("UPDATE active_address SET id="+maxAddressId, [], (tx, results) => {
-    
-      alert("The address has been removed");
-
-      const pushAction = StackActions.push('Raddish Wallet');
-                                
-      navigation.dispatch(pushAction);
-
-          });
-         }, errorCB);
-      });
-    }, errorCB);
-
-  });
-}, errorCB);
-
-
-
-} }
-]
-);
-
+                if(row.mnemonic_enc == "HW_WALLET"){
+                  alert("Cannot remove hardware wallet addresses")
+                } else{
+                  Alert.alert(
+                    "Remove address",
+                    "Are you sure you want to remove this address from this wallet?",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                      },
+                      { text: "Yes", onPress: () => {
+            
+              db.transaction((tx) => {
+                tx.executeSql("UPDATE address SET enabled_flag=0 WHERE id="+addressId, [], (tx, results) => {
+            
+                  db.transaction((tx) => {
+                    tx.executeSql("SELECT MAX(id) AS id from address WHERE enabled_flag=1 and wallet_id="+walletId, [], (tx, results) => {
+                
+                      var len = results.rows.length;
+            
+                      var maxAddressId=0;
+                  for (let i = 0; i < len; i++) {
+                      let row = results.rows.item(i);
+            
+                      maxAddressId = row.id
+                  }
+            
+                  db.transaction((tx) => {
+                    tx.executeSql("UPDATE active_address SET id="+maxAddressId, [], (tx, results) => {
+                
+                  alert("The address has been removed");
+            
+                  const pushAction = StackActions.push('Raddish Wallet');
+                                            
+                  navigation.dispatch(pushAction);
+            
+                      });
+                     }, errorCB);
+                  });
+                }, errorCB);
+            
+              });
+            }, errorCB);
+            
+            
+            
+            } }
+            ]
+            );
+            
+                }
+        });
+      }, errorCB);
 }
 
 });

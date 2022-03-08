@@ -304,7 +304,7 @@ var hdkey=""
                           var privatekey_enc ="HARDWARE_WALLET"
                           var publicKey = undefined;
                           var rdx_addr = undefined;
-                          if(i==2){enabled_flag=0};
+                          if(i==2 && hardwareWallletPubKeys.length == 0){enabled_flag=0};
 
                           if(hardwareWallletPubKeys.length == 0){
                             var childkey = hdkey.derive("m/44'/1022'/0'/0/"+(i-1).toString()+"'")

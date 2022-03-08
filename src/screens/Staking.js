@@ -166,7 +166,7 @@ function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction
       if(finalSig.length < 10){
         alert("Transaction not submitted.")
       } else{
-        alert("Transaction submitted. "+finalSig)
+        alert("Transaction submitted.")
 
         finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
       // const parsedResult = parseSignatureFromLedger(result)
@@ -195,7 +195,7 @@ function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction
 
 function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
   
-alert(unsigned_transaction +" "+public_key+" "+ finalSig)
+// alert(unsigned_transaction +" "+public_key+" "+ finalSig)
 
   fetch('https://raddish-node.com:6208/transaction/finalize', {
     method: 'POST',
@@ -221,7 +221,7 @@ alert(unsigned_transaction +" "+public_key+" "+ finalSig)
   
     )
   }).then((response) => response.json()).then((json) => {
-alert(JSON.stringify(json))
+// alert(JSON.stringify(json))
    var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
   
    Keyboard.dismiss;
@@ -305,13 +305,7 @@ async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, se
       transport = await TransportBLE.open(deviceID);
     }
 
-      // alert("IN hw wallet LOGIC. HDPATH IDX: "+hdpathIndex)
-      const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
-      // alert("AFTER HD CREATE: " + hdpath)
-      // var signAPDURequest = RadixAPDU.doSignHash({
-      //   path: hdpath,
-      //   hashToSign: unsigned_transaction,
-      // })
+     const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
 
       const transactionRes = Transaction.fromBuffer(
         Buffer.from(unsigned_transaction, 'hex'),

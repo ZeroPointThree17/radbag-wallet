@@ -127,7 +127,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID) }
+            { text: "OK", onPress: () => submitTxn(rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID) }
           ]
         );
 
@@ -186,8 +186,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
   
 
   export const submitTxn = async (
-    usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID
-  
+    rri, usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID
   ) => {
   setShow(false);
 
@@ -290,11 +289,13 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     
         // alert("numberOfInstructions: "+numberOfInstructions)
   
+       var rri_prefix = rri.split('_')[0];
+
        var apdu1 =  RadixAPDU.signTX.initialSetup({
           path: hdpath,
           txByteCount: unsigned_transaction.length / 2, // 2 hex chars per byte
           numberOfInstructions,
-          // nonNativeTokenRriHRP: input.nonXrdHRP,
+          nonNativeTokenRriHRP: rri_prefix == 'xrd' ? undefined : rri_prefix
       })
   
      console.log("BEFORE SEND HW")

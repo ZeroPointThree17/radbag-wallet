@@ -5,19 +5,25 @@ var SQLite = require('react-native-sqlite-storage');
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { Separator } from '../helpers/jsxlib';
 import { getAppFont, useInterval, openCB, errorCB } from '../helpers/helpers';
+import * as Progress from 'react-native-progress';
 
 
-function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, setword13){
-  
+function showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic, setword13, setLoading){
+ 
+  setLoading(true);
+
   try{
   var mnemonic = decrypt(mnemonic_enc, Buffer.from(password));
   var word13 = decrypt(word13_enc, Buffer.from(password));
   setMnemonic(mnemonic);
   setword13(word13);
   setShow(true);
+  setLoading(false);
   } catch(err){
     alert("Password was incorrect")
   }
+
+  setLoading(false);
 }
 
 
@@ -86,6 +92,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
   const [word13_enc, setword13_enc] = useState();
   const [word13, setword13] = useState();
   const [walletName, setWalletName] = useState();
+  const [loading, setLoading] = useState(false);
 
   return ( 
      <View style={styles.container}> 
@@ -95,7 +102,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
       <Separator/>
       <Separator/>
       { mnemonic_enc != "HW_WALLET" && <React.Fragment>
-        <Text style={[{textAlign:'center', marginHorizontal: 25}, getAppFont("black")]}>Enter your wallet password to display the mnemonic for this wallet.</Text>
+        <Text style={[{textAlign:'center', marginHorizontal: 25}, getAppFont("black")]}>Enter your wallet password to display the mnemonic for this wallet. This process may take approx. 10 seconds on slower devices.</Text>
         <Separator/>
         <PasswordInputText  style={[{marginHorizontal: 25}, getAppFont("black")]} 
         onChangeText={(password) => setPassword( password )}
@@ -105,9 +112,8 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
                 title="Show Mnemonic"
                 enabled
                 onPress={() => {Keyboard.dismiss;
-                  showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13)}}
+                  showMnemonic(mnemonic_enc, word13_enc, password, setShow, setMnemonic,setword13, setLoading)}}
               />
-
           </React.Fragment>
       }
 
@@ -118,6 +124,10 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
               <Separator/>
               <Separator/>
               <Separator/>
+
+        {  loading &&
+        <Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
+        }
 
               { show && 
        <Text style={[{textAlign:'center', marginHorizontal: 25, fontSize:20}, getAppFont("black")]}>Mnemonic Phrase:</Text> 

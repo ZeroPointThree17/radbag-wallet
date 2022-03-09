@@ -1,8 +1,9 @@
-import { Button, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Button, SafeAreaView, View, Text, StyleSheet, Platform } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState } from 'react';
 import { StackActions } from '@react-navigation/native';
 import CheckBox from 'react-native-check-box';
+import CheckboxBouncy from "react-native-bouncy-checkbox";
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { Separator } from '../helpers/jsxlib';
 import { getAppFont } from '../helpers/helpers';
@@ -48,15 +49,19 @@ const [word13, setword13] = useState("");
  <Separator/>
  
  <View style={styles.checkbox}> 
- <CheckBox 
-    onClick={()=>{
-      if(word13flag==false){
-      setword13flag(true);
-      }
-      else setword13flag(false);
-    }}
-    isChecked={word13flag}
-/> 
+
+<CheckboxBouncy
+fillColor="#183A81"
+iconStyle={{ borderColor: "black" }}
+isChecked={word13flag}
+onPress={()=>{
+  if(word13flag==false){
+  setword13flag(true);
+  }
+  else setword13flag(false);
+}}
+/>
+
 <Text style={[styles.title2,getAppFont("black")]}>Add 13th word?</Text>
 </View > 
 { word13flag && 
@@ -129,7 +134,7 @@ const styles = StyleSheet.create({
   title2: {
     textAlign: 'center',
     marginVertical: 8,
-    marginHorizontal: 5,
+    marginHorizontal: 0,
   },
   checkbox: {
     flexDirection: "row",

@@ -194,11 +194,15 @@ const HardwareWallet = ({ route, navigation }) => {
     sendToHWWallet(navigation, firstTimeString, isBluetoothString, transport, usbConn);
   }
 
+  var androidMsg = "";
 
+  if (Platform.OS === "android") {
+    androidMsg = " or wallet is connected via USB"
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={[getAppFont("black"), { textAlign: "center" }]}>Please open the Radix app in the hardware wallet and ensure the device is connected to your device. Once the Radix app is open, please wait 30 seconds for the connection to be established.</Text>
+      <Text style={[getAppFont("black"), { textAlign: "center" }]}>{"Please open the Radix app in the hardware wallet and ensure bluetooth is enabled" + androidMsg + ". Once the Radix app is open, please wait 30 seconds for the connection to be established."}</Text>
       <Separator />
       <Separator />
       <Progress.Circle style={{ alignSelf: "center" }} size={30} indeterminate={true} />

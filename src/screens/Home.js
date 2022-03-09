@@ -78,7 +78,7 @@ function getEnabledAddresses(wallet_id,db,setEnabledAddresses, setActiveAddress,
         });
 }
 
-function addAddress(wallet_id,db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
+function addAddress(setIsHW, wallet_id,db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
 
     db.transaction((tx) => {
 
@@ -710,7 +710,7 @@ navigation.dispatch(pushAction);
 </TouchableOpacity>
 </View>
 <View style={styles.rowStyleHome}>  
-     <TouchableOpacity onPress={() => addAddress(activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
+     <TouchableOpacity onPress={() => addAddress(setIsHW, activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
      <View style={styles.rowStyle}>
      <IconFeather name="hash" size={16} color="black" />
 <Text style={[styles.buttonText, getAppFont("black")]} >Add Address</Text></View>

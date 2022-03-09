@@ -406,7 +406,7 @@ if(hardwareWallletPubKeyArr.length > 0){
 
      { isActive
   &&
-  <ActivityIndicator />
+  <React.Fragment><ActivityIndicator /><Separator/></React.Fragment>
   }
 {hardwareWallletPubKeys.length>0 && <React.Fragment>
 <View style={styles.rowStyle}>

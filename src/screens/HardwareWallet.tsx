@@ -198,7 +198,7 @@ const HardwareWallet = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[getAppFont("black"), { textAlign: "center" }]}>Please connect hardware wallet and open the Radix app in the wallet. If connected, please wait 30 seconds for the connection to be established.</Text>
+      <Text style={[getAppFont("black"), { textAlign: "center" }]}>Please open the Radix app in the hardware wallet and ensure bluetooth is enabled. Once the Radix app is open, please wait 30 seconds for the connection to be established.</Text>
       <Separator />
       <Separator />
       <Progress.Circle style={{ alignSelf: "center" }} size={30} indeterminate={true} />

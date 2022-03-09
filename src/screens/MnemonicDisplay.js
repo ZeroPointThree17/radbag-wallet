@@ -91,7 +91,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
      <View style={styles.container}> 
      <ScrollView>
       <Separator/>
-      <Text style={[{fontWeight:"bold",textAlign:'center', marginHorizontal: 25 }, getAppFont("black")]}>Selected Wallet Name:</Text><Text style={{fontFamily:"AppleSDGothicNeo-Regular", fontSize:20, textAlign:'center'}}>{walletName}</Text>
+      <Text style={[{fontWeight:"bold",textAlign:'center', marginHorizontal: 25 }, getAppFont("black")]}>Selected Wallet Name:</Text><Text style={[getAppFont("black"), {fontSize:20, textAlign:'center'}]}>{walletName}</Text>
       <Separator/>
       <Separator/>
       { mnemonic_enc != "HW_WALLET" && <React.Fragment>

@@ -46,6 +46,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Needed to connect to a hardware wallet</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Please point the camera at a QR code</string>
 	<key>UIAppFonts</key>
@@ -69,8 +71,6 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Needed to connect to a hardware wallet</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

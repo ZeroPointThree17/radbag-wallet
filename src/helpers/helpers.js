@@ -6,6 +6,8 @@ import TransportHid from '@ledgerhq/react-native-hid';
 import {showMessage} from "react-native-flash-message";
 import Clipboard from '@react-native-clipboard/clipboard';
 var bigDecimal = require('js-big-decimal');
+import prompt from 'react-native-prompt-android';
+
 
 export function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -123,55 +125,104 @@ export function formatNumForHomeDisplay(number) {
 }
 
 
-export async function startScan(setTransport, setDeviceID, setDeviceName) {
+export async function startScan(setTransport, setDeviceID, setDeviceName, scanStarted, setScanStarted) {
 
-  // alert("starting scan")
-  if (Platform.OS === "android") {
-    await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
-    );
+  if(scanStarted == undefined){
+    scanStarted = true;
   }
 
-  if (Platform.OS === "android") {
-    await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-    );
-  }
+  if (Platform.OS === "android" && scanStarted == false) {
 
-  if (Platform.OS === "android") {
-    await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
-    );
-  }
+    Alert.alert(
+      "Location Data Disclosure",
+      "Raddish requests Location permission in order to scan for bluetooth pairings with a hardware wallet. This location data may be used in the background to keep the connection with the hardware wallet established. We are using Location permission on Android to send Bluetooth Low Energy messages between the app and the hardware wallet. We will NOT use or share your location at any time.",
+      [
+        {
+          text: "Decline",
+          onPress: () => alert("Location permissions for bluetooth connections declined. Bluetooth connections will not be established."),
+          style: "cancel"
+        },
+        {
+          text: "Accept",
+          onPress: () => {
+ 
+            // alert("starting scan")
 
-  if (Platform.OS === "android") {
-    await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN
-    );
-}
+               PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+              ).then( () => {
+                PermissionsAndroid.request(
+                  PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                ).then( () => {
+                  PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+                  ).then( () => {
+                    PermissionsAndroid.request(
+                  PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN
+                ).then(() => {
 
 
+            new Observable(TransportBLE.listen).subscribe({
+              complete: () => {
+                // alert("complete")
+                // this.setState({ refreshing: false });
+              },
+              next: e => {
+                // Alert.alert(JSON.stringify(e.descriptor))
+                if (e.type === "add") {
+                  //  Alert.alert(JSON.stringify(e.descriptor))
+                  setDeviceID(e.descriptor.id)
+                  setDeviceName(e.descriptor.name)
+                  TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
+                }
+                // NB there is no "remove" case in BLE.
+              },
+              error: error => {
+                // Alert.alert("error: " + error)
+                // this.setState({ error, refreshing: false });
+              }
+            });
 
-  new Observable(TransportBLE.listen).subscribe({
-    complete: () => {
-      // alert("complete")
-      // this.setState({ refreshing: false });
-    },
-    next: e => {
-      // Alert.alert(JSON.stringify(e.descriptor))
-      if (e.type === "add") {
-        //  Alert.alert(JSON.stringify(e.descriptor))
-        setDeviceID(e.descriptor.id)
-        setDeviceName(e.descriptor.name)
-        TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
+                })
+              } )
+
+              })
+            })
+            
+
+
+          }
+        }
+        ]
+    )
+  } else if (Platform.OS != "android") {
+    new Observable(TransportBLE.listen).subscribe({
+      complete: () => {
+        // alert("complete")
+        // this.setState({ refreshing: false });
+      },
+      next: e => {
+        // Alert.alert(JSON.stringify(e.descriptor))
+        if (e.type === "add") {
+          //  Alert.alert(JSON.stringify(e.descriptor))
+          setDeviceID(e.descriptor.id)
+          setDeviceName(e.descriptor.name)
+          TransportBLE.open(e.descriptor).then((transport) => { setTransport(transport); })
+        }
+        // NB there is no "remove" case in BLE.
+      },
+      error: error => {
+        // Alert.alert("error: " + error)
+        // this.setState({ error, refreshing: false });
       }
-      // NB there is no "remove" case in BLE.
-    },
-    error: error => {
-      // Alert.alert("error: " + error)
-      // this.setState({ error, refreshing: false });
-    }
-  });
+    });
+  }
+    
+  if(scanStarted == false){
+    setScanStarted(true)
+  }
+
+
 };
 
 export async function getUSB(setTransport, setUsbConn, setDeviceName) {

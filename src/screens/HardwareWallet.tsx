@@ -177,12 +177,13 @@ const HardwareWallet = ({ route, navigation }) => {
   const [deviceID, setDeviceID] = useState();
   const [usbConn, setUsbConn] = useState(false);
   const [deviceName, setDeviceName] = useState("Looking for device...");
+  const [scanStarted, setScanStarted] = useState(false);
 
 
   useInterval(() => {
 
     if (transport == undefined) {
-      startScan(setTransport, setDeviceID, setDeviceName);
+      startScan(setTransport, setDeviceID, setDeviceName, scanStarted, setScanStarted);
       getUSB(setTransport, setUsbConn, setDeviceName);
     }
   }, 3500);

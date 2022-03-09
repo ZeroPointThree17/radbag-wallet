@@ -12,6 +12,7 @@ import { Separator, SeparatorBorderMargin } from '../helpers/jsxlib';
 import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
+import TransportHid from '@ledgerhq/react-native-hid';
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import { HDPathRadix } from '@radixdlt/crypto'
 import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
@@ -846,11 +847,10 @@ onPress={() => {setStakingScreenActive(false)}}>
         </View>
         </TouchableOpacity>
         {isHWBool==true && <React.Fragment><Separator/><Separator/>
-        <Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
+        <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 </View>
 </React.Fragment>
 }
-
 
 
 {stakingScreenActive==false && <React.Fragment>
@@ -909,7 +909,7 @@ onPress={() => {setStakingScreenActive(false)}}>
         </View>
         </TouchableOpacity>
         {isHWBool==true && <React.Fragment><Separator/><Separator/>
-        <Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
+        <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 </View>
 
 </React.Fragment>

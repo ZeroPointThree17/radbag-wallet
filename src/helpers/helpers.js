@@ -168,7 +168,7 @@ export async function startScan(setTransport, setDeviceID, setDeviceName) {
       // NB there is no "remove" case in BLE.
     },
     error: error => {
-      Alert.alert("error: " + error)
+      // Alert.alert("error: " + error)
       // this.setState({ error, refreshing: false });
     }
   });

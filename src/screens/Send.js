@@ -561,7 +561,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [deviceName, setDeviceName] = useState("Looking for device...");
   const [usbConn, setUsbConn] = useState(false);
 
-  // alert(isHW)
+  // alert(isHWBool)
 
   useEffect( () => {
     // var symbolsTemp = [];
@@ -732,7 +732,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
 {isHWBool==true && <React.Fragment><Separator/><Separator/>
-<Text>Hardware Wallet: {deviceName}</Text></React.Fragment>}
+<Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 
 <Separator/>
 <Separator/>

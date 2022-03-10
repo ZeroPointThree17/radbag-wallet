@@ -195,7 +195,7 @@ export async function startScan(setTransport, setDeviceID, setDeviceName, scanSt
         }
         ]
     )
-  } else if (Platform.OS != "android") {
+  } else {
     new Observable(TransportBLE.listen).subscribe({
       complete: () => {
         // alert("complete")

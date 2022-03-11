@@ -135,8 +135,8 @@ export async function startScan(setTransport, setDeviceID, setDeviceName, scanSt
 
     Alert.alert(
       "Location Data Disclosure",
-      "Raddish requests Location permission in order to scan for bluetooth pairings with a hardware wallet. This location data may be used in the background to keep the connection with the hardware wallet established. We are using Location permission on Android to send Bluetooth Low Energy messages between the app and the hardware wallet. We will NOT use or share your location at any time.",
-      [
+      "Raddish Wallet collects location data to enable bluetooth communications for Ledger Hardware Wallet even when the app is closed or not in use."
+     [
         {
           text: "Decline",
           onPress: () => alert("Location permissions for bluetooth connections declined. Bluetooth connections will not be established."),

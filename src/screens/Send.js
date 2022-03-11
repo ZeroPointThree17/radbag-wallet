@@ -757,7 +757,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
      </Text>
  }
 
-<Text>Transaction History</Text>
+<Text>Transaction History (last 30 transactions)</Text>
  <View>{historyRows}</View>
 
 

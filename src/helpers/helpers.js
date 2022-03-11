@@ -1,5 +1,5 @@
-import {useRef, useEffect} from 'react';
-import { Alert, Platform, PermissionsAndroid} from "react-native";
+import React, {useRef, useEffect} from 'react';
+import { View, Text, Alert, Platform, PermissionsAndroid} from "react-native";
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -7,6 +7,7 @@ import {showMessage} from "react-native-flash-message";
 import Clipboard from '@react-native-clipboard/clipboard';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
+import { Separator } from './jsxlib';
 
 
 export function useInterval(callback, delay) {
@@ -246,4 +247,77 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
     setTransport(transport)
 
   }
+}
+
+
+export function fetchTxnHistory(address, setHistoryRows){
+
+
+  if(address == undefined || address.length==0){
+    alert("Address is required")
+  }
+
+  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
+  fetch('https://raddish-node.com:6208/account/transactions', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+      
+          {
+              "network_identifier": {
+              "network": "mainnet"
+              },
+              "account_identifier": {
+              "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+              },
+              "cursor": "0",
+              "limit": 30
+              }  
+        )
+      }).then((response) => response.json()).then((json) => {
+
+        // alert(JSON.stringify(json))
+          var historyRows = [];
+
+           json.transactions.forEach(txn => 
+              {
+                // alert(txn.actions.length)
+          // alert("a-1")
+                  txn.actions.forEach(action => {
+
+                    var from_account = action.from_account===undefined ? "" : "\nFrom Account: " + shortenAddress(action.from_account.address);
+                    var to_account = action.to_account===undefined ? "" : "\nTo Account: "+ shortenAddress(action.to_account.address);
+                    var to_validator = action.to_validator===undefined ? "" : "\nTo Validator: " + shortenAddress(action.to_validator.address);
+                    var from_validator = action.from_validator===undefined ? "" : "\nFrom Validator: " + shortenAddress(action.from_validator.address);
+                    var rri  = action.amount===undefined ? "" : "\nToken Identifier: "+ shortenAddress(action.amount.token_identifier.rri); 
+                    var value  = action.amount===undefined ? "" : "\nAmount: " + formatNumForDisplay(action.amount.value) + " " + action.amount.token_identifier.rri.split("_")[0].toUpperCase(); 
+                   // alert(JSON.stringify(action))
+                    // if( action.from_account.address == address || action.to_account.address == address){
+                      // alert("a-2")
+                    var row = 
+                    // "Transaction Hash: " + shortenAddress(txn.transaction_identifier.hash) + 
+                    "\nTime: " + new Date(txn.transaction_status.confirmed_time).toLocaleString() +
+                    "\nType: " + action.type +
+                from_account +
+                to_account +
+                to_validator +
+                from_validator +
+                value +
+                rri
+
+                historyRows.push(<View><Text>{row}</Text><Separator/></View>)
+
+                    // }
+                  })
+
+                  
+              });
+
+              setHistoryRows(historyRows)
+        })
+
+
 }

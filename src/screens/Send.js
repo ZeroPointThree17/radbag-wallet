@@ -10,7 +10,7 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, openCB, errorCB, useInterval, shortenAddress, last4, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
+import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
 import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
@@ -560,7 +560,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [deviceID, setDeviceID] = useState();
   const [deviceName, setDeviceName] = useState("Looking for device...");
   const [usbConn, setUsbConn] = useState(false);
-
+  const [historyRows, setHistoryRows] = useState(false);
   // alert(isHWBool)
 
   useEffect( () => {
@@ -570,7 +570,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
     // var rriTemp="";
 
     getBalances(true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-   
+    fetchTxnHistory(sourceXrdAddr, setHistoryRows)
     // onChangeSymbol(currentSymbolTemp);
 
     // startScan( setBluetoothHWDescriptor);
@@ -586,6 +586,7 @@ useInterval(() => {
   }
 
   getBalances(false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+  fetchTxnHistory(sourceXrdAddr, setHistoryRows);
 }, 3500);
 
 
@@ -755,6 +756,9 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
        Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.
      </Text>
  }
+
+<Text>Transaction History</Text>
+ <View>{historyRows}</View>
 
 
   </ScrollView>

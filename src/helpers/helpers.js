@@ -126,13 +126,17 @@ export function formatNumForHomeDisplay(number) {
 }
 
 
-export async function startScan(setTransport, setDeviceID, setDeviceName, scanStarted, setScanStarted) {
+export async function startScan(setTransport, setDeviceID, setDeviceName, scanStarted, setScanStarted, firstTimeString) {
 
   if(scanStarted == undefined){
     scanStarted = true;
   }
 
-  if (Platform.OS === "android" && scanStarted == false) {
+  if(firstTimeString == undefined){
+    firstTimeString = "true";
+  }
+
+  if (Platform.OS === "android" && scanStarted == false && firstTimeString != "false") {
 
     Alert.alert(
       "Location Data Disclosure",
@@ -250,7 +254,11 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 }
 
 
-export function fetchTxnHistory(address, setHistoryRows){
+export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
+
+  if(stakingOnly === undefined){
+    stakingOnly = false;
+  }
 
 
   if(address == undefined || address.length==0){
@@ -289,6 +297,17 @@ export function fetchTxnHistory(address, setHistoryRows){
                   var count = 0;
                   txn.actions.forEach(action => {
 
+                    var stakeFilter;
+                    if(stakingOnly){
+                      stakeFilter = action.type.toLowerCase().includes("stake") 
+                    } else{
+                      stakeFilter = true;
+                    }
+
+                    if( ((action.from_account != undefined && action.from_account.address == address) 
+                    || (action.to_account != undefined && action.to_account.address == address))
+                    && stakeFilter 
+                    ){
                     count++;
                     var from_account = action.from_account===undefined ? "" : "\nFrom: " + shortenAddress(action.from_account.address);
                     var to_account = action.to_account===undefined ? "" : "\nTo: "+ shortenAddress(action.to_account.address);
@@ -326,6 +345,7 @@ export function fetchTxnHistory(address, setHistoryRows){
 
                     // }
                   )  
+                }
               });
 
              

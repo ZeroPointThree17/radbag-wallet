@@ -183,7 +183,7 @@ const HardwareWallet = ({ route, navigation }) => {
   useInterval(() => {
 
     if (transport == undefined) {
-      startScan(setTransport, setDeviceID, setDeviceName, scanStarted, setScanStarted);
+      startScan(setTransport, setDeviceID, setDeviceName, scanStarted, setScanStarted, firstTimeString);
       getUSB(setTransport, setUsbConn, setDeviceName);
     }
   }, 3500);

@@ -9,7 +9,7 @@ const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
 import { Separator, SeparatorBorderMargin } from '../helpers/jsxlib';
-import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
+import { fetchTxnHistory, getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -714,11 +714,13 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       const [submitEnabled, setSubmitEnabled] = useState(true);
       const [usbConn, setUsbConn] = useState(false);
       const [deviceName, setDeviceName] = useState("Looking for device...");
+      const [historyRows, setHistoryRows] = useState();
 
       const stakeValRef = useRef();
       const stakeAmtRef = useRef();
       const unstakeValRef = useRef();
       const unstakeAmtRef = useRef();
+
 
       // stakeValidators.forEach((val)=>{alert(JSON.stringify(val))})
 
@@ -733,6 +735,8 @@ useInterval(() => {
     startScan(setTransport, setDeviceID, setDeviceName);
     getUSB(setTransport, setUsbConn, setDeviceName);
   }
+
+  fetchTxnHistory(currAddr, setHistoryRows, true)
 }, 2000);
  
 
@@ -848,7 +852,7 @@ onPress={() => {setStakingScreenActive(false)}}>
         </TouchableOpacity>
         {isHWBool==true && <React.Fragment><Separator/><Separator/>
         <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Hardware Wallet: {deviceName}</Text></React.Fragment>}
-</View>
+  </View>
 </React.Fragment>
 }
 
@@ -941,6 +945,10 @@ onPress={() => {setStakingScreenActive(false)}}>
 <Separator/>
 <Separator/>
 <Separator/>
+
+<Text style={[{fontSize: 14, alignSelf:"center"}, getAppFont("black")]}>Staking History (only from last 30 transactions)</Text>
+
+{historyRows}
 <Separator/>
 <Separator/>
 <Separator/>

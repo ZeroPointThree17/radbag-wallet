@@ -502,13 +502,13 @@ const Home = ({route, navigation}) => {
 )
         useEffect(() => {
           getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
-          fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
+          // fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
         }, []);
 
 
         useInterval(() => {
           getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
-          fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
+          // fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
         }, 10000);
         
 
@@ -736,10 +736,10 @@ navigation.dispatch(pushAction);
 <Separator/>
 <Separator/>
 <Separator/>
-<Separator/>
+{/* <Separator/>
 <Text style={[ getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
 <SeparatorBorder/>
-{historyRows}
+{historyRows} */}
 <Separator/>
 <Separator/>
 <Separator/>

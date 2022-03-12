@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import { View, Text, Alert, Platform, PermissionsAndroid} from "react-native";
+import { ScrollView, View, Alert, Platform, PermissionsAndroid} from "react-native";
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -8,7 +8,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
 import { Separator } from './jsxlib';
-
+import { Text, Card, Button, Icon } from 'react-native-elements';
 
 export function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -284,40 +284,55 @@ export function fetchTxnHistory(address, setHistoryRows){
 
            json.transactions.forEach(txn => 
               {
-                // alert(txn.actions.length)
-          // alert("a-1")
+                 
+                var message  = txn.metadata.message===undefined ? "" : "\nMessage: " + txn.metadata.message;
+                  var count = 0;
                   txn.actions.forEach(action => {
 
-                    var from_account = action.from_account===undefined ? "" : "\nFrom Account: " + shortenAddress(action.from_account.address);
-                    var to_account = action.to_account===undefined ? "" : "\nTo Account: "+ shortenAddress(action.to_account.address);
+                    count++;
+                    var from_account = action.from_account===undefined ? "" : "\nFrom: " + shortenAddress(action.from_account.address);
+                    var to_account = action.to_account===undefined ? "" : "\nTo: "+ shortenAddress(action.to_account.address);
                     var to_validator = action.to_validator===undefined ? "" : "\nTo Validator: " + shortenAddress(action.to_validator.address);
                     var from_validator = action.from_validator===undefined ? "" : "\nFrom Validator: " + shortenAddress(action.from_validator.address);
-                    var rri  = action.amount===undefined ? "" : "\nToken Identifier: "+ shortenAddress(action.amount.token_identifier.rri); 
-                    var value  = action.amount===undefined ? "" : "\nAmount: " + formatNumForDisplay(action.amount.value) + " " + action.amount.token_identifier.rri.split("_")[0].toUpperCase(); 
+                    // var rri  = action.amount===undefined ? "" : "       Token ID: "+ shortenAddress(action.amount.token_identifier.rri); 
+                    var value  = action.amount===undefined ? "" : "\nAmount: " + formatNumForDisplay(action.amount.value) + " " + action.amount.token_identifier.rri.split("_")[0].toUpperCase() + "  " + "(Token ID: "+ shortenAddress(action.amount.token_identifier.rri) + ")"; 
+                    
                    // alert(JSON.stringify(action))
                     // if( action.from_account.address == address || action.to_account.address == address){
                       // alert("a-2")
-                    var row = 
+                    var title = 
                     // "Transaction Hash: " + shortenAddress(txn.transaction_identifier.hash) + 
-                    "\nTime: " + new Date(txn.transaction_status.confirmed_time).toLocaleString() +
-                    "\nType: " + action.type +
-                from_account +
+                    action.type.replace(/([a-z])([A-Z])/g, '$1 $2') + "\n" + new Date(txn.transaction_status.confirmed_time).toLocaleString() + ""
+                var details = from_account +
                 to_account +
                 to_validator +
-                from_validator +
+                from_validator + 
                 value +
-                rri
+                message;
 
-                historyRows.push(<View><Text>{row}</Text><Separator/></View>)
+                // alert(JSON.stringify(action))
+                historyRows.push(
+                  <View key={count}>
+                  <Card >
+                  <Card.Title>{title}</Card.Title>
+                  <Card.Divider />
+ 
+                        <Text style={[{fontSize: 12}, getAppFont("black")]}>{details.replace(/^\s+|\s+$/g, '')}</Text>
+              
+              
+                </Card>
+                </View>
+                // <ScrollView nestedScrollEnabled={true} horizontal={true}><Text style={{fontSize: 12, textAlign:"center"}} numberOfLines={4}>{details}</Text><Separator/></ScrollView>
 
                     // }
-                  })
-
-                  
+                  )  
               });
 
-              setHistoryRows(historyRows)
+             
         })
 
+        setHistoryRows(historyRows)
 
+
+})
 }

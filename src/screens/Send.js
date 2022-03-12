@@ -40,7 +40,7 @@ import {
 import { log, BufferReader } from '@radixdlt/util'
 
 
-function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
+function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
 
   Keyboard.dismiss; 
   setSubmitEnabled(false);
@@ -102,6 +102,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
             "fee_payer": {
               "address": sourceXrdAddr
             },
+            "message": message,
             "disable_token_mint_and_burn": true
           } 
       
@@ -543,6 +544,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [destAddr, onChangeDestAddr] = useState();
   const [amount, onChangeAmount] = useState(null);
   const [symbol, onChangeSymbol] = useState(defaultSymbol);
+  const [message, onChangeMessage] = useState();
   const [txnHash, setTxHash] = useState(null);
   const [show, setShow] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
@@ -560,7 +562,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [deviceID, setDeviceID] = useState();
   const [deviceName, setDeviceName] = useState("Looking for device...");
   const [usbConn, setUsbConn] = useState(false);
-  const [historyRows, setHistoryRows] = useState(false);
+  const [historyRows, setHistoryRows] = useState();
   // alert(isHWBool)
 
   useEffect( () => {
@@ -601,11 +603,12 @@ useInterval(() => {
   const addrFromRef = useRef();
   const addrToRef = useRef();
   const amountRef = useRef();
+  const msgRef = useRef();
   const [error, setError]=useState(false);
 
  return ( 
    <View style={styles.container}>
-     <ScrollView> 
+     <ScrollView nestedScrollEnabled={true}> 
 
 <View style={[styles.rowStyle, {alignSelf: "center"}]}>
 
@@ -687,6 +690,20 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 </View>
 
 <Separator/>
+   
+   <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Message (optional):</Text>
+   <View style={styles.rowStyle}>
+
+      <TextInput ref={msgRef}
+      style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15}, getAppFont("black")]}
+      multiline={true}
+      numberOfLines={4}
+      autoCapitalize='none'
+      placeholder='Message to send in transaction'
+      onChangeText={value => onChangeMessage(value)}
+    />
+    </View>
+<Separator/>
 
 <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to send:</Text>
 <View style={styles.rowStyle}>
@@ -738,7 +755,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID)}}>
+<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>
@@ -757,11 +774,13 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
      </Text>
  }
 
-<Text>Transaction History (last 30 transactions)</Text>
- <View>{historyRows}</View>
+<Separator/>
 
+<Text style={[{fontSize: 14, alignSelf:"center"}, getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
 
+{historyRows}
   </ScrollView>
+
   </View>)
 };
 

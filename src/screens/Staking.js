@@ -8,7 +8,7 @@ import IconIonicons from 'react-native-vector-icons/Ionicons';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
-import { Separator, SeparatorBorderMargin } from '../helpers/jsxlib';
+import { Separator, SeparatorBorder, SeparatorBorderMargin } from '../helpers/jsxlib';
 import { fetchTxnHistory, getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
@@ -27,11 +27,11 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
   if(destAddr == undefined || destAddr.length==0){
     alert("Validator address is required")
   }
-  else 
-  if ( isNaN(amount) ){
+ else if(amount == undefined || amount.length==0){
+  alert("Amount is required")
+}
+  else if ( isNaN(amount) ){
     alert("Amount entered must be a number")
-  } else if(amount == undefined || amount.length==0){
-    alert("Amount is required")
   }
   else if(amount==0){
     alert("Amount must be greater than 0")
@@ -938,16 +938,15 @@ onPress={() => {setStakingScreenActive(false)}}>
 </View>
               <SeparatorBorderMargin/>
 {renderedStakeValidatorRows}
-</View>
-<Separator/>
-
 
 <Separator/>
 <Separator/>
 <Separator/>
+<Separator/>
+<Separator/>
 
-<Text style={[{fontSize: 14, alignSelf:"center"}, getAppFont("black")]}>Staking History (only from last 30 transactions)</Text>
-
+<Text style={[{fontSize: 16}, getAppFont("black")]}>Staking History (only from last 30 transactions)</Text>
+<SeparatorBorderMargin/>
 {historyRows}
 <Separator/>
 <Separator/>
@@ -962,6 +961,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 <Separator/>
 <Separator/>
 <Separator/>
+</View>
   </ScrollView>
  )
 };

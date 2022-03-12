@@ -945,7 +945,8 @@ onPress={() => {setStakingScreenActive(false)}}>
 <Separator/>
 <Separator/>
 
-<Text style={[{fontSize: 16}, getAppFont("black")]}>Staking History (only from last 30 transactions)</Text>
+<Text style={[{fontSize: 16}, getAppFont("black")]}>Staking History</Text>
+<Text style={[{fontSize: 12}, getAppFont("black")]}>(only from within last 30 transactions)</Text>
 <SeparatorBorderMargin/>
 {historyRows}
 <Separator/>

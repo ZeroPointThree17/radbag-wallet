@@ -307,8 +307,8 @@ export function fetchTxnHistory(address, setHistoryRows){
                 to_account +
                 to_validator +
                 from_validator + 
-                value +
-                message;
+                value 
+                // + message;
 
                 // alert(JSON.stringify(action))
                 historyRows.push(

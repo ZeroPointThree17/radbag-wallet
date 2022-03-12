@@ -12,7 +12,7 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, last4 } from '../helpers/helpers';
+import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, fetchTxnHistory } from '../helpers/helpers';
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
@@ -478,6 +478,7 @@ const Home = ({route, navigation}) => {
     const [enabledAddresses, setEnabledAddresses] = useState(initialEnabledAddresses);
     const [addressRRIs, setAddressRRIs] = useState(new Map())
     const [isHW, setIsHW] = useState()
+    const [historyRows, setHistoryRows] = useState();
 
     var dropdownVals = []
     var walletDropdownVals = []  
@@ -501,11 +502,13 @@ const Home = ({route, navigation}) => {
 )
         useEffect(() => {
           getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
-       }, []);
+          fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
+        }, []);
 
 
         useInterval(() => {
           getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
+          fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
         }, 10000);
         
 
@@ -730,6 +733,13 @@ navigation.dispatch(pushAction);
         { isNaN(stakedAmount) &&
 <Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
 }
+<Separator/>
+<Separator/>
+<Separator/>
+<Separator/>
+<Text style={[ getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
+<SeparatorBorder/>
+{historyRows}
 <Separator/>
 <Separator/>
 <Separator/>

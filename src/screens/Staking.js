@@ -730,15 +730,17 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
 
 useInterval(() => {
   getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
-  
+  fetchTxnHistory(currAddr, setHistoryRows, true)
+
   if (transport == undefined) {
     startScan(setTransport, setDeviceID, setDeviceName);
     getUSB(setTransport, setUsbConn, setDeviceName);
   }
 
-  fetchTxnHistory(currAddr, setHistoryRows, true)
+
 }, 2000);
  
+// alert(historyRows.length)
 
 const stakingStats = (showStakingStats) => {
 

@@ -265,6 +265,8 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
     alert("Address is required")
   }
 
+  var count = 0;
+
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
   fetch('https://raddish-node.com:6208/account/transactions', {
         method: 'POST',
@@ -279,7 +281,7 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
               "network": "mainnet"
               },
               "account_identifier": {
-              "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+              "address": address
               },
               "cursor": "0",
               "limit": 30
@@ -289,7 +291,6 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
 
         // alert(JSON.stringify(json))
           var historyRows = [];
-          var count = 0;
            json.transactions.forEach(txn => 
               {
                  

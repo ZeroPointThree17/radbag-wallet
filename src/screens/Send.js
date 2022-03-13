@@ -691,7 +691,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 
 <Separator/>
    
-   <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Message (optional):</Text>
+   {/* <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Message (optional):</Text>
    <View style={styles.rowStyle}>
 
       <TextInput ref={msgRef}
@@ -703,7 +703,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
       onChangeText={value => onChangeMessage(value)}
     />
     </View>
-<Separator/>
+<Separator/> */}
 
 <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to send:</Text>
 <View style={styles.rowStyle}>
@@ -766,12 +766,15 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <Separator/>
 
 { show == true &&
-<Text
+<React.Fragment><Text
        style={[{color: 'blue', textAlign: "center"}, getAppFont("blue")]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
      >
        Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.
      </Text>
+     <Separator/>
+     <Separator/>
+</React.Fragment>
  }
 
 <Separator/>

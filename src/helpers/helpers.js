@@ -140,7 +140,7 @@ export async function startScan(setTransport, setDeviceID, setDeviceName, scanSt
 
     Alert.alert(
       "Location Data Disclosure",
-      "Raddish Wallet collects location data to enable bluetooth communications for Ledger Hardware Wallet even when the app is closed or not in use."
+      "Raddish Wallet collects location data to enable bluetooth communications for Ledger Hardware Wallet even when the app is closed or not in use.",
      [
         {
           text: "Decline",
@@ -289,12 +289,12 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
 
         // alert(JSON.stringify(json))
           var historyRows = [];
-
+          var count = 0;
            json.transactions.forEach(txn => 
               {
                  
                 var message  = txn.metadata.message===undefined ? "" : "\nMessage: " + txn.metadata.message;
-                  var count = 0;
+                  
                   txn.actions.forEach(action => {
 
                     var stakeFilter;

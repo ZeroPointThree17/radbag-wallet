@@ -562,7 +562,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [deviceID, setDeviceID] = useState();
   const [deviceName, setDeviceName] = useState("Looking for device...");
   const [usbConn, setUsbConn] = useState(false);
-  const [historyRows, setHistoryRows] = useState();
+  const [historyRows, setHistoryRows] = useState([]);
   // alert(isHWBool)
 
   useEffect( () => {
@@ -776,9 +776,12 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 
 <Separator/>
 
-<Text style={[{fontSize: 14, alignSelf:"center"}, getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
-
-{historyRows}
+{historyRows.length > 0 && 
+<React.Fragment>
+  <Text style={[{fontSize: 14, alignSelf:"center"}, getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
+  {historyRows}
+</React.Fragment>
+}
   </ScrollView>
 
   </View>)

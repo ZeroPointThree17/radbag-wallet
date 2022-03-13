@@ -714,7 +714,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       const [submitEnabled, setSubmitEnabled] = useState(true);
       const [usbConn, setUsbConn] = useState(false);
       const [deviceName, setDeviceName] = useState("Looking for device...");
-      const [historyRows, setHistoryRows] = useState();
+      const [historyRows, setHistoryRows] = useState([]);
 
       const stakeValRef = useRef();
       const stakeAmtRef = useRef();
@@ -944,11 +944,14 @@ onPress={() => {setStakingScreenActive(false)}}>
 <Separator/>
 <Separator/>
 <Separator/>
-
+{historyRows.length > 0 && 
+<React.Fragment>
 <Text style={[{fontSize: 16}, getAppFont("black")]}>Staking History</Text>
 <Text style={[{fontSize: 12}, getAppFont("black")]}>(only from within last 30 transactions)</Text>
 <SeparatorBorderMargin/>
-{historyRows}
+  {historyRows}
+</React.Fragment>
+}
 <Separator/>
 <Separator/>
 <Separator/>

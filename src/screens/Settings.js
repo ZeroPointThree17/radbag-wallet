@@ -166,7 +166,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
 <View style={{flex: 0.7, justifyContent:"center" , alignSelf:"center"}}>
 <Image style={{margin: 0, padding:0, width: 50, height: 80, alignSelf:'center'}}
     source={Raddish}/>
-    <Text style={[{alignSelf:'center'}, getAppFont("black")]}>Raddish Wallet v2.0.5</Text>
+    <Text style={[{alignSelf:'center'}, getAppFont("black")]}>Raddish Wallet v2.1.0</Text>
 </View>
  <Separator/>
  </View>  

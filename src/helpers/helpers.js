@@ -316,7 +316,12 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
                     var from_validator = action.from_validator===undefined ? "" : "\nFrom Validator: " + shortenAddress(action.from_validator.address);
                     // var rri  = action.amount===undefined ? "" : "       Token ID: "+ shortenAddress(action.amount.token_identifier.rri); 
                     var value  = action.amount===undefined ? "" : "\nAmount: " + formatNumForDisplay(action.amount.value) + " " + action.amount.token_identifier.rri.split("_")[0].toUpperCase() + "  " + "(Token ID: "+ shortenAddress(action.amount.token_identifier.rri) + ")"; 
-                    
+                    var tkn_name  = action.token_properties===undefined ? "" : "\nToken Name: " + action.token_properties.name
+                    var tkn_symbol  = action.token_properties===undefined ? "" : "\nToken Symbol: " + action.token_properties.symbol.toUpperCase()
+                    var tkn_supply  = action.token_supply===undefined ? "" : "\nToken Supply: " + formatNumForDisplay(action.token_supply.value)
+                    var tkn_rri  = action.token_supply===undefined ? "" : "\nToken ID: " + shortenAddress(action.token_supply.token_identifier.rri)
+                    var tkn_ismutable  = action.token_properties===undefined ? "" : "\nToken is mutable?: " + action.token_properties.is_supply_mutable
+                                                                           
                    // alert(JSON.stringify(action))
                     // if( action.from_account.address == address || action.to_account.address == address){
                       // alert("a-2")
@@ -327,7 +332,12 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
                 to_account +
                 to_validator +
                 from_validator + 
-                value 
+                value +
+                tkn_name +
+                tkn_symbol +
+                tkn_supply +
+                tkn_rri +
+                tkn_ismutable
                 // + message;
 
                 // alert(JSON.stringify(action))

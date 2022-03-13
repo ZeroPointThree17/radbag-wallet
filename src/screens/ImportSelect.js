@@ -31,7 +31,7 @@ const ImportSelect = ({route, navigation}) => {
       />
       <Separator/>
       <Separator/>
-      <Text>NOTE: Ledger Nano S and USB connections are not supported on iOS</Text>
+      <Text style={getAppFont("black")}>NOTE: Ledger Nano S and USB connections are not supported on iOS</Text>
       </React.Fragment>
       }
       {Platform.OS != 'ios' && <Separator/>}

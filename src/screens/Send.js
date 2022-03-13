@@ -783,6 +783,19 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 <React.Fragment>
   <Text style={[{fontSize: 14, alignSelf:"center"}, getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
   {historyRows}
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
 </React.Fragment>
 }
   </ScrollView>

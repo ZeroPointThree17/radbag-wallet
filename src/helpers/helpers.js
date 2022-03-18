@@ -95,7 +95,7 @@ export function formatNumForDisplay(number) {
   var newNum = null;
   // alert(typeof number )
   if(typeof number == 'Object'){
-    alert("hi")
+    // alert("hi")
     newNum = isNaN(number)?new bigDecimal(0):number;
   } else{
     newNum = isNaN(number)?new bigDecimal(0):new bigDecimal(number);

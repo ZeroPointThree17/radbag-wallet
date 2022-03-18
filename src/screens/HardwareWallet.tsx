@@ -34,9 +34,9 @@ function even_or_odd_prefix(N: any) {
     || N[len - 1] == '4'
     || N[len - 1] == '6'
     || N[len - 1] == '8'
-    || N[len - 1] == 'A'
-    || N[len - 1] == 'C'
-    || N[len - 1] == 'E')
+    || N[len - 1].toUpperCase() == 'A'
+    || N[len - 1].toUpperCase() == 'C'
+    || N[len - 1].toUpperCase() == 'E')
     return ("02");
   else
     return ("03");
@@ -108,7 +108,8 @@ export const sendAPDU = async (
     }
     const publicKeyBytes = publicKeyBytesResult.value
 
-    var publicKeyFinal = even_or_odd_prefix(publicKeyBytes.toString('hex').substring(66)) + publicKeyBytes.toString('hex').substring(2, 66);
+    console.log(publicKeyBytes.toString('hex'))
+    var publicKeyFinal = even_or_odd_prefix(publicKeyBytes.toString('hex')) + publicKeyBytes.toString('hex').substring(2, 66);
     publicKeys.push(publicKeyFinal)
     console.log("PKPK: " + publicKeyFinal);
 

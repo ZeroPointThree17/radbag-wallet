@@ -615,7 +615,7 @@ function getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked){
 
           var staked_balance = json.account_balances.staked_and_unstaking_balance.value
           // alert(liquid_balance)
-          setCurrentlyLiquid(parseInt(liquid_balance));
+          setCurrentlyLiquid(new bigDecimal(liquid_balance).getValue());
           setCurrentlyStaked(staked_balance);
         }
     }).catch((error) => {

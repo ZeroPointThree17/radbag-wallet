@@ -16,6 +16,7 @@ import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboa
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
+var bigDecimal = require('js-big-decimal');
 
     const SeparatorBorder = () => (
     <View style={styles.separatorBorder} />
@@ -152,6 +153,9 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
       // alert(balance[1] + "|"+symbolCnts.get(balance[1]));
 
       if(rri=="xrd_rr1qy5wfsfh"){
+
+        // var finalNum = new bigDecimal(bigDecimal.multiply(balance[0],0.000000000000000001,1800));
+        //  alert(balance[0].getPrettyValue())
 
         xrdRow.push(
                
@@ -546,7 +550,8 @@ const Home = ({route, navigation}) => {
 
 
         if(!(balances.get(stakedTokenIdentifier) == undefined) ){
-            balances.set(stakedTokenIdentifier,[parseInt(balances.get(stakedTokenIdentifier)[0])+parseInt(stakedAmount),balances.get(stakedTokenIdentifier)[1],balances.get(stakedTokenIdentifier)[2],balances.get(stakedTokenIdentifier)[3]]);
+            // alert((new bigDecimal(balances.get(stakedTokenIdentifier)[0]).add(new bigDecimal(stakedAmount))).getValue())
+          balances.set(stakedTokenIdentifier,[(new bigDecimal(balances.get(stakedTokenIdentifier)[0]).add(new bigDecimal(stakedAmount))).getValue(),balances.get(stakedTokenIdentifier)[1],balances.get(stakedTokenIdentifier)[2],balances.get(stakedTokenIdentifier)[3]]);
         } else{
             balances.set(stakedTokenIdentifier,[stakedAmount,
                 

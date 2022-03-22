@@ -589,7 +589,7 @@ useInterval(() => {
 
   getBalances(false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
   fetchTxnHistory(sourceXrdAddr, setHistoryRows);
-}, 3500);
+}, 6000);
 
 
 // alert(defaultSymbol)
@@ -660,7 +660,7 @@ useInterval(() => {
       { cameraOn &&
       <QRCodeScanner
       cameraStyle={{width:'auto', height:200}}
-        onRead={this.onSuccess}
+        onRead={onSuccess}
         flashMode={RNCamera.Constants.FlashMode.auto}
       />
       }

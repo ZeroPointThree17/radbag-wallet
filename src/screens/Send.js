@@ -43,7 +43,7 @@ import CheckboxBouncy from "react-native-bouncy-checkbox";
 
 function buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password){
   
-  alert("M:" + message);
+  // alert("M:" + message);
   
   fetch('https://raddish-node.com:6208/transaction/build', {
         method: 'POST',
@@ -182,7 +182,12 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     
         new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
-        buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr,  ("_" + message).hexEncode(), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+        if(encryptMsgflag){
+          buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr,  ("_" + message).hexEncode(), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+
+        } else{
+          buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr,  ("_" + message).hexEncode(), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+        }
 
     } catch(err){
       alert("Password incorrect")
@@ -198,8 +203,12 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
 
     } else{
 
-      buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount,  amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
 
+      if(encryptMsgflag){
+        buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr,  ("_" + message).hexEncode(), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+      } else{
+        buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount,  amountStr, ("_" + message).hexEncode(), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+      }
     }
 
   }
@@ -228,18 +237,6 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
           alert("Transaction submitted.")
 
           finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
-        // const parsedResult = parseSignatureFromLedger(result)
-        // console.log("INSIDE RESULTS2")
-        // const signature = parsedResult.value.signature
-        // console.log("INSIDE RESULTS3")
-        // const remainingBytes = parsedResult.value.remainingBytes
-        // console.log("INSIDE RESULTS4")
-        // const signatureV = remainingBytes.readUInt8(0)
-        // console.log("INSIDE RESULTS5")
-        // console.log(`Signature: ${signature}`)
-        // console.log(`Signature V: ${signatureV}`)
-        // alert(`Signature: ${signature}`)
-        // alert(`Signature V: ${signatureV}`)
 
         }
       })
@@ -261,9 +258,6 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
 
   if(isHW != true){
 
-
-    //////
-
     var finalSig = ""
 
     console.log("unsigned_transaction: "+unsigned_transaction)
@@ -281,9 +275,6 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
    finalSig = Buffer.from(result).toString('hex');
   
    finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
-
-   /////
-
 
   } else{
 
@@ -363,12 +354,6 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
       }
     }
     
-  
-  
-  
-
-
-  
 
 function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
   fetch('https://raddish-node.com:6208/transaction/finalize', {
@@ -745,7 +730,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
       onChangeText={value => onChangeMessage(value)}
     />
     
- <View style={[{justifyContent: "center", alignSelf: "center", alignItems: "center", flexDirection: "column"}]}> 
+ {/* <View style={[{justifyContent: "center", alignSelf: "center", alignItems: "center", flexDirection: "column"}]}> 
 
  <Text style={[styles.title2,{fontSize:12},getAppFont("black")]}>Encrypt?</Text>
  <View style={[styles.rowStyle]}>
@@ -761,9 +746,9 @@ onPress={()=>{
   else setEncryptMsgflag(false);
 }}
 />
-</View>
+</View> 
 
-</View > 
+</View > */}
     </View>
 <Separator/>
 

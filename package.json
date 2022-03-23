@@ -1,6 +1,6 @@
 {
-  "name": "raddishwallet",
-  "version": "0.0.1",
+  "name": "radladwallet",
+  "version": "2.5",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

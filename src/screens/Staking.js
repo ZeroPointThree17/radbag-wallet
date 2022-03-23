@@ -760,7 +760,7 @@ const stakingStats = (showStakingStats) => {
     <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>    
        <Image style={{margin: 0, width: 30, height: 50, marginBottom:4, alignSelf:'center'}}
     source={Raddish}/>
-       <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center'}, getAppFont("white")]}>Please consider staking with Raddish.io to support products like this wallet app and more to come!{"\n"}We are one of the top Radix validators with a low 1% fee!</Text>
+       <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center'}, getAppFont("white")]}>Please consider staking with Rad-Lad to support products like this wallet app and more to come!{"\n"}We are one of the top Radix validators with a low 1% fee!</Text>
        </LinearGradient>
 
     </View>
@@ -800,7 +800,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 
     <Separator/>
       <View style={styles.rowStyle}>
-     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, borderRadius: 15}, getAppFont("black")]}>Validator Address{"\n"}(Default: Raddish.io):</Text>
+     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, borderRadius: 15}, getAppFont("black")]}>Validator Address{"\n"}(Default: Rad-Lad's Validator):</Text>
      <Text
        style={[{color: 'blue', textAlign: "center" , fontSize:12, flex:0.5}, getAppFont("blue")]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/validators')}}

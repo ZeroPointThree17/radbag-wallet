@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import { ScrollView, View, Alert, Platform, PermissionsAndroid} from "react-native";
+import { StyleSheet, View, Alert, Platform, PermissionsAndroid, TouchableOpacity} from "react-native";
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -9,6 +9,7 @@ var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
 import { Separator } from './jsxlib';
 import { Text, Card, Button, Icon } from 'react-native-elements';
+import IconFeather from 'react-native-vector-icons/Feather';
 
 export function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -310,34 +311,56 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
                     && stakeFilter 
                     ){
                     count++;
-                    var from_account = action.from_account===undefined ? "" : "\nFrom: " + shortenAddress(action.from_account.address);
-                    var to_account = action.to_account===undefined ? "" : "\nTo: "+ shortenAddress(action.to_account.address);
-                    var to_validator = action.to_validator===undefined ? "" : "\nTo Validator: " + shortenAddress(action.to_validator.address);
-                    var from_validator = action.from_validator===undefined ? "" : "\nFrom Validator: " + shortenAddress(action.from_validator.address);
+                    var from_account = action.from_account===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>From: {shortenAddress(action.from_account.address)}  </Text>
+                    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.from_account.address)}}>
+                    <IconFeather name="copy" size={16} color="#183A81" />
+                    </TouchableOpacity>
+                    </View>
+                    ;
+                    var to_account = action.to_account===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>To: {shortenAddress(action.to_account.address)}  </Text>
+                    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.to_account.address)}}>
+                    <IconFeather name="copy" size={16} color="#183A81" />
+                    </TouchableOpacity>
+                    </View>
+                    ;
+                    var to_validator = action.to_validator===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>To Validator: {shortenAddress(action.to_validator.address)}  </Text>
+                    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.to_validator.address)}}>
+                    <IconFeather name="copy" size={16} color="#183A81" />
+                    </TouchableOpacity>
+                    </View>
+                    ;
+                    var from_validator = action.from_validator===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>From Validator: {shortenAddress(action.from_validator.address)}  </Text>
+                                        <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.from_validator.address)}}>
+                    <IconFeather name="copy" size={16} color="#183A81" />
+                    </TouchableOpacity>
+                    </View>
+                    ;
                     // var rri  = action.amount===undefined ? "" : "       Token ID: "+ shortenAddress(action.amount.token_identifier.rri); 
-                    var value  = action.amount===undefined ? "" : "\nAmount: " + formatNumForDisplay(action.amount.value) + " " + action.amount.token_identifier.rri.split("_")[0].toUpperCase() + "  " + "(Token RRI: "+ shortenAddress(action.amount.token_identifier.rri) + ")"; 
-                    var tkn_name  = action.token_properties===undefined ? "" : "\nToken Name: " + action.token_properties.name
-                    var tkn_symbol  = action.token_properties===undefined ? "" : "\nToken Symbol: " + action.token_properties.symbol.toUpperCase()
-                    var tkn_supply  = action.token_supply===undefined ? "" : "\nToken Supply: " + formatNumForDisplay(action.token_supply.value)
-                    var tkn_rri  = action.token_supply===undefined ? "" : "\nToken RRI: " + shortenAddress(action.token_supply.token_identifier.rri)
-                    var tkn_ismutable  = action.token_properties===undefined ? "" : "\nToken is mutable?: " + action.token_properties.is_supply_mutable
+                    var value  = action.amount===undefined ? <Text></Text> : <Text style={getAppFont("black")}>Amount: {formatNumForDisplay(action.amount.value)} {action.amount.token_identifier.rri.split("_")[0].toUpperCase()} (Token RRI: {shortenAddress(action.amount.token_identifier.rri)})</Text>
+                    var tkn_name  = action.token_properties===undefined ? undefined : <Text style={getAppFont("black")}>Token Name: {action.token_properties.name}</Text>
+                    var tkn_symbol  = action.token_properties===undefined ? undefined: <Text style={getAppFont("black")}>Token Symbol: {action.token_properties.symbol.toUpperCase()}</Text>
+                    var tkn_supply  = action.token_supply===undefined ? undefined: <Text style={getAppFont("black")}>Token Supply: {formatNumForDisplay(action.token_supply.value)}</Text>
+                    var tkn_rri  = action.token_supply===undefined ? undefined: <Text style={getAppFont("black")}>Token RRI: {shortenAddress(action.token_supply.token_identifier.rri)}</Text>
+                    var tkn_ismutable  = action.token_properties===undefined ? undefined: <Text style={getAppFont("black")}>Token is mutable?: {action.token_properties.is_supply_mutable}</Text>
                                                                            
                    // alert(JSON.stringify(action))
                     // if( action.from_account.address == address || action.to_account.address == address){
                       // alert("a-2")
                     var title = 
                     // "Transaction Hash: " + shortenAddress(txn.transaction_identifier.hash) + 
-                    action.type.replace(/([a-z])([A-Z])/g, '$1 $2') + "\n" + new Date(txn.transaction_status.confirmed_time).toLocaleString() + ""
-                var details = from_account +
-                to_account +
-                to_validator +
-                from_validator + 
-                value +
-                tkn_name +
-                tkn_symbol +
-                tkn_supply +
-                tkn_rri +
-                tkn_ismutable
+                    <Text style={getAppFont("black")}>{action.type.replace(/([a-z])([A-Z])/g, '$1 $2') + "\n" + new Date(txn.transaction_status.confirmed_time).toLocaleString()}</Text>
+                var details = []
+                
+                details.push(from_account)
+                  details.push(to_account)
+                    details.push(to_validator)
+                      details.push(from_validator)
+                        details.push(value)
+                          details.push(tkn_name)
+                            details.push(tkn_symbol)
+                              details.push(tkn_supply)
+                                details.push(tkn_rri)
+                                  details.push(tkn_ismutable)
                 // + message;
 
                 // alert(JSON.stringify(action))
@@ -346,10 +369,7 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
                   <Card >
                   <Card.Title>{title}</Card.Title>
                   <Card.Divider />
- 
-                        <Text style={[{fontSize: 12}, getAppFont("black")]}>{details.replace(/^\s+|\s+$/g, '')}</Text>
-              
-              
+                  {details}
                 </Card>
                 </View>
                 // <ScrollView nestedScrollEnabled={true} horizontal={true}><Text style={{fontSize: 12, textAlign:"center"}} numberOfLines={4}>{details}</Text><Separator/></ScrollView>
@@ -367,3 +387,16 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
 
 })
 }
+
+
+const styles = StyleSheet.create({
+
+  rowStyle: {
+      flexDirection: 'row',
+      fontSize: 4,
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      marginVertical:0,
+    },
+   
+});

@@ -349,7 +349,7 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
                     </View>
                     ;
                     // var rri  = action.amount===undefined ? "" : "       Token ID: "+ shortenAddress(action.amount.token_identifier.rri); 
-                    var value  = action.amount===undefined ? <Text></Text> : <Text style={getAppFont("black")}>Amount: {formatNumForDisplay(action.amount.value)} {action.amount.token_identifier.rri.split("_")[0].toUpperCase()} (Token RRI: {shortenAddress(action.amount.token_identifier.rri)})</Text>
+                    var value  = action.amount===undefined ? undefined : <Text style={getAppFont("black")}>Amount: {formatNumForDisplay(action.amount.value)} {action.amount.token_identifier.rri.split("_")[0].toUpperCase()} (Token RRI: {shortenAddress(action.amount.token_identifier.rri)})</Text>
                     var tkn_name  = action.token_properties===undefined ? undefined : <Text style={getAppFont("black")}>Token Name: {action.token_properties.name}</Text>
                     var tkn_symbol  = action.token_properties===undefined ? undefined: <Text style={getAppFont("black")}>Token Symbol: {action.token_properties.symbol.toUpperCase()}</Text>
                     var tkn_supply  = action.token_supply===undefined ? undefined: <Text style={getAppFont("black")}>Token Supply: {formatNumForDisplay(action.token_supply.value)}</Text>

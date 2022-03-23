@@ -38,37 +38,10 @@ import {
 	SignTXOutput,
 } from '@radixdlt/hardware-wallet'
 import { log, BufferReader } from '@radixdlt/util'
+import CheckboxBouncy from "react-native-bouncy-checkbox";
 
 
-function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
-
-  Keyboard.dismiss; 
-  setSubmitEnabled(false);
-
-  if (amount != undefined){
-    amount = amount.replace(/,/g, '');
-  }
-
-  // alert(rri)
-  if(destAddr == undefined || destAddr.length==0){
-    alert("Destination address is required")
-  }
-  else 
-  if ( isNaN(amount) ){
-    alert("Amount entered must be a number")
-  } else if(amount == undefined || amount.length==0){
-    alert("Amount is required")
-  }
-  else if(amount==0){
-    alert("Amount must be greater than 0")
-  }
-  else{
-
-  var xrdAddr = destAddr.trim();
-  var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
-
-
-  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
+function buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password){
   fetch('https://raddish-node.com:6208/transaction/build', {
         method: 'POST',
         headers: {
@@ -88,8 +61,8 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  "address": xrdAddr
-                  // "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+                  // "address": xrdAddr
+                  "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
                 },
                 "amount": {
                   "token_identifier": {
@@ -128,7 +101,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID) }
+            { text: "OK", onPress: () => submitTxn(rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password) }
           ]
         );
 
@@ -136,7 +109,87 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
       }).catch((error) => {
           console.error(error);
       });
+
 }
+
+
+function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
+
+  Keyboard.dismiss; 
+  setSubmitEnabled(false);
+
+  if (amount != undefined){
+    amount = amount.replace(/,/g, '');
+  }
+
+  // alert(rri)
+  if(destAddr == undefined || destAddr.length==0){
+    alert("Destination address is required")
+  }
+  else 
+  if ( isNaN(amount) ){
+    alert("Amount entered must be a number")
+  } else if(amount == undefined || amount.length==0){
+    alert("Amount is required")
+  }
+  else if(amount==0){
+    alert("Amount must be greater than 0")
+  }
+  else{
+
+  var xrdAddr = destAddr.trim();
+  var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
+
+  if(isHW != true){
+
+  var passwordStr = ""
+  var promptFunc = null
+
+  if(Platform.OS === 'ios'){
+    promptFunc = Alert.prompt;
+  } else{
+    promptFunc = prompt
+  }
+      /////
+      promptFunc(
+        "Enter wallet password",
+        "Enter the wallet password to perform this transaction",
+        [
+          {
+            text: "Cancel",
+            onPress: () => alert("Transaction not performed"),
+            style: "cancel"
+          },
+          {
+            text: "OK",
+            onPress: password => {
+    
+      try{
+    
+
+        buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+
+  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
+  
+    } catch(err){
+      alert("Password incorrect")
+    }
+    
+          }
+        }
+      ],
+      "secure-text"
+    );
+
+
+
+    } else{
+
+      buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+
+    }
+
+  }
 
 }
 
@@ -187,34 +240,16 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
   
 
   export const submitTxn = async (
-    rri, usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID
+    rri, usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password
   ) => {
   setShow(false);
 
-  var passwordStr = ""
-  var promptFunc = null
 
-  if(Platform.OS === 'ios'){
-    promptFunc = Alert.prompt;
-  } else{
-    promptFunc = prompt
-  }
 
   if(isHW != true){
-  promptFunc(
-    "Enter wallet password",
-    "Enter the wallet password to perform this transaction",
-    [
-      {
-        text: "Cancel",
-        onPress: () => alert("Transaction not performed"),
-        style: "cancel"
-      },
-      {
-        text: "OK",
-        onPress: password => {
 
-  try{
+
+    //////
 
     var finalSig = ""
 
@@ -234,15 +269,8 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
   
    finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
-  } catch(err){
-    alert("Password incorrect")
-  }
-  
-        }
-      }
-    ],
-    "secure-text"
-  );
+   /////
+
 
   } else{
 
@@ -563,6 +591,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [deviceName, setDeviceName] = useState("Looking for device...");
   const [usbConn, setUsbConn] = useState(false);
   const [historyRows, setHistoryRows] = useState([]);
+  const [encryptMsgflag, setEncryptMsgflag] = useState(false);
   // alert(isHWBool)
 
   useEffect( () => {
@@ -691,8 +720,8 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 
 <Separator/>
    
-   {/* <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Message (optional):</Text>
-   <View style={styles.rowStyle}>
+   <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Message (optional):</Text>
+   <View style={[styles.rowStyle]}>
 
       <TextInput ref={msgRef}
       style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15}, getAppFont("black")]}
@@ -702,8 +731,29 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
       placeholder='Message to send in transaction'
       onChangeText={value => onChangeMessage(value)}
     />
+    
+ <View style={[{justifyContent: "center", alignSelf: "center", alignItems: "center", flexDirection: "column"}]}> 
+
+ <Text style={[styles.title2,{fontSize:12},getAppFont("black")]}>Encrypt?</Text>
+ <View style={[styles.rowStyle]}>
+ <Text style={[styles.title2]}> </Text>
+<CheckboxBouncy
+fillColor="#183A81"
+// style={styles.checkbox}
+iconStyle={[{ borderColor: "black"}, styles.checkbox]}
+isChecked={encryptMsgflag}
+onPress={()=>{
+  if(encryptMsgflag==false){
+  setEncryptMsgflag(true);
+  }
+  else setEncryptMsgflag(false);
+}}
+/>
+</View>
+
+</View > 
     </View>
-<Separator/> */}
+<Separator/>
 
 <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to send:</Text>
 <View style={styles.rowStyle}>
@@ -826,6 +876,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
     marginVertical:0
+  },
+  checkbox: {
+    // flexDirection:",
+    textAlign: 'center',
+    alignItems: 'center',
+    marginVertical: 0,
+    marginHorizontal: 2,
+    alignSelf: "center",
+    justifyContent: 'center'
+  },
+  title2: {
+    textAlign: 'center',
+    marginVertical: 0,
+    marginHorizontal: 2,
   },
 });
 

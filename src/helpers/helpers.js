@@ -255,6 +255,17 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 }
 
 
+String.prototype.hexDecode = function(){
+  var j;
+  var hexes = this.match(/.{1,4}/g) || [];
+  var back = "";
+  for(j = 0; j<hexes.length; j++) {
+      back += String.fromCharCode(parseInt(hexes[j], 16));
+  }
+
+  return back;
+}
+
 export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
 
   if(stakingOnly === undefined){
@@ -290,12 +301,14 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
         )
       }).then((response) => response.json()).then((json) => {
 
+
+
         // alert(JSON.stringify(json))
           var historyRows = [];
            json.transactions.forEach(txn => 
               {
                  
-                var message  = txn.metadata.message===undefined ? "" : "\nMessage: " + txn.metadata.message;
+                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode().trim()}</Text></View>
                   
                   txn.actions.forEach(action => {
 
@@ -356,11 +369,12 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
                     details.push(to_validator)
                       details.push(from_validator)
                         details.push(value)
-                          details.push(tkn_name)
-                            details.push(tkn_symbol)
-                              details.push(tkn_supply)
-                                details.push(tkn_rri)
-                                  details.push(tkn_ismutable)
+                          details.push(message)
+                            details.push(tkn_name)
+                              details.push(tkn_symbol)
+                                details.push(tkn_supply)
+                                  details.push(tkn_rri)
+                                    details.push(tkn_ismutable)
                 // + message;
 
                 // alert(JSON.stringify(action))

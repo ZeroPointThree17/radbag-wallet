@@ -41,7 +41,10 @@ import { log, BufferReader } from '@radixdlt/util'
 import CheckboxBouncy from "react-native-bouncy-checkbox";
 
 
-function buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount,  amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password){
+function buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password){
+  
+  alert("M:" + message);
+  
   fetch('https://raddish-node.com:6208/transaction/build', {
         method: 'POST',
         headers: {
@@ -112,6 +115,17 @@ function buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, s
 
 }
 
+String.prototype.hexEncode = function(){
+  var hex, i;
+
+  var result = "";
+  for (i=0; i<this.length; i++) {
+      hex = this.charCodeAt(i).toString(16);
+      result += ("000"+hex).slice(-4);
+  }
+
+  return result
+}
 
 function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, encryptMsgflag){
 
@@ -150,7 +164,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
   } else{
     promptFunc = prompt
   }
-      /////
+
       promptFunc(
         "Enter wallet password",
         "Enter the wallet password to perform this transaction",
@@ -168,10 +182,8 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     
         new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
-        buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+        buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr,  ("_" + message).hexEncode(), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
 
-  // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
-  
     } catch(err){
       alert("Password incorrect")
     }

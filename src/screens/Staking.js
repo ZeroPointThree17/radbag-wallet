@@ -760,7 +760,7 @@ const stakingStats = (showStakingStats) => {
     <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>    
        <Image style={{margin: 0, width: 30, height: 50, marginBottom:4, alignSelf:'center'}}
     source={Raddish}/>
-       <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center'}, getAppFont("white")]}>Please consider staking with Rad-Lad to support products like this wallet app and more to come!{"\n"}We are one of the top Radix validators with a low 1% fee!</Text>
+       <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center'}, getAppFont("white")]}>Please consider staking with Rad-Lad's Validator to support products like this wallet app and more to come!{"\n"}We are one of the top Radix validators with a low 1% fee!</Text>
        </LinearGradient>
 
     </View>

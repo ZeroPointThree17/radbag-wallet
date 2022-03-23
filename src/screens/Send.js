@@ -41,7 +41,7 @@ import { log, BufferReader } from '@radixdlt/util'
 import CheckboxBouncy from "react-native-bouncy-checkbox";
 
 
-function buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password){
+function buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount,  amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password){
   fetch('https://raddish-node.com:6208/transaction/build', {
         method: 'POST',
         headers: {
@@ -113,7 +113,7 @@ function buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, s
 }
 
 
-function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
+function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, encryptMsgflag){
 
   Keyboard.dismiss; 
   setSubmitEnabled(false);
@@ -166,8 +166,9 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     
       try{
     
+        new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
-        buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+        buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
   
@@ -185,7 +186,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
 
     } else{
 
-      buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+      buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount,  amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
 
     }
 
@@ -739,7 +740,6 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
  <Text style={[styles.title2]}> </Text>
 <CheckboxBouncy
 fillColor="#183A81"
-// style={styles.checkbox}
 iconStyle={[{ borderColor: "black"}, styles.checkbox]}
 isChecked={encryptMsgflag}
 onPress={()=>{
@@ -805,7 +805,7 @@ onPress={()=>{
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID)}}>
+<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID, encryptMsgflag)}}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>
@@ -878,7 +878,6 @@ const styles = StyleSheet.create({
     marginVertical:0
   },
   checkbox: {
-    // flexDirection:",
     textAlign: 'center',
     alignItems: 'center',
     marginVertical: 0,

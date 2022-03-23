@@ -2,7 +2,6 @@ import { Button, SafeAreaView, View, Text, StyleSheet, Platform } from 'react-na
 const bip39 = require('bip39');
 import React, { useState } from 'react';
 import { StackActions } from '@react-navigation/native';
-import CheckBox from 'react-native-check-box';
 import CheckboxBouncy from "react-native-bouncy-checkbox";
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { Separator } from '../helpers/jsxlib';

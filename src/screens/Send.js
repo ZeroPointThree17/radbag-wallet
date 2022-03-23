@@ -722,11 +722,12 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
    <View style={[styles.rowStyle]}>
 
       <TextInput ref={msgRef}
-      style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15}, getAppFont("black")]}
+      style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
       placeholder='Message to send in transaction'
+      placeholderTextColor="#d3d3d3"
       onChangeText={value => onChangeMessage(value)}
     />
     

@@ -86,6 +86,7 @@
     "react-native-router-flux": "4.3.1",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^3.10.1",
+    "react-native-scrypt": "^1.2.1",
     "react-native-select-dropdown": "^1.7.0",
     "react-native-select-multiple": "^2.1.0",
     "react-native-simple-radio-button": "^2.7.4",

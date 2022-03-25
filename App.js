@@ -75,11 +75,11 @@ LogBox.ignoreAllLogs();
           fontFamily:"AppleSDGothicNeo-Regular"
         },
       }}>{ firstTimer == true
-  ?<Stack.Screen name="Welcome to the Raddish Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>:<Stack.Screen name="Raddish Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />}
+  ?<Stack.Screen name="Welcome to the Rad-Lad Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>:<Stack.Screen name="Rad-Lad Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />}
       <Stack.Screen name="Mnemonic" component={CreateWallet} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Mnemonic Input" component={MnemonicInput} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Wallet Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="Raddish Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
+      <Stack.Screen name="Rad-Lad Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
       <Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>

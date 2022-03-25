@@ -40,6 +40,19 @@ import {
 import { log, BufferReader } from '@radixdlt/util'
 
 
+String.prototype.hexEncode = function(){
+  var hex, i;
+
+  var result = "";
+  for (i=0; i<this.length; i++) {
+      hex = this.charCodeAt(i).toString(16);
+      result += ("000"+hex).slice(-4);
+  }
+
+  return result
+}
+
+
 function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
 
   Keyboard.dismiss; 
@@ -47,6 +60,10 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
 
   if (amount != undefined){
     amount = amount.replace(/,/g, '');
+  }
+
+  if(message != undefined){
+    message = (" " + message).hexEncode();
   }
 
   // alert(rri)
@@ -563,7 +580,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [deviceName, setDeviceName] = useState("Looking for device...");
   const [usbConn, setUsbConn] = useState(false);
   const [historyRows, setHistoryRows] = useState([]);
-  // alert(isHWBool)
+  const [encryptMsgflag, setEncryptMsgflag] = useState(false)
 
   useEffect( () => {
     // var symbolsTemp = [];
@@ -691,19 +708,39 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
 
 <Separator/>
    
-   {/* <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Message (optional):</Text>
-   <View style={styles.rowStyle}>
+   <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Message (optional):</Text>
+   <View style={[styles.rowStyle]}>
 
       <TextInput ref={msgRef}
-      style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15}, getAppFont("black")]}
+      style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
       placeholder='Message to send in transaction'
+      placeholderTextColor="#d3d3d3"
       onChangeText={value => onChangeMessage(value)}
     />
+    
+ {/* <View style={[{justifyContent: "center", alignSelf: "center", alignItems: "center", flexDirection: "column"}]}> 
+ <Text style={[styles.title2,{fontSize:12},getAppFont("black")]}>Encrypt?</Text>
+ <View style={[styles.rowStyle]}>
+ <Text style={[styles.title2]}> </Text>
+<CheckboxBouncy
+fillColor="#183A81"
+iconStyle={[{ borderColor: "black"}, styles.checkbox]}
+isChecked={encryptMsgflag}
+onPress={()=>{
+  if(encryptMsgflag==false){
+  setEncryptMsgflag(true);
+  }
+  else setEncryptMsgflag(false);
+}}
+/>
+</View> 
+</View > */}
     </View>
-<Separator/> */}
+<Separator/>
+
 
 <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to send:</Text>
 <View style={styles.rowStyle}>

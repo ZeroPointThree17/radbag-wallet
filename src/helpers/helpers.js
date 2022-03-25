@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import { StyleSheet, View, Alert, Platform, PermissionsAndroid, TouchableOpacity} from "react-native";
+import { StyleSheet, View, Alert, Platform, PermissionsAndroid, TouchableOpacity, Linking} from "react-native";
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -360,7 +360,9 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
                       // alert("a-2")
                     var title = 
                     // "Transaction Hash: " + shortenAddress(txn.transaction_identifier.hash) + 
-                    <Text style={getAppFont("black")}>{action.type.replace(/([a-z])([A-Z])/g, '$1 $2') + "\n" + new Date(txn.transaction_status.confirmed_time).toLocaleString()}</Text>
+                    <Text style={getAppFont("black")}
+                    onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/' + txn.transaction_identifier.hash)}}
+                    >{action.type.replace(/([a-z])([A-Z])/g, '$1 $2') + "\n" + new Date(txn.transaction_status.confirmed_time).toLocaleString()}</Text>
                 var details = []
                 
                 details.push(from_account)

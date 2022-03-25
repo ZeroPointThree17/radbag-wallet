@@ -62,7 +62,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     amount = amount.replace(/,/g, '');
   }
 
-  if(message != undefined){
+  if(message != undefined && message.length > 0){
     message = (" " + message).hexEncode();
   }
 

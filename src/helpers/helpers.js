@@ -124,6 +124,15 @@ export function formatNumForHomeDisplay(number) {
   return finalResult;
 }
 
+export function formatCurrencyForHomeDisplay(number) {
+
+  var num = new bigDecimal(formatNumForDisplay(number).replace(/,/g, ''));
+  var result = num.round(2, bigDecimal.RoundingModes.DOWN).getPrettyValue(); 
+
+  return result;
+}
+
+
 
 export async function startScan(setTransport, setDeviceID, setDeviceName, scanStarted, setScanStarted, firstTimeString) {
 

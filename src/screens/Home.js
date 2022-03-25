@@ -12,11 +12,41 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, fetchTxnHistory } from '../helpers/helpers';
+import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay } from '../helpers/helpers';
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
 var bigDecimal = require('js-big-decimal');
+
+
+async function getPrices(fiatCurrencySymbol, setTokenPrices){
+   
+  const isConnected = await NetworkUtils.isNetworkAvailable();
+
+  if(isConnected){
+  await fetch('https://raddish-node.com:8082/rad_token_prices/radix', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }).then((response) => response.json()).then((json) => {
+
+      // alert(JSON.stringify(json))
+      setTokenPrices(json);
+        
+    }).catch((error) => {
+
+      setTokenPrices(undefined);
+        // console.error(error);
+    });
+  } else{
+    setTokenPrices(undefined);
+      // alert("No internet connection available. Please connect to the internet.");
+  }
+}
+
+
 
     const SeparatorBorder = () => (
     <View style={styles.separatorBorder} />
@@ -108,7 +138,7 @@ function addAddress(setIsHW, wallet_id,db, setWallets, setActiveWallet, setEnabl
 }
 
 
-function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
+function renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
@@ -154,6 +184,12 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
 
       if(rri=="xrd_rr1qy5wfsfh"){
 
+        var xrdPrice = undefined;
+
+        if(tokenPrices !=undefined){
+          xrdPrice = tokenPrices.radix.usd
+        }
+         
         // var finalNum = new bigDecimal(bigDecimal.multiply(balance[0],0.000000000000000001,1800));
         //  alert(balance[0].getPrettyValue())
 
@@ -171,10 +207,12 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
     defaultSource={GenericToken}
     source={{uri: balance[3]}}
       />
-    <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({balance[1]}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
+    <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({balance[1]}) <Text style={[{fontSize:12},getAppFont("black")]}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
+    <View >
     <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end'},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
-
+    {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:10, textAlign:"right"},getAppFont("black")]}>${ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue())} USD</Text>}
+    </View> 
     </View> 
     </TouchableOpacity>
     </View>        )
@@ -208,10 +246,12 @@ function renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigatio
   source={{uri: balance[3]}}
     />
     </ImageBackground>
-        <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) <Text style={{fontSize:12}}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
+        <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) <Text style={[{fontSize:12},getAppFont("black")]}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
+  <View>
   <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end'},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
-
+  {/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
+  </View> 
   </View> 
   </TouchableOpacity>
   </View>        )
@@ -483,6 +523,8 @@ const Home = ({route, navigation}) => {
     const [addressRRIs, setAddressRRIs] = useState(new Map())
     const [isHW, setIsHW] = useState()
     const [historyRows, setHistoryRows] = useState();
+    const [tokenPrices, setTokenPrices] = useState();
+
 
     var dropdownVals = []
     var walletDropdownVals = []  
@@ -513,6 +555,14 @@ const Home = ({route, navigation}) => {
         useInterval(() => {
           getWallets(setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
           // fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
+        }, 10000);
+
+        useEffect(() => {
+          getPrices("USD", setTokenPrices)
+        }, []);
+
+        useInterval(() => {
+          getPrices("USD", setTokenPrices)
         }, 10000);
         
 
@@ -730,8 +780,9 @@ navigation.dispatch(pushAction);
 
 <View style={{margin:16}}>
 <Text style={getAppFont("black")}>Tokens</Text>
+{/* <Text style={[{fontSize: 9}, getAppFont("black")]}>Wallet Value: $1,233.32 USD</Text> */}
 
-{renderAddressRows(balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
+{renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
 
 </View> 
         <Separator/>

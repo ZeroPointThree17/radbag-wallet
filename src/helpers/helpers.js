@@ -124,12 +124,19 @@ export function formatNumForHomeDisplay(number) {
   return finalResult;
 }
 
-export function formatCurrencyForHomeDisplay(number) {
+export function formatCurrencyForHomeDisplay(number, currencySymbol) {
 
   var num = new bigDecimal(formatNumForDisplay(number).replace(/,/g, ''));
-  var result = num.round(2, bigDecimal.RoundingModes.DOWN).getPrettyValue(); 
+  var result = num.round(6, bigDecimal.RoundingModes.DOWN).getValue(); 
 
-  return result;
+  const formatter = new Intl.NumberFormat(navigator.language || 'en-US', {
+    style: 'currency',
+    currency: currencySymbol,
+    minimumFractionDigits: 6
+  });
+
+  return formatter.format(result);
+
 }
 
 
@@ -424,3 +431,42 @@ const styles = StyleSheet.create({
     },
    
 });
+
+
+export const currencyList = [
+  {"label": "Fiat Prices in: USD", "value": "usd"},
+  {"label": "Fiat Prices in: EUR", "value": "eur"},
+  {"label": "Fiat Prices in: JPY", "value": "jpy"},
+  {"label": "Fiat Prices in: GBP", "value": "gbp"},
+  {"label": "Fiat Prices in: AUD", "value": "aud"},
+  {"label": "Fiat Prices in: CAD", "value": "cad"},
+  {"label": "Fiat Prices in: CHF", "value": "chf"},
+  {"label": "Fiat Prices in: CNY", "value": "cny"},
+  {"label": "Fiat Prices in: HKD", "value": "hkd"},
+  {"label": "Fiat Prices in: NZD", "value": "nzd"},
+  {"label": "Fiat Prices in: SEK", "value": "sek"},
+  {"label": "Fiat Prices in: KRW", "value": "krw"},
+  {"label": "Fiat Prices in: SGD", "value": "sgd"},
+  {"label": "Fiat Prices in: NOK", "value": "nok"},
+  {"label": "Fiat Prices in: MXN", "value": "mxn"},
+  {"label": "Fiat Prices in: INR", "value": "inr"},
+  {"label": "Fiat Prices in: RUB", "value": "rub"},
+  {"label": "Fiat Prices in: ZAR", "value": "zar"},
+  {"label": "Fiat Prices in: TRY", "value": "try"},
+  {"label": "Fiat Prices in: BRL", "value": "brl"},
+  {"label": "Fiat Prices in: TWD", "value": "twd"},
+  {"label": "Fiat Prices in: DKK", "value": "dkk"},
+  {"label": "Fiat Prices in: PLN", "value": "pln"},
+  {"label": "Fiat Prices in: THB", "value": "thb"},
+  {"label": "Fiat Prices in: IDR", "value": "idr"},
+  {"label": "Fiat Prices in: HUF", "value": "huf"},
+  {"label": "Fiat Prices in: CZK", "value": "czk"},
+  {"label": "Fiat Prices in: ILS", "value": "ils"},
+  {"label": "Fiat Prices in: CLP", "value": "clp"},
+  {"label": "Fiat Prices in: PHP", "value": "php"},
+  {"label": "Fiat Prices in: AED", "value": "aed"},
+  {"label": "Fiat Prices in: COP", "value": "cop"},
+  {"label": "Fiat Prices in: SAR", "value": "sar"},
+  {"label": "Fiat Prices in: MYR", "value": "myr"},
+  {"label": "Fiat Prices in: RON", "value": "ron"},
+]

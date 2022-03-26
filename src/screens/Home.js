@@ -12,19 +12,20 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay } from '../helpers/helpers';
+import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay, currencyList } from '../helpers/helpers';
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
 var bigDecimal = require('js-big-decimal');
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-async function getPrices(fiatCurrencySymbol, setTokenPrices){
+async function getPrices(setTokenPrices){
    
   const isConnected = await NetworkUtils.isNetworkAvailable();
 
   if(isConnected){
-  await fetch('https://raddish-node.com:8082/rad_token_prices/radix', {
+  await fetch('https://raddish-node.com:8082/rad_token_prices', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -138,8 +139,10 @@ function addAddress(setIsHW, wallet_id,db, setWallets, setActiveWallet, setEnabl
 }
 
 
-function renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
+function renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
+  var totalWalletValue = new bigDecimal(0);
+  
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
         var rows = []
@@ -152,6 +155,8 @@ function renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balan
         balances.forEach((balance, rri) =>  {
           symbolCnts.set(balance[1],0)
         })
+
+
 
     balances.forEach((balance, rri) =>  
 
@@ -187,7 +192,11 @@ function renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balan
         var xrdPrice = undefined;
 
         if(tokenPrices !=undefined){
-          xrdPrice = tokenPrices.radix.usd
+
+          xrdPrice = tokenPrices.radix[currValue]
+
+          totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)))
+          
         }
          
         // var finalNum = new bigDecimal(bigDecimal.multiply(balance[0],0.000000000000000001,1800));
@@ -210,13 +219,27 @@ function renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balan
     <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({balance[1]}) <Text style={[{fontSize:12},getAppFont("black")]}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
     <View >
-    <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end'},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
-    {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:10, textAlign:"right"},getAppFont("black")]}>${ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue())} USD</Text>}
+    <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
+    {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue.toUpperCase())} {currValue.toUpperCase()}</Text>}
     </View> 
     </View> 
     </TouchableOpacity>
     </View>        )
       } else{
+
+
+        var dogecubePrice = undefined;
+  
+        if(rri=="dgc_rr1qvnre767vp607yr9pqzqhlprg72q2ny5pj4agn53k0pqy6huxw"){
+
+          if(tokenPrices !=undefined){
+  
+            dogecubePrice = tokenPrices.dogecube[currValue]
+            // alert(dogecubePrice)
+            totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)))
+          
+          }
+        }
 
         if(rri == blackListed){
           possScamToken = true;
@@ -249,7 +272,9 @@ function renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balan
         <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) <Text style={[{fontSize:12},getAppFont("black")]}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
   <View>
-  <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end'},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
+  <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
+  {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue.toUpperCase())} {currValue.toUpperCase()}</Text>}
+   
   {/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
   </View> 
   </View> 
@@ -263,8 +288,10 @@ function renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balan
    }
    })
            
+    var headerRow = []
+    headerRow.push(<View key={999999999999}><Text style={[{fontSize: 9}, getAppFont("black")]}>Wallet Value: {totalWalletValue.getValue()} {currValue}</Text></View>)
 
-    return (xrdRow.concat(rows))
+    return (headerRow.concat(xrdRow).concat(rows))
 
     }
 
@@ -497,6 +524,9 @@ const wait = (timeout) => {
 
 const Home = ({route, navigation}) => {
 
+ 
+  
+
     const [refreshing, setRefreshing] = React.useState(false);
 
     const onRefresh = React.useCallback(() => {
@@ -514,6 +544,8 @@ const Home = ({route, navigation}) => {
     const [isFocus, setIsFocus] = useState(false);
     const [label, setLabel] = useState();
     const [value, setValue] = useState();
+    const [currLabel, setCurrLabel] = useState();
+    const [currValue, setCurrValue] = useState();
     const [isFocusAddr, setIsFocusAddr] = useState(false);
     const [labelAddr, setLabelAddr] = useState();
     const [valueAddr, setValueAddr] = useState();
@@ -524,6 +556,35 @@ const Home = ({route, navigation}) => {
     const [isHW, setIsHW] = useState()
     const [historyRows, setHistoryRows] = useState();
     const [tokenPrices, setTokenPrices] = useState();
+
+    
+    const storeCurrData = async (json, setCurrValue, setCurrLabel) => {
+      try {
+        const jsonValue = JSON.stringify(json)
+        await AsyncStorage.setItem('@fiatCurrencySelected', jsonValue)
+        setCurrValue(json.value);
+        setCurrLabel(json.label);
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  
+    const getCurrData = async (setCurrValue, setCurrLabel) => {
+      try {
+
+        var jsonValue = await AsyncStorage.getItem('@fiatCurrencySelected')
+
+        if(jsonValue == undefined) {
+          jsonValue = '{ "label" : "Fiat Prices in: USD", "value" : "usd" }';
+          await AsyncStorage.setItem('@fiatCurrencySelected', jsonValue)
+        }
+
+        setCurrValue(JSON.parse(jsonValue).value);
+        setCurrLabel(JSON.parse(jsonValue).label);
+      } catch(e) {
+        console.log(e)
+      }
+    }
 
 
     var dropdownVals = []
@@ -558,11 +619,11 @@ const Home = ({route, navigation}) => {
         }, 10000);
 
         useEffect(() => {
-          getPrices("USD", setTokenPrices)
+          getPrices(setTokenPrices)
         }, []);
 
         useInterval(() => {
-          getPrices("USD", setTokenPrices)
+          getPrices(setTokenPrices)
         }, 10000);
         
 
@@ -617,6 +678,10 @@ const Home = ({route, navigation}) => {
 //  alert(isHW)
 
 console.log("WALLETS: "+JSON.stringify(wallets));
+
+// alert(JSON.stringify(getCurrData()));
+
+getCurrData(setCurrValue, setCurrLabel);
 
   return (
 
@@ -778,11 +843,63 @@ navigation.dispatch(pushAction);
 </View>
 
 
-<View style={{margin:16}}>
-<Text style={getAppFont("black")}>Tokens</Text>
-{/* <Text style={[{fontSize: 9}, getAppFont("black")]}>Wallet Value: $1,233.32 USD</Text> */}
+<View style={{margin:14}}>
+<View style={styles.rowStyle}>
 
-{renderAddressRows(tokenPrices, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
+<Dropdown
+         style={[getAppFont("black"), styles.dropdown,  isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={[styles.placeholderStyle,getAppFont("black")]}
+          selectedTextStyle={[styles.selectedTextStyle,getAppFont("black")]}
+          inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
+          iconStyle={[styles.iconStyle,getAppFont("black")]}
+          containerStyle ={[styles.containerStyle,getAppFont("black")]}
+          data={[]}
+          activeColor="#4DA892"
+          search
+          maxHeight={300}
+          disable={true}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Tokens' : '...'}
+          searchPlaceholder="Search..."
+          label="Tokens"
+          value="Tokens"
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+
+          }}
+        />
+<Dropdown
+         style={[getAppFont("black"), styles.dropdown2, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={[styles.placeholderStyle,getAppFont("black"),{textAlign: "right"}]}
+          selectedTextStyle={[styles.selectedTextStyle,getAppFont("black"),{textAlign: "right"}]}
+          inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
+          iconStyle={[styles.iconStyle,getAppFont("black")]}
+          containerStyle ={[getAppFont("black")]}
+          data={currencyList}
+          activeColor="#4DA892"
+          search
+          maxHeight={300}
+          // disable={true}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Fiat Prices in: ' : '...'}
+          searchPlaceholder="Search..."
+          label={currLabel}
+          value={currValue}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            storeCurrData(item)
+           setCurrLabel(item.label);
+            setCurrValue(item.value);
+            setIsFocus(true);
+          }}
+        />
+        </View>
+
+{renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
 
 </View> 
         <Separator/>
@@ -927,6 +1044,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     marginHorizontal: 0,
   },
+  dropdown2: {
+    flex: 1,
+    alignContent:"flex-start",
+    justifyContent:"flex-start",
+    textAlign:"right",
+    height: 20,
+    borderColor: 'gray',
+    borderWidth: 0,
+    borderRadius: 8,
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
+  },
   icon: {
     marginRight: 5,
   },
@@ -943,20 +1072,17 @@ const styles = StyleSheet.create({
   },
 containerStyle: {
      backgroundColor: "#183A81",
-     color:"white",
   },
   placeholderStyle: {
     fontSize: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    color:"white",
   },
   selectedTextStyle: {
     fontSize: 14,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     textAlign: 'left',
-    color:"white",
   },
   iconStyle: {
     width: 0,
@@ -965,7 +1091,6 @@ containerStyle: {
   inputSearchStyle: {
     height: 40,
     fontSize: 14,
-    color:"white",
   },
   scrollView: {
     backgroundColor: "white",

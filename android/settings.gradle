@@ -9,3 +9,5 @@ include ':react-native-os'
 project(':react-native-os').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-os/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
+include ':react-native-android-checkbox', ':app'
+project(':react-native-android-checkbox').projectDir = new File(settingsDir, '../node_modules/react-native-android-checkbox/android')

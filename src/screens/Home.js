@@ -139,12 +139,11 @@ function addAddress(setIsHW, wallet_id,db, setWallets, setActiveWallet, setEnabl
 }
 
 
-function renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
+function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
-  var totalWalletValue = new bigDecimal(0);
-  
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
+        var totalWalletValue = new bigDecimal(0);
         var rows = []
         var xrdRow = []      
         var symbolCnts = new Map();
@@ -195,7 +194,7 @@ function renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liqui
 
           xrdPrice = tokenPrices.radix[currValue]
 
-          totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)))
+          totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)))
           
         }
          
@@ -220,7 +219,7 @@ function renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liqui
     {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
     <View >
     <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
-    {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue.toUpperCase())} {currValue.toUpperCase()}</Text>}
+    {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue.toUpperCase())}</Text>}
     </View> 
     </View> 
     </TouchableOpacity>
@@ -236,7 +235,7 @@ function renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liqui
   
             dogecubePrice = tokenPrices.dogecube[currValue]
             // alert(dogecubePrice)
-            totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)))
+            totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)))
           
           }
         }
@@ -273,7 +272,7 @@ function renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liqui
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
   <View>
   <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
-  {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue.toUpperCase())} {currValue.toUpperCase()}</Text>}
+  {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue.toUpperCase())}</Text>}
    
   {/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
   </View> 
@@ -289,7 +288,46 @@ function renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liqui
    })
            
     var headerRow = []
-    headerRow.push(<View key={999999999999}><Text style={[{fontSize: 9}, getAppFont("black")]}>Wallet Value: {totalWalletValue.getValue()} {currValue}</Text></View>)
+
+
+    headerRow.push(<View key={9999} style={styles.rowStyleHeader}>
+<View style={{
+        backgroundColor: '#white',
+
+        borderRadius: 9,
+        justifyContent: 'center',
+        marginBottom: 0
+      }}>
+      <Text style={[{fontSize: 14}, getAppFont("black")]}>Wallet Value: {formatCurrencyForHomeDisplay(totalWalletValue.getValue(), currValue.toUpperCase())}</Text>
+      </View>
+      <Dropdown
+         style={[getAppFont("black"), styles.dropdown2, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={[styles.placeholderStyle,getAppFont("black"),{textAlign: "right"}]}
+          selectedTextStyle={[styles.selectedTextStyle,getAppFont("black"),{textAlign: "right"}]}
+          inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
+          iconStyle={[styles.iconStyle,getAppFont("black")]}
+          containerStyle ={[getAppFont("black")]}
+          data={currencyList}
+          activeColor="#4DA892"
+          search
+          maxHeight={300}
+          // disable={true}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Fiat Prices in: ' : '...'}
+          searchPlaceholder="Search..."
+          label={currLabel}
+          value={currValue}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            storeCurrData(item)
+           setCurrLabel(item.label);
+            setCurrValue(item.value);
+            setIsFocus(true);
+          }}
+        />
+      </View>)
 
     return (headerRow.concat(xrdRow).concat(rows))
 
@@ -845,7 +883,7 @@ navigation.dispatch(pushAction);
 
 <View style={{margin:14}}>
 <View style={styles.rowStyle}>
-
+{/* 
 <Dropdown
          style={[getAppFont("black"), styles.dropdown,  isFocus && { borderColor: 'blue' }]}
           placeholderStyle={[styles.placeholderStyle,getAppFont("black")]}
@@ -869,37 +907,11 @@ navigation.dispatch(pushAction);
           onChange={item => {
 
           }}
-        />
-<Dropdown
-         style={[getAppFont("black"), styles.dropdown2, isFocus && { borderColor: 'blue' }]}
-          placeholderStyle={[styles.placeholderStyle,getAppFont("black"),{textAlign: "right"}]}
-          selectedTextStyle={[styles.selectedTextStyle,getAppFont("black"),{textAlign: "right"}]}
-          inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
-          iconStyle={[styles.iconStyle,getAppFont("black")]}
-          containerStyle ={[getAppFont("black")]}
-          data={currencyList}
-          activeColor="#4DA892"
-          search
-          maxHeight={300}
-          // disable={true}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus ? 'Fiat Prices in: ' : '...'}
-          searchPlaceholder="Search..."
-          label={currLabel}
-          value={currValue}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={item => {
-            storeCurrData(item)
-           setCurrLabel(item.label);
-            setCurrValue(item.value);
-            setIsFocus(true);
-          }}
-        />
+        /> */}
+
         </View>
 
-{renderAddressRows(tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
+{renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
 
 </View> 
         <Separator/>
@@ -955,6 +967,12 @@ const styles = StyleSheet.create({
         fontSize: 4,
         alignItems: 'center',
         justifyContent: 'center',
+        marginVertical:0,
+      },
+      rowStyleHeader: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
         marginVertical:0,
       },
       rowStyleHome: {
@@ -1046,14 +1064,15 @@ const styles = StyleSheet.create({
   },
   dropdown2: {
     flex: 1,
-    alignContent:"flex-start",
-    justifyContent:"flex-start",
+    // alignContent:"flex-start",
+    // justifyContent:"flex-start",
     textAlign:"right",
-    height: 20,
+    height: 19,
     borderColor: 'gray',
     borderWidth: 0,
-    borderRadius: 8,
+    borderRadius: 0,
     paddingHorizontal: 0,
+    marginBottom: 0,
     marginHorizontal: 0,
   },
   icon: {

@@ -125,7 +125,7 @@ export function formatNumForHomeDisplay(number) {
 }
 
 export function formatCurrencyForHomeDisplay(number, currencySymbol) {
-
+  
   var num = new bigDecimal(formatNumForDisplay(number).replace(/,/g, ''));
   var result = num.round(6, bigDecimal.RoundingModes.DOWN).getValue(); 
 

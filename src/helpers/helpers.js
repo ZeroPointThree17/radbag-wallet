@@ -465,8 +465,6 @@ export const currencyList = [
   {"label": "Fiat Prices in: CLP", "value": "clp"},
   {"label": "Fiat Prices in: PHP", "value": "php"},
   {"label": "Fiat Prices in: AED", "value": "aed"},
-  {"label": "Fiat Prices in: COP", "value": "cop"},
   {"label": "Fiat Prices in: SAR", "value": "sar"},
-  {"label": "Fiat Prices in: MYR", "value": "myr"},
-  {"label": "Fiat Prices in: RON", "value": "ron"},
+  {"label": "Fiat Prices in: MYR", "value": "myr"}
 ]

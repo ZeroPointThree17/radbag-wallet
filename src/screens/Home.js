@@ -20,7 +20,7 @@ var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-async function getPrices(setTokenPrices){
+async function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
    
   const isConnected = await NetworkUtils.isNetworkAvailable();
 
@@ -35,10 +35,14 @@ async function getPrices(setTokenPrices){
 
       // alert(JSON.stringify(json))
       setTokenPrices(json);
+      getCurrData(setCurrValue, setCurrLabel);
+
         
     }).catch((error) => {
 
       setTokenPrices(undefined);
+      getCurrData(setCurrValue, setCurrLabel);
+
         // console.error(error);
     });
   } else{
@@ -657,11 +661,11 @@ const Home = ({route, navigation}) => {
         }, 10000);
 
         useEffect(() => {
-          getPrices(setTokenPrices)
+          getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel)
         }, []);
 
         useInterval(() => {
-          getPrices(setTokenPrices)
+          getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel)
         }, 10000);
         
 
@@ -719,7 +723,6 @@ console.log("WALLETS: "+JSON.stringify(wallets));
 
 // alert(JSON.stringify(getCurrData()));
 
-getCurrData(setCurrValue, setCurrLabel);
 
   return (
 

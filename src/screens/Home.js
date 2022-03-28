@@ -219,9 +219,12 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
     defaultSource={GenericToken}
     source={{uri: balance[3]}}
       />
-    <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({balance[1]}) <Text style={[{fontSize:12},getAppFont("black")]}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
+    <View style={{flex:2}}>
+        <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
+        <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
+        </View>
     {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
-    <View >
+    <View style={{flex:1.5}}>
     <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
     {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue.toUpperCase())}</Text>}
     </View> 
@@ -262,19 +265,23 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
   <ImageBackground
     style={{
       width: 36,
-      height: 36
+      height: 36,
+      justifyContent: "flex-start"
     }}
     source={
       require("../assets/generic_token.png") //Indicator
     }>
-  <Image style={{width: 36, height: 36}}
+  <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
   defaultSource={GenericToken}
   source={{uri: balance[3]}}
     />
     </ImageBackground>
-        <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) <Text style={[{fontSize:12},getAppFont("black")]}>{"\nToken RRI: "+shortenAddress(rri)} </Text></Text>
+    <View style={{flex:2}}>
+        <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
+        <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
+        </View>
     {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
-  <View>
+  <View style={{ textAlign:"right", flex:1.5}}>
   <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
   {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue.toUpperCase())}</Text>}
    
@@ -877,7 +884,7 @@ navigation.dispatch(pushAction);
      <TouchableOpacity onPress={() => addAddress(setIsHW, activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
      <View style={styles.rowStyle}>
      <IconFeather name="hash" size={16} color="black" />
-<Text style={[styles.buttonText, getAppFont("black")]} >Add Address</Text></View>
+<Text style={[styles.buttonText, getAppFont("black")]}>Add Address</Text></View>
 </TouchableOpacity> 
 </View>
 </View>
@@ -989,8 +996,8 @@ const styles = StyleSheet.create({
       addrRowStyle: {
         flexDirection: 'row',
         fontSize: 4,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
         marginVertical:0,
       },
       rowStyleLeft: {

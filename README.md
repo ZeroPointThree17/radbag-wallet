@@ -36,6 +36,9 @@ This app can be downloaded and installed on an iPhone from the Apple App Store u
 <a href="https://apps.apple.com/us/app/raddish-wallet/id1608033916"><img src="src/assets/download-on-the-app-store-badge.png" width="150" /></a>
 </p>
 
+Also available on Android:
+<a href="https://play.google.com/store/apps/details?id=com.raddishwallet&hl=en_US&gl=US>><img src="https://i0.wp.com/radbag.io/wp-content/uploads/2022/03/googleplay-1.png?resize=768%2C228&ssl=1 /></a>
+
 ## Installation for Development Purposes
 
 This app was created using React Native. Although React Native can be used to create both iOS and Android apps, currently only the iOS React Native app is working.

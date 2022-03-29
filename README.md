@@ -1,9 +1,9 @@
-# Raddish iOS Mobile Wallet for Radix DLT
+# Radbag iOS Mobile Wallet for Radix DLT
 
 <p align="center">
 <img alight="center" src="src/assets/radish_nobackground.png" width="100" />
 </p>
-Introducing the Raddish Wallet! Raddish Wallet is the *first* iOS mobile wallet for the Radix DLT ecosystem!
+Introducing the Radbag Wallet! Radbag Wallet is the *first* iOS and Android mobile wallet for the Radix DLT ecosystem!
 
 Features of this wallet include:
 
@@ -34,6 +34,13 @@ This app can be downloaded and installed on an iPhone from the Apple App Store u
 </br>
 <p align="center">
 <a href="https://apps.apple.com/us/app/raddish-wallet/id1608033916"><img src="src/assets/download-on-the-app-store-badge.png" width="150" /></a>
+</p>
+
+Also available on Android:
+</br>
+</br>
+<p align="center">
+<a href="https://play.google.com/store/apps/details?id=com.raddishwallet&hl=en_US&gl=US"><img src="https://i0.wp.com/radbag.io/wp-content/uploads/2022/03/googleplay-1.png?resize=768%2C228&ssl=1" width="150" /></a>
 </p>
 
 ## Installation for Development Purposes

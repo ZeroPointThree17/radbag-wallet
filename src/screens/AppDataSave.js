@@ -248,7 +248,7 @@ db.transaction((tx) => {
                                 db.transaction((tx) => {
                                     tx.executeSql("INSERT INTO active_address (id) VALUES('"+nextAddressId+"')", [], (tx, results) => {
                                       console.log("Insert into active address table completed");  
-                                    const pushAction = StackActions.push('Rad-Lad Wallet');
+                                    const pushAction = StackActions.push('RadBag Wallet');
                                   
                                   navigation.dispatch(pushAction);
                                   

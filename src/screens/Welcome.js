@@ -23,7 +23,7 @@ const Welcome = ({ navigation }) => {
       />
      <View style={styles.text}> 
    
- <Text style={[styles.title,getAppFont("black")]}>Welcome to the Rad-Lad Mobile Wallet! Have you previously made a Radix DLT Wallet?</Text>
+ <Text style={[styles.title,getAppFont("black")]}>Welcome to the RadBag Wallet! Have you previously made a Radix DLT Wallet?</Text>
  <Separator/>
  <Button style={getAppFont("black")}
         title="Yes - Import a Wallet"

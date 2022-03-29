@@ -786,7 +786,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           onFocus={() => setIsFocusAddr(true)}
           onBlur={() => setIsFocusAddr(false)}
           onChange={item => {
-            updateActiveAddress(setIsHW, db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+            updateActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
            setLabelAddr(item.label);
             setValueAddr(item.value);
             setIsFocusAddr(true);

@@ -117,7 +117,7 @@ export function formatNumForHomeDisplay(number) {
   var result = num.round(4, bigDecimal.RoundingModes.DOWN).getPrettyValue(); 
   resArry = result.split(".")
   var resP1 = resArry[0]
-  var resP2 = resArry[1].replace(/^0+|0+$/g, "");
+  var resP2 = resArry[1].replace(/0+$/g, "");
 
   finalResult = resP1.concat(".", resP2).replace(/\.$/, "");;
 

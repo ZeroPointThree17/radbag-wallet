@@ -37,7 +37,7 @@ This app can be downloaded and installed on an iPhone from the Apple App Store u
 </p>
 
 Also available on Android:
-<a href="https://play.google.com/store/apps/details?id=com.raddishwallet&hl=en_US&gl=US><img src="https://i0.wp.com/radbag.io/wp-content/uploads/2022/03/googleplay-1.png?resize=768%2C228&ssl=1 /></a>
+<a href="https://play.google.com/store/apps/details?id=com.raddishwallet&hl=en_US&gl=US"><img src="https://i0.wp.com/radbag.io/wp-content/uploads/2022/03/googleplay-1.png?resize=768%2C228&ssl=1" /></a>
 
 ## Installation for Development Purposes
 

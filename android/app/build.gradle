@@ -135,8 +135,8 @@ android {
         applicationId "com.raddishwallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
-        versionName "2.5.3"
+        versionCode 15
+        versionName "2.5.4"
                     missingDimensionStrategy 'react-native-camera', 'general' // <-- insert this line
                 ndk {
             abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"

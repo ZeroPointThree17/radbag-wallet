@@ -299,12 +299,12 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
         justifyContent: 'center',
         marginBottom: 0
       }}>
-<Text style={[{fontSize: 14}, getAppFont("black")]}>Wallet Value: {formatCurrencyForHomeDisplay(totalWalletValue.getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>
+<Text style={[{fontSize: 10}, getAppFont("black")]}>Value: {formatCurrencyForHomeDisplay(totalWalletValue.getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>
       </View>
       <Dropdown
          style={[getAppFont("black"), styles.dropdown2, isFocus && { borderColor: 'blue' }]}
-          placeholderStyle={[styles.placeholderStyle,getAppFont("black"),{textAlign: "right"}]}
-          selectedTextStyle={[styles.selectedTextStyle,getAppFont("black"),{textAlign: "right"}]}
+          placeholderStyle={[styles.placeholderStyle2,getAppFont("black"),{textAlign: "right"}]}
+          selectedTextStyle={[styles.selectedTextStyle2,getAppFont("black"),{textAlign: "right"}]}
           inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
           iconStyle={[styles.iconStyle,getAppFont("black")]}
           containerStyle ={[getAppFont("black")]}
@@ -315,7 +315,7 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
           // disable={true}
           labelField="label"
           valueField="value"
-          placeholder={!isFocus ? 'Fiat Prices in: ' : '...'}
+          placeholder={!isFocus ? 'Prices in: ' : '...'}
           searchPlaceholder="Search..."
           label={currLabel}
           value={currValue}
@@ -1066,7 +1066,7 @@ const styles = StyleSheet.create({
     // alignContent:"flex-start",
     // justifyContent:"flex-start",
     textAlign:"right",
-    height: 19,
+    height: 15,
     borderColor: 'gray',
     borderWidth: 0,
     borderRadius: 0,
@@ -1102,6 +1102,17 @@ containerStyle: {
     justifyContent: 'flex-start',
     textAlign: 'left',
   },
+    placeholderStyle2: {
+    fontSize: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedTextStyle2: {
+    fontSize: 10,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    textAlign: 'left',
+  },
   iconStyle: {
     width: 0,
     height: 0,
@@ -1109,6 +1120,10 @@ containerStyle: {
   inputSearchStyle: {
     height: 40,
     fontSize: 14,
+  },
+  inputSearchStyle2: {
+    height: 40,
+    fontSize: 10,
   },
   scrollView: {
     backgroundColor: "white",

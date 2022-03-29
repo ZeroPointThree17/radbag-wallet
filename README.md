@@ -1,9 +1,9 @@
-# Raddish iOS Mobile Wallet for Radix DLT
+# Radbag iOS Mobile Wallet for Radix DLT
 
 <p align="center">
 <img alight="center" src="src/assets/radish_nobackground.png" width="100" />
 </p>
-Introducing the Raddish Wallet! Raddish Wallet is the *first* iOS mobile wallet for the Radix DLT ecosystem!
+Introducing the Radbag Wallet! Radbag Wallet is the *first* iOS and Android mobile wallet for the Radix DLT ecosystem!
 
 Features of this wallet include:
 

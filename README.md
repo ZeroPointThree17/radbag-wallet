@@ -45,9 +45,7 @@ Also available on Android:
 
 ## Installation for Development Purposes
 
-This app was created using React Native. Although React Native can be used to create both iOS and Android apps, currently only the iOS React Native app is working.
-
-More detailed installation instructions are to come. For now, if you already have at least XCode v12.0, node.js v16.5.0, and npm v7.19.1 installed, go into the Raddish Wallet home directory and run:
+This app was created using React Native. More detailed installation instructions are to come. For now, if you already have at least XCode v12.0, node.js v16.5.0, and npm v7.19.1 installed, go into the RadBag Wallet home directory and run:
 
 ```bash
 npm install
@@ -61,6 +59,12 @@ Then, go back to the project home directory and run the following to start the i
 
 ```bash
 npx react-native run-ios  
+```
+
+Or, for Android, run:
+
+```bash
+npx react-native run-android
 ```
 
 

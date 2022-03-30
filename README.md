@@ -37,7 +37,7 @@ This app can be downloaded and installed on an iPhone from the Apple App Store u
 <a href="https://apps.apple.com/us/app/raddish-wallet/id1608033916"><img src="src/assets/download-on-the-app-store-badge.png" width="150" /></a>
 </p>
 
-Also available on Android:
+Also available on Android (Only on Android 8.0 and above):
 </br>
 </br>
 <p align="center">

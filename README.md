@@ -4,7 +4,7 @@
 <img alight="center" src="src/assets/radish_nobackground.png" width="100" />
 </p>
 Introducing the RadBag Wallet! RadBag Wallet is the *first* iOS and Android mobile wallet for the Radix DLT ecosystem!
-
+</br>
 Features of this wallet include:
 
 - Wallet creation and imports

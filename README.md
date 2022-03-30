@@ -1,4 +1,4 @@
-# Radbag iOS Mobile Wallet for Radix DLT
+# RadBag iOS Mobile Wallet for Radix DLT
 
 <p align="center">
 <img alight="center" src="src/assets/radish_nobackground.png" width="100" />

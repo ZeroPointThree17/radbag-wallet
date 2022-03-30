@@ -30,14 +30,14 @@ Features of this wallet include:
 This app can be downloaded and installed on an iPhone from the Apple App Store using the link below. 
 </br>
 </br>
-<b>NOTE: </b>Due to dependence on certain cryptographic libraries, only iOS v.13.0 and above is supported!:
+<b>NOTE: </b>Due to dependence on certain cryptographic libraries, only iOS v.13.0 or above is supported!:
 </br>
 </br>
 <p align="center">
 <a href="https://apps.apple.com/us/app/raddish-wallet/id1608033916"><img src="src/assets/download-on-the-app-store-badge.png" width="150" /></a>
 </p>
 
-Also available on Android (Only on Android 8.0 and above):
+Also available on Android (Only on Android 8.0 or above):
 </br>
 </br>
 <p align="center">

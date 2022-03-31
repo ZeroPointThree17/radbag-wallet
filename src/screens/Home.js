@@ -143,9 +143,9 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
         var possScamToken = false;
         var appendStr = ""
 
-        balances.forEach((balance, rri) =>  {
-          symbolCnts.set(balance[1],0)
-        })
+        // balances.forEach((balance, rri) =>  {
+        //   symbolCnts.set(balance[1],0)
+        // })
 
 
 
@@ -157,23 +157,23 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
 
       var symbol = balance[1];
 
-      symbolCnts.set(balance[1],symbolCnts.get(balance[1])+1)
+      // symbolCnts.set(balance[1],symbolCnts.get(balance[1])+1)
 
-      // alert(symbolCnts.get(balance[1]))
-      if(symbolCnts.get(balance[1]) > 1){
-        appendStr = symbolCnts.get(balance[1]);
+      // // alert(symbolCnts.get(balance[1]))
+      // if(symbolCnts.get(balance[1]) > 1){
+      //   appendStr = symbolCnts.get(balance[1]);
 
-        for(let cnt = 0; cnt < parseInt(symbolCnts.get(balance[1])); cnt++){
-          //  alert(cnt)
+      //   for(let cnt = 0; cnt < parseInt(symbolCnts.get(balance[1])); cnt++){
+      //     //  alert(cnt)
 
-          if(Platform.OS === 'ios'){
-            symbol = symbol + " ";
-          } else{
-            symbol = " " + symbol + " ";
-          }
+      //     if(Platform.OS === 'ios'){
+      //       symbol = symbol + " ";
+      //     } else{
+      //       symbol = " " + symbol + " ";
+      //     }
           
-        }
-      }
+      //   }
+      // }
 
       // alert(symbol)
       // alert(balance[1] + "|"+symbolCnts.get(balance[1]));
@@ -198,7 +198,7 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
             <View key={rri}>
 
    <SeparatorBorder/>
-    <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: balance[1], sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
+    <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol: balance[1] + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
 
     <View style={styles.addrRowStyle}>
 
@@ -246,7 +246,7 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
           <View key={rri}>
 
  <SeparatorBorder/>
-  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultSymbol: symbol, sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
+  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
 
   <View style={styles.addrRowStyle}>
 
@@ -506,6 +506,7 @@ export class NetworkUtils {
               },
               "account_identifier": {
                 "address": enabledAddresses.get(activeAddress).radix_address
+                // "address": "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
               }
             }      
       
@@ -814,7 +815,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         {/* <Text style={{fontSize: 14, color:"white"}}>          </Text> */}
   
         <View style={styles.rowStyleHome}>
-        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultSymbol:"XRD", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW})}>
+        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol:"XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW})}>
         <View style={styles.rowStyle}>
         <IconFeather name="send" size={18} color="white" />
         <Text style={[{fontSize: 14}, getAppFont("white")]}> Send</Text>

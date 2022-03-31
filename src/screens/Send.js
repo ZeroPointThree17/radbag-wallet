@@ -179,18 +179,6 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
           alert("Transaction submitted.")
 
           finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
-        // const parsedResult = parseSignatureFromLedger(result)
-        // console.log("INSIDE RESULTS2")
-        // const signature = parsedResult.value.signature
-        // console.log("INSIDE RESULTS3")
-        // const remainingBytes = parsedResult.value.remainingBytes
-        // console.log("INSIDE RESULTS4")
-        // const signatureV = remainingBytes.readUInt8(0)
-        // console.log("INSIDE RESULTS5")
-        // console.log(`Signature: ${signature}`)
-        // console.log(`Signature V: ${signatureV}`)
-        // alert(`Signature: ${signature}`)
-        // alert(`Signature V: ${signatureV}`)
 
         }
       })
@@ -340,11 +328,6 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     }
     
   
-  
-  
-
-
-  
 
 function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
   fetch('https://raddish-node.com:6208/transaction/finalize', {
@@ -385,7 +368,7 @@ function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSi
 }
 
 
-function getTokenSymbols(setGettingBalances, rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts, appendStr){
+function getTokenSymbols(defaultRri, setGettingBalances, rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts, appendStr){
 
   var rri = rris.shift();
   var symbolsArr = inputSymbols.slice();
@@ -394,6 +377,8 @@ function getTokenSymbols(setGettingBalances, rris, inputSymbols, inputSymToRRIs,
   var namesMap = new Map(initialNamesMap);
   var updatedSymbolCnts = new Map(symbolCnts);
 
+  // alert(defaultRri)
+  if(defaultRri == rri || defaultRri == undefined){
   fetch('https://raddish-node.com:6208/token', {
     method: 'POST',
     headers: {
@@ -416,41 +401,43 @@ function getTokenSymbols(setGettingBalances, rris, inputSymbols, inputSymToRRIs,
 
     if(json.token != undefined){
  
-        var symbol = json.token.token_properties.symbol.toUpperCase();
+        // var symbol = json.token.token_properties.symbol.toUpperCase();
         var localSymbol = json.token.token_properties.symbol.toUpperCase();
 
-        if(updatedSymbolCnts.get(symbol) != undefined){     
-          // alert(updatedSymbolCnts.get(symbol))  
-          updatedSymbolCnts.set(symbol, updatedSymbolCnts.get(symbol)+1);
+        
+        // if(updatedSymbolCnts.get(symbol) != undefined){     
+        //   // alert(updatedSymbolCnts.get(symbol))  
+        //   updatedSymbolCnts.set(symbol, updatedSymbolCnts.get(symbol)+1);
           
-            // alert(updatedSymbolCnts.get(symbol))  
+        //     // alert(updatedSymbolCnts.get(symbol))  
 
-          for(var cnt = 0; cnt < parseInt(updatedSymbolCnts.get(symbol)); cnt++){
-            // alert(cnt)
+        //   for(var cnt = 0; cnt < parseInt(updatedSymbolCnts.get(symbol)); cnt++){
+        //     // alert(cnt)
 
-            if(Platform.OS === 'ios'){
-              localSymbol = localSymbol + " ";
-            } else{
-              localSymbol = " " + localSymbol + " ";
-            }
+        //     if(Platform.OS === 'ios'){
+        //       localSymbol = localSymbol + " ";
+        //     } else{
+        //       localSymbol = " " + localSymbol + " ";
+        //     }
 
-          }
+        //   }
 
-          //  alert(symbol)
-        } else{
-          updatedSymbolCnts.set(symbol,1);
-        }
+        //   //  alert(symbol)
+        // } else{
+        //   updatedSymbolCnts.set(symbol,1);
+        // }
 
         if(rri != "xrd_rr1qy5wfsfh"){
-          symbolsArr.push(localSymbol)
+          symbolsArr.push(localSymbol + ' (' + shortenAddress(rri) + ')')
         }
 
-        symbolToRRI.set(localSymbol, rri);
-        iconsMap.set(rri, json.token.token_properties.icon_url); 
-        namesMap.set(rri, json.token.token_properties.name)     
+        symbolToRRI.set(localSymbol + " ("+shortenAddress(rri)+")", rri);
+        iconsMap.set(localSymbol + " ("+shortenAddress(rri)+")", json.token.token_properties.icon_url); 
+        namesMap.set(localSymbol + " ("+shortenAddress(rri)+")", json.token.token_properties.name)     
     }
 
-    if(rris.length == 0){
+    // alert(defaultRri == rri)
+    if(rris.length == 0 || defaultRri == rri){
 
         setSymbols(symbolsArr);
         setSymbolToRRI(symbolToRRI);
@@ -478,17 +465,21 @@ function getTokenSymbols(setGettingBalances, rris, inputSymbols, inputSymToRRIs,
                 }
               
               else{
-                getTokenSymbols(setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
+                getTokenSymbols(defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
               }
             }
               ).catch((error) => {
                   console.error(error);
               });
+      } else{
+        getTokenSymbols(defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
+ 
+      }
           
 }
 
 
-function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames){
+function getBalances(defaultRri, firstTime, setGettingBalances, sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames){
    
   setGettingBalances(firstTime);
 
@@ -518,7 +509,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
 
           var balances = new Map();
           var rris = ["xrd_rr1qy5wfsfh"]
-          var symbols = ["XRD"]
+          var symbols = ["XRD (" + shortenAddress("xrd_rr1qy5wfsfh") + ")"]
  
           json.account_balances.liquid_balances.forEach( (balance) =>{
 
@@ -530,20 +521,21 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
         setBalances(balances);
 
          var initialSymbolToRRIMap = new Map();
-         initialSymbolToRRIMap.set("XRD","xrd_rr1qy5wfsfh")
+         initialSymbolToRRIMap.set("XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")","xrd_rr1qy5wfsfh")
 
          var initialIconsMap = new Map();
-         initialIconsMap.set("xrd_rr1qy5wfsfh", "https://assets.radixdlt.com/icons/icon-xrd-32x32.png")
+         initialIconsMap.set("XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")", "https://assets.radixdlt.com/icons/icon-xrd-32x32.png")
 
          var initialNamesMap = new Map();
-         initialNamesMap.set("xrd_rr1qy5wfsfh", "Radix")
+         initialNamesMap.set("XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")", "Radix")
 
          var initialTokenCnts = new Map();
-         initialNamesMap.set("XRD", 1)
+         initialTokenCnts.set("XRD", 1)
 
         var appendStr = "";
 
-         getTokenSymbols(setGettingBalances, rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts, appendStr)
+        getTokenSymbols(defaultRri, setGettingBalances, rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts, appendStr)     
+
         }
     }).catch((error) => {
         console.error(error);
@@ -555,7 +547,7 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
 
  const Send = ({route, navigation}) => {
  
-  const { defaultSymbol, sourceXrdAddr, hdpathIndex, isHWBool } = route.params;
+  var { defaultRri, defaultSymbol, sourceXrdAddr, hdpathIndex, isHWBool } = route.params;
   const [privKey_enc, setPrivKey_enc] = useState();
   const [public_key, setPublic_key] = useState();
   const [destAddr, onChangeDestAddr] = useState();
@@ -582,18 +574,13 @@ function getBalances(firstTime, setGettingBalances, sourceXrdAddr, setSymbols, s
   const [historyRows, setHistoryRows] = useState([]);
   const [encryptMsgflag, setEncryptMsgflag] = useState(false)
 
+  // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
+
   useEffect( () => {
-    // var symbolsTemp = [];
-    // var currentValTemp = null;
-    // var currentSymbolTemp="";
-    // var rriTemp="";
 
-    getBalances(true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+    getBalances(defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+    getBalances(undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
     fetchTxnHistory(sourceXrdAddr, setHistoryRows)
-    // onChangeSymbol(currentSymbolTemp);
-
-    // startScan( setBluetoothHWDescriptor);
-    // alert(bluetoothHWDescriptor)
   
 },[]);
 
@@ -604,9 +591,9 @@ useInterval(() => {
     getUSB(setTransport, setUsbConn, setDeviceName);
   }
 
-  getBalances(false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+  getBalances(undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
   fetchTxnHistory(sourceXrdAddr, setHistoryRows);
-}, 6000);
+}, 10000);
 
 
 // alert(defaultSymbol)
@@ -632,7 +619,13 @@ useInterval(() => {
 { gettingBalances &&
 <Progress.Circle style={{alignSelf:"center", marginBottom:10, marginRight: 12}} size={25} indeterminate={true} />
 }
-<ImageBackground
+
+
+      <View style={[{alignSelf: "center"}]}>
+
+      <View style={[styles.rowStyle, {alignSelf: "center"}]}>
+
+      <ImageBackground
     style={{
       width: 25,
       height: 25
@@ -643,15 +636,17 @@ useInterval(() => {
 <Image style={{width: 25, height: 25}}
     defaultSource={GenericToken}
     source={
-      {uri: iconURIs.get(symbolToRRI.get(symbol))}
+      {uri: iconURIs.get(symbol)}
     }
     
       /> 
       </ImageBackground>
-  <Text style={[{fontSize:20}, getAppFont("black")]}> {tokenNames.get(symbolToRRI.get(symbol))} ({symbol.trim()})</Text>
-
+  <Text style={[{fontSize:20, textAlign:"center"}, getAppFont("black")]}> {tokenNames.get(symbol) + " (" + symbol.split(" (")[0] + ")"}</Text>
+  </View>
+  <Text style={[{fontSize:14, textAlign:"center"}, getAppFont("black")]}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>
+  </View>
      </View>
-     <Text style={[{color: 'black', textAlign: "center"}, getAppFont("black")]}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>
+     {/* <Text style={[{color: 'black', textAlign: "center"}, getAppFont("black")]}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text> */}
      <Text
        style={[{marginVertical:4, textAlign: "center", textDecorationLine: "underline"}, getAppFont("blue")]}
        disabled = {symbolToRRI.get(symbol) == undefined}
@@ -743,7 +738,7 @@ onPress={()=>{
 
 
 <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to send:</Text>
-<View style={styles.rowStyle}>
+{/* <View > */}
 <TextInput ref={amountRef}
         style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15}, getAppFont("black")]}
         placeholder='Amount'
@@ -762,10 +757,13 @@ onPress={()=>{
         }  
       }
       />
-
+<Separator/>
+<Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Token type:</Text>
 { symbols.length > 0 &&
+<React.Fragment>
+  <View style={{alignSelf: 'center'}}>
 <SelectDropdown
- buttonStyle={[{backgroundColor:"#183A81", flex:0.5, borderWidth:1, marginRight:10, borderRadius: 15}, getAppFont("black")]}
+ buttonStyle={[{backgroundColor:"#183A81", width: '100%', borderWidth:1, marginRight:0, borderRadius: 15}, getAppFont("black")]}
  buttonTextStyle={{color:"white"}}
 	data={symbols}
   defaultValue={defaultSymbol}
@@ -782,8 +780,9 @@ onPress={()=>{
 		// if data array is an array of objects then return item.property to represent item in dropdown
 		return item
 	}}
-/> }
-</View>
+/></View></React.Fragment>}
+{/* </View> */}
+<Separator/>
 <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
 {isHWBool==true && <React.Fragment><Separator/><Separator/>

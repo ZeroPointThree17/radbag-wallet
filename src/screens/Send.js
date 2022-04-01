@@ -46,7 +46,7 @@ String.prototype.hexEncode = function(){
   var result = "";
   for (i=0; i<this.length; i++) {
       hex = this.charCodeAt(i).toString(16);
-      result += ("000"+hex).slice(-4);
+      result += ("0"+hex).slice(-2);
   }
 
   return result

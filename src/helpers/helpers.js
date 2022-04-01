@@ -271,9 +271,9 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 
 String.prototype.hexDecode = function(){
   var j;
-  var hexes = this.match(/.{1,4}/g) || [];
+  var hexes = this.match(/.{1,2}/g) || [];
   var back = "";
-  for(j = 1; j<hexes.length; j++) {
+  for(j = 0; j<hexes.length; j++) {
       back += String.fromCharCode(parseInt(hexes[j], 16));
   }
 
@@ -323,7 +323,7 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
            json.transactions.forEach(txn => 
               {
                  
-                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode()}</Text></View>
+                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.substring(4,txn.metadata.message.length).hexDecode()}</Text></View>
                   
                   txn.actions.forEach(action => {
 

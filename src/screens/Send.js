@@ -574,7 +574,7 @@ function getBalances(defaultRri, firstTime, setGettingBalances, sourceXrdAddr, s
   const [historyRows, setHistoryRows] = useState([]);
   const [encryptMsgflag, setEncryptMsgflag] = useState(false)
 
-  // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
+  // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
 
   useEffect( () => {
 

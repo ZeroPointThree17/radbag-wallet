@@ -270,6 +270,12 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 
 
 String.prototype.hexDecode = function(){
+
+  var back = "";
+
+  if(this.startsWith("0001")){
+    back = "<This message is encrypted. Decrypting messages on this wallet is currently not implemented.>"
+  } else{
   var j;
   var hexes = this.match(/.{1,2}/g) || [];
 
@@ -279,8 +285,7 @@ String.prototype.hexDecode = function(){
         back += String.fromCharCode(parseInt(hexes[j], 16));
     }
   }
-
-  console.log("BK"+hexes)
+}
 
   return back;
 }

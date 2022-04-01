@@ -18,7 +18,7 @@ var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
 var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import CodePin from 'react-native-pin-code';
 
 function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
    
@@ -731,9 +731,11 @@ console.log("WALLETS: "+JSON.stringify(wallets));
               onRefresh={onRefresh}/>
             }>
             <View  > 
-                
-                <View style={styles.rowStyle}>
 
+                <View style={styles.rowStyle}>
+                <View>
+
+  </View>
                 <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
             
             <View style={styles.rowStyle}>

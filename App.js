@@ -1,8 +1,8 @@
 import './shim';
 import 'react-native-gesture-handler'
-import React, {useState} from 'react';
+import React, {useRef, useState, useEffect } from 'react';
 import type {Node} from 'react';
-import { StyleSheet, Text, View, SafeAreaView, useColorScheme, LogBox } from 'react-native';
+import { StyleSheet, AppState, View, SafeAreaView, useColorScheme, LogBox } from 'react-native';
 import { NavigationContext, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 var SQLite = require('react-native-sqlite-storage');
@@ -22,13 +22,77 @@ import Staking from './src/screens/Staking';
 import ImportSelect from './src/screens/ImportSelect';
 import HardwareWallet from './src/screens/HardwareWallet';
 import {openCB, errorCB} from './src/helpers/helpers';
+import CodePin from 'react-native-pin-code';
 
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
 
+function navContainer(Stack, firstTimer){
+
+  var navContainerJSX = [];
+
+  navContainerJSX.push(
+  <React.Fragment><NavigationContainer onReady={() => RNBootSplash.hide()}>
+
+<Stack.Navigator screenOptions={{
+headerStyle: {
+backgroundColor: '#183A81',
+},
+headerTintColor: '#fff',
+headerTitleStyle: {
+fontWeight: 'bold'
+},
+}}>{ firstTimer == true
+?<Stack.Screen name="Welcome to the RadBag Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>:<Stack.Screen name="RadBag Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />}
+<Stack.Screen name="Mnemonic" component={CreateWallet} options={{ headerTitleAlign: 'center' }}/>
+<Stack.Screen name="Mnemonic Input" component={MnemonicInput} options={{ headerTitleAlign: 'center' }}/>
+<Stack.Screen name="Wallet Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
+<Stack.Screen name="RadBag Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
+<Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
+<Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
+<Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
+<Stack.Screen name="Import Select" component={ImportSelect} options={{ headerTitleAlign: 'center' }}/>
+<Stack.Screen name="Hardware Wallet" component={HardwareWallet} options={{ headerTitleAlign: 'center' }}/>
+
+</Stack.Navigator>
+<FlashMessage position="center" style={{height:60}}/>
+</NavigationContainer>
+</React.Fragment>
+)
+
+return navContainerJSX;
+}
+
+
 
 const App: () => Node = () => {
+
+  
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const [correctPin, setCorrectPin] = useState(false);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        setCorrectPin(false)
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      console.log("AppState", appState.current);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+
   const isDarkMode = useColorScheme() === 'dark';
   const navigation = React.useContext(NavigationContext);
   const backgroundStyle = {
@@ -60,40 +124,27 @@ db.transaction((tx) => {
 
 LogBox.ignoreAllLogs();
 
+var jsx = undefined
+
+if(correctPin == false){
+jsx = <CodePin
+code="2018" // code.length is used if you not pass number prop
+success={() =>  setCorrectPin(true)} // If user fill '2018', success is called
+text="A simple Pin code component" // My title
+error="You fail" // If user fail (fill '2017' for instance)
+autoFocusFirst={false} // disabling auto-focus
+/>
+}
+
+if(correctPin == true){
+  jsx = navContainer(Stack, firstTimer)
+  }
 
   return (
-
-//  <View><Text>ELLO</Text></View>
- <NavigationContainer onReady={() => RNBootSplash.hide()}>
-   <Stack.Navigator screenOptions={{
-        headerStyle: {
-          backgroundColor: '#183A81',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-          fontFamily:"AppleSDGothicNeo-Regular"
-        },
-      }}>{ firstTimer == true
-  ?<Stack.Screen name="Welcome to the RadBag Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>:<Stack.Screen name="RadBag Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />}
-      <Stack.Screen name="Mnemonic" component={CreateWallet} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="Mnemonic Input" component={MnemonicInput} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="Wallet Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="RadBag Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
-      <Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="Import Select" component={ImportSelect} options={{ headerTitleAlign: 'center' }}/>
-      <Stack.Screen name="Hardware Wallet" component={HardwareWallet} options={{ headerTitleAlign: 'center' }}/>
-
-    </Stack.Navigator>
-    <FlashMessage position="center" style={{height:60}}/>
-    </NavigationContainer>
-   
-
-
+    jsx
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

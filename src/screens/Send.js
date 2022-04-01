@@ -63,7 +63,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
   }
 
   if(message != undefined && message.length > 0){
-    message = (" " + message).hexEncode();
+    message = "0000" + message.hexEncode();
   }
 
   // alert(rri)
@@ -105,8 +105,8 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  "address": xrdAddr
-                  // "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+                  // "address": xrdAddr
+                  "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
                 },
                 "amount": {
                   "token_identifier": {

@@ -323,7 +323,7 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
            json.transactions.forEach(txn => 
               {
                  
-                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode().trim()}</Text></View>
+                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode()}</Text></View>
                   
                   txn.actions.forEach(action => {
 

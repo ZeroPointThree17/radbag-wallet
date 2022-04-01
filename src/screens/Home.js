@@ -867,7 +867,7 @@ navigation.dispatch(pushAction);
      <View style={styles.rowStyle}>
      <IconEntypo name="wallet" size={16} color="black" />
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={[styles.buttonText, getAppFont("black")]}>Add Wallet</Text></View>
+<Text style={[styles.buttonText, getAppFont("black")]}>New Wallet</Text></View>
 </TouchableOpacity>
 </View>
 <View style={styles.rowStyleHome}>  

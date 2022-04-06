@@ -12,6 +12,7 @@
     "generate": "react-native generate-bootsplash ./src/assets/radish_nobackground.png --background-color=219D7D   --logo-width=192 --assets-path=./src/assets --flavor=main"
   },
   "dependencies": {
+    "@dusan-ivanco/react-native-pincode": "^1.22.9",
     "@ledgerhq/react-native-hid": "^6.24.1",
     "@ledgerhq/react-native-hw-transport-ble": "^6.25.1",
     "@noble/secp256k1": "^1.4.0",
@@ -37,6 +38,7 @@
     "constants": "^0.0.2",
     "crypto-js": "^4.1.1",
     "events": "^1.1.1",
+    "fedapay-react-native-pincode": "^1.2.5",
     "hdkey": "^2.0.1",
     "hdwallet-accounts": "^0.0.1",
     "https-browserify": "^0.0.1",
@@ -72,6 +74,7 @@
     "react-native-image-gallery": "2.1.5",
     "react-native-image-layout": "^5.9.1",
     "react-native-key-encoder": "^1.1.6",
+    "react-native-keychain": "^8.0.0",
     "react-native-level-fs": "^3.0.1",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-os": "^1.2.6",
@@ -96,6 +99,7 @@
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-svg": "^12.1.0",
     "react-native-swipeable-view-stack": "^1.0.4",
+    "react-native-touch-id": "^4.4.1",
     "react-native-touchable-scale": "^2.1.2",
     "react-native-vector-icons": "^9.0.0",
     "readable-stream": "^1.0.33",

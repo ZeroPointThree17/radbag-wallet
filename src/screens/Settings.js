@@ -1,5 +1,5 @@
-import React from 'react';
-import { RefreshControl, ScrollView, Text, Image, View, StyleSheet } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { RefreshControl, Switch, ScrollView, Text, Image, View, StyleSheet, Alert } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
@@ -7,7 +7,11 @@ import IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 var Raddish = require("../assets/radish_nobackground.png");
 import { Separator, SeparatorBorder } from '../helpers/jsxlib';
 import IconAnt from 'react-native-vector-icons/AntDesign';
-import { getAppFont } from '../helpers/helpers';
+import { getAppFont, useInterval } from '../helpers/helpers';
+import IconMaterialMain  from 'react-native-vector-icons/MaterialIcons'
+import PINCode from '@dusan-ivanco/react-native-pincode'
+import TouchID from 'react-native-touch-id';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
@@ -22,16 +26,78 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
   setRefreshing(false);
 }
 
+const optionalConfigObject = {
+  title: 'Authentication Required', // Android
+  imageColor: '#e00606', // Android
+  imageErrorColor: '#ff0000', // Android
+  sensorDescription: 'Touch sensor', // Android
+  sensorErrorDescription: 'Failed', // Android
+  cancelText: 'Cancel', // Android
+  fallbackLabel: 'Show Passcode', // iOS (if empty, then label is hidden)
+  unifiedErrors: false, // use unified error messages (default false)
+  passcodeFallback: true, // iOS - allows the device to fall back to using the passcode, if faceid/touch is not available. this does not mean that if touchid/faceid fails the first few times it will revert to passcode, rather that if the former are not enrolled, then it will use the passcode.
+};
+
+function _pressHandler() {
+  TouchID.authenticate('to demo this react-native component', optionalConfigObject)
+    .then(success => {
+      alert('Authenticated Successfully');
+    })
+    .catch(error => {
+      alert(error.message)
+    });
+}
+
+
  const Settings = ({route, navigation}) => {
+
+
 
   const [refreshing, setRefreshing] = React.useState(false);
   const [refreshCount, setRefreshCount] = React.useState(11);
   const [TKUnlock, setTKUnlock] = React.useState(false);
 
+  const [isEnabled, setIsEnabled] = useState(false);
 
+
+  useEffect(() => {
+    AsyncStorage.getItem('@AppPIN').then( (appPin) => {
+      setIsEnabled(appPin != undefined);
+    })
+  }, []);
+
+  useInterval(() => {
+    AsyncStorage.getItem('@AppPIN').then( (appPin) => {
+      setIsEnabled(appPin != undefined);
+    })
+  }, 2000);
+
+  const toggleSwitch = () => {
+
+    if(!isEnabled){
+      navigation.navigate('PIN')
+    } else{
+      AsyncStorage.removeItem('@AppPIN');
+      setIsEnabled(false);
+    }
+    // setIsEnabled(previousState => !previousState);
+
+    // if(!isEnabled){
+    //   navigation.navigate('PIN')
+    // }
+  }
+
+  TouchID.authenticate('to demo this react-native component')
+  .then(success => {
+    // Success code
+  })
+  .catch(error => {
+    // Failure code
+  });
 
  return ( 
   <View style={{flex:1}}>
+
      <ScrollView style={{flex:1}}
         refreshControl={
             <RefreshControl
@@ -96,7 +162,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
       <Text>Address Options</Text>
     </ListItem.Title>
     <ListItem.Subtitle style={[{fontSize:14,  color: 'black' }, getAppFont("black")]}>
-      <Text>Options for the currently selected address</Text>
+      <Text>Rename or remove the currently selected address</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
@@ -104,7 +170,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
 <SeparatorBorder/>
 
 <ListItem
- onPress={() => {navigation.navigate('Wallet Options')}}
+ onPress={() => {_pressHandler()}}
   Component={TouchableScale}
   friction={90} //
   tension={100} // These props are passed to the parent component (here TouchableScale)
@@ -122,7 +188,7 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
       <Text>Wallet Options</Text>
     </ListItem.Title>
     <ListItem.Subtitle style={[{fontSize:14,  color: 'black' }, getAppFont("black")]}>
-      <Text>Options for the currently selected wallet</Text>
+      <Text>Rename or remove the currently selected wallet</Text>
     </ListItem.Subtitle>
   </ListItem.Content>
   <ListItem.Chevron color="black" />
@@ -159,7 +225,22 @@ function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
 </React.Fragment>
  }
 
-
+<View style={[{backgroundColor:"white"}]}>
+<View style={[styles.rowStyle, {marginLeft: 15, marginTop: 10, marginBottom: 10, flexDirection: "row"}]}>
+<IconMaterialMain style={{alignSelf:"center"}} name="fiber-pin" size={20} color="#4F8EF7"/>
+<Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Enable App PIN?</Text>
+<View style={{flex:0.1, alignItems:"flex-end", marginRight: 10}}>
+<Switch 
+        trackColor={{ false: "#767577", true: "#81b0ff" }}
+        thumbColor={isEnabled ? "blue" : "#f4f3f4"}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleSwitch}
+        value={isEnabled}
+      />
+      </View>
+      </View>
+      </View>
+      <SeparatorBorder/>
 </ScrollView>
 
 

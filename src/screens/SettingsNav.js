@@ -5,6 +5,7 @@ import Settings from './Settings';
 import MnemonicDisplay from './MnemonicDisplay';
 import AddressOptions from './AddressOptions';
 import WalletOptions from './WalletOptions';
+import PIN from './PIN';
 import TokenCreator from './TokenCreator';
 import AdvancedOptions from './AdvancedOptions';
 
@@ -18,6 +19,7 @@ const SettingsNav = ({route, navigation}) => {
     <Stack.Screen name="Mnemonic Display" component={MnemonicDisplay} options={{ headerTitleAlign: 'center' }}/>
     <Stack.Screen name="Address Options" component={AddressOptions} options={{ headerTitleAlign: 'center' }}/>
     <Stack.Screen name="Wallet Options" component={WalletOptions} options={{ headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="PIN" component={PIN} options={{ headerTitleAlign: 'center' }}/>
     <Stack.Screen name="Advanced Options" component={AdvancedOptions} options={{ headerTitleAlign: 'center' }}/>
    <Stack.Screen name="Token Creator" component={TokenCreator} options={{
       tabBarLabel: 'Token Creator',

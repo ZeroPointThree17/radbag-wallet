@@ -369,11 +369,13 @@ PODS:
     - React-perflogger (= 0.66.4)
   - RNBootSplash (4.1.3):
     - React-Core
-  - RNCAsyncStorage (1.17.0):
+  - RNCAsyncStorage (1.17.3):
     - React-Core
   - RNCClipboard (1.8.5):
     - React-Core
   - RNGestureHandler (2.2.0):
+    - React-Core
+  - RNKeychain (8.0.0):
     - React-Core
   - RNOS (1.2.6):
     - React
@@ -416,6 +418,8 @@ PODS:
     - React
   - RNVectorIcons (9.1.0):
     - React-Core
+  - TouchID (4.4.1):
+    - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -488,6 +492,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNOS (from `../node_modules/react-native-os`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -495,6 +500,7 @@ DEPENDENCIES:
   - RNScrypt (from `../node_modules/react-native-scrypt`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - TouchID (from `../node_modules/react-native-touch-id`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -604,6 +610,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNPermissions:
@@ -618,6 +626,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  TouchID:
+    :path: "../node_modules/react-native-touch-id"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -677,9 +687,10 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   RNBootSplash: 4f34ccf1a0c2573cb4ba918ab7f69d51d610827f
-  RNCAsyncStorage: 4efdcd2f7378421b29467c9de58f43552b60cf5b
+  RNCAsyncStorage: 005c0e2f09575360f142d0d1f1f15e4ec575b1af
   RNCClipboard: cc054ad1e8a33d2a74cd13e565588b4ca928d8fd
   RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
+  RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNPermissions: f7ebe52db07c00901127966ca080b4ec6a6ceb0a
   RNReanimated: e8afbe2a9e08e9e778ea72ddb1a8533445812621
@@ -687,9 +698,10 @@ SPEC CHECKSUMS:
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: 7923e585eaeb139b9f4531d25a125a1500162a0b
+  TouchID: ba4c656d849cceabc2e4eef722dea5e55959ecf4
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 0537bab9e3285580b0f23674084236d25c1c97d7
+PODFILE CHECKSUM: 3056e765af351da3b215725c500742bad5933b9d
 
 COCOAPODS: 1.11.2

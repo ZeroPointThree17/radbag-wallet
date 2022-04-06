@@ -1,9 +1,18 @@
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 platform :ios, '13.0'
 
 target 'RaddishWallet' do
+  use_expo_modules!
+  post_integrate do |installer|
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
+    end
+  end
   config = use_native_modules!
 
   use_react_native!(
@@ -13,6 +22,8 @@ target 'RaddishWallet' do
   )
 
 
+
+  pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
 
   target 'RaddishWalletTests' do
     inherit! :complete
@@ -37,4 +48,5 @@ pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite
 pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 permissions_path = '../node_modules/react-native-permissions/ios'
 pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+pod 'TouchID', :path => "../node_modules/react-native-touch-id"
 end

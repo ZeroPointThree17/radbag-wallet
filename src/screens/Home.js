@@ -20,6 +20,7 @@ var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+
 function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
    
    fetch('https://raddish-node.com:8082/rad_token_prices', {
@@ -45,7 +46,7 @@ function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
     <View style={styles.separatorBorder} />
     );
 
-function getWallets(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances) {
+function getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances) {
 
     db.transaction((tx) => {
 
@@ -69,7 +70,7 @@ function getWallets(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, set
             
              setWallets(wallets);
     
-             getActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances, hwWallets, setIsHW);
+             getActiveWallet(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances, hwWallets, setIsHW);
              
              console.log("inside get wallets");
              console.log("inside get wallets2");
@@ -78,7 +79,7 @@ function getWallets(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, set
         
 }
 
-function getEnabledAddresses(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, wallet_id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
+function getEnabledAddresses(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, wallet_id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
 
         var addresses = new Map();
 
@@ -96,7 +97,7 @@ function getEnabledAddresses(setTokenPrices, getCurrData, setCurrValue, setCurrL
             }
 
             setEnabledAddresses(addresses);
-            getActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveAddress, addresses, addressBalances, setAddressBalances);
+            getActiveAddress(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveAddress, addresses, addressBalances, setAddressBalances);
 
           }, errorCB); 
         });
@@ -323,7 +324,7 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
           onBlur={() => setIsFocus(false)}
           onChange={item => {
             storeCurrData(item)
-           setCurrLabel(item.label);
+            setCurrLabel(item.label);
             setCurrValue(item.value);
             setIsFocus(true);
           }}
@@ -366,12 +367,15 @@ function updateActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLa
 export function updateActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, address_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
     db.transaction((tx) => {
         tx.executeSql("UPDATE active_address set id = '"+address_id+"'", [], (tx, results) => {
-            getWallets(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+          AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+            
+            getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+          })
         }, errorCB);
     }); 
 }
 
-function getActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db,setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances, hwWallets, setIsHW){
+function getActiveWallet(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db,setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances, hwWallets, setIsHW){
     db.transaction((tx) => {
         tx.executeSql("SELECT id FROM active_wallet", [], (tx, results) => {
         
@@ -391,13 +395,13 @@ function getActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLabel
                   setIsHW(false);
                 }
           
-                getEnabledAddresses(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+                getEnabledAddresses(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
 
         }, errorCB);
     }); 
 }
 
-function getActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveAddress, addresses, addressBalances, setAddressBalances){
+function getActiveAddress(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveAddress, addresses, addressBalances, setAddressBalances){
 
     db.transaction((tx) => {
         tx.executeSql("SELECT id FROM active_address", [], (tx, results) => {
@@ -412,7 +416,7 @@ function getActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabe
 
                 setActiveAddress(id);
                 
-                getBalances(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, addresses, id, addressBalances, setAddressBalances)
+                getBalances(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, addresses, id, addressBalances, setAddressBalances)
 
 
         }, errorCB);
@@ -429,7 +433,7 @@ export class NetworkUtils {
 
      var rri = uniqueRRIs.pop();
 
-     fetch('https://raddish-node.com:6208/token', {
+     fetch(global.gateways[gatewayIdx] + '/token', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -487,12 +491,13 @@ export class NetworkUtils {
  
   }
   
-  async function getBalances(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, enabledAddresses, activeAddress, addressBalances, setAddressBalances){
+  async function getBalances(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, enabledAddresses, activeAddress, addressBalances, setAddressBalances){
    
     const isConnected = await NetworkUtils.isNetworkAvailable();
- 
+    // alert(gatewayIdx)
+    // alert(global.gateways[gatewayIdx])
     if(isConnected){
-    await fetch('https://raddish-node.com:6208/account/balances', {
+    await fetch(global.gateways[gatewayIdx] + '/account/balances', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -532,6 +537,11 @@ export class NetworkUtils {
           }
       }).catch((error) => {
           console.error(error);
+          if(gatewayIdx + 1 > global.gateways.length){
+            AsyncStorage.setItem('@gatewayIdx',"0");
+          } else{
+            AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+          }
       });
     } else{
         // alert("No internet connection available. Please connect to the internet.");
@@ -619,10 +629,15 @@ const Home = ({route, navigation}) => {
       }
     }
 
+
+
     const onRefresh = React.useCallback(() => {
-      getWallets(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+      AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+            
+      getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
     setRefreshing(true);
     wait(500).then(() => setRefreshing(false));
+  })
      }, []);
 
 
@@ -647,14 +662,20 @@ const Home = ({route, navigation}) => {
     }
 )
         useEffect(() => {
-          getWallets(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+          AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+            
+          getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
           // fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
+        })
         }, []);
 
 
         useInterval(() => {
-          getWallets(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
+          AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+    
+          getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
           // fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
+        })
         }, 10000);
 
         // useEffect(() => {
@@ -758,7 +779,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           onBlur={() => setIsFocus(false)}
           onChange={item => {
             updateActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
-           setLabel(item.label);
+            setLabel(item.label);
             setValue(item.value);
             setIsFocus(true);
           }}

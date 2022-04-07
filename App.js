@@ -97,13 +97,14 @@ return navContainerJSX;
 
 const App: () => Node = () => {
 
-
-
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [correctPin, setCorrectPin] = useState(true);
-
+  global.gateways = ["https://raddish-node.com:6208","https://mainnet.clana.io","https://mainnet-gateway.radixdlt.com"]
+  
   useEffect(() => {
+
+    AsyncStorage.setItem('@gatewayIdx',"0");
 
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setIsPINEnabled(appPin != undefined);

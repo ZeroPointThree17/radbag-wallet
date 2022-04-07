@@ -291,7 +291,7 @@ String.prototype.hexDecode = function(){
 }
 
 
-export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
+export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly){
 
   if(stakingOnly === undefined){
     stakingOnly = false;

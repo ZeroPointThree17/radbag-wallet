@@ -38,6 +38,7 @@ import {
 	SignTXOutput,
 } from '@radixdlt/hardware-wallet'
 import { log, BufferReader } from '@radixdlt/util'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 String.prototype.hexEncode = function(){
@@ -378,7 +379,7 @@ function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_
 }
 
 
-function getTokenSymbols(defaultRri, setGettingBalances, rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts, appendStr){
+function getTokenSymbols(gatewayIdx, defaultRri, setGettingBalances, rris, inputSymbols, inputSymToRRIs, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,initialIconsMap,setIconURIs, initialNamesMap, setTokenNames, symbolCnts, appendStr){
 
   var rri = rris.shift();
   var symbolsArr = inputSymbols.slice();
@@ -475,7 +476,7 @@ function getTokenSymbols(defaultRri, setGettingBalances, rris, inputSymbols, inp
                 }
               
               else{
-                getTokenSymbols(defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
+                getTokenSymbols(gatewayIdx, defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
               }
             }).catch((error) => {
               console.error(error);
@@ -486,14 +487,14 @@ function getTokenSymbols(defaultRri, setGettingBalances, rris, inputSymbols, inp
               }
             });
       } else{
-        getTokenSymbols(defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
+        getTokenSymbols(gatewayIdx, defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
  
       }
           
 }
 
 
-function getBalances(defaultRri, firstTime, setGettingBalances, sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames){
+function getBalances(gatewayIdx, defaultRri, firstTime, setGettingBalances, sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames){
    
   setGettingBalances(firstTime);
 
@@ -548,7 +549,7 @@ function getBalances(defaultRri, firstTime, setGettingBalances, sourceXrdAddr, s
 
         var appendStr = "";
 
-        getTokenSymbols(defaultRri, setGettingBalances, rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts, appendStr)     
+        getTokenSymbols(gatewayIdx, defaultRri, setGettingBalances, rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts, appendStr)     
 
         }
       }).catch((error) => {
@@ -596,10 +597,12 @@ function getBalances(defaultRri, firstTime, setGettingBalances, sourceXrdAddr, s
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
 
   useEffect( () => {
-
-    getBalances(defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    getBalances(undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    fetchTxnHistory(sourceXrdAddr, setHistoryRows)
+    AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+           
+    getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+    getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows)
+    })
   
 },[]);
 
@@ -610,8 +613,11 @@ useInterval(() => {
     getUSB(setTransport, setUsbConn, setDeviceName);
   }
 
-  getBalances(undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-  fetchTxnHistory(sourceXrdAddr, setHistoryRows);
+  AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+          
+  getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+  fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows);
+  })
 }, 10000);
 
 

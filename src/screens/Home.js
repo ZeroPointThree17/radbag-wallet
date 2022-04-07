@@ -20,7 +20,6 @@ var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-
 function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
    
    fetch('https://raddish-node.com:8082/rad_token_prices', {
@@ -37,7 +36,7 @@ function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
     }).catch((error) => {
       setTokenPrices(undefined);
       getCurrData(setCurrValue, setCurrLabel);
-    });
+    })
 }
 
 
@@ -429,7 +428,7 @@ export class NetworkUtils {
       return response.isConnected;
   }}
 
-   function getTokenMetadata(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances){
+   function getTokenMetadata(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances){
 
      var rri = uniqueRRIs.pop();
 
@@ -480,7 +479,7 @@ export class NetworkUtils {
               setAddressBalances(newBalance);
               getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel)
             } else{
-              getTokenMetadata(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newBalance, setAddressBalances)
+              getTokenMetadata(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newBalance, setAddressBalances)
             }
   
              
@@ -538,7 +537,7 @@ export class NetworkUtils {
       
                var uniqueRRIs = [...new Set(rris)]
                
-               getTokenMetadata(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances);
+               getTokenMetadata(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances);
           }
       }).catch((error) => {
           console.error(error);

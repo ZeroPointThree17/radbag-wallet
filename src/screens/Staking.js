@@ -374,9 +374,9 @@ async function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,pri
 
 
 
-function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
+function getStakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
-  fetch('https://raddish-node.com:6208/account/stakes', {
+  fetch(global.gateways[gatewayIdx] + '/account/stakes', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -743,12 +743,18 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       // stakeValidators.forEach((val)=>{alert(JSON.stringify(val))})
 
   useEffect(() => {
-    getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked)
-}, []);
+    
+    AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+    getStakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked)
+    })
+  }, []);
 
 useInterval(() => {
-  getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
-  fetchTxnHistory(currAddr, setHistoryRows, true)
+
+  AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {     
+  getStakeData(gatewayIdx, gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+  fetchTxnHistory(gatewayIdx, currAddr, setHistoryRows, true)
+  })
 
   if (transport == undefined) {
     startScan(setTransport, setDeviceID, setDeviceName);

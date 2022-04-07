@@ -33,19 +33,31 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
 
   var navContainerJSX = [];
 
+  const customTexts = {
+
+    enter: {
+      title: 'Enter PIN',
+      subTitle: 'Enter 6-digit PIN to access RadBag Wallet',
+      error: 'Wrong PIN',
+      backSpace: 'Delete',
+      footerText: undefined
+    },
+  }
+
   navContainerJSX.push(
   <React.Fragment>
     <View style={{height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
-    <PinCode mode={PinCodeT.Modes.Enter} visible={correctPin == false && isPINEnabled} 
-
+    <PinCode allowReset="false" mode={PinCodeT.Modes.Enter} visible={firstTimer == false && correctPin == false && isPINEnabled} 
+textOptions={customTexts}
 onEnterSuccess={(pin) => setCorrectPin(true)}
 
 options={{
   pinLength: 6,
   maxAttempt: 999999999,
   lockDuration: 10000,
-  allowedReset: true,
-  disableLock: false
+  allowedReset: false,
+  disableLock: false,
+  dotColor: "white"
 }}
 
  /> 
@@ -89,7 +101,7 @@ const App: () => Node = () => {
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const [correctPin, setCorrectPin] = useState(false);
+  const [correctPin, setCorrectPin] = useState(true);
 
   useEffect(() => {
 

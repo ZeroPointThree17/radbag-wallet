@@ -12,29 +12,43 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PIN = ({route, navigation}) => {
  
+  const customTexts = {
+
+    set: {
+        title: 'Set up a new PIN',
+        subTitle: 'Enter 6 digits',
+        repeat: 'Enter new PIN again',
+        error: "PIN don't match. Start the process again.",
+        cancel: undefined,
+    },
+  }
+
  return ( 
   <View style={styles.container}> 
     <ScrollView styles={{backgroundColor:"white"}}>
-    <PinCode mode={PinCodeT.Modes.Set} visible={true} 
+    <PinCode mode={PinCodeT.Modes.Set} visible={true}  onSetCancel={() => {}}
           options={{
             pinLength: 6,
             maxAttempt: 9999999,
             lockDuration: 10000,
             allowedReset: true,
-            disableLock: false
+            disableLock: false,
+            dotColor: "black"
           }}
       styles={{ 
-        main: { backgroundColor:"black" },
+        main: { backgroundColor:"white" },
         enter: {
-          titleContainer: { borderWidth: 1 },
-          title: { color: 'yellow' },
-          subTitle: { color: 'red' },
-          buttonContainer: { borderWidth: 1 },
-          buttonText: { color: 'blue' },
-          buttons: { backgroundColor: 'green' },
-          footer: { borderWidth: 1 },
+          titleContainer: { borderWidth: 0 },
+          title: { color: 'black' },
+          subTitle: { color: 'black' },
+          buttonContainer: { borderWidth: 0 , color: 'black' },
+          buttonText: { color: 'black' },
+          buttons: { backgroundColor: 'white', borderWidth: 1 },
+          footer: { borderWidth: 0 },
           footerText: { color: 'purple' },
-          pinContainer: { borderWidth: 1 }
+          pinContainer: { borderWidth: 0,  },
+          
+         
         },
       }} 
       onSetSuccess={(newPin) => {
@@ -43,8 +57,10 @@ const PIN = ({route, navigation}) => {
             alert('App PIN successfully set!')
             navigation.navigate('Settings')
           })
-        }
+        } 
       }
+
+      textOptions={customTexts}
       />
 
   </ScrollView>

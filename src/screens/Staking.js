@@ -18,6 +18,7 @@ import { HDPathRadix } from '@radixdlt/crypto'
 import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
 import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){

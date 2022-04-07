@@ -11,6 +11,7 @@ import { Separator } from '../helpers/jsxlib';
 import { getAppFont, useInterval, openCB, errorCB, formatNumForDisplay } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 var radio_props = [

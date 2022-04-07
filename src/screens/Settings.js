@@ -12,6 +12,7 @@ import IconMaterialMain  from 'react-native-vector-icons/MaterialIcons'
 import PINCode from '@dusan-ivanco/react-native-pincode'
 import TouchID from 'react-native-touch-id';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Progress from 'react-native-progress';
 
 
 function onRefresh(refreshCount, setRefreshCount, setRefreshing, setTKUnlock) {
@@ -38,26 +39,23 @@ const optionalConfigObject = {
   passcodeFallback: true, // iOS - allows the device to fall back to using the passcode, if faceid/touch is not available. this does not mean that if touchid/faceid fails the first few times it will revert to passcode, rather that if the former are not enrolled, then it will use the passcode.
 };
 
-function _pressHandler() {
-  TouchID.authenticate('to demo this react-native component', optionalConfigObject)
-    .then(success => {
-      alert('Authenticated Successfully');
-    })
-    .catch(error => {
-      alert(error.message)
-    });
-}
+// function _pressHandler() {
+//   TouchID.authenticate('to demo this react-native component', optionalConfigObject)
+//     .then(success => {
+//       alert('Authenticated Successfully');
+//     })
+//     .catch(error => {
+//       alert(error.message)
+//     });
+// }
 
 
  const Settings = ({route, navigation}) => {
 
-
-
   const [refreshing, setRefreshing] = React.useState(false);
   const [refreshCount, setRefreshCount] = React.useState(11);
   const [TKUnlock, setTKUnlock] = React.useState(false);
-
-  const [isEnabled, setIsEnabled] = useState(false);
+  var [isEnabled, setIsEnabled] = useState(true);
 
 
   useEffect(() => {
@@ -70,10 +68,11 @@ function _pressHandler() {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setIsEnabled(appPin != undefined);
     })
-  }, 2000);
+  }, 3500);
 
   const toggleSwitch = () => {
 
+    // alert(enablePINToggle)
     if(!isEnabled){
       navigation.navigate('PIN')
     } else{
@@ -87,13 +86,13 @@ function _pressHandler() {
     // }
   }
 
-  TouchID.authenticate('to demo this react-native component')
-  .then(success => {
-    // Success code
-  })
-  .catch(error => {
-    // Failure code
-  });
+  // TouchID.authenticate('to demo this react-native component')
+  // .then(success => {
+  //   // Success code
+  // })
+  // .catch(error => {
+  //   // Failure code
+  // });
 
  return ( 
   <View style={{flex:1}}>
@@ -170,7 +169,7 @@ function _pressHandler() {
 <SeparatorBorder/>
 
 <ListItem
- onPress={() => {_pressHandler()}}
+ onPress={() => {navigation.navigate('Wallet Options')}}
   Component={TouchableScale}
   friction={90} //
   tension={100} // These props are passed to the parent component (here TouchableScale)

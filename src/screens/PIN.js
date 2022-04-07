@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { TouchableOpacity, ScrollView, Text, View, StyleSheet } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import QRCode from 'react-native-qrcode-svg';
@@ -8,10 +8,14 @@ import { Separator } from '../helpers/jsxlib';
 import { getAppFont, copyToClipboard } from '../helpers/helpers';
 import { PinCode, PinCodeT } from 'fedapay-react-native-pincode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Progress from 'react-native-progress';
 
 
 const PIN = ({route, navigation}) => {
  
+
+  const [pinSaveSpinner, setPinSaveSpinner] = useState();
+
   const customTexts = {
 
     set: {
@@ -26,6 +30,9 @@ const PIN = ({route, navigation}) => {
  return ( 
   <View style={styles.container}> 
     <ScrollView styles={{backgroundColor:"white"}}>
+    { pinSaveSpinner == true &&
+<Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
+}
     <PinCode mode={PinCodeT.Modes.Set} visible={true}  onSetCancel={() => {}}
           options={{
             pinLength: 6,
@@ -52,10 +59,20 @@ const PIN = ({route, navigation}) => {
         },
       }} 
       onSetSuccess={(newPin) => {
+      
+        setPinSaveSpinner(true)
+
+        // navigation.addListener('beforeRemove', (e) => {
+        //   e.preventDefault();
+        // });
+
           AsyncStorage.setItem('@AppPIN', "SET").then( (newPin) => 
           {
-            alert('App PIN successfully set!')
-            navigation.navigate('Settings')
+            setTimeout(() => {
+              alert('App PIN successfully set!');
+              setPinSaveSpinner(false)
+              navigation.navigate('Settings');
+            }, 3500);
           })
         } 
       }

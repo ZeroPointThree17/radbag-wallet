@@ -131,7 +131,7 @@ const App: () => Node = () => {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setIsPINEnabled(appPin != undefined);
     })
-  }, 2000);
+  }, 10000);
 
 
   const isDarkMode = useColorScheme() === 'dark';

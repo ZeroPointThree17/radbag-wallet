@@ -8,6 +8,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 var bigDecimal = require('js-big-decimal');
 import IconFeather from 'react-native-vector-icons/Feather';
 import { Text, Card, Button, Icon } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export function useInterval(callback, delay) {
   const savedCallback = useRef();

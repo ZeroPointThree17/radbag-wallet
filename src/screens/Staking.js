@@ -20,7 +20,7 @@ import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 
 
-function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){
+function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){
 
   Keyboard.dismiss; 
 
@@ -110,7 +110,7 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
     };
   }
 
-  fetch('https://raddish-node.com:6208/transaction/build', {
+  fetch(global.gateways[gatewayIdx] + '/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -138,20 +138,25 @@ function buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, de
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn) }
+            { text: "OK", onPress: () => submitTxn(gatewayIdx, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn) }
           ]
         );
 
         }
       }).catch((error) => {
-          console.error(error);
+        console.error(error);
+        if(gatewayIdx + 1 > global.gateways.length){
+          AsyncStorage.setItem('@gatewayIdx',"0");
+        } else{
+          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+        }
       });
 }
 }
 
 
 
-function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash){
+function transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash){
 
   var currApdu = apdus.shift();
 
@@ -169,36 +174,24 @@ function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction
       } else{
         alert("Transaction submitted.")
 
-        finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
-      // const parsedResult = parseSignatureFromLedger(result)
-      // console.log("INSIDE RESULTS2")
-      // const signature = parsedResult.value.signature
-      // console.log("INSIDE RESULTS3")
-      // const remainingBytes = parsedResult.value.remainingBytes
-      // console.log("INSIDE RESULTS4")
-      // const signatureV = remainingBytes.readUInt8(0)
-      // console.log("INSIDE RESULTS5")
-      // console.log(`Signature: ${signature}`)
-      // console.log(`Signature V: ${signatureV}`)
-      // alert(`Signature: ${signature}`)
-      // alert(`Signature V: ${signatureV}`)
+        finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
       }
     })
   } else{
      transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
       console.log("INSIDE RESULTS: "+result.toString('hex'))
-      transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash)
+      transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash)
     })
   }
 }
 
 
-function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
+function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
   
 // alert(unsigned_transaction +" "+public_key+" "+ finalSig)
 
-  fetch('https://raddish-node.com:6208/transaction/finalize', {
+  fetch(global.gateways[gatewayIdx] + '/transaction/finalize', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -231,13 +224,18 @@ function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSi
    setSubmitEnabled(true);
 
   }).catch((error) => {
-      console.error(error);
-  }); 
+    console.error(error);
+    if(gatewayIdx + 1 > global.gateways.length){
+      AsyncStorage.setItem('@gatewayIdx',"0");
+    } else{
+      AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+    }
+  });
 }
 
 
 
-async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){
+async function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){
 
   setShow(false);
 
@@ -279,7 +277,7 @@ async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, se
   
   var finalSig = Buffer.from(result).toString('hex');
 
-  finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
+  finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
    
 } catch(err){
@@ -362,7 +360,7 @@ async function submitTxn(message,unsigned_transaction,public_key,privKey_enc, se
             apdus.push(apdu2)
       }
             
-            transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
+            transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
 
         }).catch((error) => {
         alert("Please open the hardware wallet and the Radix app in the wallet first")
@@ -420,7 +418,12 @@ function getStakeData(currAddr, setValAddr, setStakingScreenActive, setStakeVali
        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
     }
   }).catch((error) => {
-      console.error(error);
+    console.error(error);
+    if(gatewayIdx + 1 > global.gateways.length){
+      AsyncStorage.setItem('@gatewayIdx',"0");
+    } else{
+      AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+    }
   });
 }
 
@@ -499,9 +502,13 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
        }
     }
   }).catch((error) => {
-      console.error(error);
+    console.error(error);
+    if(gatewayIdx + 1 > global.gateways.length){
+      AsyncStorage.setItem('@gatewayIdx',"0");
+    } else{
+      AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+    }
   });
-
 
 }
 
@@ -572,9 +579,14 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
            });
          }, errorCB);
       }
-  }).catch((error) => {
+    }).catch((error) => {
       console.error(error);
-  });
+      if(gatewayIdx + 1 > global.gateways.length){
+        AsyncStorage.setItem('@gatewayIdx',"0");
+      } else{
+        AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+      }
+    });
 }
 
 
@@ -618,9 +630,14 @@ function getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked){
           setCurrentlyLiquid(new bigDecimal(liquid_balance).getValue());
           setCurrentlyStaked(new bigDecimal(staked_balance).getValue());
         }
-    }).catch((error) => {
+      }).catch((error) => {
         console.error(error);
-    });
+        if(gatewayIdx + 1 > global.gateways.length){
+          AsyncStorage.setItem('@gatewayIdx',"0");
+        } else{
+          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+        }
+      });
 
   }
  
@@ -845,7 +862,13 @@ onPress={() => {setStakingScreenActive(false)}}>
      stakeValRef.current.blur();
      stakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled, usbConn) }}>
+
+     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+         
+     buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, stakeAmt , "stake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled, usbConn) 
+     })
+     
+     }}>
 
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-down-circle-outline" size={22} color="black" />
@@ -907,8 +930,11 @@ onPress={() => {setStakingScreenActive(false)}}>
      unstakeValRef.current.blur();
      unstakeAmtRef.current.blur();
      Keyboard.dismiss;
-     buildTxn(public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled )
-  }}>
+
+     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {  
+      buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled )
+     })
+    }}>
         <View style={styles.sendRowStyle}>
         <IconIonicons name="arrow-up-circle-outline" size={22} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Unstake</Text>

@@ -19,7 +19,7 @@ var radio_props = [
 ];
 
 
-function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
+function startTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity ){
  
   if(tknSupply != undefined){
     tknSupply = tknSupply.replace(/,/g, '');
@@ -50,7 +50,7 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
       alert("URL part after http(s):// must not be empty")
   } else {
   var rri=""
-  fetch('https://raddish-node.com:6208/token/derive', {
+  fetch(global.gateways[gatewayIdx] + '/token/derive', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -76,15 +76,20 @@ function startTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tk
 
         rri = JSON.stringify(json.token_identifier.rri).replace(/["']/g, "")
 
-        buildTxn(public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity )
+        buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity )
         }
       }).catch((error) => {
-          console.error(error);
+        console.error(error);
+        if(gatewayIdx + 1 > global.gateways.length){
+          AsyncStorage.setItem('@gatewayIdx',"0");
+        } else{
+          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+        }
       });
     }
 }
 
-function buildTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
+function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, rri, tknGranularity ){
 
   var tknSupplyStr = new bigDecimal(tknSupply).multiply(new bigDecimal(1000000000000000000)).getValue();
 
@@ -124,7 +129,7 @@ var jsonBody = {
 };
 
 
-  fetch('https://raddish-node.com:6208/transaction/build', {
+  fetch(global.gateways[gatewayIdx] + '/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -149,18 +154,23 @@ var jsonBody = {
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash) }
+            { text: "OK", onPress: () => submitTxn(gatewayIdx, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash) }
           ]
         );
 
         }
       }).catch((error) => {
-          console.error(error);
+        console.error(error);
+        if(gatewayIdx + 1 > global.gateways.length){
+          AsyncStorage.setItem('@gatewayIdx',"0");
+        } else{
+          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+        }
       });
 }
 
 
-function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash){
+function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash){
 
   setShow(false);
 
@@ -197,7 +207,7 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
   
   var finalSig = Buffer.from(result).toString('hex');
   
-    fetch('https://raddish-node.com:6208/transaction/finalize', {
+    fetch(global.gateways[gatewayIdx] + '/transaction/finalize', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -229,8 +239,13 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
          setTxHash(txnHash);
   
         }).catch((error) => {
-            console.error(error);
-        });  
+          console.error(error);
+          if(gatewayIdx + 1 > global.gateways.length){
+            AsyncStorage.setItem('@gatewayIdx',"0");
+          } else{
+            AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+          }
+        });
 } catch(err){
     alert("Password incorrect")
   }
@@ -440,8 +455,13 @@ function submitTxn(message,unsigned_transaction,public_key,privKey_enc, setShow,
      tknURLRef.current.blur();
      tknSupplyRef.current.blur();
      Keyboard.dismiss;
-  startTxn(public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )}}>
-        <View style={styles.sendRowStyle}>
+     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+      startTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash,sourceXrdAddr, tknName, tknDesc,tknIconUrl, tknUrl, tknSymbol, tknIsSuppMut, tknSupply, tknGranularity )
+     }
+     )}
+ }>
+ 
+ <View style={styles.sendRowStyle}>
         <IconFA5 name="coins" size={20} color="black" />
         <Text style={{fontSize: 18, color:"black"}, getAppFont("black")}> Mint Tokens</Text>
         </View>

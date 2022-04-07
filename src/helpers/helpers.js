@@ -303,9 +303,10 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
   }
 
   var count = 0;
-
+  AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+           
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
-  fetch('https://raddish-node.com:6208/account/transactions', {
+  fetch(global.gateways[gatewayIdx] + '/account/transactions', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -427,6 +428,15 @@ export function fetchTxnHistory(address, setHistoryRows, stakingOnly){
 
 
 })
+}).catch((error) => {
+  console.error(error);
+  if(gatewayIdx + 1 > global.gateways.length){
+    AsyncStorage.setItem('@gatewayIdx',"0");
+  } else{
+    AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+  }
+});
+  
 }
 
 

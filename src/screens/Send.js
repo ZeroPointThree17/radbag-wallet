@@ -53,7 +53,7 @@ String.prototype.hexEncode = function(){
 }
 
 
-function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
+function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID){
 
   Keyboard.dismiss; 
   setSubmitEnabled(false);
@@ -86,7 +86,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
 
 
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
-  fetch('https://raddish-node.com:6208/transaction/build', {
+  fetch(global.gateways[gatewayIdx] + '/transaction/build', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -145,13 +145,18 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "OK", onPress: () => submitTxn(rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID) }
+            { text: "OK", onPress: () => submitTxn(gatewayIdx, rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID) }
           ]
         );
 
         }
       }).catch((error) => {
-          console.error(error);
+        console.error(error);
+        if(gatewayIdx + 1 > global.gateways.length){
+          AsyncStorage.setItem('@gatewayIdx',"0");
+        } else{
+          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+        }
       });
 }
 
@@ -161,7 +166,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
 
 
 
-  function transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash){
+  function transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash){
 
     var currApdu = apdus.shift();
     if(apdus.length == 0){
@@ -178,21 +183,21 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
         } else{
           alert("Transaction submitted.")
 
-          finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
+          finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
         }
       })
     } else{
        transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
         console.log("INSIDE RESULTS: "+result.toString('hex'))
-        transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash)
+        transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash)
       })
     }
   }
   
 
   export const submitTxn = async (
-    rri, usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID
+    gatewayIdx, rri, usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID
   ) => {
   setShow(false);
 
@@ -237,7 +242,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
 
    finalSig = Buffer.from(result).toString('hex');
   
-   finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
+   finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
   } catch(err){
     alert("Password incorrect")
@@ -318,7 +323,7 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
               apdus.push(apdu2)
         }
               
-              transport_send(setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
+              transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
 
           }).catch((error) => {
             alert("Please open the hardware wallet and the Radix app in the wallet first")
@@ -329,8 +334,8 @@ function buildTxn(usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbo
     
   
 
-function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
-  fetch('https://raddish-node.com:6208/transaction/finalize', {
+function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
+  fetch(global.gateways[gatewayIdx] + '/transaction/finalize', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -363,8 +368,13 @@ function finalizeTxn(setSubmitEnabled, unsigned_transaction, public_key, finalSi
    setSubmitEnabled(true);
 
   }).catch((error) => {
-      console.error(error);
-  });  
+    console.error(error);
+    if(gatewayIdx + 1 > global.gateways.length){
+      AsyncStorage.setItem('@gatewayIdx',"0");
+    } else{
+      AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+    }
+  });
 }
 
 
@@ -379,7 +389,7 @@ function getTokenSymbols(defaultRri, setGettingBalances, rris, inputSymbols, inp
 
   // alert(defaultRri)
   if(defaultRri == rri || defaultRri == undefined){
-  fetch('https://raddish-node.com:6208/token', {
+    fetch(global.gateways[gatewayIdx] + '/token', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -467,10 +477,14 @@ function getTokenSymbols(defaultRri, setGettingBalances, rris, inputSymbols, inp
               else{
                 getTokenSymbols(defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
               }
-            }
-              ).catch((error) => {
-                  console.error(error);
-              });
+            }).catch((error) => {
+              console.error(error);
+              if(gatewayIdx + 1 > global.gateways.length){
+                AsyncStorage.setItem('@gatewayIdx',"0");
+              } else{
+                AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+              }
+            });
       } else{
         getTokenSymbols(defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
  
@@ -483,7 +497,7 @@ function getBalances(defaultRri, firstTime, setGettingBalances, sourceXrdAddr, s
    
   setGettingBalances(firstTime);
 
-  fetch('https://raddish-node.com:6208/account/balances', {
+  fetch(global.gateways[gatewayIdx] + '/account/balances', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -537,9 +551,14 @@ function getBalances(defaultRri, firstTime, setGettingBalances, sourceXrdAddr, s
         getTokenSymbols(defaultRri, setGettingBalances, rris, symbols, initialSymbolToRRIMap, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key, initialIconsMap, setIconURIs, initialNamesMap, setTokenNames, initialTokenCnts, appendStr)     
 
         }
-    }).catch((error) => {
+      }).catch((error) => {
         console.error(error);
-    });
+        if(gatewayIdx + 1 > global.gateways.length){
+          AsyncStorage.setItem('@gatewayIdx',"0");
+        } else{
+          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+        }
+      });
 
   }
 
@@ -791,7 +810,14 @@ onPress={()=>{
 <Separator/>
 <Separator/>
 <Separator/>
-<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();buildTxn(usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID)}}>
+<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();
+  
+  AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+     
+  buildTxn(gatewayIdx, usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID)
+  })
+  
+  }}>
         <View style={styles.sendRowStyle}>
         <IconFeather name="send" size={18} color="black" />
         <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>

@@ -486,7 +486,12 @@ export class NetworkUtils {
              
           }
       }).catch((error) => {
-          console.error(error);
+        console.error(error);
+        if(gatewayIdx + 1 > global.gateways.length){
+          AsyncStorage.setItem('@gatewayIdx',"0");
+        } else{
+          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
+        }
       });
  
   }

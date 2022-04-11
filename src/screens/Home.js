@@ -12,7 +12,7 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay, currencyList } from '../helpers/helpers';
+import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay, currencyList, setNewGatewayIdx } from '../helpers/helpers';
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
@@ -485,12 +485,7 @@ export class NetworkUtils {
              
           }
       }).catch((error) => {
-        console.error(error);
-        if(gatewayIdx + 1 > global.gateways.length){
-          AsyncStorage.setItem('@gatewayIdx',"0");
-        } else{
-          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-        }
+        setNewGatewayIdx(gatewayIdx);
       });
  
   }
@@ -540,12 +535,7 @@ export class NetworkUtils {
                getTokenMetadata(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances);
           }
       }).catch((error) => {
-          console.error(error);
-          if(gatewayIdx + 1 > global.gateways.length){
-            AsyncStorage.setItem('@gatewayIdx',"0");
-          } else{
-            AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-          }
+        setNewGatewayIdx(gatewayIdx);
       });
     } else{
         // alert("No internet connection available. Please connect to the internet.");
@@ -605,6 +595,7 @@ const Home = ({route, navigation}) => {
     const [tokenPrices, setTokenPrices] = useState();
 
     
+
     const storeCurrData = async (json, setCurrValue, setCurrLabel) => {
       try {
         const jsonValue = JSON.stringify(json)
@@ -639,8 +630,8 @@ const Home = ({route, navigation}) => {
       AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
             
       getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
-    setRefreshing(true);
-    wait(500).then(() => setRefreshing(false));
+      setRefreshing(true);
+      wait(500).then(() => setRefreshing(false));
   })
      }, []);
 

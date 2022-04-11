@@ -8,7 +8,7 @@ var SQLite = require('react-native-sqlite-storage');
 import RadioForm from 'react-native-simple-radio-button';
 var GenericToken = require("../assets/generic_token.png");
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, useInterval, openCB, errorCB, formatNumForDisplay } from '../helpers/helpers';
+import { getAppFont, useInterval, openCB, errorCB, formatNumForDisplay, setNewGatewayIdx } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -81,11 +81,7 @@ function startTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
         }
       }).catch((error) => {
         console.error(error);
-        if(gatewayIdx + 1 > global.gateways.length){
-          AsyncStorage.setItem('@gatewayIdx',"0");
-        } else{
-          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-        }
+        setNewGatewayIdx(gatewayIdx);
       });
     }
 }
@@ -162,11 +158,7 @@ var jsonBody = {
         }
       }).catch((error) => {
         console.error(error);
-        if(gatewayIdx + 1 > global.gateways.length){
-          AsyncStorage.setItem('@gatewayIdx',"0");
-        } else{
-          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-        }
+        setNewGatewayIdx(gatewayIdx);
       });
 }
 
@@ -241,11 +233,7 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
   
         }).catch((error) => {
           console.error(error);
-          if(gatewayIdx + 1 > global.gateways.length){
-            AsyncStorage.setItem('@gatewayIdx',"0");
-          } else{
-            AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-          }
+          setNewGatewayIdx(gatewayIdx);
         });
 } catch(err){
     alert("Password incorrect")
@@ -462,9 +450,11 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
      )}
  }>
  
- <View style={styles.sendRowStyle}>
-        <IconFA5 name="coins" size={20} color="black" />
-        <Text style={{fontSize: 18, color:"black"}, getAppFont("black")}> Mint Tokens</Text>
+        <View style={[styles.sendRowStyle]}>
+        <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 10, backgroundColor:"#183A81"}]}>
+        <IconFA5 name="coins" size={20} color="white" />
+        <Text style={{fontSize: 18}, getAppFont("white")}> Mint Tokens</Text>
+        </View>
         </View>
         </TouchableOpacity>
               <Separator/>

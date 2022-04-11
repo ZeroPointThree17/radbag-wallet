@@ -9,7 +9,7 @@ const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
 import { Separator, SeparatorBorder, SeparatorBorderMargin } from '../helpers/jsxlib';
-import { fetchTxnHistory, getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
+import { fetchTxnHistory, getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx } from '../helpers/helpers';
 var bigDecimal = require('js-big-decimal');
 import prompt from 'react-native-prompt-android';
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -145,12 +145,7 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
         }
       }).catch((error) => {
-        console.error(error);
-        if(gatewayIdx + 1 > global.gateways.length){
-          AsyncStorage.setItem('@gatewayIdx',"0");
-        } else{
-          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-        }
+        setNewGatewayIdx(gatewayIdx);
       });
 }
 }
@@ -225,12 +220,7 @@ function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_
    setSubmitEnabled(true);
 
   }).catch((error) => {
-    console.error(error);
-    if(gatewayIdx + 1 > global.gateways.length){
-      AsyncStorage.setItem('@gatewayIdx',"0");
-    } else{
-      AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-    }
+    setNewGatewayIdx(gatewayIdx);
   });
 }
 
@@ -416,20 +406,15 @@ function getStakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, 
       //  alert(JSON.stringify(stakeValidatorsArr));
        setPendingStake(pendingStake.getValue());
 
-       getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+       getValidatorData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
     }
   }).catch((error) => {
-    console.error(error);
-    if(gatewayIdx + 1 > global.gateways.length){
-      AsyncStorage.setItem('@gatewayIdx',"0");
-    } else{
-      AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-    }
+    setNewGatewayIdx(gatewayIdx);
   });
 }
 
 
-function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
+function getValidatorData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
   // alert("GV SL Len: "+stakeValidators.length)
   var jsonBody = null;
@@ -466,7 +451,7 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
   //  alert("val addr: "+validatorAddr)
   var validatorData = new Map(inputMap);
 
-  fetch('https://raddish-node.com:6208/validator', {
+  fetch(global.gateways[gatewayIdx]  + '/validator', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -496,27 +481,22 @@ function getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeVal
      
          setValidatorData(validatorData)
 
-         getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+         getUnstakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
          
        } else{
-        getValidatorData(currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+        getValidatorData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
        }
     }
   }).catch((error) => {
-    console.error(error);
-    if(gatewayIdx + 1 > global.gateways.length){
-      AsyncStorage.setItem('@gatewayIdx',"0");
-    } else{
-      AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-    }
+    setNewGatewayIdx(gatewayIdx);
   });
 
 }
 
 
-function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
+function getUnstakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
  
-  fetch('https://raddish-node.com:6208/account/unstakes', {
+  fetch(global.gateways[gatewayIdx] + '/account/unstakes', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -576,25 +556,20 @@ function getUnstakeData(currAddr, setValAddr, setStakingScreenActive, setTotalUn
      
              setPrivKey_enc(tempPrivkey_enc);
              setPublic_key(tempPubkey);
-             getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked)
+             getBalances(gatewayIdx, currAddr, setCurrentlyLiquid, setCurrentlyStaked)
            });
          }, errorCB);
       }
     }).catch((error) => {
-      console.error(error);
-      if(gatewayIdx + 1 > global.gateways.length){
-        AsyncStorage.setItem('@gatewayIdx',"0");
-      } else{
-        AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-      }
+      setNewGatewayIdx(gatewayIdx);
     });
 }
 
 
 
-function getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked){
+function getBalances(gatewayIdx, currAddr, setCurrentlyLiquid, setCurrentlyStaked){
    
-  fetch('https://raddish-node.com:6208/account/balances', {
+  fetch(global.gateways[gatewayIdx] + '/account/balances', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -632,12 +607,7 @@ function getBalances(currAddr, setCurrentlyLiquid, setCurrentlyStaked){
           setCurrentlyStaked(new bigDecimal(staked_balance).getValue());
         }
       }).catch((error) => {
-        console.error(error);
-        if(gatewayIdx + 1 > global.gateways.length){
-          AsyncStorage.setItem('@gatewayIdx',"0");
-        } else{
-          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-        }
+        setNewGatewayIdx(gatewayIdx);
       });
 
   }
@@ -743,17 +713,15 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       // stakeValidators.forEach((val)=>{alert(JSON.stringify(val))})
 
   useEffect(() => {
-    
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
     getStakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked)
     })
   }, []);
 
 useInterval(() => {
-
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {     
-  getStakeData(gatewayIdx, gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
-  fetchTxnHistory(gatewayIdx, currAddr, setHistoryRows, true)
+    getStakeData(gatewayIdx, gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+    fetchTxnHistory(gatewayIdx, currAddr, setHistoryRows, true)
   })
 
   if (transport == undefined) {
@@ -761,8 +729,7 @@ useInterval(() => {
     getUSB(setTransport, setUsbConn, setDeviceName);
   }
 
-
-}, 2000);
+}, 5000);
  
 // alert(historyRows.length)
 
@@ -877,9 +844,11 @@ onPress={() => {setStakingScreenActive(false)}}>
      
      }}>
 
-        <View style={styles.sendRowStyle}>
-        <IconIonicons name="arrow-down-circle-outline" size={22} color="black" />
-        <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Stake</Text>
+        <View style={[styles.sendRowStyle]}>
+        <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 8, backgroundColor:"#183A81"}]}>
+        <IconIonicons name="arrow-down-circle-outline" size={22} color="white" />
+        <Text style={[{fontSize: 18, color:"black"}, getAppFont("white")]}> Stake</Text>
+        </View>
         </View>
         </TouchableOpacity>
         {isHWBool==true && <React.Fragment><Separator/><Separator/>
@@ -942,9 +911,11 @@ onPress={() => {setStakingScreenActive(false)}}>
       buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled )
      })
     }}>
-        <View style={styles.sendRowStyle}>
-        <IconIonicons name="arrow-up-circle-outline" size={22} color="black" />
-        <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Unstake</Text>
+        <View style={[styles.sendRowStyle]}>
+        <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 8, backgroundColor:"#183A81"}]}>
+        <IconIonicons name="arrow-up-circle-outline" size={22} color="white" />
+        <Text style={[{fontSize: 18, color:"black"}, getAppFont("white")]}> Unstake</Text>
+        </View>
         </View>
         </TouchableOpacity>
         {isHWBool==true && <React.Fragment><Separator/><Separator/>

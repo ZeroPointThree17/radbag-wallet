@@ -10,7 +10,7 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB } from '../helpers/helpers';
+import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx } from '../helpers/helpers';
 import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
@@ -106,8 +106,8 @@ function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, des
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  // "address": xrdAddr
-                  "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+                  "address": xrdAddr
+                  // "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
                 },
                 "amount": {
                   "token_identifier": {
@@ -153,11 +153,7 @@ function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, des
         }
       }).catch((error) => {
         console.error(error);
-        if(gatewayIdx + 1 > global.gateways.length){
-          AsyncStorage.setItem('@gatewayIdx',"0");
-        } else{
-          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-        }
+        setNewGatewayIdx(gatewayIdx);
       });
 }
 
@@ -370,11 +366,7 @@ function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_
 
   }).catch((error) => {
     console.error(error);
-    if(gatewayIdx + 1 > global.gateways.length){
-      AsyncStorage.setItem('@gatewayIdx',"0");
-    } else{
-      AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-    }
+    setNewGatewayIdx(gatewayIdx);
   });
 }
 
@@ -480,11 +472,7 @@ function getTokenSymbols(gatewayIdx, defaultRri, setGettingBalances, rris, input
               }
             }).catch((error) => {
               console.error(error);
-              if(gatewayIdx + 1 > global.gateways.length){
-                AsyncStorage.setItem('@gatewayIdx',"0");
-              } else{
-                AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-              }
+              setNewGatewayIdx(gatewayIdx);
             });
       } else{
         getTokenSymbols(gatewayIdx, defaultRri,setGettingBalances,rris, symbolsArr, symbolToRRI, setSymbols, setSymbolToRRI,setPrivKey_enc,setPublic_key,iconsMap,setIconURIs, namesMap, setTokenNames, updatedSymbolCnts, appendStr)
@@ -554,11 +542,7 @@ function getBalances(gatewayIdx, defaultRri, firstTime, setGettingBalances, sour
         }
       }).catch((error) => {
         console.error(error);
-        if(gatewayIdx + 1 > global.gateways.length){
-          AsyncStorage.setItem('@gatewayIdx',"0");
-        } else{
-          AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
-        }
+        setNewGatewayIdx(gatewayIdx);
       });
 
   }
@@ -824,9 +808,11 @@ onPress={()=>{
   })
   
   }}>
-        <View style={styles.sendRowStyle}>
-        <IconFeather name="send" size={18} color="black" />
-        <Text style={[{fontSize: 18, color:"black"}, getAppFont("black")]}> Send</Text>
+        <View style={[styles.sendRowStyle]}>
+        <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 10, backgroundColor:"#183A81"}]}>
+        <IconFeather name="send" size={23} color="white" />
+        <Text style={[{fontSize: 18, color:"black"}, getAppFont("white")]}> Send</Text>
+        </View>
         </View>
         </TouchableOpacity>
 <Separator/>

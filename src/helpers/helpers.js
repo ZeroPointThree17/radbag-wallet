@@ -431,14 +431,20 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
 
 })
 }).catch((error) => {
-  console.error(error);
-  if(gatewayIdx + 1 > global.gateways.length){
+  setNewGatewayIdx(gatewayIdx);
+});
+  
+}
+
+export function setNewGatewayIdx(gatewayIdx){
+
+  alert("Not able to connect to the Radix ledger. Attempting to reconnect...");
+
+  if(parseInt(gatewayIdx)+1 >= global.gateways.length){
     AsyncStorage.setItem('@gatewayIdx',"0");
   } else{
     AsyncStorage.setItem('@gatewayIdx',(parseInt(gatewayIdx)+1).toString());
   }
-});
-  
 }
 
 

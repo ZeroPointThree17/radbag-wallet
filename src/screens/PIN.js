@@ -23,6 +23,7 @@ const PIN = ({route, navigation}) => {
         subTitle: 'Enter 6 digits',
         repeat: 'Enter new PIN again',
         error: "PIN don't match. Start the process again.",
+        backSpace: 'Del',
         cancel: undefined,
     },
   }
@@ -40,8 +41,11 @@ const PIN = ({route, navigation}) => {
             lockDuration: 10000,
             allowedReset: true,
             disableLock: false,
-            dotColor: "black"
+            dotColor: "black",
           }}
+          textOptions={{set: {
+            backSpace: 'Del',
+          }}}
       styles={{ 
         main: { backgroundColor:"white" },
         enter: {

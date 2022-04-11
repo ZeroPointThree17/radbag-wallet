@@ -39,7 +39,7 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
       title: 'Enter PIN',
       subTitle: 'Enter 6-digit PIN to access RadBag Wallet',
       error: 'Wrong PIN',
-      backSpace: 'Delete',
+      backSpace: 'Del',
       footerText: undefined
     },
   }
@@ -132,7 +132,7 @@ const App: () => Node = () => {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setIsPINEnabled(appPin != undefined);
     })
-  }, 10000);
+  }, 3500);
 
 
   const isDarkMode = useColorScheme() === 'dark';

@@ -20,7 +20,7 @@ const ImportSelect = ({route, navigation}) => {
     <Button style={getAppFont("black")}
         title="Import a Wallet via Mnemonic Phrase"
         enabled
-        onPress={() => navigation.navigate('Mnemonic Input', {firstTimeStr: firstTimeString})}
+        onPress={() => navigation.push('Mnemonic Input', {firstTimeStr: firstTimeString})}
       />
       {Platform.OS != 'ios' && <Separator/>}
     {Platform.OS === 'ios' && <React.Fragment><Separator/>

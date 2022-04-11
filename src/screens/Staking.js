@@ -729,7 +729,7 @@ useInterval(() => {
     getUSB(setTransport, setUsbConn, setDeviceName);
   }
 
-}, 5000);
+}, 2000);
  
 // alert(historyRows.length)
 

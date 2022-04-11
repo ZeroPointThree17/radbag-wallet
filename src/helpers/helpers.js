@@ -438,7 +438,10 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
 
 export function setNewGatewayIdx(gatewayIdx){
 
-  alert("Not able to connect to the Radix ledger. Attempting to reconnect...");
+  showMessage({
+    message: "Attemeping to re-connect to Radix",
+    type: "danger",
+    });
 
   if(parseInt(gatewayIdx)+1 >= global.gateways.length){
     AsyncStorage.setItem('@gatewayIdx',"0");

@@ -57,9 +57,23 @@ options={{
   lockDuration: 10000,
   allowedReset: false,
   disableLock: false,
-  dotColor: "white"
+  dotColor: "white"  
 }}
 
+styles={{ 
+  main: { backgroundColor:"#183A81" },
+  enter: {
+    titleContainer: { borderWidth: 0 },
+    title: { color: 'white' },
+    subTitle: { color: 'white' },
+    buttonContainer: { borderWidth: 0 , color: 'white' },
+    buttonText: { color: 'white' },
+    buttons: { backgroundColor: 'white', borderWidth: 1 },
+    footer: { borderWidth: 0 },
+    footerText: { color: 'purple' },
+    pinContainer: { borderWidth: 0,  },
+  }}
+}
  /> 
   </View>
     <NavigationContainer onReady={() => RNBootSplash.hide()}>

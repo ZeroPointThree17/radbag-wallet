@@ -207,12 +207,12 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
     defaultSource={GenericToken}
     source={{uri: balance[3]}}
       />
-    <View style={{flex:2}}>
+    <View style={{flex:1.8}}>
         <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
         <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
         </View>
     {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
-    <View style={{flex:1.5}}>
+    <View style={{flex:1.7}}>
     <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
     {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
     </View> 

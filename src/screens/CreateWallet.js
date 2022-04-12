@@ -1,4 +1,4 @@
-import { Button, SafeAreaView, View, Text, StyleSheet, Platform } from 'react-native';
+import { Button, ScrollView, View, Text, StyleSheet, Platform } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState } from 'react';
 import { StackActions } from '@react-navigation/native';
@@ -6,6 +6,7 @@ import CheckboxBouncy from "react-native-bouncy-checkbox";
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { Separator } from '../helpers/jsxlib';
 import { getAppFont } from '../helpers/helpers';
+// import { ScrollView } from 'react-native-gesture-handler';
 
 
 function navigateAppPassword(navigation, mnemonic, word13, firstTime){
@@ -39,9 +40,9 @@ const [word13, setword13] = useState("");
 
   return (
 
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={{backgroundColor: "white"}}>
    <Separator/>
-     <View > 
+     <View  style={styles.container}> 
       <Text style={[styles.title,getAppFont("black")]}>Below is your mnemonic phrase. Write it down and keep them in a safe place. DO NOT take a photo of the phrase or copy and paste it anywhere. This key holds ALL YOUR FUNDS!</Text>
  <Separator/>
  <Text style={[styles.mnemonic,getAppFont("black")]}>{mnemonic}</Text>
@@ -75,9 +76,64 @@ label='13th word' style={[styles.title,getAppFont("black")]}/>
         enabled
         onPress={() => navigateAppPassword(navigation, mnemonic, word13, firstTime)}
       />
-        
   </View> 
-  </SafeAreaView>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/> 
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/> 
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/> 
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/> 
+  <Separator/>
+  <Separator/>
+  </ScrollView>
   )
   ;
 };

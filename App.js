@@ -2,7 +2,7 @@ import './shim';
 import 'react-native-gesture-handler'
 import React, {useRef, useState, useEffect } from 'react';
 import type {Node} from 'react';
-import { StyleSheet, AppState, View, SafeAreaView, useColorScheme, LogBox, Alert } from 'react-native';
+import { ScrollView, StyleSheet, AppState, View, SafeAreaView, useColorScheme, LogBox, Alert } from 'react-native';
 import { NavigationContext, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 var SQLite = require('react-native-sqlite-storage');
@@ -47,6 +47,7 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
   navContainerJSX.push(
   <React.Fragment>
     <View style={{height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
+    <ScrollView>
     <PinCode allowReset="false" mode={PinCodeT.Modes.Enter} visible={firstTimer == false && correctPin == false && isPINEnabled} 
 textOptions={customTexts}
 onEnterSuccess={(pin) => setCorrectPin(true)}
@@ -75,8 +76,10 @@ styles={{
   }}
 }
  /> 
+  </ScrollView>
   </View>
-    <NavigationContainer onReady={() => RNBootSplash.hide()}>
+
+<NavigationContainer onReady={() => RNBootSplash.hide()}>
 
 <Stack.Navigator screenOptions={{
 headerStyle: {

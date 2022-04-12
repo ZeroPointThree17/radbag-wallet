@@ -140,6 +140,55 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
        
         <Text style={[{textAlign:'center', marginHorizontal: 25, fontSize:20}, getAppFont("black")]}>{mnemonic} {word13}</Text>
         }
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
   </ScrollView>
   </View>)
 };

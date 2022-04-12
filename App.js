@@ -48,8 +48,8 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
   navContainerJSX.push(
   <React.Fragment>
     <View style={{ alignItems: "center", backgroundColor: "#183A81",height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
-    <Separator/>
     <ScrollView contentContainerStyle={{alignContents: "center", justifyContent: "center"}}>
+      <View style={{ marginVertical: "25%", alignContents: "center", backgroundColor: "#183A81",height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
     <PinCode allowReset="false" mode={PinCodeT.Modes.Enter} visible={firstTimer == false && correctPin == false && isPINEnabled} 
 textOptions={customTexts}
 onEnterSuccess={(pin) => setCorrectPin(true)}
@@ -78,6 +78,7 @@ styles={{
   }}
 }
  /> 
+  </View>
   </ScrollView>
   </View>
 

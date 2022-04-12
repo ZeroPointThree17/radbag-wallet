@@ -490,7 +490,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = RaddishWalletTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -519,7 +519,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 9J7RQJR4ZS;
 				INFOPLIST_FILE = RaddishWalletTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -547,7 +547,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaddishWallet/RaddishWallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9J7RQJR4ZS;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = RaddishWallet/Info.plist;
@@ -556,7 +556,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.9;
+				MARKETING_VERSION = 2.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -581,7 +581,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaddishWallet/RaddishWallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9J7RQJR4ZS;
 				INFOPLIST_FILE = RaddishWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -589,7 +589,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.9;
+				MARKETING_VERSION = 2.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -597,7 +597,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.raddish.RaddishIOWallet;
 				PRODUCT_NAME = RaddishWallet;
-				PROVISIONING_PROFILE_SPECIFIER = RadBag;
+				PROVISIONING_PROFILE_SPECIFIER = RaddishWallet;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";

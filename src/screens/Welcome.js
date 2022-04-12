@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image,SafeAreaView, Button, View, Text, StyleSheet } from 'react-native';
+import {Image, ScrollView, Button, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import Svg, { Path } from "react-native-svg"
 import { Separator } from '../helpers/jsxlib';
 import { getAppFont } from '../helpers/helpers';
@@ -17,13 +17,14 @@ const Welcome = ({ navigation }) => {
   return (
 
     <SafeAreaView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
         <Image
         style={{width:140, height:180}}
         source={require('../assets/radish_nobackground.png')}
       />
      <View style={styles.text}> 
    
- <Text style={[styles.title,getAppFont("black")]}>Welcome to the RadBag Wallet! Have you previously made a Radix DLT Wallet?</Text>
+ <Text style={[styles.title,getAppFont("black")]}>Welcome to the RadBag Wallet!{"\n"}Have you previously made a Radix DLT Wallet?</Text>
  <Separator/>
  <Button style={getAppFont("black")}
         title="Yes - Import a Wallet"
@@ -40,10 +41,6 @@ const Welcome = ({ navigation }) => {
       />
 
   </View> 
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
 <Separator/>
 <Separator/>
 
@@ -65,7 +62,8 @@ const Welcome = ({ navigation }) => {
     />
   </Svg>
 
-
+  </ScrollView>
+  
   </SafeAreaView>
   )
   ;
@@ -77,8 +75,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical:35,
-    paddingHorizontal: 20,
+    marginTop: 0,
+    // paddingTop: 40,
     textAlign: 'center'
   },
   container: {

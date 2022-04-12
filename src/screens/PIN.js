@@ -83,7 +83,13 @@ const PIN = ({route, navigation}) => {
 
       textOptions={customTexts}
       />
-
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <Separator/>
   </ScrollView>
   </View>
   )

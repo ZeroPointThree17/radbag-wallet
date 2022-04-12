@@ -24,6 +24,7 @@ import HardwareWallet from './src/screens/HardwareWallet';
 import {openCB, errorCB, useInterval} from './src/helpers/helpers';
 import { PinCode, PinCodeT } from 'fedapay-react-native-pincode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Separator } from './src/helpers/jsxlib';
 
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
@@ -46,8 +47,9 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
 
   navContainerJSX.push(
   <React.Fragment>
-    <View style={{height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
-    <ScrollView>
+    <View style={{ alignItems: "center", backgroundColor: "#183A81",height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
+    <Separator/>
+    <ScrollView contentContainerStyle={{alignContents: "center", justifyContent: "center"}}>
     <PinCode allowReset="false" mode={PinCodeT.Modes.Enter} visible={firstTimer == false && correctPin == false && isPINEnabled} 
 textOptions={customTexts}
 onEnterSuccess={(pin) => setCorrectPin(true)}

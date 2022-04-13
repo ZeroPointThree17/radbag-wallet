@@ -810,8 +810,8 @@ onPress={()=>{
   }}>
         <View style={[styles.sendRowStyle]}>
         <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 10, backgroundColor:"#183A81"}]}>
-        <IconFeather name="send" size={23} color="white" />
-        <Text style={[{fontSize: 18, color:"black"}, getAppFont("white")]}> Send</Text>
+        <IconFeather name="send" size={23} color="white" style={{alignSelf:"center"}}/>
+        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}> Send</Text>
         </View>
         </View>
         </TouchableOpacity>
@@ -873,6 +873,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     marginVertical:5
+  },
+  sendColStyle: {
+    flexDirection: 'column',
+    fontSize: 4,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    marginVertical:0
   },
   sendRowStyle: {
     flexDirection: 'row',

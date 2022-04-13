@@ -846,8 +846,8 @@ onPress={() => {setStakingScreenActive(false)}}>
 
         <View style={[styles.sendRowStyle]}>
         <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 8, backgroundColor:"#183A81"}]}>
-        <IconIonicons name="arrow-down-circle-outline" size={22} color="white" />
-        <Text style={[{fontSize: 18, color:"black"}, getAppFont("white")]}> Stake</Text>
+        <IconIonicons name="arrow-down-circle-outline" size={22} color="white"  style={{alignSelf:"center"}}/>
+        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}> Stake</Text>
         </View>
         </View>
         </TouchableOpacity>
@@ -913,8 +913,8 @@ onPress={() => {setStakingScreenActive(false)}}>
     }}>
         <View style={[styles.sendRowStyle]}>
         <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 8, backgroundColor:"#183A81"}]}>
-        <IconIonicons name="arrow-up-circle-outline" size={22} color="white" />
-        <Text style={[{fontSize: 18, color:"black"}, getAppFont("white")]}> Unstake</Text>
+        <IconIonicons name="arrow-up-circle-outline" size={22} color="white"  style={{alignSelf:"center"}}/>
+        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}> Unstake</Text>
         </View>
         </View>
         </TouchableOpacity>

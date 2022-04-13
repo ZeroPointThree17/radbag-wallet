@@ -275,12 +275,10 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 String.prototype.hexDecode = function() {
   if(this.startsWith("01")){
     return "<This message is encrypted. Decrypting messages on this wallet is currently not implemented>"
-  } else {
-    if(hexyjs.isHex(this) && !this.includes(" ")){
-      return hexyjs.hexToStr(this.replace("0000",""));
-    } else{
-      return this;
-    }
+  } else if(this.startsWith("3030")){
+    return hexyjs.hexToStr(hexyjs.hexToStr(this).slice(4));
+  } else if(this.startsWith("0000")){
+    return hexyjs.hexToStr(this.slice(4));
   }
 }
 
@@ -328,7 +326,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
            json.transactions.forEach(txn => 
               {
                  
-                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode().hexDecode()}</Text></View>
+                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode()}</Text></View>
                   
                   txn.actions.forEach(action => {
 

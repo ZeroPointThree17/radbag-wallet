@@ -1,6 +1,6 @@
 {
   "name": "radbagwallet",
-  "version": "2.9.3",
+  "version": "2.9.5",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

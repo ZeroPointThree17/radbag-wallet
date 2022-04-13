@@ -73,7 +73,12 @@ const PIN = ({route, navigation}) => {
           AsyncStorage.setItem('@AppPIN', "SET").then( (newPin) => 
           {
             setTimeout(() => {
-              alert('App PIN successfully set!');
+
+              showMessage({
+                message: "App PIN successfully set!",
+                type: "info",
+                });
+
               setPinSaveSpinner(false)
               navigation.navigate('Settings');
             }, 3500);

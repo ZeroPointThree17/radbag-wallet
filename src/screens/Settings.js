@@ -247,7 +247,7 @@ const optionalConfigObject = {
 <View style={{flex: 0.7, justifyContent:"center" , alignSelf:"center"}}>
 <Image style={{margin: 0, padding:0, width: 70, height: 90, alignSelf:'center'}}
     source={Raddish}/>
-    <Text style={[{alignSelf:'center'}, getAppFont("black")]}>RadBag Wallet v2.9.3</Text>
+    <Text style={[{alignSelf:'center'}, getAppFont("black")]}>RadBag Wallet v2.9.4</Text>
 </View>
  <Separator/><Separator/>
  </View>  

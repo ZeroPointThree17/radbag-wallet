@@ -41,6 +41,7 @@
     "fedapay-react-native-pincode": "^1.2.5",
     "hdkey": "^2.0.1",
     "hdwallet-accounts": "^0.0.1",
+    "hexyjs": "^2.1.4",
     "https-browserify": "^0.0.1",
     "is-buffer": "^1.1.6",
     "js-big-decimal": "^1.3.4",

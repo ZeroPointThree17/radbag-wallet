@@ -9,7 +9,8 @@ var bigDecimal = require('js-big-decimal');
 import IconFeather from 'react-native-vector-icons/Feather';
 import { Text, Card, Button, Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+const hexyjs = require("hexyjs");
+ 
 
 export function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -271,25 +272,16 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 }
 
 
-String.prototype.hexDecode = function(){
-
-  var back = "";
-
+String.prototype.hexDecode = function() {
   if(this.startsWith("01")){
-    back = "<This message is encrypted. Decrypting messages on this wallet is currently not implemented>"
-  } else{
-  var j;
-  var hexes = this.match(/.{1,2}/g) || [];
-
-  var back = "";
-  for(j = 1; j<hexes.length; j++) {
-    if(hexes[j] != '00'){
-        back += String.fromCharCode(parseInt(hexes[j], 16));
+    return "<This message is encrypted. Decrypting messages on this wallet is currently not implemented>"
+  } else {
+    if(hexyjs.isHex(this) && !this.includes(" ")){
+      return hexyjs.hexToStr(this.replace("0000",""));
+    } else{
+      return this;
     }
   }
-}
-
-  return back;
 }
 
 
@@ -336,7 +328,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
            json.transactions.forEach(txn => 
               {
                  
-                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode()}</Text></View>
+                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode().hexDecode()}</Text></View>
                   
                   txn.actions.forEach(action => {
 
@@ -382,7 +374,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                     var tkn_symbol  = action.token_properties===undefined ? undefined: <Text style={getAppFont("black")}>Token Symbol: {action.token_properties.symbol.toUpperCase()}</Text>
                     var tkn_supply  = action.token_supply===undefined ? undefined: <Text style={getAppFont("black")}>Token Supply: {formatNumForDisplay(action.token_supply.value)}</Text>
                     var tkn_rri  = action.token_supply===undefined ? undefined: <Text style={getAppFont("black")}>Token RRI: {shortenAddress(action.token_supply.token_identifier.rri)}</Text>
-                    var tkn_ismutable  = action.token_properties===undefined ? undefined: <Text style={getAppFont("black")}>Token is mutable?: {action.token_properties.is_supply_mutable}</Text>
+                    var tkn_ismutable  = action.token_properties===undefined ? undefined: <Text style={getAppFont("black")}>Token is mutable?: {action.token_properties.is_supply_mutable.toString()}</Text>
                                                                            
                    // alert(JSON.stringify(action))
                     // if( action.from_account.address == address || action.to_account.address == address){

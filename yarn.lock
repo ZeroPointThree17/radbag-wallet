@@ -6894,6 +6894,11 @@
   dependencies:
     "source-map" "^0.7.3"
 
+"hexyjs@^2.1.4":
+  "integrity" "sha512-xv4pjwHoOauMxpPMSyDK+b5sIQ9aBRDtoDJjxf5WBYIDc2NYRtp3Q5LBdXuZ245XzISmzuon0P7XznmttSH7LA=="
+  "resolved" "https://registry.npmjs.org/hexyjs/-/hexyjs-2.1.4.tgz"
+  "version" "2.1.4"
+
 "hmac-drbg@^1.0.1":
   "integrity" "sha1-0nRXAQJabHdabFRXk+1QL8DGSaE="
   "resolved" "https://registry.npmjs.org/hmac-drbg/-/hmac-drbg-1.0.1.tgz"

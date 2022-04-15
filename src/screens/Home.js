@@ -812,7 +812,6 @@ console.log("WALLETS: "+JSON.stringify(wallets));
        <Separator/>
        <Text style={[{fontSize: 20}, getAppFont("white")]}>Staked: {formatNumForHomeDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForHomeDisplay(liquid_rdx_balance)} XRD</Text>
  
-       <Separator/>
        <View style={styles.rowStyle}>
 
        <View style={styles.rowStyleHome}>
@@ -1000,7 +999,8 @@ const styles = StyleSheet.create({
         fontSize: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical:5,
+        marginTop: 8,
+        marginBottom: 5,
         flex:1
       },
       addrRowStyle: {

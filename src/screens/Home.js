@@ -820,8 +820,8 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <View style={styles.rowStyle}>
      
        
-        <Text style={[{fontSize: 18}, getAppFont("white")]}>
-        <IconMaterialCommunityIcons name="call-received" size={18} color="white" /> Receive</Text>
+        <Text style={[{fontSize: 16}, getAppFont("white")]}>
+        <IconMaterialCommunityIcons name="call-received" size={16} color="white" /> Receive</Text>
         </View>
         
         </TouchableOpacity>
@@ -833,8 +833,8 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol:"XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW})}>
         <View style={styles.rowStyle}>
 
-        <Text style={[{fontSize: 18, alignSelf:"center" }, getAppFont("white")]}>
-        <IconFeather name="send" size={18} color="white" /> Send</Text>
+        <Text style={[{fontSize: 16, alignSelf:"center" }, getAppFont("white")]}>
+        <IconFeather name="send" size={16} color="white" /> Send</Text>
         </View>
         </TouchableOpacity>
         </View>
@@ -844,8 +844,8 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW
       })}>
         <View style={styles.rowStyle}>
-     <Text style={[{fontSize: 18, alignSelf:"center", alignContents:"center", textAlign:"center", justifyContent:"center"}, getAppFont("white")]}>       
-     <IconFeather name="arrow-down-circle" size={18} color="white"/> Staking</Text>
+     <Text style={[{fontSize: 16, alignSelf:"center", alignContents:"center", textAlign:"center", justifyContent:"center"}, getAppFont("white")]}>       
+     <IconFeather name="arrow-down-circle" size={16} color="white"/> Staking</Text>
         </View>
         </TouchableOpacity>
         </View>
@@ -1084,7 +1084,7 @@ const styles = StyleSheet.create({
   dropdown2: {
     flex: 1,
     textAlign:"right",
-    height: 15,
+    height: 19,
     borderColor: 'gray',
     borderWidth: 0,
     borderRadius: 0,

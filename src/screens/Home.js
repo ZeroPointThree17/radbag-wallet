@@ -999,7 +999,7 @@ const styles = StyleSheet.create({
         fontSize: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 8,
+        marginTop: 9,
         marginBottom: 5,
         flex:1
       },

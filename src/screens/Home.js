@@ -72,7 +72,6 @@ function getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCu
              getActiveWallet(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances, hwWallets, setIsHW);
              
              console.log("inside get wallets");
-             console.log("inside get wallets2");
       }, errorCB);
         });
         
@@ -146,7 +145,6 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
         // balances.forEach((balance, rri) =>  {
         //   symbolCnts.set(balance[1],0)
         // })
-
 
 
     balances.forEach((balance, rri) =>  
@@ -299,7 +297,7 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
         justifyContent: 'center',
         marginBottom: 0
       }}>
-<Text style={[{fontSize: 10}, getAppFont("black")]}>Value: {formatCurrencyForHomeDisplay(totalWalletValue.getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>
+<Text style={[{fontSize: 12}, getAppFont("black")]}>Value: {formatCurrencyForHomeDisplay(totalWalletValue.getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>
       </View>
       <Dropdown
          style={[getAppFont("black"), styles.dropdown2, isFocus && { borderColor: 'blue' }]}
@@ -821,8 +819,9 @@ console.log("WALLETS: "+JSON.stringify(wallets));
        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() => navigation.navigate('Receive',{xrdAddress: enabledAddresses.get(activeAddress).radix_address})}>
         <View style={styles.rowStyle}>
      
-        <IconMaterialCommunityIcons name="call-received" size={18} color="white" />
-        <Text style={[{fontSize: 14}, getAppFont("white")]}> Receive</Text>
+       
+        <Text style={[{fontSize: 18}, getAppFont("white")]}>
+        <IconMaterialCommunityIcons name="call-received" size={18} color="white" /> Receive</Text>
         </View>
         
         </TouchableOpacity>
@@ -833,8 +832,9 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <View style={styles.rowStyleHome}>
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol:"XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW})}>
         <View style={styles.rowStyle}>
-        <IconFeather name="send" size={18} color="white" />
-        <Text style={[{fontSize: 14}, getAppFont("white")]}> Send</Text>
+
+        <Text style={[{fontSize: 18, alignSelf:"center" }, getAppFont("white")]}>
+        <IconFeather name="send" size={18} color="white" /> Send</Text>
         </View>
         </TouchableOpacity>
         </View>
@@ -844,8 +844,8 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW
       })}>
         <View style={styles.rowStyle}>
-        <Icon name="arrow-down-circle-outline" size={20} color="white" />
-        <Text style={[{fontSize: 14}, getAppFont("white")]}> Staking</Text>
+     <Text style={[{fontSize: 18, alignSelf:"center", alignContents:"center", textAlign:"center", justifyContent:"center"}, getAppFont("white")]}>       
+     <IconFeather name="arrow-down-circle" size={18} color="white"/> Staking</Text>
         </View>
         </TouchableOpacity>
         </View>
@@ -866,8 +866,9 @@ navigation.dispatch(pushAction);
      }
     }>
      <View style={styles.rowStyle}>
-     <IconMaterialCommunityIcons name="application-import" size={16} color="black" />
-<Text style={[styles.buttonText, getAppFont("black")]}>Import Wallet</Text></View>
+    
+<Text style={[styles.buttonText, getAppFont("black")]}>
+<IconMaterialCommunityIcons name="application-import" size={12} color="black" /> Import Wallet</Text></View>
 </TouchableOpacity>
 </View>
 
@@ -881,16 +882,18 @@ navigation.dispatch(pushAction);
      }
     }>
      <View style={styles.rowStyle}>
-     <IconEntypo name="wallet" size={16} color="black" />
+  
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={[styles.buttonText, getAppFont("black")]}>New Wallet</Text></View>
+<Text style={[styles.buttonText, getAppFont("black")]}>
+<IconEntypo name="wallet" size={12} color="black" /> New Wallet</Text></View>
 </TouchableOpacity>
 </View>
 <View style={styles.rowStyleHome}>  
      <TouchableOpacity onPress={() => addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
      <View style={styles.rowStyle}>
-     <IconFeather name="hash" size={16} color="black" />
-<Text style={[styles.buttonText, getAppFont("black")]}>Add Address</Text></View>
+    
+<Text style={[styles.buttonText, getAppFont("black")]}>
+<IconFeather name="hash" size={12} color="black" /> Add Address</Text></View>
 </TouchableOpacity> 
 </View>
 </View>
@@ -983,6 +986,7 @@ const styles = StyleSheet.create({
         fontSize: 4,
         alignItems: 'center',
         justifyContent: 'center',
+        alignContent:'center',
         marginVertical:0,
       },
       rowStyleHeader: {
@@ -1013,7 +1017,7 @@ const styles = StyleSheet.create({
         marginVertical:5,
       },
       buttonText: {
-        fontSize: 10,
+        fontSize: 12,
         color:"black",
       },
   text: {
@@ -1118,12 +1122,12 @@ containerStyle: {
     textDecorationLine: 'underline',
   },
     placeholderStyle2: {
-    fontSize: 10,
+    fontSize: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   selectedTextStyle2: {
-    fontSize: 10,
+    fontSize: 12,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     textAlign: 'left',

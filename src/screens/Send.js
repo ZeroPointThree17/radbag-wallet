@@ -772,8 +772,8 @@ onPress={()=>{
 <React.Fragment>
   <View style={{alignSelf: 'center'}}>
 <SelectDropdown
- buttonStyle={[{backgroundColor:"#183A81", width: '100%', borderWidth:1, marginRight:0, borderRadius: 15}, getAppFont("black")]}
- buttonTextStyle={{color:"white"}}
+ buttonStyle={[{height: 44, backgroundColor:"#183A81", width: '100%', borderWidth:1, marginRight:0, borderRadius: 15}, getAppFont("black")]}
+ buttonTextStyle={{color:"white", size:16}}
 	data={symbols}
   defaultValue={defaultSymbol}
 	onSelect={(selectedItem, index) => {
@@ -810,8 +810,9 @@ onPress={()=>{
   }}>
         <View style={[styles.sendRowStyle]}>
         <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 10, backgroundColor:"#183A81"}]}>
-        <IconFeather name="send" size={23} color="white" style={{alignSelf:"center"}}/>
-        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}> Send</Text>
+       
+        <Text style={[{fontSize: 20, color:"black", alignSelf:"center"}, getAppFont("white")]}>
+        <IconFeather name="send" size={20} color="white" style={{alignSelf:"center"}}/> Send</Text>
         </View>
         </View>
         </TouchableOpacity>

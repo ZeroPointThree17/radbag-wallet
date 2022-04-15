@@ -5,6 +5,7 @@ import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
 import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
 import IconIonicons from 'react-native-vector-icons/Ionicons';
+import IconFeather from 'react-native-vector-icons/Feather';
 const secp256k1 = require('secp256k1');
 var SQLite = require('react-native-sqlite-storage');
 var Raddish = require("../assets/radish_nobackground.png");
@@ -846,8 +847,9 @@ onPress={() => {setStakingScreenActive(false)}}>
 
         <View style={[styles.sendRowStyle]}>
         <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 8, backgroundColor:"#183A81"}]}>
-        <IconIonicons name="arrow-down-circle-outline" size={22} color="white"  style={{alignSelf:"center"}}/>
-        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}> Stake</Text>
+
+        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}>
+        <IconFeather name="arrow-down-circle" size={18} color="white"/> Stake</Text>
         </View>
         </View>
         </TouchableOpacity>
@@ -913,8 +915,9 @@ onPress={() => {setStakingScreenActive(false)}}>
     }}>
         <View style={[styles.sendRowStyle]}>
         <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 8, backgroundColor:"#183A81"}]}>
-        <IconIonicons name="arrow-up-circle-outline" size={22} color="white"  style={{alignSelf:"center"}}/>
-        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}> Unstake</Text>
+
+        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}>
+        <IconFeather name="arrow-down-circle" size={18} color="white"/> Unstake</Text>
         </View>
         </View>
         </TouchableOpacity>

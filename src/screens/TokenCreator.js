@@ -452,8 +452,9 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
  
         <View style={[styles.sendRowStyle]}>
         <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 10, backgroundColor:"#183A81"}]}>
-        <IconFA5 name="coins" size={20} color="white" style={{alignSelf:"center"}}/>
-        <Text style={{fontSize: 18, alignSelf:"center"}, getAppFont("white")}> Mint Tokens</Text>
+
+        <Text style={{fontSize: 22, alignSelf:"center"}, getAppFont("white")}>
+        <IconFA5 name="coins" size={22} color="white" style={{alignSelf:"center"}}/> Mint Tokens</Text>
         </View>
         </View>
         </TouchableOpacity>

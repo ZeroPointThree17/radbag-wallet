@@ -117,7 +117,7 @@ export function formatNumForDisplay(number) {
 export function formatNumForHomeDisplay(number) {
 
   var num = new bigDecimal(formatNumForDisplay(number).replace(/,/g, ''));
-  var result = num.round(4, bigDecimal.RoundingModes.DOWN).getPrettyValue(); 
+  var result = num.round(2, bigDecimal.RoundingModes.DOWN).getPrettyValue(); 
   resArry = result.split(".")
   var resP1 = resArry[0]
   var resP2 = resArry[1].replace(/0+$/g, "");
@@ -130,12 +130,12 @@ export function formatNumForHomeDisplay(number) {
 export function formatCurrencyForHomeDisplay(number, currencySymbol) {
   
   var num = new bigDecimal(formatNumForDisplay(number).replace(/,/g, ''));
-  var result = num.round(6, bigDecimal.RoundingModes.DOWN).getValue(); 
+  var result = num.round(4, bigDecimal.RoundingModes.DOWN).getValue(); 
 
   const formatter = new Intl.NumberFormat(navigator.language || 'en-US', {
     style: 'currency',
     currency: currencySymbol,
-    minimumFractionDigits: 6
+    minimumFractionDigits: 4
   });
 
   return formatter.format(result);

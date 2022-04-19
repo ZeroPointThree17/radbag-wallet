@@ -1,20 +1,24 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View } from 'react-native';
+import { View ,Linking} from 'react-native';
 import React from 'react';
 import Home from './Home';
 import TokenCreator from './TokenCreator';
 import NFTs from './NFTs';
+import Sign from './Sign';
 import SettingsNav from './SettingsNav';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import  Ionicons  from 'react-native-vector-icons/Ionicons';
 import IconFA5 from 'react-native-vector-icons/FontAwesome5';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import { Image } from 'react-native';
+
 // import HardwareWallet from './HardwareWalletUSB'
 
 const Tab = createBottomTabNavigator();
 
 export default function HomeNav({route, navigation}) {
+
+
 
   return (
   
@@ -68,6 +72,14 @@ export default function HomeNav({route, navigation}) {
          {/* <Tab.Screen name="Market" component={NFTs} options={
            {
       tabBarLabel: 'Market',
+      tabBarIcon: ({ color, size }) => (
+
+        <IconFA5 name="opencart" color={color} size={size} />
+      ),
+    }}/> */}
+            {/* <Tab.Screen name="Sign" component={Sign} options={
+           {
+      tabBarLabel: 'Sign',
       tabBarIcon: ({ color, size }) => (
 
         <IconFA5 name="opencart" color={color} size={size} />

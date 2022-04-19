@@ -2,7 +2,7 @@ import './shim';
 import 'react-native-gesture-handler'
 import React, {useRef, useState, useEffect } from 'react';
 import type {Node} from 'react';
-import { ScrollView, StyleSheet, AppState, View, SafeAreaView, useColorScheme, LogBox, Alert } from 'react-native';
+import { ScrollView, StyleSheet, AppState, View, useColorScheme, LogBox, Alert } from 'react-native';
 import { NavigationContext, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 var SQLite = require('react-native-sqlite-storage');
@@ -14,6 +14,7 @@ import RNBootSplash from 'react-native-bootsplash';
 import Welcome from './src/screens/Welcome';
 import CreateWallet from './src/screens/CreateWallet';
 import HomeNav from './src/screens/HomeNav';
+import Sign from './src/screens/Sign';
 import AppDataSave from './src/screens/AppDataSave';
 import MnemonicInput from './src/screens/MnemonicInput';
 import Send from './src/screens/Send';
@@ -25,10 +26,24 @@ import {openCB, errorCB, useInterval} from './src/helpers/helpers';
 import { PinCode, PinCodeT } from 'fedapay-react-native-pincode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Separator } from './src/helpers/jsxlib';
-
+import DeepLinking from 'react-native-deep-linking';
+import { Linking } from 'react-native';
+ 
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
+const linking = {
+  prefixes: ['https://raddish-node.com/'],
+  config: {
+    initialRouteName: 'Sign',
+    screens: {
+      Sign: {
+        path: 'sign'
+      },
+
+    }
+  }
+};
 
 function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin){
 
@@ -82,7 +97,7 @@ styles={{
   </ScrollView>
   </View>
 
-<NavigationContainer onReady={() => RNBootSplash.hide()}>
+<NavigationContainer linking={linking} onReady={() => RNBootSplash.hide()}>
 
 <Stack.Navigator screenOptions={{
 headerStyle: {
@@ -99,6 +114,7 @@ fontWeight: 'bold'
 <Stack.Screen name="Wallet Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
 <Stack.Screen name="RadBag Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
 <Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
+<Stack.Screen name="Sign" component={Sign} options={{ headerTitleAlign: 'center' }}/>
 <Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
 <Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
 <Stack.Screen name="Import Select" component={ImportSelect} options={{ headerTitleAlign: 'center' }}/>
@@ -115,7 +131,11 @@ return navContainerJSX;
 
 
 
+
+
 const App: () => Node = () => {
+
+
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);

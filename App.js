@@ -120,7 +120,7 @@ const App: () => Node = () => {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [correctPin, setCorrectPin] = useState(false);
-  global.gateways = ["https://raddish-node.com:6208","https://mainnet.clana.io","https://mainnet-gateway.radixdlt.com"]
+  global.gateways = ["https://raddish-node.com:6208","https://mainnet.clana.io"]
   
   useEffect(() => {
 

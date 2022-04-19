@@ -579,7 +579,8 @@ function getBalances(gatewayIdx, defaultRri, firstTime, setGettingBalances, sour
   const [encryptMsgflag, setEncryptMsgflag] = useState(false)
 
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
-
+  // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
+  
   useEffect( () => {
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
            
@@ -629,27 +630,15 @@ useInterval(() => {
 <Progress.Circle style={{alignSelf:"center", marginBottom:10, marginRight: 12}} size={25} indeterminate={true} />
 }
 
-
       <View style={[{alignSelf: "center"}]}>
 
       <View style={[styles.rowStyle, {alignSelf: "center"}]}>
 
-      <ImageBackground
-    style={{
-      width: 25,
-      height: 25
-    }}
-    source={
-      require("../assets/generic_token.png") //Indicator
-    }>
 <Image style={{width: 25, height: 25}}
     defaultSource={GenericToken}
     source={
       {uri: iconURIs.get(symbol)}
-    }
-    
-      /> 
-      </ImageBackground>
+    }/> 
   <Text style={[{fontSize:20, textAlign:"center"}, getAppFont("black")]}> {tokenNames.get(symbol) + " (" + symbol.split(" (")[0] + ")"}</Text>
   </View>
   <Text style={[{fontSize:14, textAlign:"center"}, getAppFont("black")]}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>

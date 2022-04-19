@@ -248,20 +248,11 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
 
   <View style={styles.addrRowStyle}>
 
-  <ImageBackground
-    style={{
-      width: 36,
-      height: 36,
-      justifyContent: "flex-start"
-    }}
-    source={
-      require("../assets/generic_token.png") //Indicator
-    }>
   <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
-  defaultSource={GenericToken}
-  source={{uri: balance[3]}}
-    />
-    </ImageBackground>
+   defaultSource={GenericToken}
+   source={{uri: balance[3]}}
+     />
+
     <View style={{flex:2}}>
         <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
         <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>

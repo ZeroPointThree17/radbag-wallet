@@ -38,7 +38,10 @@ const linking = {
     initialRouteName: 'Sign',
     screens: {
       Sign: {
-        path: 'sign'
+        path: 'sign/:txn',
+        parse: {
+          txn: (txn) => `${txn}`,
+        },
       },
 
     }

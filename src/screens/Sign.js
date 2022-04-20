@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, ScrollView, Text, View, StyleSheet, useWindowDimensions } from 'react-native';
+import { TouchableOpacity, ScrollView, Text, View, StyleSheet, Linking, Alert } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -11,6 +11,11 @@ import RenderHtml from 'react-native-render-html';
 
 const Sign = ({route, navigation}) => {
  
+  const {
+    params: { txn },
+  } = route;
+
+  Alert.alert(txn)
   // const [initialised, setInitialised] = useState(false);
 
   // useEffect(() => {
@@ -30,9 +35,18 @@ const Sign = ({route, navigation}) => {
   //   }
   // }
 
-  // const { unbuiltTxn, description } = route.params;
-  const { width } = useWindowDimensions();
+  // const _handleOpenURL = (evt) = {
+  //   alert(evt)
+  // }
 
+  // // const { unbuiltTxn } = route.params;
+  // // alert(unbuiltTxn)
+  // Linking.addEventListener('url', this._handleOpenURL);
+  // Linking.getInitialURL().then(url => {
+  //   if (url) {
+  //     this._handleOpenURL({ url });
+  //   }
+  // });
 //   const source = {
 //     html: `
 // <table class="jh-type-object jh-root"><tbody class="">

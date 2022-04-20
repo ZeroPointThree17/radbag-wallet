@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RadBag</string>
+    <string name="asset_statements">[{\n  \"relation\": [\"delegate_permission/common.handle_all_urls\"],\n  \"target\": {\n    \"namespace\": \"web\",\n    \"site\": \"https://raddish-node.com\",\n  }\n}]</string>
 </resources>

@@ -50,7 +50,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
   const [mnemonic, setMnemonic] = useState("");
   
  return ( 
-     <View style={styles.container}> 
+     <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}> 
      <Separator/>
 <Text style={[getAppFont("black"), {margin: 20}]}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
 
@@ -60,7 +60,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
-      style={[{height: 150, padding: 12, paddingTop: 12, margin:20, marginTop:10, borderWidth:1, borderRadius: 15, textAlignVertical: 'top'},getAppFont("black")]}
+      style={[{ backgroundColor: global.reverseModeTranslation, borderColor: global.modeTranslation, height: 150, padding: 12, paddingTop: 12, margin:20, marginTop:10, borderWidth:1, borderRadius: 15, textAlignVertical: 'top'},getAppFont("black")]}
     />
 
  <Button style={styles.title}

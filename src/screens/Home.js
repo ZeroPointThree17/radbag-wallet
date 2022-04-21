@@ -1,6 +1,6 @@
-import { RefreshControl, Image, ImageBackground, ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { RefreshControl, Image, ImageBackground, useColorScheme,ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
-var GenericToken = require("../assets/generic_token.png");
+var GenericToken = require("../assets/square-rounded-xxl.png");
  var SQLite = require('react-native-sqlite-storage');
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -201,10 +201,22 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
     <View style={styles.addrRowStyle}>
 
 
-    <Image style={{width: 36, height: 36}}
-    defaultSource={GenericToken}
-    source={{uri: balance[3]}}
-      />
+    <ImageBackground
+    style={{
+      width: 36,
+      height: 36,
+      justifyContent: "flex-start",
+     
+    }}
+    source={
+      require("../assets/square-rounded-xxl.png") //Indicator
+    }>
+  <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
+  defaultSource={GenericToken}
+  source={{uri: balance[3]}}
+    />
+    </ImageBackground>
+
     <View style={{flex:1.8}}>
         <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
         <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
@@ -248,11 +260,22 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
 
   <View style={styles.addrRowStyle}>
 
+  <ImageBackground
+    style={{
+      width: 36,
+      height: 36,
+      justifyContent: "flex-start",
+     
+    }}
+    source={
+      require("../assets/square-rounded-xxl.png") //Indicator
+    }>
   <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
    defaultSource={GenericToken}
    source={{uri: balance[3]}}
      />
-
+    </ImageBackground>
+    
     <View style={{flex:2}}>
         <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
         <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
@@ -582,8 +605,10 @@ const Home = ({route, navigation}) => {
     const [isHW, setIsHW] = useState()
     const [historyRows, setHistoryRows] = useState();
     const [tokenPrices, setTokenPrices] = useState();
-
-    
+    global.isDarkMode = useColorScheme() === 'dark';
+    global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
+    global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
+ 
 
     const storeCurrData = async (json, setCurrValue, setCurrLabel) => {
       try {
@@ -729,7 +754,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
   return (
 
     <SafeAreaView style={styles.containerMain}>
-        <ScrollView style={styles.scrollView}
+        <ScrollView style={[styles.scrollView], {backgroundColor: global.reverseModeTranslation}}
         refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -858,7 +883,7 @@ navigation.dispatch(pushAction);
      <View style={styles.rowStyle}>
     
 <Text style={[styles.buttonText, getAppFont("black")]}>
-<IconMaterialCommunityIcons name="application-import" size={12} color="black" /> Import Wallet</Text></View>
+<IconMaterialCommunityIcons name="application-import" size={12} color={global.modeTranslation} /> Import Wallet</Text></View>
 </TouchableOpacity>
 </View>
 
@@ -875,7 +900,7 @@ navigation.dispatch(pushAction);
   
          {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
 <Text style={[styles.buttonText, getAppFont("black")]}>
-<IconEntypo name="wallet" size={12} color="black" /> New Wallet</Text></View>
+<IconEntypo name="wallet" size={12} color={global.modeTranslation} /> New Wallet</Text></View>
 </TouchableOpacity>
 </View>
 <View style={styles.rowStyleHome}>  
@@ -883,7 +908,7 @@ navigation.dispatch(pushAction);
      <View style={styles.rowStyle}>
     
 <Text style={[styles.buttonText, getAppFont("black")]}>
-<IconFeather name="hash" size={12} color="black" /> Add Address</Text></View>
+<IconFeather name="hash" size={12} color={global.modeTranslation} /> Add Address</Text></View>
 </TouchableOpacity> 
 </View>
 </View>

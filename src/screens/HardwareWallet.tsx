@@ -203,7 +203,7 @@ const HardwareWallet = ({ route, navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: global.reverseModeTranslation }]}>
       <Text style={[getAppFont("black"), { textAlign: "center" }]}>{"Please open the Radix app in the hardware wallet and ensure bluetooth is enabled on the wallet and on your device" + androidMsg + ". Once the Radix app is open, please wait 30 seconds for the connection to be established."}</Text>
       <Separator />
       <Separator />

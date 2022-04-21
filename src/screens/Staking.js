@@ -632,11 +632,11 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       // alert("Val deets: "+JSON.stringify(validatorDetails)) 
           rows.push(
              
-          <View key={valAddr}>
+          <View key={valAddr} style={[{backgroundColor:global.reverseModeTranslation}]}>
 
 
 
-<View>
+<View style={[{backgroundColor:global.reverseModeTranslation}]}>
     {/* <View style={styles.addrRowStyle}> */}
 
     <Text style={[{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start'}, getAppFont("black")]}>{validatorDetails.name}</Text>
@@ -762,9 +762,9 @@ const stakingStats = (showStakingStats) => {
 
 
  return ( 
-  <ScrollView style={{backgroundColor:"white"}}> 
+  <ScrollView contentContainerStyle={{backgroundColor:global.reverseModeTranslation}}> 
      <Separator/>
-     <View style={styles.addrRowStyle}>
+     <View style={[styles.addrRowStyle,{backgroundColor:global.reverseModeTranslation}]}>
      <TouchableHighlight 
      activeOpacity={0.6}
      underlayColor="black"
@@ -781,7 +781,7 @@ onPress={() => {setStakingScreenActive(false)}}>
     </View>
 
 {stakingScreenActive && <React.Fragment>
-  <View style={styles.container}>
+  <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}>
  
   <TouchableOpacity style={styles.appButtonContainer} onPress={ () => setShowStakingStats(!showStakingStats) }>
   < Text style={[styles.appButtonText, getAppFont("white")]}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
@@ -791,7 +791,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 
 
     <Separator/>
-      <View style={styles.rowStyle}>
+      <View style={[styles.rowStyle,{backgroundColor:global.reverseModeTranslation}]}>
      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, borderRadius: 15}, getAppFont("black")]}>Validator Address{"\n"}(Default: RadBag Validator):</Text>
      <Text
        style={[{color: 'blue', textAlign: "center" , fontSize:12, flex:0.5}, getAppFont("blue")]}
@@ -800,10 +800,10 @@ onPress={() => {setStakingScreenActive(false)}}>
        [Validator List]
      </Text>
      </View>
-     <View style={styles.rowStyle}>
+     <View style={[styles.rowStyle]}>
  
         <TextInput ref={stakeValRef}
-        style={[{padding:8, borderWidth:1, backgroundColor:"white", flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
+        style={[{padding:8, borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation, flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -821,7 +821,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeAmtRef}
-        style={[{padding:4, borderWidth:1, backgroundColor:"white", flex:0.5, borderRadius: 15}, getAppFont("black")]}
+        style={[{padding:4, borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation, flex:0.5, borderRadius: 15}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'
@@ -861,7 +861,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 
 
 {stakingScreenActive==false && <React.Fragment>
-<View style={styles.container} > 
+<View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}>
       
 <TouchableOpacity style={styles.appButtonContainer} onPress={ () => setShowStakingStats(!showStakingStats) }>
     < Text style={[styles.appButtonText, getAppFont("white")]}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
@@ -872,7 +872,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      <Separator/>
        <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Validator to unstake from:</Text>
         <TextInput ref={unstakeValRef}
-        style={[{padding:8, borderWidth:1, backgroundColor:"white", flex:1, borderRadius: 15}, getAppFont("black")]}
+        style={[{padding:8, borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation,flex:1, borderRadius: 15}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -891,7 +891,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={unstakeAmtRef}
-        style={[{padding:4, borderWidth:1, backgroundColor:"white", flex:0.5, borderRadius: 15}, getAppFont("black")]}
+        style={[{padding:4, borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation, flex:0.5, borderRadius: 15}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'
@@ -940,7 +940,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      </React.Fragment>
  }
 
-<View style={styles.container} > 
+<View style={[styles.container, {backgroundColor:global.reverseModeTranslation}]} > 
 <View >
 <Text style={[{fontSize: 16}, getAppFont("black")]}>Current Stakes</Text>
 <Text style={[{fontSize: 12}, getAppFont("black")]}>(excludes amounts pending and being unstaked) </Text>

@@ -14,7 +14,7 @@ const ImportSelect = ({route, navigation}) => {
   var firstTimeString = JSON.stringify(firstTimeStr).replace(/"/g, '');
 
  return ( 
-  <View style={styles.container}> 
+  <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}> 
     {/* <ScrollView styles={{justifyContent: "center", alignItems:"center", backgroundColor:"white"}}> */}
 
     <Button style={getAppFont("black")}

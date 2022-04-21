@@ -12,8 +12,8 @@ import { getAppFont } from '../helpers/helpers';
 
 const AdvancedOptions = ({route, navigation}) => {
  return ( 
-  <View style={{flex:1}}>
-     <ScrollView style={{flex:1}}> 
+  <View style={{flex:1, backgroundColor:globalThis.reverseModeTranslation}}>
+     <ScrollView style={{flex:1}}>
 
 
  
@@ -26,7 +26,7 @@ const AdvancedOptions = ({route, navigation}) => {
   tension={100} // These props are passed to the parent component (here TouchableScale)
   activeScale={0.95} //
   linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
+    colors: [global.reverseModeTranslation, global.reverseModeTranslation],
     start: { x: 1, y: 0 },
     end: { x: 0.2, y: 0 },
   }}

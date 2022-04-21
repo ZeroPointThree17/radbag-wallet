@@ -2,7 +2,7 @@ import './shim';
 import 'react-native-gesture-handler'
 import React, {useRef, useState, useEffect } from 'react';
 import type {Node} from 'react';
-import { ScrollView, StyleSheet, AppState, View, useColorScheme, LogBox, Alert } from 'react-native';
+import { ScrollView, StyleSheet, AppState, View, LogBox, useColorScheme } from 'react-native';
 import { NavigationContext, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 var SQLite = require('react-native-sqlite-storage');
@@ -139,12 +139,16 @@ return navContainerJSX;
 const App: () => Node = () => {
 
 
-
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [correctPin, setCorrectPin] = useState(false);
+
   global.gateways = ["https://raddish-node.com:6208","https://mainnet.clana.io"]
-  
+  global.isDarkMode = useColorScheme() === 'dark';
+  global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
+  global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
+ 
+
   useEffect(() => {
 
     AsyncStorage.setItem('@gatewayIdx',"0");
@@ -175,19 +179,16 @@ const App: () => Node = () => {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setIsPINEnabled(appPin != undefined);
     })
+
   }, 3500);
 
 
-  const isDarkMode = useColorScheme() === 'dark';
   const navigation = React.useContext(NavigationContext);
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
   const Stack = createStackNavigator();
 
-const [firstTimer, setFirstTimer] = useState(true);
-const [isPINEnabled, setIsPINEnabled] = useState(true);
+  const [firstTimer, setFirstTimer] = useState(true);
+  const [isPINEnabled, setIsPINEnabled] = useState(true);
 
 db.transaction((tx) => {
   tx.executeSql("SELECT new_user_flag FROM application", [], (tx, results) => {

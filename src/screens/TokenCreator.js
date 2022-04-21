@@ -299,8 +299,8 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
   const tknSupplyRef = useRef();
 
  return ( 
-  <ScrollView style={styles.scrollView}>
-     <View style={styles.container} > 
+  <ScrollView style={[styles.scrollView, {backgroundColor: global.reverseModeTranslation}]}>
+     <View style={[styles.container, {backgroundColor: global.reverseModeTranslation}]}>
 
      {/* <Image style={{margin: 0, width: 85, height: 85, alignSelf:'center'}}
     source={GenericToken}
@@ -311,7 +311,7 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknNameRef}
-        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, borderRadius: 15,}, getAppFont("black")]}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, backgroundColor: global.reverseModeTranslation, borderColor: global.modeTranslation, height:30, width:300, flex:1, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Name'
@@ -327,7 +327,7 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknDescRef}
-        style={[{padding:4, paddingLeft:10, borderWidth:1,  height: 125, width:300, backgroundColor:"white", flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
+        style={[{padding:4, paddingLeft:10, borderWidth:1,  height: 125, width:300, backgroundColor: global.reverseModeTranslation, borderColor: global.modeTranslation,  flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         multiline={true}
@@ -345,7 +345,7 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknSymbolRef}
-        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:50, backgroundColor:"white", flex:0.33, borderRadius: 15,}, getAppFont("black")]}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:50, backgroundColor: global.reverseModeTranslation, borderColor: global.modeTranslation,  flex:0.33, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Symbol'
@@ -361,7 +361,7 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknIconURLRef}
-        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, borderRadius: 15,}, getAppFont("black")]}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor: global.reverseModeTranslation, borderColor: global.modeTranslation,  flex:1, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Icon URL'
@@ -376,7 +376,7 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
      <View style={styles.rowStyle}>
  
         <TextInput ref={tknURLRef}
-        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, borderRadius: 15,}, getAppFont("black")]}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor: global.reverseModeTranslation, borderColor: global.modeTranslation,  flex:1, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Project URL'
@@ -412,7 +412,7 @@ function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,privKey_e
       <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Token Supply (must be a number)</Text>
      <View style={styles.rowStyle}>
         <TextInput ref={tknSupplyRef}
-        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor:"white", flex:1, borderRadius: 15,}, getAppFont("black")]}
+        style={[{padding:4, paddingLeft:10, borderWidth:1, height:30, width:300, backgroundColor: global.reverseModeTranslation, borderColor: global.modeTranslation,  flex:1, borderRadius: 15,}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Token Supply'

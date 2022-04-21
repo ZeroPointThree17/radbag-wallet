@@ -66,6 +66,18 @@ export function last4(address){
   return shortenedAddr;
 }
 
+export function getAppFontNoMode(color){
+  
+  var font = "";
+  if(Platform.OS === 'ios'){
+    font = "AppleSDGothicNeo-Light"
+  } else{
+    font = "Roboto-Regular"
+  }
+
+  return {fontFamily: font, color: color};
+}
+
 export function getAppFont(color){
 
   var font = "";
@@ -74,6 +86,19 @@ export function getAppFont(color){
   } else{
     font = "Roboto-Regular"
   }
+
+  if(global.isDarkMode){
+    // if(color === "white"){
+    //   color = "black"
+    // }
+    if(color === "black"){
+      color = "white"
+    }
+    if(color === "blue"){
+      color = "white"
+    }
+  }
+
   return {fontFamily: font, color: color};
 }
 
@@ -342,25 +367,25 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                     && stakeFilter 
                     ){
                     count++;
-                    var from_account = action.from_account===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>From: {shortenAddress(action.from_account.address)}  </Text>
+                    var from_account = action.from_account===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>From: {shortenAddress(action.from_account.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.from_account.address)}}>
                     <IconFeather name="copy" size={16} color="#183A81" />
                     </TouchableOpacity>
                     </View>
                     ;
-                    var to_account = action.to_account===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>To: {shortenAddress(action.to_account.address)}  </Text>
+                    var to_account = action.to_account===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>To: {shortenAddress(action.to_account.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.to_account.address)}}>
                     <IconFeather name="copy" size={16} color="#183A81" />
                     </TouchableOpacity>
                     </View>
                     ;
-                    var to_validator = action.to_validator===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>To Validator: {shortenAddress(action.to_validator.address)}  </Text>
+                    var to_validator = action.to_validator===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>To Validator: {shortenAddress(action.to_validator.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.to_validator.address)}}>
                     <IconFeather name="copy" size={16} color="#183A81" />
                     </TouchableOpacity>
                     </View>
                     ;
-                    var from_validator = action.from_validator===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>From Validator: {shortenAddress(action.from_validator.address)}  </Text>
+                    var from_validator = action.from_validator===undefined ? undefined : <View style={[styles.rowStyle, , {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>From Validator: {shortenAddress(action.from_validator.address)}  </Text>
                                         <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.from_validator.address)}}>
                     <IconFeather name="copy" size={16} color="#183A81" />
                     </TouchableOpacity>
@@ -399,11 +424,14 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
 
                 // alert(JSON.stringify(action))
                 historyRows.push(
-                  <View key={count}>
-                  <Card >
-                  <Card.Title>{title}</Card.Title>
+                  <View key={count} style={{backgroundColor: global.reverseModeTranslation}}>
+                  <Card containerStyle={{ backgroundColor: global.reverseModeTranslation }}>
+              
+                  <Card.Title style={{backgroundColor: global.reverseModeTranslation}}>{title}</Card.Title>
                   <Card.Divider />
+                  <View style={{backgroundColor: global.reverseModeTranslation}}>
                   {details}
+                  </View>
                 </Card>
                 </View>
                 // <ScrollView nestedScrollEnabled={true} horizontal={true}><Text style={{fontSize: 12, textAlign:"center"}} numberOfLines={4}>{details}</Text><Separator/></ScrollView>

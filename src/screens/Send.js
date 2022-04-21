@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { Keyboard, Image,ImageBackground, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
+import { Keyboard, Image, ImageBackground, useColorScheme, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
@@ -10,10 +10,10 @@ var SQLite = require('react-native-sqlite-storage');
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx } from '../helpers/helpers';
+import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
 import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
-var GenericToken = require("../assets/generic_token.png");
+var GenericToken = require("../assets/square-rounded-xxl.png");
 import * as Progress from 'react-native-progress';
 import prompt from 'react-native-prompt-android';
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
@@ -577,6 +577,10 @@ function getBalances(gatewayIdx, defaultRri, firstTime, setGettingBalances, sour
   const [usbConn, setUsbConn] = useState(false);
   const [historyRows, setHistoryRows] = useState([]);
   const [encryptMsgflag, setEncryptMsgflag] = useState(false)
+  global.isDarkMode = useColorScheme() === 'dark';
+  global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
+  global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
+  global.linkModeTranslation = useColorScheme() === 'dark' ? "white" : "blue";
 
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
   // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
@@ -621,7 +625,7 @@ useInterval(() => {
   const [error, setError]=useState(false);
 
  return ( 
-   <View style={styles.container}>
+   <View style={[styles.container, {backgroundColor: global.reverseModeTranslation}]}>
      <ScrollView nestedScrollEnabled={true}> 
 
 <View style={[styles.rowStyle, {alignSelf: "center"}]}>
@@ -633,12 +637,23 @@ useInterval(() => {
       <View style={[{alignSelf: "center"}]}>
 
       <View style={[styles.rowStyle, {alignSelf: "center"}]}>
-
+     
+    
+      <ImageBackground
+    style={{
+      width: 25,
+      height: 25
+    }}
+    source={
+      require("../assets/square-rounded-xxl.png") //Indicator
+    }>
 <Image style={{width: 25, height: 25}}
     defaultSource={GenericToken}
     source={
       {uri: iconURIs.get(symbol)}
     }/> 
+    </ImageBackground>
+
   <Text style={[{fontSize:20, textAlign:"center"}, getAppFont("black")]}> {tokenNames.get(symbol) + " (" + symbol.split(" (")[0] + ")"}</Text>
   </View>
   <Text style={[{fontSize:14, textAlign:"center"}, getAppFont("black")]}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text>
@@ -656,7 +671,7 @@ useInterval(() => {
      <View style={styles.rowStyle}>
  
         <TextInput ref={addrFromRef}
-        style={[{padding:10, borderWidth:1, height:55, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15}, getAppFont("black")]}
+        style={[{padding:10, borderWidth:1, height:55, borderColor: global.modeTranslation, backgroundColor:"#d3d3d3", flex:1, borderRadius: 15}, getAppFontNoMode("black")]}
         disabled="true"
         multiline={true}
         numberOfLines={2}
@@ -679,14 +694,14 @@ useInterval(() => {
       <TouchableOpacity style={{justifyContent:'center'}} onPress={() => {setCameraOn(!cameraOn)} }>
       <Text style={[{ textAlign:'center', marginHorizontal: 0, fontSize:8}, getAppFont("black")]}>Scan QR</Text>
   
- <IconMaterial style={{justifyContent:'center', alignSelf:'center'}} name="qrcode-scan" size={20} color="black" />
+ <IconMaterial style={{justifyContent:'center', alignSelf:'center', color: global.modeTranslation}} name="qrcode-scan" size={20} color="black" />
  </TouchableOpacity>
  </View>
 
       <View style={styles.rowStyle}>
 
 <TextInput ref={addrToRef}
-style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
+style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: global.modeTranslation, textAlignVertical: 'top'}, getAppFont("black")]}
         placeholder='Destination Radix Address'
         placeholderTextColor="#d3d3d3"
         value={destAddr}
@@ -705,7 +720,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, textAlignVertical:
    <View style={[styles.rowStyle]}>
 
       <TextInput ref={msgRef}
-      style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15, textAlignVertical: 'top'}, getAppFont("black")]}
+      style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15, borderColor: global.modeTranslation, textAlignVertical: 'top'}, getAppFont("black")]}
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
@@ -738,7 +753,7 @@ onPress={()=>{
 <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to send:</Text>
 {/* <View > */}
 <TextInput ref={amountRef}
-        style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15}, getAppFont("black")]}
+        style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: global.modeTranslation,}, getAppFont("black")]}
         placeholder='Amount'
         autoCapitalize='none'
         placeholderTextColor="#d3d3d3"

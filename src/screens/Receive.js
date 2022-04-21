@@ -13,9 +13,9 @@ const Receive = ({route, navigation}) => {
   const { xrdAddress } = route.params;
 
  return ( 
-  <View style={styles.container}> 
-    <ScrollView styles={{backgroundColor:"white"}}>
-      <View style={styles.container}> 
+  <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}> 
+    <ScrollView contentContainerStyle={{backgroundColor:global.reverseModeTranslation}}>
+      <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}> 
        <Text style={[{textAlign:'center', fontWeight:'bold'}, getAppFont("black")]}>Radix Address QR Code:</Text>
        <Separator/>
 <QRCode 
@@ -34,7 +34,7 @@ const Receive = ({route, navigation}) => {
  
    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(xrdAddress)}}>
    <View style={styles.rowStyle}>
-   <IconFeather name="copy" size={20} color="black" />
+   <IconFeather name="copy" size={20} color={global.modeTranslation} />
 <Text style={getAppFont("black")}> Copy address to clipboard</Text>
 </View>
 </TouchableOpacity>

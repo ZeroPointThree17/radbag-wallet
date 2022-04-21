@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { RefreshControl, Switch, ScrollView, Text, Image, View, StyleSheet, Alert } from 'react-native';
+import { RefreshControl, Switch, ScrollView, Text, Image, View, StyleSheet, useColorScheme } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
@@ -56,6 +56,9 @@ const optionalConfigObject = {
   const [refreshCount, setRefreshCount] = React.useState(11);
   const [TKUnlock, setTKUnlock] = React.useState(false);
   var [isEnabled, setIsEnabled] = useState(true);
+  global.isDarkMode = useColorScheme() === 'dark';
+  global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
+  global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
 
 
   useEffect(() => {
@@ -95,9 +98,9 @@ const optionalConfigObject = {
   // });
 
  return ( 
-  <View style={{flex:1}}>
+  <View style={{flex:2, backgroundColor:globalThis.reverseModeTranslation}}>
 
-     <ScrollView style={{flex:1}}
+     <ScrollView style={{flex:2}}
         refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -112,7 +115,7 @@ const optionalConfigObject = {
   tension={100} // These props are passed to the parent component (here TouchableScale)
   activeScale={0.95} //
   linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
+    colors: [global.reverseModeTranslation, global.reverseModeTranslation],
     start: { x: 1, y: 0 },
     end: { x: 0.2, y: 0 },
   }}
@@ -149,7 +152,7 @@ const optionalConfigObject = {
   tension={100} // These props are passed to the parent component (here TouchableScale)
   activeScale={0.95} //
   linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
+    colors: [global.reverseModeTranslation, global.reverseModeTranslation],
     start: { x: 1, y: 0 },
     end: { x: 0.2, y: 0 },
   }}
@@ -175,7 +178,7 @@ const optionalConfigObject = {
   tension={100} // These props are passed to the parent component (here TouchableScale)
   activeScale={0.95} //
   linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
+    colors: [global.reverseModeTranslation, global.reverseModeTranslation],
     start: { x: 1, y: 0 },
     end: { x: 0.2, y: 0 },
   }}
@@ -204,7 +207,7 @@ const optionalConfigObject = {
   tension={100} // These props are passed to the parent component (here TouchableScale)
   activeScale={0.95} //
   linearGradientProps={{
-    colors: ['#ffffff', '#ffffff'],
+    colors: [global.reverseModeTranslation, global.reverseModeTranslation],
     start: { x: 1, y: 0 },
     end: { x: 0.2, y: 0 },
   }}
@@ -224,7 +227,7 @@ const optionalConfigObject = {
 </React.Fragment>
  }
 
-<View style={[{backgroundColor:"white"}]}>
+<View style={[{backgroundColor:global.reverseModeTranslation}]}>
 <View style={[styles.rowStyle, {marginLeft: 15, marginTop: 10, marginBottom: 10, flexDirection: "row"}]}>
 <IconMaterialMain style={{alignSelf:"center"}} name="fiber-pin" size={20} color="#4F8EF7"/>
 <Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Enable App PIN?</Text>
@@ -240,16 +243,19 @@ const optionalConfigObject = {
       </View>
       </View>
       <SeparatorBorder/>
-
+ 
 </ScrollView>
 
 
-<View style={{flex: 0.7, justifyContent:"center" , alignSelf:"center"}}>
+<View style={{flex: 0.4, flexDirection:"column", justifyContent:"flex-end", alignSelf:"center", }}>
+  <ScrollView contentContainerStyle={{justifyContent:"flex-end"}}>
 <Image style={{margin: 0, padding:0, width: 70, height: 90, alignSelf:'center'}}
     source={Raddish}/>
-    <Text style={[{alignSelf:'center'}, getAppFont("black")]}>RadBag Wallet v2.11</Text>
+    <Text style={[{alignSelf:'center',justifyContent:"center"}, getAppFont("black")]}>RadBag Wallet v2.11</Text>
+    <Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
+    </ScrollView>
 </View>
- <Separator/><Separator/>
+ 
  </View>  
  )
 };

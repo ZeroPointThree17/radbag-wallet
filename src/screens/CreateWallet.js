@@ -40,9 +40,9 @@ const [word13, setword13] = useState("");
 
   return (
 
-    <ScrollView style={{backgroundColor: "white"}}>
+    <ScrollView > 
    <Separator/>
-     <View  style={styles.container}> 
+     <View  style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}> 
       <Text style={[styles.title,getAppFont("black")]}>Below is your mnemonic phrase. Write it down and keep them in a safe place. DO NOT take a photo of the phrase or copy and paste it anywhere. This key holds ALL YOUR FUNDS!</Text>
  <Separator/>
  <Text style={[styles.mnemonic,getAppFont("black")]}>{mnemonic}</Text>

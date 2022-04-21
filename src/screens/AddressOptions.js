@@ -169,7 +169,7 @@ const addressNameRef = useRef();
 
  return ( 
             
-      <View style={styles.container}> 
+      <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}> 
       <ScrollView>
        <Text style={[{textAlign:'left', fontWeight:'bold', textAlign:'center'},getAppFont("black")]}>Current Address Name:</Text><Text style={[{textAlign:"center", fontSize:20}, getAppFont("black")]}>{addressName}</Text>
        <Separator/>
@@ -178,7 +178,7 @@ const addressNameRef = useRef();
       
        <View style={styles.rowStyle}>
        <TextInput ref={addressNameRef}
-        style={[{padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1},getAppFont("black")]}
+        style={[{borderColor:global.modeTranslation, padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1},getAppFont("black")]}
         placeholder='Address Name'
         placeholderTextColor="#d3d3d3"
         autoCapitalize='none'

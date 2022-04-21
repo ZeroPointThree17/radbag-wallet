@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import { Button, Text, Keyboard, ScrollView, View, StyleSheet } from 'react-native';
 import { decrypt } from '../helpers/encryption';
 var SQLite = require('react-native-sqlite-storage');
-import PasswordInputText from 'react-native-hide-show-password-input';
+import PasswordInputText from 'react-native-password-eye'; 
 import { Separator } from '../helpers/jsxlib';
 import { getAppFont, useInterval, openCB, errorCB } from '../helpers/helpers';
 import * as Progress from 'react-native-progress';
@@ -95,7 +95,7 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
   const [loading, setLoading] = useState(false);
 
   return ( 
-     <View style={styles.container}> 
+     <View style={[styles.container, {backgroundColor:global.reverseModeTranslation}]}> 
      <ScrollView>
       <Separator/>
       <Text style={[{fontWeight:"bold",textAlign:'center', marginHorizontal: 25 }, getAppFont("black")]}>Selected Wallet Name:</Text><Text style={[getAppFont("black"), {fontSize:20, textAlign:'center'}]}>{walletName}</Text>
@@ -104,9 +104,8 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
       { mnemonic_enc != "HW_WALLET" && <React.Fragment>
         <Text style={[{textAlign:'center', marginHorizontal: 25}, getAppFont("black")]}>Enter your wallet password to display the mnemonic for this wallet. This process may take approx. 10 seconds on slower devices.</Text>
         <Separator/>
-        <PasswordInputText  style={[{marginHorizontal: 25}, getAppFont("black")]} 
-        onChangeText={(password) => setPassword( password )}
-        label='Wallet Password' />
+       <View style={{marginHorizontal: 25}}><PasswordInputText placeholder="Wallet Password" secureTextEntry={true} eyeColor={global.modeTranslation} placeholderTextColor={global.modeTranslation} underlineColor={global.modeTranslation}  inputStyle={[{  borderWidth: 1, borderBottomColor: global.modeTranslation, color:global.modeTranslation}, getAppFont("black")]} 
+        onChangeText={(password) => setPassword( password )}/></View>
         <Separator/>
         <Button style={[{marginHorizontal: 25}, getAppFont("black")]}
                 title="Show Mnemonic"

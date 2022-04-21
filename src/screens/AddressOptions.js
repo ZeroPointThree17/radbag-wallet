@@ -178,7 +178,7 @@ const addressNameRef = useRef();
       
        <View style={styles.rowStyle}>
        <TextInput ref={addressNameRef}
-        style={[{borderColor:global.modeTranslation, padding:10, borderWidth:StyleSheet.hairlineWidth, flex: 1},getAppFont("black")]}
+        style={[{borderColor:global.modeTranslation, padding:4, paddingLeft:10, height:40, borderRadius: 15,  borderWidth:StyleSheet.hairlineWidth, flex: 1},getAppFont("black")]}
         placeholder='Address Name'
         placeholderTextColor="#d3d3d3"
         autoCapitalize='none'

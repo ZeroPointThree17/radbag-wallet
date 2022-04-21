@@ -423,6 +423,7 @@ if(hardwareWallletPubKeyArr.length > 0){
 {hardwareWallletPubKeys.length==0 && <React.Fragment>
     <Text style={[styles.title,getAppFont("black")]}>Enter a password to protect the data in this wallet.</Text>
     <Separator/>
+    <Separator/>
     <View style={{marginHorizontal: 50}}><PasswordInputText placeholder="Wallet Password" secureTextEntry={true} eyeColor={global.modeTranslation} placeholderTextColor={global.modeTranslation} underlineColor={global.modeTranslation}  inputStyle={[{ padding:4, paddingLeft:10, height: 40, borderRadius: 15, borderWidth: 1, borderColor: global.modeTranslation, color:global.modeTranslation}, getAppFont("black")]} 
         onChangeText={(password) => setAppPw( password )}/></View>
  <Separator/>

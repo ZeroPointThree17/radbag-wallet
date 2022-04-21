@@ -369,25 +369,25 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                     count++;
                     var from_account = action.from_account===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>From: {shortenAddress(action.from_account.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.from_account.address)}}>
-                    <IconFeather name="copy" size={16} color="#183A81" />
+                    <IconFeather name="copy" size={16} color={global.isDarkMode?"white":"#183A81"} />
                     </TouchableOpacity>
                     </View>
                     ;
                     var to_account = action.to_account===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>To: {shortenAddress(action.to_account.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.to_account.address)}}>
-                    <IconFeather name="copy" size={16} color="#183A81" />
+                    <IconFeather name="copy" size={16} color={global.isDarkMode?"white":"#183A81"} />
                     </TouchableOpacity>
                     </View>
                     ;
                     var to_validator = action.to_validator===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>To Validator: {shortenAddress(action.to_validator.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.to_validator.address)}}>
-                    <IconFeather name="copy" size={16} color="#183A81" />
+                    <IconFeather name="copy" size={16} color={global.isDarkMode?"white":"#183A81"} />
                     </TouchableOpacity>
                     </View>
                     ;
                     var from_validator = action.from_validator===undefined ? undefined : <View style={[styles.rowStyle, , {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>From Validator: {shortenAddress(action.from_validator.address)}  </Text>
                                         <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.from_validator.address)}}>
-                    <IconFeather name="copy" size={16} color="#183A81" />
+                    <IconFeather name="copy" size={16} color={global.isDarkMode?"white":"#183A81"} />
                     </TouchableOpacity>
                     </View>
                     ;

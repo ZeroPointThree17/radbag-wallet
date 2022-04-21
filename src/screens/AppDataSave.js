@@ -2,7 +2,7 @@ import { Button, BackHandler, ActivityIndicator, SafeAreaView, View, Text, Style
 const bip39 = require('bip39');
 import React, { useState, useEffect } from 'react';
 let { bech32 } = require('bech32')
-import PasswordInputText from 'react-native-hide-show-password-input';
+import PasswordInputText from 'react-native-password-eye'; 
 var SQLite = require('react-native-sqlite-storage');
 import {encrypt} from '../helpers/encryption';
 var HDKey = require('hdkey')
@@ -399,7 +399,7 @@ if(hardwareWallletPubKeyArr.length > 0){
 }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container,{backgroundColor: global.reverseModeTranslation}]}>
       <Separator/>
       <Separator/>
      <View > 
@@ -422,14 +422,13 @@ if(hardwareWallletPubKeyArr.length > 0){
 <Separator/>
 {hardwareWallletPubKeys.length==0 && <React.Fragment>
     <Text style={[styles.title,getAppFont("black")]}>Enter a password to protect the data in this wallet.</Text>
- <PasswordInputText style={[styles.title, getAppFont("black")]}
-onChangeText={(password) => setAppPw( password )}
-label='Wallet Password' />
-
-<PasswordInputText style={[styles.title,getAppFont("black")]}
-onChangeText={(password) => setAppPwConfirm( password )}
-label='Confirm Wallet Password' />
-
+    <Separator/>
+    <View style={{marginHorizontal: 50}}><PasswordInputText placeholder="Wallet Password" secureTextEntry={true} eyeColor={global.modeTranslation} placeholderTextColor={global.modeTranslation} underlineColor={global.modeTranslation}  inputStyle={[{ padding:4, paddingLeft:10, height: 40, borderRadius: 15, borderWidth: 1, borderColor: global.modeTranslation, color:global.modeTranslation}, getAppFont("black")]} 
+        onChangeText={(password) => setAppPw( password )}/></View>
+ <Separator/>
+    <View style={{marginHorizontal: 50}}><PasswordInputText placeholder="Confirm Wallet Password" secureTextEntry={true} eyeColor={global.modeTranslation} placeholderTextColor={global.modeTranslation} underlineColor={global.modeTranslation}  inputStyle={[{ padding:4, paddingLeft:10, height: 40, borderRadius: 15, borderWidth: 1, borderColor: global.modeTranslation, color:global.modeTranslation}, getAppFont("black")]} 
+        onChangeText={(password) => setAppPwConfirm( password )}/></View>
+ <Separator/>
  <Separator/>
  { !isActive
   &&

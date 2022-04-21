@@ -104,8 +104,9 @@ function getMnemonicDataFromDatabase(db, setMnemonic_enc, setword13_enc,setWalle
       { mnemonic_enc != "HW_WALLET" && <React.Fragment>
         <Text style={[{textAlign:'center', marginHorizontal: 25}, getAppFont("black")]}>Enter your wallet password to display the mnemonic for this wallet. This process may take approx. 10 seconds on slower devices.</Text>
         <Separator/>
-       <View style={{marginHorizontal: 25}}><PasswordInputText placeholder="Wallet Password" secureTextEntry={true} eyeColor={global.modeTranslation} placeholderTextColor={global.modeTranslation} underlineColor={global.modeTranslation}  inputStyle={[{  borderWidth: 1, borderBottomColor: global.modeTranslation, color:global.modeTranslation}, getAppFont("black")]} 
+       <View style={{marginHorizontal: 25}}><PasswordInputText placeholder="Wallet Password" secureTextEntry={true} eyeColor={global.modeTranslation} placeholderTextColor={global.modeTranslation} underlineColor={global.modeTranslation}  inputStyle={[{ padding:4, paddingLeft:10, height: 40, borderRadius: 15, borderWidth: 1, borderColor: global.modeTranslation, color:global.modeTranslation}, getAppFont("black")]} 
         onChangeText={(password) => setPassword( password )}/></View>
+        <Separator/>
         <Separator/>
         <Button style={[{marginHorizontal: 25}, getAppFont("black")]}
                 title="Show Mnemonic"

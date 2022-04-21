@@ -30,7 +30,6 @@ export default function HomeNav({route, navigation}) {
       headerShown: false,
       alignSelf: 'center',
       headerTitleAlign: 'center',
-      tabBarActiveTintColor: "white",
       headerStyle: {
         backgroundColor: '#183A81',
         borderWidth:0,
@@ -40,10 +39,10 @@ export default function HomeNav({route, navigation}) {
             height: 0,
         },
       },
-      headerTintColor: '#fff',
+      headerTintColor: "white",
       headerTitleStyle: {
         fontWeight: 'bold',
-        fontFamily:"AppleSDGothicNeo-Regular"
+        fontFamily:"AppleSDGothicNeo-Regular",
       },
       headerTextStyle:{
         textAlign:'center',

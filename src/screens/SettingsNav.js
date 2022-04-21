@@ -14,13 +14,32 @@ const Stack = createStackNavigator();
 const SettingsNav = ({route, navigation}) => {
 
  return (
-  <Stack.Navigator>
+  <Stack.Navigator  
+  screenOptions={{
+    headerStyle: {
+    backgroundColor: '#4DA892',
+    headerTitleAlign: 'center',
+    headerTintColor: 'white',
+    borderWidth:0,
+    shadowRadius: 0,
+    textAlign:'center',
+    shadowOffset: {
+        height: 0,
+    },
+    
+  },
+  headerTitleStyle: {
+    fontWeight: 'bold',
+    fontFamily:"AppleSDGothicNeo-Regular",
+    color: "white",
+  },
+  }}>
     <Stack.Screen name="Settings" component={Settings} options={{ tabBarLabel: 'Settings', headerShown: false }}/>
-    <Stack.Screen name="Mnemonic Display" component={MnemonicDisplay} options={{ headerTitleAlign: 'center' }}/>
-    <Stack.Screen name="Address Options" component={AddressOptions} options={{ headerTitleAlign: 'center' }}/>
-    <Stack.Screen name="Wallet Options" component={WalletOptions} options={{ headerTitleAlign: 'center' }}/>
-    <Stack.Screen name="PIN" component={PIN} options={{ headerTitleAlign: 'center' }}/>
-    <Stack.Screen name="Advanced Options" component={AdvancedOptions} options={{ headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="Mnemonic Display" component={MnemonicDisplay} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="Address Options" component={AddressOptions} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="Wallet Options" component={WalletOptions} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="PIN" component={PIN} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="Advanced Options" component={AdvancedOptions} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
    <Stack.Screen name="Token Creator" component={TokenCreator} options={{
       tabBarLabel: 'Token Creator',
       headerTitleAlign: 'center',

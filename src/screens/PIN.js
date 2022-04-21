@@ -29,8 +29,8 @@ const PIN = ({route, navigation}) => {
   }
 
  return ( 
-  <View style={styles.container}> 
-    <ScrollView styles={{backgroundColor:"white"}}>
+  <View style={[styles.container, {backgroundColor: global.reverseModeTranslation}]}> 
+    <ScrollView styles={{backgroundColor: global.reverseModeTranslation}}>
     { pinSaveSpinner == true &&
 <Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
 }
@@ -41,19 +41,19 @@ const PIN = ({route, navigation}) => {
             lockDuration: 10000,
             allowedReset: true,
             disableLock: false,
-            dotColor: "black",
+            dotColor: global.modeTranslation,
           }}
           textOptions={{set: {
             backSpace: 'Del',
           }}}
       styles={{ 
-        main: { backgroundColor:"white" },
+        main: { backgroundColor: global.reverseModeTranslation},
         enter: {
           titleContainer: { borderWidth: 0 },
-          title: { color: 'black' },
-          subTitle: { color: 'black' },
-          buttonContainer: { borderWidth: 0 , color: 'black' },
-          buttonText: { color: 'black' },
+          title: { color: global.modeTranslation },
+          subTitle: { color: global.modeTranslation },
+          buttonContainer: { borderWidth: 0 , color: global.modeTranslation},
+          buttonText: { color: global.modeTranslation },
           buttons: { backgroundColor: 'white', borderWidth: 1 },
           footer: { borderWidth: 0 },
           footerText: { color: 'purple' },

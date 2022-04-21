@@ -1,6 +1,7 @@
-import { RefreshControl, Image, ImageBackground, useColorScheme,ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { RefreshControl, ImageBackground, Image, useColorScheme,ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
-var GenericToken = require("../assets/square-rounded-xxl.png");
+var GenericToken = require("../assets/generic_token.png");
+var GenericTokenInverted = require("../assets/generic_token_inverted.png");
  var SQLite = require('react-native-sqlite-storage');
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -201,7 +202,7 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
     <View style={styles.addrRowStyle}>
 
 
-    <ImageBackground
+    {/* <ImageBackground
     style={{
       width: 36,
       height: 36,
@@ -209,13 +210,14 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
      
     }}
     source={
-      require("../assets/square-rounded-xxl.png") //Indicator
-    }>
+      require("../assets/generic_token.png") //Indicator
+    }> */}
+    {/* {checkImageURL(balance[3])} */}
   <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
-  defaultSource={GenericToken}
-  source={{uri: balance[3]}}
-    />
-    </ImageBackground>
+  defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
+  source={{uri: balance[3]}} />
+    
+    {/* </ImageBackground> */}
 
     <View style={{flex:1.8}}>
         <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
@@ -260,7 +262,7 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
 
   <View style={styles.addrRowStyle}>
 
-  <ImageBackground
+  {/* <ImageBackground
     style={{
       width: 36,
       height: 36,
@@ -268,14 +270,13 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
      
     }}
     source={
-      require("../assets/square-rounded-xxl.png") //Indicator
-    }>
+      require("../assets/generic_token.png") //Indicator
+    }> */}
   <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
-   defaultSource={GenericToken}
-   source={{uri: balance[3]}}
-     />
-    </ImageBackground>
-    
+  defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
+  source={{uri: balance[3]}} />
+    {/* </ImageBackground> */}
+
     <View style={{flex:2}}>
         <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
         <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>

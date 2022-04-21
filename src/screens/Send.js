@@ -13,7 +13,8 @@ import { Separator } from '../helpers/jsxlib';
 import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
 import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
-var GenericToken = require("../assets/square-rounded-xxl.png");
+var GenericToken = require("../assets/generic_token.png");
+var GenericTokenInverted = require("../assets/generic_token_inverted.png");
 import * as Progress from 'react-native-progress';
 import prompt from 'react-native-prompt-android';
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
@@ -639,20 +640,20 @@ useInterval(() => {
       <View style={[styles.rowStyle, {alignSelf: "center"}]}>
      
     
-      <ImageBackground
+      {/* <ImageBackground
     style={{
       width: 25,
       height: 25
     }}
     source={
-      require("../assets/square-rounded-xxl.png") //Indicator
-    }>
+      require("../assets/generic_token.png") //Indicator
+    }> */}
 <Image style={{width: 25, height: 25}}
-    defaultSource={GenericToken}
+    defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
     source={
       {uri: iconURIs.get(symbol)}
     }/> 
-    </ImageBackground>
+    {/* </ImageBackground> */}
 
   <Text style={[{fontSize:20, textAlign:"center"}, getAppFont("black")]}> {tokenNames.get(symbol) + " (" + symbol.split(" (")[0] + ")"}</Text>
   </View>

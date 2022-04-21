@@ -3,7 +3,7 @@ const bip39 = require('bip39');
 import React, { useState } from 'react';
 import { StackActions } from '@react-navigation/native';
 import CheckboxBouncy from "react-native-bouncy-checkbox";
-import PasswordInputText from 'react-native-hide-show-password-input';
+import PasswordInputText from 'react-native-password-eye'; 
 import { Separator } from '../helpers/jsxlib';
 import { getAppFont } from '../helpers/helpers';
 // import { ScrollView } from 'react-native-gesture-handler';
@@ -40,7 +40,7 @@ const [word13, setword13] = useState("");
 
   return (
 
-    <ScrollView > 
+    <ScrollView style={[{backgroundColor:global.reverseModeTranslation}]}> 
    <Separator/>
      <View  style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}> 
       <Text style={[styles.title,getAppFont("black")]}>Below is your mnemonic phrase. Write it down and keep them in a safe place. DO NOT take a photo of the phrase or copy and paste it anywhere. This key holds ALL YOUR FUNDS!</Text>
@@ -52,7 +52,7 @@ const [word13, setword13] = useState("");
 
 <CheckboxBouncy
 fillColor="#183A81"
-iconStyle={{ borderColor: "black" }}
+iconStyle={{ borderColor: global.modeTranslation }}
 isChecked={word13flag}
 onPress={()=>{
   if(word13flag==false){
@@ -64,12 +64,10 @@ onPress={()=>{
 
 <Text style={[styles.title2,getAppFont("black")]}>Add 13th word?</Text>
 </View > 
-{ word13flag && 
-
-<PasswordInputText 
-onChangeText={(password) => setword13( password )}
-label='13th word' style={[styles.title,getAppFont("black")]}/>
+{ word13flag && <React.Fragment><View style={{width: "80%"}}><PasswordInputText placeholder="13th word" secureTextEntry={true} eyeColor={global.modeTranslation} placeholderTextColor={global.modeTranslation} underlineColor={global.modeTranslation}  inputStyle={[{ padding:4, paddingLeft:10, height:40, borderRadius: 15, borderWidth: 1, borderColor: global.modeTranslation, color:global.modeTranslation}, getAppFont("black")]} 
+onChangeText={(password) => setword13( password )}/></View></React.Fragment>
  }
+<Separator/>
 <Separator/>
  <Button style={[styles.title, getAppFont("black")]}
         title="Understood - Continue"

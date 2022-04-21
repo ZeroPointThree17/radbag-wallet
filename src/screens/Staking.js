@@ -821,7 +821,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={stakeAmtRef}
-        style={[{padding:4, borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation, flex:0.5, borderRadius: 15}, getAppFont("black")]}
+        style={[{ padding:4, paddingLeft:10,  borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation, flex:0.5, borderRadius: 15}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'
@@ -891,7 +891,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      <View style={styles.rowStyle}>
  
         <TextInput ref={unstakeAmtRef}
-        style={[{padding:4, borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation, flex:0.5, borderRadius: 15}, getAppFont("black")]}
+        style={[{ padding:4, paddingLeft:10, borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation, flex:0.5, borderRadius: 15}, getAppFont("black")]}
         disabled="false"
         autoCapitalize='none'
         placeholder='Amount'

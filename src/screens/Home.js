@@ -306,8 +306,6 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
     headerRow.push(
      <View key={9999} style={styles.rowStyleHeader}>
 <View style={{
-        backgroundColor: '#white',
-
         borderRadius: 9,
         justifyContent: 'center',
         marginBottom: 0
@@ -320,7 +318,7 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
           selectedTextStyle={[styles.selectedTextStyle2,getAppFont("black"),{textAlign: "right"}]}
           inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
           iconStyle={[styles.iconStyle,getAppFont("black")]}
-          containerStyle ={[getAppFont("black")]}
+          containerStyle ={[getAppFont("black"), {backgroundColor: global.reverseModeTranslation}]}
           data={currencyList}
           activeColor="#4DA892"
           search
@@ -819,7 +817,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           onBlur={() => setIsFocusAddr(false)}
           onChange={item => {
             updateActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
-           setLabelAddr(item.label);
+            setLabelAddr(item.label);
             setValueAddr(item.value);
             setIsFocusAddr(true);
 

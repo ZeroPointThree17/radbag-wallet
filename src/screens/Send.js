@@ -583,6 +583,7 @@ function getBalances(gatewayIdx, defaultRri, firstTime, setGettingBalances, sour
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
   // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
   // sourceXrdAddr = "rdx1qspa05gfcxux87nlw7rrky86pptmwc9hsev73retl57tykgs9llwqrswl9jrg"
+  // sourceXrdAddr = "rdx1qspz0gxzprhegk8dsf8u5zknmpf68f5g8c4dhlex0n3uypky3f5z6dqsxwleh"
 
   useEffect( () => {
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {

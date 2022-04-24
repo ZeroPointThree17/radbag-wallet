@@ -298,12 +298,27 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 
 
 String.prototype.hexDecode = function() {
+  
+  console.log("decoding hex: " + this)
   if(this.startsWith("01")){
     return "<This message is encrypted. Decrypting messages on this wallet is currently not implemented>"
   } else if(this.startsWith("3030")){
     return hexyjs.hexToStr(hexyjs.hexToStr(this).slice(4));
   } else if(this.startsWith("0000")){
-    return hexyjs.hexToStr(this.slice(4));
+
+    var h = this.slice(4);
+
+    var s = ''
+    for (var i = 0; i < h.length; i+=2) {
+        s += String.fromCharCode(parseInt(h.substr(i, 2), 16))
+    }
+
+      try{
+      return decodeURIComponent(escape(s))
+      } catch(e){
+        return hexyjs.hexToStr(this.slice(4));
+      }
+
   }
 }
 

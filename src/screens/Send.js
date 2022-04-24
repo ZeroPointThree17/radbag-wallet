@@ -43,15 +43,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 String.prototype.hexEncode = function(){
-  var hex, i;
-
-  var result = "";
-  for (i=0; i<this.length; i++) {
-      hex = this.charCodeAt(i).toString(16);
-      result += ("0"+hex).slice(-2);
+  var s = unescape(encodeURIComponent(this))
+  var h = ''
+  for (var i = 0; i < s.length; i++) {
+      h += s.charCodeAt(i).toString(16)
   }
-
-  return result
+  return h
 }
 
 
@@ -585,7 +582,8 @@ function getBalances(gatewayIdx, defaultRri, firstTime, setGettingBalances, sour
 
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
   // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
-  
+  // sourceXrdAddr = "rdx1qspa05gfcxux87nlw7rrky86pptmwc9hsev73retl57tykgs9llwqrswl9jrg"
+
   useEffect( () => {
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
            

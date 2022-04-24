@@ -135,7 +135,7 @@ android {
         applicationId "com.raddishwallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
+        versionCode 27
         versionName "2.11"
                     missingDimensionStrategy 'react-native-camera', 'general' // <-- insert this line
                 ndk {

@@ -25,7 +25,7 @@ import HardwareWallet from './src/screens/HardwareWallet';
 import {openCB, errorCB, useInterval} from './src/helpers/helpers';
 import { PinCode, PinCodeT } from 'fedapay-react-native-pincode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Separator } from './src/helpers/jsxlib';
+import { gateways, linkingPrefixes } from './src/helpers/config';
 import DeepLinking from 'react-native-deep-linking';
 import { Linking } from 'react-native';
  
@@ -33,7 +33,7 @@ import { Linking } from 'react-native';
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
 const linking = {
-  prefixes: ['https://raddish-node.com/'],
+  prefixes: linkingPrefixes,
   config: {
     initialRouteName: 'Sign',
     screens: {
@@ -141,7 +141,7 @@ const App: () => Node = () => {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [correctPin, setCorrectPin] = useState(false);
 
-  global.gateways = ["https://raddish-node.com:6208","https://mainnet.clana.io"]
+  global.gateways = gateways
   global.isDarkMode = useColorScheme() === 'dark';
   global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
   global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";

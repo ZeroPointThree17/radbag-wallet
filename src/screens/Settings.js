@@ -251,7 +251,7 @@ const optionalConfigObject = {
   <ScrollView contentContainerStyle={{justifyContent:"flex-end"}}>
 <Image style={{margin: 0, padding:0, width: 70, height: 90, alignSelf:'center'}}
     source={Raddish}/>
-    <Text style={[{alignSelf:'center',justifyContent:"center"}, getAppFont("black")]}>RadBag Wallet v2.12</Text>
+    <Text style={[{alignSelf:'center',justifyContent:"center"}, getAppFont("black")]}>RadBag Wallet v2.13</Text>
     <Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
     </ScrollView>
 </View>

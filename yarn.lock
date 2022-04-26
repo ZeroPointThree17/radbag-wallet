@@ -3181,9 +3181,9 @@
   "version" "4.14.178"
 
 "@types/node@*", "@types/node@^14.14.35", "@types/node@^14.14.37":
-  "integrity" "sha512-q4jlIR71hUpWTnGhXWcakgkZeHa3CCjcQcnuzU8M891BAWA2jHiziiWEPEkdS5pFsz7H9HJiy8BrK7tBRNrY7A=="
-  "resolved" "https://registry.npmjs.org/@types/node/-/node-14.18.12.tgz"
-  "version" "14.18.12"
+  "integrity" "sha512-hzzmpfqOhsFmvQ9nu87qNQJ8ksofJLBIKkgaYWFapV+W8UGHCxtg5uf69ZtlDSS8rb4ax3lMgpqBnLUQETjCJA=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-14.18.15.tgz"
+  "version" "14.18.15"
 
 "@types/node@11.11.6":
   "integrity" "sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ=="
@@ -4454,7 +4454,7 @@
     "ieee754" "^1.1.4"
     "isarray" "^1.0.0"
 
-"buffer@^5.2.0", "buffer@^5.6.0", "buffer@^5.7.1":
+"buffer@^5.0.8", "buffer@^5.2.0", "buffer@^5.6.0", "buffer@^5.7.1":
   "integrity" "sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ=="
   "resolved" "https://registry.npmjs.org/buffer/-/buffer-5.7.1.tgz"
   "version" "5.7.1"
@@ -11267,6 +11267,19 @@
     "react-native-ratings" "8.0.4"
     "react-native-size-matters" "^0.3.1"
 
+"react-native-elliptic-curve-cryptography@^1.0.5":
+  "integrity" "sha512-HUAX/uB9tbvL1rowA43tcgIaLDvPd+5Slda0K14v60wnfZWAst/DW6EZO8xKoH7RsQzlvFtKEywnehPQVc1l+g=="
+  "resolved" "https://registry.npmjs.org/react-native-elliptic-curve-cryptography/-/react-native-elliptic-curve-cryptography-1.0.5.tgz"
+  "version" "1.0.5"
+
+"react-native-fast-crypto@^2.2.0":
+  "integrity" "sha512-JXQmnXGH3HpJYZrBsR7sL6cO/W3k1pHqTYbwnwTsJ8VUYXIsIEf1T0nMk6Z+XkQNI8RIQOeWJ9AuZLai4onHZg=="
+  "resolved" "https://registry.npmjs.org/react-native-fast-crypto/-/react-native-fast-crypto-2.2.0.tgz"
+  "version" "2.2.0"
+  dependencies:
+    "buffer" "^5.0.8"
+    "rfc4648" "^1.0.0"
+
 "react-native-flash-message@^0.2.0":
   "integrity" "sha512-jVLIygLSBEl+GZur6wyxLtla/v8dUAy1dPVwDpjAiGg9D4D5gvkdE7ZGJ9hY9svVriF464mgNi3qXQ9AP/+pNg=="
   "resolved" "https://registry.npmjs.org/react-native-flash-message/-/react-native-flash-message-0.2.1.tgz"
@@ -11723,7 +11736,7 @@
     "prop-types" "^15.7.2"
     "yargs" "^15.0.2"
 
-"react-native@*", "react-native@^*", "react-native@^0.0.0-0 || 0.60 - 0.68 || 1000.0.0", "react-native@>= 0.55.x", "react-native@>=0.14.0", "react-native@>=0.19.0", "react-native@>=0.42.0", "react-native@>=0.48.4", "react-native@>=0.50.0", "react-native@>=0.55", "react-native@>=0.55.0", "react-native@>=0.56", "react-native@>=0.57", "react-native@>=0.57.0", "react-native@>=0.59", "react-native@>=0.60.0", "react-native@>=0.63.0", "react-native@>=0.63.3", "react-native@>=0.63.4", "react-native@>=0.65.0", "react-native@0.66.4":
+"react-native@*", "react-native@^*", "react-native@^0.0.0-0 || 0.60 - 0.68 || 1000.0.0", "react-native@>= 0.55.x", "react-native@>=0.14.0", "react-native@>=0.19.0", "react-native@>=0.42.0", "react-native@>=0.47.0 <1.0.0", "react-native@>=0.48.4", "react-native@>=0.50.0", "react-native@>=0.55", "react-native@>=0.55.0", "react-native@>=0.56", "react-native@>=0.57", "react-native@>=0.57.0", "react-native@>=0.59", "react-native@>=0.60.0", "react-native@>=0.63.0", "react-native@>=0.63.3", "react-native@>=0.63.4", "react-native@>=0.65.0", "react-native@0.66.4":
   "integrity" "sha512-9vx5dlSfQlKbbDtr8+xMon6qsmSu7jvjdXWZpEKh3XVKpUidbbODv7048gwVKX8YAel1egeR7hN8vzSeI6ssTw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.66.4.tgz"
   "version" "0.66.4"
@@ -12191,6 +12204,11 @@
   "integrity" "sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw=="
   "resolved" "https://registry.npmjs.org/reusify/-/reusify-1.0.4.tgz"
   "version" "1.0.4"
+
+"rfc4648@^1.0.0":
+  "integrity" "sha512-60e/YWs2/D3MV1ErdjhJHcmlgnyLUiG4X/14dgsfm9/zmCWLN16xI6YqJYSCd/OANM7bUNzJqPY5B8/02S9Ibw=="
+  "resolved" "https://registry.npmjs.org/rfc4648/-/rfc4648-1.5.1.tgz"
+  "version" "1.5.1"
 
 "rimraf@^2.2.8", "rimraf@^2.5.4", "rimraf@^2.6.1", "rimraf@^2.6.3", "rimraf@2", "rimraf@2.6.3":
   "integrity" "sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA=="

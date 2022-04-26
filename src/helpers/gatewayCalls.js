@@ -5,15 +5,15 @@ import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import TransportHid from '@ledgerhq/react-native-hid';
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
-import { HDPathRadix } from '@radixdlt/crypto'
+import { HDPathRadix, Message } from '@radixdlt/crypto'
 import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
 var SQLite = require('react-native-sqlite-storage');
-import { decrypt } from '../helpers/encryption';
+import { decrypt, CreateSharedSecret, encryptMessage, ECPointFromPublicKey, ECPointMullScalar } from '../helpers/encryption';
 import prompt from 'react-native-prompt-android';
 var bigDecimal = require('js-big-decimal');
 
 
-export function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, encryptMsgflag){
+export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, encryptMsgflag){
 
     // alert('z')
     Keyboard.dismiss; 
@@ -23,9 +23,9 @@ export function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAd
       amount = amount.replace(/,/g, '');
     }
   
-    if(message != undefined && message.length > 0){
-      message = "0000" + message.hexEncode();
-    }
+
+
+
 
     // alert(rri)
     if(destAddr == undefined || destAddr.length==0){
@@ -70,15 +70,46 @@ export function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAd
               onPress: password => {
       
         try{
+
+
       
-          new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+          var privKey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
   
+        //   alert("privk: "+privKey)
           if(encryptMsgflag){
-            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
-  
+              
+           if(message != undefined && message.length > 0){
+            //    alert("pubk: " +public_key)
+                var sharedKey = CreateSharedSecret(Buffer.from("0000000000000000000000000000000000000000000000000000000000000002", 'hex'),Buffer.from("04ea74a893f84afbd640c535128dc8d944f4b8cd109a746a4c2abb6f4c1f814471e6537b9205a568f188ba4c75bbb306befb6c9361daa58c2ed6e3d8ed740954e5",'hex'));
+                
+                // alert("css2.3")
+
+                // const AlicePoint = ECPointFromPublicKey(Buffer.from("04ea74a893f84afbd640c535128dc8d944f4b8cd109a746a4c2abb6f4c1f814471e6537b9205a568f188ba4c75bbb306befb6c9361daa58c2ed6e3d8ed740954e5",'hex'));
+                // alert("css2.4")
+                // const secret1 =  ECPointMullScalar(Buffer.from(privKey,'hex'), AlicePoint);
+                // alert("css2.5")
+                // const secret1key = Buffer.from("04"+ secret1[0].toString(16).padStart(64, '0')+ secret1[1].toString(16).padStart(64, '0'), 'hex');
+                // alert("css2.6")
+                encryptMessage(message, sharedKey).then((message)=>{
+                    // alert(message.toString('hex'))
+                    buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message.toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+ 
+                
+                })
+
+                
+            }  
+
+            // alert("1")
+
           } else{
+
+            if(message != undefined && message.length > 0){
+                message = "0000" + message.hexEncode();
+            }
             buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
-          }
+
+        }
   
       } catch(err){
   
@@ -97,10 +128,16 @@ export function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAd
   
   
         if(encryptMsgflag){
-          buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr,  message.hexEncode(), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
-        } else{
-          buildTxnFetch(usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount,  amountStr, message.hexEncode(), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+            if(message != undefined && message.length > 0){
+                message = "0000" + message.hexEncode();
+            }
+            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+       } else{
+        if(message != undefined && message.length > 0){
+            message = "0000" + message.hexEncode();
         }
+            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+   }
       }
   
     }
@@ -198,8 +235,6 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
 
   if(isHW != true){
 
-
-
     var finalSig = ""
 
     console.log("unsigned_transaction: "+unsigned_transaction)
@@ -261,15 +296,14 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
       })
   
      console.log("BEFORE SEND HW")
-  
      
-            transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
-      
-              alert("Please confirm this transaction on the device");
+     transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
 
-              console.log("AFTER SEND HW")
-  
-              var apdus = []
+     alert("Please confirm this transaction on the device");
+
+     console.log("AFTER SEND HW")
+
+        var apdus = []
 
         while( instructions.length > 0){
   

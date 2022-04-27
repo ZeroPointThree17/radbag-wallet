@@ -73,17 +73,27 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
 
 
       
-          var privKey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+          var privKey = Buffer.from(new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16))));
   
+          console.log("PRIV KEY OF me ACCT3: "+privKey.toString('hex'))
+          //a4695759fc0c9223d3203c9c11074a24c4b370ec08f4efab3ef9093924d3884e
         //   alert("privk: "+privKey)
           if(encryptMsgflag){
               
            if(message != undefined && message.length > 0){
             //    alert("pubk: " +public_key)
-                var sharedKey = CreateSharedSecret(Buffer.from("0000000000000000000000000000000000000000000000000000000000000002", 'hex'),Buffer.from("04ea74a893f84afbd640c535128dc8d944f4b8cd109a746a4c2abb6f4c1f814471e6537b9205a568f188ba4c75bbb306befb6c9361daa58c2ed6e3d8ed740954e5",'hex'));
-                
-                // alert("css2.3")
 
+                // JDZ PRIVE KEY - ME PUBKEY
+                var sharedKey = CreateSharedSecret(Buffer.from(privKey, 'hex'),Buffer.from("04ea74a893f84afbd640c535128dc8d944f4b8cd109a746a4c2abb6f4c1f814471e6537b9205a568f188ba4c75bbb306befb6c9361daa58c2ed6e3d8ed740954e5",'hex'));
+                //39d24bbfaa22c6b569a304e38dca8c0be212ca943e6d8a2b8e56b4c6325b4c8d - me PRIV KEY
+
+                //040fe69bd2c620e59a8a4917415107c647451a5aaa80cb0b90a0db138e148fe7ed4ea5dc499a01d0d62e3a5871eefc52814c9e11ed2e9cc032f6bacdc8cc6fe75e
+                 alert(sharedKey.toString('hex'))
+
+                 //SS 04d338b365a2e57dab3257ee87064afb08239cc5375f7d690602840c9f6132bc9f893a82270270166cbd28b13a65b091363b7e4e118471b57ef933fd92c79d7c04
+
+
+                 
                 // const AlicePoint = ECPointFromPublicKey(Buffer.from("04ea74a893f84afbd640c535128dc8d944f4b8cd109a746a4c2abb6f4c1f814471e6537b9205a568f188ba4c75bbb306befb6c9361daa58c2ed6e3d8ed740954e5",'hex'));
                 // alert("css2.4")
                 // const secret1 =  ECPointMullScalar(Buffer.from(privKey,'hex'), AlicePoint);
@@ -91,7 +101,13 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                 // const secret1key = Buffer.from("04"+ secret1[0].toString(16).padStart(64, '0')+ secret1[1].toString(16).padStart(64, '0'), 'hex');
                 // alert("css2.6")
                 encryptMessage(message, sharedKey).then((message)=>{
-                    // alert(message.toString('hex'))
+                    console.log("CUSTOM LIB ENC HEX: " + message.toString('hex'))
+                    //01ff03721bb241b760666e0433dd871bae8a4eb8c67c870f2d674b69bf28ab0b0d4537ca0fcc7ddad16c7213268ec741c9e75c040f3135ed682bc059f0eb64495193 <-- function
+                    //01ff027dc61ef9b7e476a8c2c93ec50641a9231b892b9b54701e62889de85c8e175106d866c5da6de9312b7272cd51000456e1cdbaf86398496204eaa2c6a64174f4 <-- desktop
+                    
+                    //01ff0335146ad123350b3d547e83e2ea76518e8eeef7fbd132fbd4384f98da11406c59392be35d7b917cd7d6e28f0ecfa509bfd9d1292b8cd791b052564fae9cb168
+
+                    //01ff0222569aeec8303a8a8e2cb25fc6bffdfbd396615cae41a014c3f0957631512ecb223bb2db04a6ddef3bb1e0399132b466ececa9635b3ce6d1da4862d34be6a1 <-- uncompressed
                     buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message.toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
  
                 

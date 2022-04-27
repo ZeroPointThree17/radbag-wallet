@@ -301,6 +301,7 @@ String.prototype.hexDecode = function() {
   
   // console.log("decoding hex: " + this)
   if(this.startsWith("01")){
+    console.log("FROM HISTORY ENC: "+this)
     return "<This message is encrypted. Decrypting messages on this wallet is currently not implemented>"
   } else if(this.startsWith("3030")){
     return hexyjs.hexToStr(hexyjs.hexToStr(this).slice(4));

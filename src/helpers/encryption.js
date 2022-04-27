@@ -236,7 +236,9 @@ export function decrypt (encdata, masterkey){
       if (Buffer.isBuffer(PublicKey)){
         try {
           if (PublicKey.length === 33){
-            this._uncompressed = Buffer.from(_crypto.ECDH.convertKey(this._compressed, 'secp256k1', 'hex', 'hex', 'uncompressed'),'hex');
+            var ec = new elliptic.ec('secp256k1');
+            this._uncompressed = ec.keyFromPublic(PublicKey, 'hex').getPublic(false, 'hex');
+            // this._uncompressed = Buffer.from(_crypto.ECDH.convertKey(this._compressed, 'secp256k1', 'hex', 'hex', 'uncompressed'),'hex');
           }else if (PublicKey.length === 65){
             this._uncompressed = PublicKey;
           } else {
@@ -341,25 +343,27 @@ export function decrypt (encdata, masterkey){
   // the Ephermeral Key string to be used as 'additional authenticated data'
   const EphemeralPublicKey = Buffer.from(RandomEphemeral.getPublicKey('hex', 'compressed'), 'hex');
 
-  const EC_POINT_calc = new EC_POINT();
-  // alert("0.1")
-  EC_POINT_calc.setPublicKey(sharedsecret);
-  // alert("0.2")
-  EC_POINT_calc.ECPointAdd(EphemeralPublicKey);
-  // alert("0.3")
-  const MasterKey = EC_POINT_calc.getDHAddPointX();
+  // const EC_POINT_calc = new EC_POINT();
+  // // alert("0.1")
+  // EC_POINT_calc.setPublicKey(sharedsecret);
+  // // alert("0.2")
+  // EC_POINT_calc.ECPointAdd(EphemeralPublicKey);
+  // // alert("0.3")
+  // const MasterKey = EC_POINT_calc.getDHAddPointX();
   // alert("0.4")
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> old code replaced by the class
-//    // Convert the Ephemeral compressed Point to Ephemeral uncompressed Point and ECpoint for addition
-//    const Ephemeral = _crypto.ECDH.convertKey(EphemeralPublicKey, 'secp256k1', 'hex', 'hex', 'uncompressed');
-//    const EphemeralPoint = ECPointFromPublicKey(Buffer.from(Ephemeral,'hex'));
-//
-//    // Convert the Diffie Hellman uncompressed shared Point to ECpoint for addition
-//    const SharedSecretPoint = ECPointFromPublicKey(sharedsecret);
-//    const MasterKeyPoint = ECPointAdd(SharedSecretPoint, EphemeralPoint)
-//
-//    // generate the 32 byte Masterkey for this encryption
-//    const MasterKey = Buffer.from(MasterKeyPoint[0].toString(16).padStart(64, '0'), 'hex');
+   // Convert the Ephemeral compressed Point to Ephemeral uncompressed Point and ECpoint for addition
+   var ec = new elliptic.ec('secp256k1');
+   const Ephemeral = ec.keyFromPublic(EphemeralPublicKey, 'hex').getPublic(false, 'hex');
+  //  const Ephemeral = _crypto.ECDH.convertKey(EphemeralPublicKey, 'secp256k1', 'hex', 'hex', 'uncompressed');
+   const EphemeralPoint = ECPointFromPublicKey(Buffer.from(Ephemeral,'hex'));
+
+   // Convert the Diffie Hellman uncompressed shared Point to ECpoint for addition
+   const SharedSecretPoint = ECPointFromPublicKey(sharedsecret);
+   const MasterKeyPoint = ECPointAdd(SharedSecretPoint, EphemeralPoint)
+
+   // generate the 32 byte Masterkey for this encryption
+   const MasterKey = Buffer.from(MasterKeyPoint[0].toString(16).padStart(64, '0'), 'hex');
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //    for debug if you need to check the encryption agains known random Ephemeral an nonce
@@ -373,7 +377,7 @@ export function decrypt (encdata, masterkey){
 // alert("1")
   // key    
   // try{
-  const key = await scrypt(MasterKey, salt, 16384, 8, 1, 32)
+  const key = await scrypt(MasterKey, salt, 8192, 8, 1, 32)
   // } catch (err) {
   //   alert("Scrypt err: "+err)
   // }
@@ -412,7 +416,7 @@ export function decrypt (encdata, masterkey){
     @ return --> Buffer containing the Diffie-Hellman shared EC_POINT
   */
   export function CreateSharedSecret(myPrivateKey, PublicKey){
-    if (Buffer.isBuffer(myPrivateKey) && Buffer.isBuffer(myPrivateKey)){
+    if (Buffer.isBuffer(myPrivateKey) && Buffer.isBuffer(PublicKey)){
       const EC_DH_calc = new EC_POINT();
       EC_DH_calc.setPublicKey(PublicKey);
       const EC_DH_POINT = EC_DH_calc.getPoint();

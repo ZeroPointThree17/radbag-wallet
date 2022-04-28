@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import { StyleSheet, View, Alert, Platform, PermissionsAndroid, TouchableOpacity, Linking} from "react-native";
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
@@ -9,6 +9,7 @@ var bigDecimal = require('js-big-decimal');
 import IconFeather from 'react-native-vector-icons/Feather';
 import { Text, Card, Button, Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CreateSharedSecret, decryptMessage } from './encryption';
 const hexyjs = require("hexyjs");
  
 
@@ -297,12 +298,13 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 }
 
 
+
 String.prototype.hexDecode = function() {
   
   // console.log("decoding hex: " + this)
   if(this.startsWith("01")){
-    console.log("FROM HISTORY ENC: "+this)
-    return "<This message is encrypted. Decrypting messages on this wallet is currently not implemented>"
+
+    // return "<This message is encrypted. Decrypting messages on this wallet is currently not implemented>"
   } else if(this.startsWith("3030")){
     return hexyjs.hexToStr(hexyjs.hexToStr(this).slice(4));
   } else if(this.startsWith("0000")){
@@ -324,7 +326,7 @@ String.prototype.hexDecode = function() {
 }
 
 
-export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly){
+export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, decryptedTxt, setDecryptedTxt){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -361,13 +363,29 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
       }).then((response) => response.json()).then((json) => {
 
 
+        // console.log("FROM HISTORY ENC: "+this)
+        // var sharedKey = CreateSharedSecret(Buffer.from(privKey, 'hex'),Buffer.from("04ea74a893f84afbd640c535128dc8d944f4b8cd109a746a4c2abb6f4c1f814471e6537b9205a568f188ba4c75bbb306befb6c9361daa58c2ed6e3d8ed740954e5",'hex'));
+                   
 
         // alert(JSON.stringify(json))
+       
           var historyRows = [];
-           json.transactions.forEach(txn => 
+
+          var count = 0;
+           json.transactions.forEach( (txn) => 
               {
                  
-                var message  = txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {txn.metadata.message.hexDecode()}</Text></View>
+                var encryptedStr=""
+
+                var message =  txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
+                  
+                  txn.metadata.message.startsWith("01") ?
+                    decryptMessage(count, decryptedTxt, setDecryptedTxt, txn.metadata.message, Buffer.from("04d338b365a2e57dab3257ee87064afb08239cc5375f7d690602840c9f6132bc9f893a82270270166cbd28b13a65b091363b7e4e118471b57ef933fd92c79d7c04",'hex'))
+  
+                  :
+                  txn.metadata.message.hexDecode()
+
+                  }</Text></View>
                   
                   txn.actions.forEach(action => {
 
@@ -457,8 +475,10 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                 }
               });
 
-             
-        })
+              count++;  
+        }
+        
+        )
 
         setHistoryRows(historyRows)
 

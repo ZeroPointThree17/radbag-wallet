@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 const _crypto = require('crypto');
 import { scrypt } from 'react-native-fast-crypto';
 var elliptic = require('elliptic');
+import {syncScrypt} from 'scrypt-js';
 
 
 export function encrypt (text, masterkey){
@@ -266,8 +267,10 @@ export function decrypt (encdata, masterkey){
     @ sharedsecret --> Buffer containing the diffie-hellman PublicKey
     @ output --> decoded message
   */
-  function decryptMessage (encdata, sharedsecret){
+  export function decryptMessage (count, decryptedTxt, setDecryptedTxt, encdata, sharedsecret){
   
+    if(encdata.startsWith("01")){
+      // alert(encdata)
       // unhex the encdata string
       const bData = Buffer.from(encdata, 'hex');
       
@@ -280,31 +283,35 @@ export function decrypt (encdata, masterkey){
       const AuthTag = bData.slice(47, 63);
       const text = bData.slice(63);
   
-      const EC_POINT_calc = new EC_POINT();
-      EC_POINT_calc.setPublicKey(sharedsecret);
-      EC_POINT_calc.ECPointAdd(EphemeralPublicKey);
-      const MasterKey = EC_POINT_calc.getDHAddPointX();
+      // const EC_POINT_calc = new EC_POINT();
+      // EC_POINT_calc.setPublicKey(sharedsecret);
+      // EC_POINT_calc.ECPointAdd(EphemeralPublicKey);
+      // const MasterKey = EC_POINT_calc.getDHAddPointX();
       
   // >>>>>>>>>>>>>>>>>>>>>>>>>> old code replaced by the class
   //    // Convert the Ephemeral compressed Point to Ephemeral uncompressed Point and ECpoint for addition
-  //    const Ephemeral = _crypto.ECDH.convertKey(EphemeralPublicKey, 'secp256k1', 'hex', 'hex', 'uncompressed');
-  //    const EphemeralPoint = ECPointFromPublicKey(Buffer.from(Ephemeral,'hex'));
-  //
-  //    // Convert the Diffie Hellman uncompressed shared Point to ECpoint for addition
-  //    const SharedSecretPoint = ECPointFromPublicKey(sharedsecret);
-  //    const MasterKeyPoint = ECPointAdd(SharedSecretPoint, EphemeralPoint)
-  //    console.log(MasterKeyPoint)
-  //
-  //    // generate the 32 byte Masterkey for this encryption
-  //    const MasterKey = Buffer.from(MasterKeyPoint[0].toString(16).padStart(64, '0'), 'hex');
+    //  const Ephemeral = _crypto.ECDH.convertKey(EphemeralPublicKey, 'secp256k1', 'hex', 'hex', 'uncompressed');
+    var ec = new elliptic.ec('secp256k1');
+    const Ephemeral = ec.keyFromPublic(EphemeralPublicKey, 'hex').getPublic(false, 'hex');
+     const EphemeralPoint = ECPointFromPublicKey(Buffer.from(Ephemeral,'hex'));
+  
+     // Convert the Diffie Hellman uncompressed shared Point to ECpoint for addition
+     const SharedSecretPoint = ECPointFromPublicKey(sharedsecret);
+     const MasterKeyPoint = ECPointAdd(SharedSecretPoint, EphemeralPoint)
+     console.log(MasterKeyPoint)
+  
+     // generate the 32 byte Masterkey for this encryption
+     const MasterKey = Buffer.from(MasterKeyPoint[0].toString(16).padStart(64, '0'), 'hex');
   // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   
       // salt
       const salthash = _crypto.createHash('sha256').update(nonce).digest('hex');
       const salt = Buffer.from(salthash, 'hex');
-  
+  // alert("A")
       // key    
-      const key = _crypto.scryptSync(MasterKey, salt, 32, {N: 8192, r: 8, p: 1});
+      const key = syncScrypt(MasterKey, salt, 8192, 8, 1, 32);
+      // const key = await scrypt(MasterKey, salt, 8192, 8, 1, 32)
+      // const key = _crypto.scryptSync(MasterKey, salt, 32, {N: 8192, r: 8, p: 1});
       
       // initialize the deciper engine in AES 256 GCM Mode
       const decipher = _crypto.createDecipheriv('aes-256-gcm', key, nonce);
@@ -314,14 +321,26 @@ export function decrypt (encdata, masterkey){
   
       // Set the Authentication Tag
       decipher.setAuthTag(AuthTag);
-  
+      // alert("B")
       // decrypt the encoded message
       try{
           const decrypted = decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
+          // alert("C:" + decrypted)
+
+          // decryptedTxt[count]=decrypted 
+          
+          // var decryptedTxtUpd = [...decryptedTxt];
+          // alert(decryptedTxtUpd[count])
+          // alert(count)
+          // setDecryptedTxt(decrypted)
+          // alert(decrypted)
           return decrypted;
       }
       catch (err){
         return "Error decoding the message";
+      }
+      } else{
+        return encdata;
       }
   }
   /*

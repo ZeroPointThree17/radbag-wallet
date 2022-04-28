@@ -63,6 +63,7 @@ String.prototype.hexEncode = function(){
   global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
   global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
   global.linkModeTranslation = useColorScheme() === 'dark' ? "white" : "blue";
+  const [decryptedTxt, setDecryptedTxt] = useState();
 
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
   // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
@@ -74,7 +75,7 @@ String.prototype.hexEncode = function(){
            
     getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows)
+    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, decryptedTxt, setDecryptedTxt)
     })
   
 },[]);

@@ -426,7 +426,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                       raw_message.hexDecode()
     
                       }  {raw_message.startsWith("01") && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
-                      onPress={() => {showPasswordPrompt(setWallet_password, "NO_REPONSE", "Section will refresh with decrypted data in approximately 5 seconds...")}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {showPasswordPrompt(setWallet_password, "NO_RESPONSE", "Section will refresh with decrypted data in approximately 5 seconds...")}}>[Decrypt]</Text>: ""}</Text></View>
                       
 
 
@@ -571,14 +571,14 @@ export function showPasswordPrompt(setWallet_password, cancelResponse, successRe
       [
         {
           text: "Cancel",
-          onPress: () => { if(cancelResponse != "NO_REPONSE"){alert(cancelResponse)}},
+          onPress: () => { if(cancelResponse != "NO_RESPONSE"){alert(cancelResponse)}},
           style: "cancel"
         },
         {
           text: "OK",
           onPress: password => {
             setWallet_password(password)
-            if(successResponse != "NO_REPONSE"){alert(successResponse)}
+            if(successResponse != "NO_RESPONSE"){alert(successResponse)}
           }
         }
       ]

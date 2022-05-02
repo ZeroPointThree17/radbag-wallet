@@ -67,7 +67,7 @@ export function decrypt (encdata, masterkey){
     constructor() {
       this._privatekey = "";
       this._uncompressed = "";
-      this._point = [0n, 0n];
+      this._point = [BigInt(0), BigInt(0)];
     }
     
     ECmod(number, modulo = this.CURVE.P){
@@ -102,10 +102,10 @@ export function decrypt (encdata, masterkey){
           const MyPoint = [BigInt("0x"+ this._uncompressed.slice(1, 33).toString('hex')),
                            BigInt("0x"+ this._uncompressed.slice(33, 65).toString('hex'))]
           const [X1, Y1, X2, Y2] = [this._point[0], this._point[1], MyPoint[0], MyPoint[1]];
-          if (X1 === 0n || Y1 === 0n) this._point = [X2, Y2];
-          if (X2 === 0n || Y2 === 0n) this._point = [X1, Y1];
+          if (X1 === BigInt(0) || Y1 === BigInt(0)) this._point = [X2, Y2];
+          if (X2 === BigInt(0) || Y2 === BigInt(0)) this._point = [X1, Y1];
           if (X1 === X2 && Y1 === Y2) this._point = this.ECPointDouble();
-          if (X1 === X2 && Y1 === -Y2) this._point = [0n, 0n]
+          if (X1 === X2 && Y1 === -Y2) this._point = [BigInt(0), BigInt(0)]
           const lam = this.ECmod((Y2 - Y1) * this.ECPointInv(X2 - X1));
           const X3 = this.ECmod(lam * lam - X1 - X2);
           const Y3 = this.ECmod(lam * (X1 - X3) - Y1);
@@ -120,14 +120,14 @@ export function decrypt (encdata, masterkey){
     }
   
     MultiplyScalarJacobian(scalar, BasePoint = this.CURVE.G){
-      PointR = [0n, 0n, 1n];
-      PointN = [BasePoint[0], BasePoint[1], 1n];
+      PointR = [BigInt(0), BigInt(0), BigInt(1)];
+      PointN = [BasePoint[0], BasePoint[1], BigInt(1)];
       for (i=0; i < scalar.length; i++){
         const byte = scalar[scalar.length-1-i];
         for (j=0; j < 8; j++){
           if (byte & 2**j){ // ADD
             const [X1, Y1, Z1, X2, Y2, Z2] = [PointR[0], PointR[1], PointR[2], PointN[0], PointN[1], PointN[2]];
-            if (X1 === 0n || Y1 === 0n) { // bacause this condition does occur at the begin
+            if (X1 === BigInt(0) || Y1 === BigInt(0)) { // bacause this condition does occur at the begin
               PointR = PointN;
             }else{
               const Z2Z2 = this.ECmod(Z2 * Z2);
@@ -141,7 +141,7 @@ export function decrypt (encdata, masterkey){
               const HHH = this.ECmod(HH * H);
               const R = this.ECmod(S2 - S1);
               const V = this.ECmod(U1 * HH);
-              const X3 = this.ECmod((R * R) - HHH - (2n * V));
+              const X3 = this.ECmod((R * R) - HHH - (BigInt(2) * V));
               const Y3 = this.ECmod(R * (V - X3) - (S1 * HHH));
               const Z3 = this.ECmod(H*Z1*Z2);
               PointR = [X3, Y3, Z3];
@@ -153,11 +153,11 @@ export function decrypt (encdata, masterkey){
           const YY = this.ECmod(Y1 * Y1);
           const YYYY = this.ECmod(YY * YY);
           const ZZ = this.ECmod(Z1 * Z1);
-          const S = this.ECmod(4n * X1 * YY);
-          const M = this.ECmod(3n * XX);
-          const X3 = this.ECmod(M * M - (2n * S));
-          const Y3 = this.ECmod(M * (S - X3) - (8n * YYYY));
-          const Z3 = this.ECmod(2n * Y1 * Z1);
+          const S = this.ECmod(BigInt(4) * X1 * YY);
+          const M = this.ECmod(BigInt(3) * XX);
+          const X3 = this.ECmod(M * M - (BigInt(2) * S));
+          const Y3 = this.ECmod(M * (S - X3) - (BigInt(8) * YYYY));
+          const Z3 = this.ECmod(BigInt(2) * Y1 * Z1);
           PointN =  [X3, Y3, Z3];
         }
       }
@@ -168,14 +168,14 @@ export function decrypt (encdata, masterkey){
     }
   
     MultiplyScalar(scalar, BasePoint = this.CURVE.G){
-      PointR = [0n, 0n];
+      PointR = [BigInt(0), BigInt(0)];
       PointN = BasePoint;
       for (i=0; i < scalar.length; i++){
         const byte = scalar[scalar.length-1-i];
         for (j=0; j < 8; j++){
           if (byte & 2**j){ // ADD
             const [X1, Y1, X2, Y2] = [PointR[0], PointR[1], PointN[0], PointN[1]];
-            if (X1 === 0n || Y1 === 0n) { // bacause this condition does occur at the begin
+            if (X1 === BigInt(0) || Y1 === BigInt(0)) { // bacause this condition does occur at the begin
               PointR = PointN;
             }else{
               const lam = this.ECmod((Y2 - Y1) * this.ECPointInv(X2 - X1));
@@ -187,9 +187,9 @@ export function decrypt (encdata, masterkey){
           // Double
           const [X1, Y1] = [PointN[0], PointN[1]];
           const XX = this.ECmod(X1 * X1);
-          const tripXX = this.ECmod(3n * XX)
+          const tripXX = this.ECmod(BigInt(3) * XX)
           const lam = this.ECmod(tripXX * this.ECPointInv(Y1+Y1));
-          const X3 = this.ECmod(lam * lam - (2n * X1));
+          const X3 = this.ECmod(lam * lam - (BigInt(2) * X1));
           const Y3 = this.ECmod(lam * (X1 - X3) - Y1);
           PointN =  [X3, Y3];
         }
@@ -203,8 +203,8 @@ export function decrypt (encdata, masterkey){
       if (number === 0) return number;
       let a = this.ECmod(number, modulo);
       let b = modulo;
-      let [x, y, u, v] = [0n, 1n, 1n, 0n];
-      while (a !== 0n) {
+      let [x, y, u, v] = [BigInt(0), BigInt(1), BigInt(1), BigInt(0)];
+      while (a !== BigInt(0)) {
         const q = b / a;
         const r = b % a;
         const m = x - u * q;
@@ -267,9 +267,11 @@ export function decrypt (encdata, masterkey){
     @ sharedsecret --> Buffer containing the diffie-hellman PublicKey
     @ output --> decoded message
   */
-  export function decryptMessage (count, decryptedTxt, setDecryptedTxt, encdata, sharedsecret){
+  export function decryptMessage (encdata, sharedsecret){
   
     if(encdata.startsWith("01")){
+
+      try{
       // alert(encdata)
       // unhex the encdata string
       const bData = Buffer.from(encdata, 'hex');
@@ -323,7 +325,7 @@ export function decrypt (encdata, masterkey){
       decipher.setAuthTag(AuthTag);
       // alert("B")
       // decrypt the encoded message
-      try{
+
           const decrypted = decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
           // alert("C:" + decrypted)
 
@@ -337,7 +339,7 @@ export function decrypt (encdata, masterkey){
           return decrypted;
       }
       catch (err){
-        return "Error decoding the message";
+        return "<encrypted>";
       }
       } else{
         return encdata;
@@ -503,8 +505,8 @@ export function decrypt (encdata, masterkey){
     if (number === 0) return number;
     let a = ECmod(number, modulo);
     let b = modulo;
-    let [x, y, u, v] = [0n, 1n, 1n, 0n];
-    while (a !== 0n) {
+    let [x, y, u, v] = [BigInt(0), BigInt(1), BigInt(1), BigInt(0)];
+    while (a !== BigInt(0)) {
       const q = b / a;
       const r = b % a;
       const m = x - u * q;
@@ -523,10 +525,10 @@ export function decrypt (encdata, masterkey){
   */
   function ECPointAdd(PointA, PointB){
       const [X1, Y1, X2, Y2] = [PointA[0], PointA[1], PointB[0], PointB[1]];
-      if (X1 === 0n || Y1 === 0n) return PointB;
-      if (X2 === 0n || Y2 === 0n) return PointA;
+      if (X1 === BigInt(0) || Y1 === BigInt(0)) return PointB;
+      if (X2 === BigInt(0) || Y2 === BigInt(0)) return PointA;
       if (X1 === X2 && Y1 === Y2) return ECPointDouble(PointA);
-      if (X1 === X2 && Y1 === -Y2) return [0n, 0n];
+      if (X1 === X2 && Y1 === -Y2) return [BigInt(0), BigInt(0)];
       const lam = ECmod((Y2 - Y1) * ECPointInv(X2 - X1));
       const X3 = ECmod(lam * lam - X1 - X2);
       const Y3 = ECmod(lam * (X1 - X3) - Y1);
@@ -539,7 +541,7 @@ export function decrypt (encdata, masterkey){
   */
   function ECPointDouble(Point){
       const [X1, Y1] = [Point[0], Point[1]];
-      if (X1 === 0n || Y1 === 0n) return Point;
+      if (X1 === BigInt(0) || Y1 === BigInt(0)) return Point;
       const dbl = ECmod(X1 * X1);
       const dbltrip = ECmod(dbl+dbl+dbl)
       const lam = ECmod(dbltrip * ECPointInv(Y1+Y1));
@@ -565,7 +567,7 @@ export function decrypt (encdata, masterkey){
     
   */
   export function ECPointMullScalar(scalar, BasePoint = CURVE.G){
-    PointR = [0n, 0n]
+    PointR = [BigInt(0), BigInt(0)]
     PointN = BasePoint
     for (i=0; i < scalar.length; i++){
       const byte = scalar[scalar.length-1-i];
@@ -581,4 +583,30 @@ export function decrypt (encdata, masterkey){
   
   // <<<<<<<< These functions have been moved to the class
   
+  export function convertbits (data, frombits, tobits, pad) {
+    var acc = 0;
+    var bits = 0;
+    var ret = [];
+    var maxv = (1 << tobits) - 1;
+    for (var p = 0; p < data.length; ++p) {
+      var value = data[p];
+      if (value < 0 || (value >> frombits) !== 0) {
+        return null;
+      }
+      acc = (acc << frombits) | value;
+      bits += frombits;
+      while (bits >= tobits) {
+        bits -= tobits;
+        ret.push((acc >> bits) & maxv);
+      }
+    }
+    if (pad) {
+      if (bits > 0) {
+        ret.push((acc << (tobits - bits)) & maxv);
+      }
+    } else if (bits >= frombits || ((acc << (tobits - bits)) & maxv)) {
+      return null;
+    }
+    return ret;
+  }
   

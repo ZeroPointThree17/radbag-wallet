@@ -4070,7 +4070,7 @@
   "resolved" "https://registry.npmjs.org/bech32/-/bech32-2.0.0.tgz"
   "version" "2.0.0"
 
-"big-integer@1.6.x":
+"big-integer@^1.6.51", "big-integer@1.6.x":
   "integrity" "sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg=="
   "resolved" "https://registry.npmjs.org/big-integer/-/big-integer-1.6.51.tgz"
   "version" "1.6.51"

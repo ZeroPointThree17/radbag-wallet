@@ -11,6 +11,8 @@ if (typeof process === 'undefined') {
   }
 }
 
+if (typeof BigInt === 'undefined') global.BigInt = require('big-integer')
+
 process.browser = false
 if (typeof Buffer === 'undefined') global.Buffer = require('buffer').Buffer
 
@@ -25,3 +27,4 @@ if (typeof localStorage !== 'undefined') {
 // crypto is loaded first, so it can populate global.crypto
  require('crypto')
 //import crypto from 'crypto'
+

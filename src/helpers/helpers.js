@@ -9,9 +9,12 @@ var bigDecimal = require('js-big-decimal');
 import IconFeather from 'react-native-vector-icons/Feather';
 import { Text, Card, Button, Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CreateSharedSecret, decryptMessage } from './encryption';
+import { decrypt, CreateSharedSecret, decryptMessage } from './encryption';
+import { bech32 } from 'bech32';
 const hexyjs = require("hexyjs");
- 
+import { convertbits } from '../helpers/encryption';
+var elliptic = require('elliptic');
+
 
 export function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -325,8 +328,26 @@ String.prototype.hexDecode = function() {
   }
 }
 
+function toHexString(bytes) {
 
-export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, decryptedTxt, setDecryptedTxt){
+  var ec = new elliptic.ec('secp256k1');
+
+  var compressed = bytes.map(function(byte) {
+    return (byte & 0xFF).toString(16)
+  }).join('').replace("4","0")
+
+  var uncompressed = ec.keyFromPublic(compressed, 'hex').getPublic(false, 'hex');
+
+  return uncompressed
+}
+
+export function getWalletPrivKey(privKey_enc, wallet_password){
+  var privKey = Buffer.from(new Uint8Array(decrypt(privKey_enc, Buffer.from(wallet_password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16))));
+  
+  return privKey;
+}
+
+export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -374,20 +395,40 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
           var count = 0;
            json.transactions.forEach( (txn) => 
               {
-                 
-                var encryptedStr=""
+                var sharedKey = ""
+                var raw_message =  txn.metadata.message
 
-                var message =  txn.metadata.message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
-                  
-                  txn.metadata.message.startsWith("01") ?
-                    decryptMessage(count, decryptedTxt, setDecryptedTxt, txn.metadata.message, Buffer.from("04d338b365a2e57dab3257ee87064afb08239cc5375f7d690602840c9f6132bc9f893a82270270166cbd28b13a65b091363b7e4e118471b57ef933fd92c79d7c04",'hex'))
-  
-                  :
-                  txn.metadata.message.hexDecode()
-
-                  }</Text></View>
-                  
+       
                   txn.actions.forEach(action => {
+
+                    try{
+                    var pubKeyIntermediate = bech32.decode(action.to_account.address)
+                    var prefix = pubKeyIntermediate.prefix
+                    var words = pubKeyIntermediate.words
+                    var pubkey_bytes = convertbits(words, 5, 8, false);
+                    toHexString(pubkey_bytes)
+                    console.log("calculated pubkey bytes: "+ toHexString(pubkey_bytes))
+                    } catch(error){
+                      // do nothing, to_account address not found
+                    }
+
+                    if(txn.metadata.message != undefined && txn.metadata.message.startsWith("01") && wallet_password != undefined){
+                      sharedKey = CreateSharedSecret(Buffer.from(getWalletPrivKey(privKey_enc, wallet_password), 'hex'),Buffer.from(toHexString(pubkey_bytes),'hex'));
+                      // alert(sharedKey.toString('hex'))
+                    }
+                    var message = raw_message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
+                      
+                      raw_message.startsWith("01") && sharedKey != undefined ?
+                        
+                         decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex'))
+                      
+                      :
+                      raw_message.hexDecode()
+    
+                      }  {raw_message.startsWith("01") && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
+                      onPress={() => {showPasswordPrompt(setWallet_password, "NO_REPONSE", "Section will refresh with decrypted data in approximately 5 seconds...")}}>[Decrypt]</Text>: ""}</Text></View>
+                      
+
 
                     var stakeFilter;
                     if(stakingOnly){
@@ -516,6 +557,33 @@ const styles = StyleSheet.create({
     },
    
 });
+
+export function showPasswordPrompt(setWallet_password, cancelResponse, successResponse){
+  if(Platform.OS === 'ios'){
+    promptFunc = Alert.prompt;
+    } else{
+    promptFunc = prompt
+    }
+
+    promptFunc(
+      "Enter wallet password",
+      "Enter the wallet password to perform this action",
+      [
+        {
+          text: "Cancel",
+          onPress: () => { if(cancelResponse != "NO_REPONSE"){alert(cancelResponse)}},
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: password => {
+            setWallet_password(password)
+            if(successResponse != "NO_REPONSE"){alert(successResponse)}
+          }
+        }
+      ]
+    )
+}
 
 
 export const currencyList = [

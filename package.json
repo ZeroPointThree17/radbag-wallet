@@ -31,6 +31,7 @@
     "antd": "^4.18.3",
     "assert": "^1.5.0",
     "bech32": "^2.0.0",
+    "big-integer": "^1.6.51",
     "bignumber.js": "^9.0.2",
     "bip39": "^3.0.4",
     "browserify": "^17.0.0",

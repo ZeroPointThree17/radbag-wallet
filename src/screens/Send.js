@@ -7,7 +7,7 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
+import { showPasswordPrompt, getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
 import { buildTxn, getBalances } from '../helpers/gatewayCalls';
 import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
@@ -35,6 +35,7 @@ String.prototype.hexEncode = function(){
  
   var { defaultRri, defaultSymbol, sourceXrdAddr, hdpathIndex, isHWBool } = route.params;
   const [privKey_enc, setPrivKey_enc] = useState();
+  const [wallet_password, setWallet_password] = useState();
   const [public_key, setPublic_key] = useState();
   const [destAddr, onChangeDestAddr] = useState();
   const [amount, onChangeAmount] = useState(null);
@@ -63,7 +64,6 @@ String.prototype.hexEncode = function(){
   global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
   global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
   global.linkModeTranslation = useColorScheme() === 'dark' ? "white" : "blue";
-  const [decryptedTxt, setDecryptedTxt] = useState();
 
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
   // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
@@ -75,7 +75,7 @@ String.prototype.hexEncode = function(){
            
     getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, decryptedTxt, setDecryptedTxt)
+    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, privKey_enc, setWallet_password, wallet_password)
     })
   
 },[]);
@@ -90,9 +90,9 @@ useInterval(() => {
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
           
   getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-  fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows);
+  fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, privKey_enc, setWallet_password, wallet_password);
   })
-}, 10000);
+}, 2500);
 
 
 // alert(defaultSymbol)
@@ -322,6 +322,7 @@ onPress={()=>{
  }
 
 <Separator/>
+
 
 {historyRows.length > 0 && 
 <React.Fragment>

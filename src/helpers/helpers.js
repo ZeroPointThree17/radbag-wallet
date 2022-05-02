@@ -328,11 +328,16 @@ String.prototype.hexDecode = function() {
   }
 }
 
-function toHexString(bytes) {
+export function rdxToPubKey(address) {
+
+  var pubKeyIntermediate = bech32.decode(address)
+  var prefix = pubKeyIntermediate.prefix
+  var words = pubKeyIntermediate.words
+  var pubkey_bytes = convertbits(words, 5, 8, false);
 
   var ec = new elliptic.ec('secp256k1');
 
-  var compressed = bytes.map(function(byte) {
+  var compressed = pubkey_bytes.map(function(byte) {
     return (byte & 0xFF).toString(16)
   }).join('').replace("4","0")
 
@@ -402,18 +407,14 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                   txn.actions.forEach(action => {
 
                     try{
-                    var pubKeyIntermediate = bech32.decode(action.to_account.address)
-                    var prefix = pubKeyIntermediate.prefix
-                    var words = pubKeyIntermediate.words
-                    var pubkey_bytes = convertbits(words, 5, 8, false);
-                    toHexString(pubkey_bytes)
-                    console.log("calculated pubkey bytes: "+ toHexString(pubkey_bytes))
+
+                    console.log("calculated pubkey bytes: "+ rdxToPubKey(action.to_account.address))
                     } catch(error){
                       // do nothing, to_account address not found
                     }
 
                     if(txn.metadata.message != undefined && txn.metadata.message.startsWith("01") && wallet_password != undefined){
-                      sharedKey = CreateSharedSecret(Buffer.from(getWalletPrivKey(privKey_enc, wallet_password), 'hex'),Buffer.from(toHexString(pubkey_bytes),'hex'));
+                      sharedKey = CreateSharedSecret(Buffer.from(getWalletPrivKey(privKey_enc, wallet_password), 'hex'),Buffer.from(rdxToPubKey(action.to_account.address),'hex'));
                       // alert(sharedKey.toString('hex'))
                     }
                     var message = raw_message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
@@ -422,7 +423,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                          decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) : raw_message.hexDecode()
     
                       }  {raw_message.startsWith("01") && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
-                      onPress={() => {showPasswordPrompt(setWallet_password, "NO_RESPONSE", "Section will refresh with decrypted data in approximately 5 seconds...")}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {showPasswordPrompt(setWallet_password, "NO_RESPONSE", "Section will refresh with decrypted data in approximately 10 seconds...")}}>[Decrypt]</Text>: ""}</Text></View>
                       
 
 

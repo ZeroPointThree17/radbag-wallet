@@ -92,7 +92,7 @@ useInterval(() => {
   getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
   fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, privKey_enc, setWallet_password, wallet_password);
   })
-}, 2500);
+}, 10000);
 
 
 // alert(defaultSymbol)

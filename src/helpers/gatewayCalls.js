@@ -1,5 +1,5 @@
 import { Keyboard, Alert } from 'react-native';
-import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
+import { rdxToPubKey, getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
 const secp256k1 = require('secp256k1');
 import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
@@ -84,7 +84,8 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
             //    alert("pubk: " +public_key)
 
                 // JDZ PRIVE KEY - ME PUBKEY
-                var sharedKey = CreateSharedSecret(Buffer.from(privKey, 'hex'),Buffer.from("04ea74a893f84afbd640c535128dc8d944f4b8cd109a746a4c2abb6f4c1f814471e6537b9205a568f188ba4c75bbb306befb6c9361daa58c2ed6e3d8ed740954e5",'hex'));
+                alert(xrdAddr)
+                var sharedKey = CreateSharedSecret(Buffer.from(privKey, 'hex'),Buffer.from(rdxToPubKey("rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"),'hex'));
                 //39d24bbfaa22c6b569a304e38dca8c0be212ca943e6d8a2b8e56b4c6325b4c8d - me PRIV KEY
 
                 //040fe69bd2c620e59a8a4917415107c647451a5aaa80cb0b90a0db138e148fe7ed4ea5dc499a01d0d62e3a5871eefc52814c9e11ed2e9cc032f6bacdc8cc6fe75e

@@ -419,11 +419,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                     var message = raw_message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
                       
                       raw_message.startsWith("01") && sharedKey != undefined ?
-                        
-                         decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex'))
-                      
-                      :
-                      raw_message.hexDecode()
+                         decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) : raw_message.hexDecode()
     
                       }  {raw_message.startsWith("01") && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
                       onPress={() => {showPasswordPrompt(setWallet_password, "NO_RESPONSE", "Section will refresh with decrypted data in approximately 5 seconds...")}}>[Decrypt]</Text>: ""}</Text></View>

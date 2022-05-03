@@ -307,7 +307,7 @@ String.prototype.hexDecode = function() {
   // console.log("decoding hex: " + this)
   if(this.startsWith("01")){
 
-    // return "<This message is encrypted. Decrypting messages on this wallet is currently not implemented>"
+    return "<This message is encrypted>"
   } else if(this.startsWith("3030")){
     return hexyjs.hexToStr(hexyjs.hexToStr(this).slice(4));
   } else if(this.startsWith("0000")){
@@ -352,7 +352,7 @@ export function getWalletPrivKey(privKey_enc, wallet_password){
   return privKey;
 }
 
-export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password){
+export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -402,7 +402,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
               {
                 var sharedKey = ""
                 var raw_message =  txn.metadata.message
-
+                var txn_id = txn.transaction_identifier.hash
        
                   txn.actions.forEach(action => {
 
@@ -413,17 +413,17 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                       // do nothing, to_account address not found
                     }
 
-                    if(txn.metadata.message != undefined && txn.metadata.message.startsWith("01") && wallet_password != undefined){
+                    if(hashToDecrypt.includes(txn_id) && txn.metadata.message != undefined && txn.metadata.message.startsWith("01") && wallet_password != undefined){
                       sharedKey = CreateSharedSecret(Buffer.from(getWalletPrivKey(privKey_enc, wallet_password), 'hex'),Buffer.from(rdxToPubKey(action.to_account.address),'hex'));
                       // alert(sharedKey.toString('hex'))
                     }
                     var message = raw_message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
                       
-                      raw_message.startsWith("01") && sharedKey != undefined ?
+                      hashToDecrypt.includes(txn_id) && raw_message.startsWith("01") && sharedKey != undefined ?
                          decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) : raw_message.hexDecode()
     
                       }  {raw_message.startsWith("01") && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
-                      onPress={() => {showPasswordPrompt(setWallet_password, "NO_RESPONSE", "Section will refresh with decrypted data in approximately 10 seconds...")}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {showPasswordPrompt(hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...", setHashToDecrypt)}}>[Decrypt]</Text>: ""}</Text></View>
                       
 
 
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
    
 });
 
-export function showPasswordPrompt(setWallet_password, cancelResponse, successResponse){
+export function showPasswordPrompt(hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse){
   if(Platform.OS === 'ios'){
     promptFunc = Alert.prompt;
     } else{
@@ -574,8 +574,17 @@ export function showPasswordPrompt(setWallet_password, cancelResponse, successRe
         {
           text: "OK",
           onPress: password => {
+            var hashToDecryptCopy = [...hashToDecrypt];
+            hashToDecryptCopy.push(txn_id)
             setWallet_password(password)
-            if(successResponse != "NO_RESPONSE"){alert(successResponse)}
+            setHashToDecrypt(hashToDecryptCopy)
+            if(successResponse != "NO_RESPONSE"){
+              showMessage({
+                message: successResponse,
+                type: "info",
+                });
+              // alert(successResponse)
+            }
           }
         }
       ]

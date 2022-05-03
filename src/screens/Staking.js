@@ -20,6 +20,7 @@ import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
 import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {showMessage} from "react-native-flash-message";
 
 
 function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){
@@ -365,7 +366,7 @@ async function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,pri
 
 
 
-function getStakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
+function getStakeData(gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
   fetch(global.gateways[gatewayIdx] + '/account/stakes', {
     method: 'POST',
@@ -407,7 +408,7 @@ function getStakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, 
       //  alert(JSON.stringify(stakeValidatorsArr));
        setPendingStake(pendingStake.getValue());
 
-       getValidatorData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+       getValidatorData(gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, stakeValidatorsArr, setValidatorData, new Map(), setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
     }
   }).catch((error) => {
     setNewGatewayIdx(gatewayIdx);
@@ -415,7 +416,7 @@ function getStakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, 
 }
 
 
-function getValidatorData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
+function getValidatorData(gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, stakeValidators, setValidatorData, inputMap, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked){
 
   // alert("GV SL Len: "+stakeValidators.length)
   var jsonBody = null;
@@ -482,10 +483,10 @@ function getValidatorData(gatewayIdx, currAddr, setValAddr, setStakingScreenActi
      
          setValidatorData(validatorData)
 
-         getUnstakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+         getUnstakeData(gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc,setPublic_key,setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
          
        } else{
-        getValidatorData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+        getValidatorData(gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, stakeValidators, setValidatorData, validatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
        }
     }
   }).catch((error) => {
@@ -495,7 +496,7 @@ function getValidatorData(gatewayIdx, currAddr, setValAddr, setStakingScreenActi
 }
 
 
-function getUnstakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
+function getUnstakeData(gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, setTotalUnstaking, setRenderedStakeValidatorRows, validatorData,setPrivKey_enc, setPublic_key, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked){
  
   fetch(global.gateways[gatewayIdx] + '/account/unstakes', {
     method: 'POST',
@@ -540,7 +541,7 @@ function getUnstakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive
        setTotalUnstaking(totalUnstaking.getValue());
 
       //  validatorData.forEach((el)=> alert(JSON.stringify(el)))
-       setRenderedStakeValidatorRows(renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorData))
+       setRenderedStakeValidatorRows(renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScreenActive, validatorData))
 
        var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -617,7 +618,7 @@ function getBalances(gatewayIdx, currAddr, setCurrentlyLiquid, setCurrentlyStake
 
 
 
-function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorData){
+function renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScreenActive, validatorData){
 
   // alert("stked val len: " + stakeValidators.length);
   // if(  validatorData.size > 0){
@@ -648,10 +649,16 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(valAddr)}}>
     < Text style={[{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("blue")]}>[Copy Address]</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(valAddr); setStakingScreenActive(false)}}>
+    <TouchableOpacity style={styles.button} onPress={ () => {  showMessage({
+    message: "Validator selected",
+    type: "info",
+    }); setUnstakeValAddr(valAddr); setStakingScreenActive(false)}}>
     < Text style={[{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("blue")]}>  [Reduce Stake]</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={ () => {setValAddr(valAddr); setStakingScreenActive(true)}}>
+    <TouchableOpacity style={styles.button} onPress={ () => {  showMessage({
+    message: "Validator selected",
+    type: "info",
+    });setValAddr(valAddr); setStakingScreenActive(true)}}>
     < Text style={[{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("blue")]}>  [Add to Stake]</Text>
     </TouchableOpacity>
      </View>   
@@ -694,6 +701,7 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
       const [validatorData, setValidatorData] = useState(new Map());
       const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
       const [valAddr, setValAddr] = useState("rv1qt7dmsekqnrel6uxf9prqwujhn4udnu9yl9yzrlrkprmq4zrwmppvxn2gqf");
+      const [unstakeValAddr, setUnstakeValAddr] = useState();
       const [stakingScreenActive, setStakingScreenActive] = useState(true);
       const [stakeAmt, setStakeAmt] = useState();
       const [unstakeAmt, setUnstakeAmt] = useState();
@@ -715,13 +723,13 @@ function renderStakeValidatorRows(setValAddr, setStakingScreenActive, validatorD
 
   useEffect(() => {
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
-    getStakeData(gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked)
+    getStakeData(gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake,setCurrentlyLiquid, setCurrentlyStaked)
     })
   }, []);
 
 useInterval(() => {
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {     
-    getStakeData(gatewayIdx, gatewayIdx, currAddr, setValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
+    getStakeData(gatewayIdx, gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
     fetchTxnHistory(gatewayIdx, currAddr, setHistoryRows, true)
   })
 
@@ -877,11 +885,11 @@ onPress={() => {setStakingScreenActive(false)}}>
         autoCapitalize='none'
         multiline={true}
         numberOfLines={2}
-        placeholder='Validator Address'
+        placeholder='Click REDUCE STAKE on a validator below'
         placeholderTextColor="#d3d3d3"
-        value={valAddr}
+        value={unstakeValAddr}
         maxLength={199}
-        onChangeText={value => setValAddr(value)}
+        onChangeText={value => setUnstakeValAddr(value)}
         // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
       />
      
@@ -910,7 +918,7 @@ onPress={() => {setStakingScreenActive(false)}}>
      Keyboard.dismiss;
 
      AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {  
-      buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, currAddr, valAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled )
+      buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, currAddr, unstakeValAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled )
      })
     }}>
         <View style={[styles.sendRowStyle]}>

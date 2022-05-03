@@ -9,6 +9,7 @@ import { getAppFont, copyToClipboard } from '../helpers/helpers';
 import { PinCode, PinCodeT } from 'fedapay-react-native-pincode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Progress from 'react-native-progress';
+import { SERVFAIL } from 'dns';
 
 
 const PIN = ({route, navigation}) => {
@@ -29,10 +30,10 @@ const PIN = ({route, navigation}) => {
   }
 
  return ( 
-  <View style={[styles.container, {backgroundColor: global.reverseModeTranslation}]}> 
-    <ScrollView styles={{backgroundColor: global.reverseModeTranslation}}>
+  <View style={[styles.container, {backgroundColor: "#183A81"}]}> 
+    <ScrollView contentContainerStyle={{backgroundColor: "#183A81"}}>
     { pinSaveSpinner == true &&
-<Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
+<React.Fragment><Separator/><Separator/><Separator/><Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} /></React.Fragment>
 }
     <PinCode mode={PinCodeT.Modes.Set} visible={true}  onSetCancel={() => {}}
           options={{
@@ -47,19 +48,18 @@ const PIN = ({route, navigation}) => {
             backSpace: 'Del',
           }}}
       styles={{ 
-        main: { backgroundColor: global.reverseModeTranslation},
+        main: { backgroundColor: "#183A81"},
         enter: {
           titleContainer: { borderWidth: 0 },
-          title: { color: global.modeTranslation },
-          subTitle: { color: global.modeTranslation },
-          buttonContainer: { borderWidth: 0 , color: global.modeTranslation},
-          buttonText: { color: global.modeTranslation },
+          title: { color: "white" },
+          subTitle: { color: "white" },
+          buttonContainer: { borderWidth: 0 , color: "white"},
+          buttonText: { color: "black" },
           buttons: { backgroundColor: 'white', borderWidth: 1 },
           footer: { borderWidth: 0 },
           footerText: { color: 'purple' },
           pinContainer: { borderWidth: 0,  },
           
-         
         },
       }} 
       onSetSuccess={(newPin) => {
@@ -86,7 +86,6 @@ const PIN = ({route, navigation}) => {
         } 
       }
 
-      textOptions={customTexts}
       />
   <Separator/>
   <Separator/>
@@ -105,7 +104,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    padding: 30,
+    padding: 0,
     margin: 0,
     backgroundColor: "white",
     alignItems:"center",
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
         fontSize: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical:5
+        marginVertical: 0
       },
 });
 

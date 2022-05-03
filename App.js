@@ -88,7 +88,7 @@ styles={{
     title: { color: 'white' },
     subTitle: { color: 'white' },
     buttonContainer: { borderWidth: 0 , color: 'white' },
-    buttonText: { color: 'white' },
+    buttonText: { color: 'black' },
     buttons: { backgroundColor: 'white', borderWidth: 1 },
     footer: { borderWidth: 0 },
     footerText: { color: 'purple' },

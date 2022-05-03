@@ -753,7 +753,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
   return (
 
     <SafeAreaView style={styles.containerMain}>
-        <ScrollView style={[styles.scrollView], {backgroundColor: global.reverseModeTranslation}}
+        <ScrollView style={[styles.scrollView, {backgroundColor: global.reverseModeTranslation}]} 
         refreshControl={
             <RefreshControl
               refreshing={refreshing}

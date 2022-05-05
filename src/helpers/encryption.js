@@ -4,7 +4,7 @@ const _crypto = require('crypto');
 import { scrypt } from 'react-native-fast-crypto';
 var elliptic = require('elliptic');
 import {syncScrypt} from 'scrypt-js';
-
+import { KeyPair } from '@radixdlt/crypto';
 
 export function encrypt (text, masterkey){
     // random initialization vector
@@ -57,17 +57,19 @@ export function decrypt (encdata, masterkey){
 
 
   class EC_POINT {
+
+
     CURVE = {
-      P:  new BigInt(hexToDec("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F")),
-      n:  new BigInt(hexToDec("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141")),
-      G:  [new BigInt(hexToDec("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798")),
-           new BigInt(hexToDec("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8"))]
+      P:  makeNewBigInt(hexToDec("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F")),
+      n:  makeNewBigInt(hexToDec("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141")),
+      G:  [makeNewBigInt(hexToDec("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798")),
+           makeNewBigInt(hexToDec("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8"))]
     };
   
     constructor() {
       this._privatekey = "";
       this._uncompressed = "";
-      this._point = [new BigInt('0'), new BigInt('0')];
+      this._point = [makeNewBigInt('0'), makeNewBigInt('0')];
     }
     
     ECmod(number, modulo = this.CURVE.P){
@@ -101,13 +103,13 @@ export function decrypt (encdata, masterkey){
           }
 
           // alert("A4")
-          const MyPoint = [new BigInt(hexToDec(this._uncompressed.slice(1, 33).toString('hex'))),
-                           new BigInt(hexToDec(this._uncompressed.slice(33, 65).toString('hex')))]
+          const MyPoint = [makeNewBigInt(hexToDec(this._uncompressed.slice(1, 33).toString('hex'))),
+                           makeNewBigInt(hexToDec(this._uncompressed.slice(33, 65).toString('hex')))]
           const [X1, Y1, X2, Y2] = [this._point[0], this._point[1], MyPoint[0], MyPoint[1]];
-          if (X1 === new BigInt(0) || Y1 === new BigInt(0)) this._point = [X2, Y2];
-          if (X2 === new BigInt(0) || Y2 === new BigInt(0)) this._point = [X1, Y1];
+          if (X1 === makeNewBigInt(0) || Y1 === makeNewBigInt(0)) this._point = [X2, Y2];
+          if (X2 === makeNewBigInt(0) || Y2 === makeNewBigInt(0)) this._point = [X1, Y1];
           if (X1 === X2 && Y1 === Y2) this._point = this.ECPointDouble();
-          if (X1 === X2 && Y1 === -Y2) this._point = [new BigInt(0), new BigInt(0)]
+          if (X1 === X2 && Y1 === -Y2) this._point = [makeNewBigInt(0), makeNewBigInt(0)]
           const lam = this.ECmod((Y2 - Y1) * this.ECPointInv(X2 - X1));
           const X3 = this.ECmod(lam * lam - X1 - X2);
           const Y3 = this.ECmod(lam * (X1 - X3) - Y1);
@@ -123,8 +125,8 @@ export function decrypt (encdata, masterkey){
   
     MultiplyScalarJacobian(scalar, BasePoint = this.CURVE.G){
       // alert("jake")
-      var PointR = [new BigInt('0'), new BigInt('0'), new BigInt('1')];
-      var PointN = [BasePoint[0], BasePoint[1], new BigInt('1')];
+      var PointR = [makeNewBigInt('0'), makeNewBigInt('0'), makeNewBigInt('1')];
+      var PointN = [BasePoint[0], BasePoint[1], makeNewBigInt('1')];
       // alert("jake2: "+PointN[2])
       for (i=0; i < scalar.length; i++){
         const byte = scalar[scalar.length-1-i];
@@ -149,7 +151,7 @@ export function decrypt (encdata, masterkey){
               const HHH = this.ECmod(HH * H);
               const R = this.ECmod(S2 - S1);
               const V = this.ECmod(U1 * HH);
-              const X3 = this.ECmod((R * R) - HHH - (new BigInt('2') * V));
+              const X3 = this.ECmod((R * R) - HHH - (makeNewBigInt('2') * V));
               const Y3 = this.ECmod(R * (V - X3) - (S1 * HHH));
               const Z3 = this.ECmod(H*Z1*Z2);
               PointR = [X3, Y3, Z3];
@@ -163,11 +165,11 @@ export function decrypt (encdata, masterkey){
           const YY = this.ECmod(Y1 * Y1);
           const YYYY = this.ECmod(YY * YY);
           const ZZ = this.ECmod(Z1 * Z1);
-          const S = this.ECmod(new BigInt('4') * X1 * YY);
-          const M = this.ECmod(new BigInt('3') * XX);
-          const X3 = this.ECmod(M * M - (new BigInt('2') * S));
-          const Y3 = this.ECmod(M * (S - X3) - (new BigInt('8') * YYYY));
-          const Z3 = this.ECmod(new BigInt('2') * Y1 * Z1);
+          const S = this.ECmod(makeNewBigInt('4') * X1 * YY);
+          const M = this.ECmod(makeNewBigInt('3') * XX);
+          const X3 = this.ECmod(M * M - (makeNewBigInt('2') * S));
+          const Y3 = this.ECmod(M * (S - X3) - (makeNewBigInt('8') * YYYY));
+          const Z3 = this.ECmod(makeNewBigInt('2') * Y1 * Z1);
           PointN =  [X3, Y3, Z3];
          
         }
@@ -181,14 +183,14 @@ export function decrypt (encdata, masterkey){
     }
   
     MultiplyScalar(scalar, BasePoint = this.CURVE.G){
-      PointR = [new BigInt('0'), new BigInt('0')];
+      PointR = [makeNewBigInt('0'), makeNewBigInt('0')];
       PointN = BasePoint;
       for (i=0; i < scalar.length; i++){
         const byte = scalar[scalar.length-1-i];
         for (j=0; j < 8; j++){
           if (byte & 2**j){ // ADD
             const [X1, Y1, X2, Y2] = [PointR[0], PointR[1], PointN[0], PointN[1]];
-            if (X1 === new BigInt('0') || Y1 === new BigInt('0')) { // bacause this condition does occur at the begin
+            if (X1 === makeNewBigInt('0') || Y1 === makeNewBigInt('0')) { // bacause this condition does occur at the begin
               PointR = PointN;
             }else{
               const lam = this.ECmod((Y2 - Y1) * this.ECPointInv(X2 - X1));
@@ -200,9 +202,9 @@ export function decrypt (encdata, masterkey){
           // Double
           const [X1, Y1] = [PointN[0], PointN[1]];
           const XX = this.ECmod(X1 * X1);
-          const tripXX = this.ECmod(new BigInt('3') * XX)
+          const tripXX = this.ECmod(makeNewBigInt('3') * XX)
           const lam = this.ECmod(tripXX * this.ECPointInv(Y1+Y1));
-          const X3 = this.ECmod(lam * lam - (new BigInt('2') * X1));
+          const X3 = this.ECmod(lam * lam - (makeNewBigInt('2') * X1));
           const Y3 = this.ECmod(lam * (X1 - X3) - Y1);
           PointN =  [X3, Y3];
         }
@@ -216,8 +218,8 @@ export function decrypt (encdata, masterkey){
       if (number === 0) return number;
       let a = this.ECmod(number, modulo);
       let b = modulo;
-      let [x, y, u, v] = [new BigInt('0'), new BigInt('1'), new BigInt('1'), new BigInt('0')];
-      while (a !== new BigInt('0')) {
+      let [x, y, u, v] = [makeNewBigInt('0'), makeNewBigInt('1'), makeNewBigInt('1'), makeNewBigInt('0')];
+      while (a !== makeNewBigInt('0')) {
         const q = b / a;
         const r = b % a;
         const m = x - u * q;
@@ -258,8 +260,8 @@ export function decrypt (encdata, masterkey){
           } else {
             throw 'Lenght not compatible with Point on the Curve';
           }
-          this._point = [new BigInt(hexToDec(this._uncompressed.slice(1, 33).toString('hex'))),
-                         new BigInt(hexToDec(this._uncompressed.slice(33, 65).toString('hex')))]
+          this._point = [makeNewBigInt(hexToDec(this._uncompressed.slice(1, 33).toString('hex'))),
+                         makeNewBigInt(hexToDec(this._uncompressed.slice(33, 65).toString('hex')))]
         }catch(Err){
           throw 'Error converting Public key to Point on the Curve';
         }
@@ -483,27 +485,35 @@ export function decrypt (encdata, masterkey){
   
   // parameters for secp256k1 Curve
   const CURVE = {
-    P:  new BigInt(hexToDec("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F")),
-    n:  new BigInt(hexToDec("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141")),
-    G: [new BigInt(hexToDec("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798")),
-        new BigInt(hexToDec("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8"))]
+    P:  makeNewBigInt(hexToDec("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F")),
+    n:  makeNewBigInt(hexToDec("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141")),
+    G: [makeNewBigInt(hexToDec("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798")),
+        makeNewBigInt(hexToDec("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8"))]
   };
   
   /*
-    ECPointFromPublicKey converts a public key to new BigInt [x,y] array
+    ECPointFromPublicKey converts a public key to makeNewBigInt [x,y] array
     @ pubkey --> Buffer containing 64 hex bytes uncompressed public key
   */
   export function ECPointFromPublicKey(pubkey){
       const ECPointX = pubkey.slice(1, 33).toString('hex');
       const ECPointY = pubkey.slice(33, 65).toString('hex');
-      const x = new BigInt(hexToDec(ECPointX));
-      const y = new BigInt(hexToDec(ECPointY));
+      const x = makeNewBigInt(hexToDec(ECPointX));
+      const y = makeNewBigInt(hexToDec(ECPointY));
       return [x,y]
     }
+
+  export function makeNewBigInt(bigintStr){
+    if(Platform.OS === 'ios'){
+      return BigInt(hexToDec(bigintStr))
+    } else{
+      return new BigInt(hexToDec(bigintStr))
+    }
+  }
   
   /*
     ECmod field modulo function
-    @ number --> new BigInt value
+    @ number --> makeNewBigInt value
     @ modulo --> Optional modulo
   */
   function ECmod(number , modulo = CURVE.P){
@@ -513,7 +523,7 @@ export function decrypt (encdata, masterkey){
   
   /*
     ECPointInv field inversion function
-    @ number --> new BigInt value
+    @ number --> makeNewBigInt value
     @ modulo --> Optional modulo
   */
   function ECPointInv(number, modulo = CURVE.P) {
@@ -521,8 +531,8 @@ export function decrypt (encdata, masterkey){
     if (number === 0) return number;
     let a = ECmod(number, modulo);
     let b = modulo;
-    let [x, y, u, v] = [new BigInt('0'), new BigInt('1'), new BigInt('1'), new BigInt('0')];
-    while (a !== new BigInt('0')) {
+    let [x, y, u, v] = [makeNewBigInt('0'), makeNewBigInt('1'), makeNewBigInt('1'), makeNewBigInt('0')];
+    while (a !== makeNewBigInt('0')) {
       const q = b / a;
       const r = b % a;
       const m = x - u * q;
@@ -536,15 +546,15 @@ export function decrypt (encdata, masterkey){
   
   /*
     ECPointAdd add two point on the curve
-    @ PointA --> new BigInt [x,y] array
-    @ PointB --> new BigInt [x,y] array
+    @ PointA --> makeNewBigInt [x,y] array
+    @ PointB --> makeNewBigInt [x,y] array
   */
   function ECPointAdd(PointA, PointB){
       const [X1, Y1, X2, Y2] = [PointA[0], PointA[1], PointB[0], PointB[1]];
-      if (X1 === new BigInt('0') || Y1 === new BigInt('0')) return PointB;
-      if (X2 === new BigInt('0') || Y2 === new BigInt('0')) return PointA;
+      if (X1 === makeNewBigInt('0') || Y1 === makeNewBigInt('0')) return PointB;
+      if (X2 === makeNewBigInt('0') || Y2 === makeNewBigInt('0')) return PointA;
       if (X1 === X2 && Y1 === Y2) return ECPointDouble(PointA);
-      if (X1 === X2 && Y1 === -Y2) return [new BigInt('0'), new BigInt('0')];
+      if (X1 === X2 && Y1 === -Y2) return [makeNewBigInt('0'), makeNewBigInt('0')];
       const lam = ECmod((Y2 - Y1) * ECPointInv(X2 - X1));
       const X3 = ECmod(lam * lam - X1 - X2);
       const Y3 = ECmod(lam * (X1 - X3) - Y1);
@@ -553,11 +563,11 @@ export function decrypt (encdata, masterkey){
   
   /*
     ECPointDouble double point on the curve
-    @ Point --> new BigInt [x,y] array
+    @ Point --> makeNewBigInt [x,y] array
   */
   function ECPointDouble(Point){
       const [X1, Y1] = [Point[0], Point[1]];
-      if (X1 === new BigInt('0') || Y1 === new BigInt('0')) return Point;
+      if (X1 === makeNewBigInt('0') || Y1 === makeNewBigInt('0')) return Point;
       const dbl = ECmod(X1 * X1);
       const dbltrip = ECmod(dbl+dbl+dbl)
       const lam = ECmod(dbltrip * ECPointInv(Y1+Y1));
@@ -568,7 +578,7 @@ export function decrypt (encdata, masterkey){
   
   /*
     ECPointMullScalar Multiply by double and add
-    @ scalar --> new BigInt generator multiplier
+    @ scalar --> makeNewBigInt generator multiplier
     @ BasePoint --> BasePoint to be multiplied default is field generator
     
     For EC-Diffie-Hellman the return value still contains [x,y] of the Point on the CURVE
@@ -583,7 +593,7 @@ export function decrypt (encdata, masterkey){
     
   */
   export function ECPointMullScalar(scalar, BasePoint = CURVE.G){
-    PointR = [new BigInt('0'), new BigInt('0')]
+    PointR = [makeNewBigInt('0'), makeNewBigInt('0')]
     PointN = BasePoint
     for (i=0; i < scalar.length; i++){
       const byte = scalar[scalar.length-1-i];

@@ -310,7 +310,7 @@ String.prototype.hexDecode = function() {
   // console.log("decoding hex: " + this)
   if(this.startsWith("01")){
 
-    return "<This message is encrypted>"
+    return " <Encrypted>"
   } else if(this.startsWith("3030")){
     return hexyjs.hexToStr(hexyjs.hexToStr(this).slice(4));
   } else if(this.startsWith("0000")){
@@ -433,18 +433,11 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                     var message = raw_message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
                       
                       hashToDecrypt.includes(txn_id) && raw_message.startsWith("01") ?
-
-                      // && sharedKey != undefined ?
-                        //  decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) 
-                        // raw_message.hexDecode()
                          decryptedMap.get(txn_id) : raw_message.hexDecode()
     
                       }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id)
-                      // && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" 
                       ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
                       onPress={() => {showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...", setDecryptedMap, decryptedMap, action.to_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
-                      
-                      console.log("after ss2")
 
 
                     var stakeFilter;
@@ -601,10 +594,20 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
 
             if(raw_message.startsWith("01") && to_account != null){
 
+              if(successResponse != "NO_RESPONSE"){
+                showMessage({
+                  message: successResponse,
+                  type: "info",
+                  });
+                // alert(successResponse)
+              }
+            
               var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
       
               db.transaction((tx) => {
                 tx.executeSql("SELECT address.privatekey_enc FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
+                 
+
                   var len = results.rows.length;
                   var tempPrivkey_enc = "default_val";
 
@@ -648,13 +651,7 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
                       hashToDecryptCopy.push(txn_id)
                       setWallet_password(password)
                       setHashToDecrypt(hashToDecryptCopy)
-                      if(successResponse != "NO_RESPONSE"){
-                        showMessage({
-                          message: successResponse,
-                          type: "info",
-                          });
-                        // alert(successResponse)
-                      }
+                     
       
                     })
                   });

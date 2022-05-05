@@ -8185,6 +8185,11 @@
     "argparse" "^1.0.7"
     "esprima" "^4.0.0"
 
+"jsbn@^1.1.0":
+  "integrity" "sha1-sBMHyym2GKHtJux56RH4A8TaAEA="
+  "resolved" "https://registry.npmjs.org/jsbn/-/jsbn-1.1.0.tgz"
+  "version" "1.1.0"
+
 "jsbn@~0.1.0":
   "integrity" "sha1-peZUwuWi3rXyAdls77yoDA7y9RM="
   "resolved" "https://registry.npmjs.org/jsbn/-/jsbn-0.1.1.tgz"

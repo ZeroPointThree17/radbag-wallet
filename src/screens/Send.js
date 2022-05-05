@@ -61,6 +61,7 @@ String.prototype.hexEncode = function(){
   const [historyRows, setHistoryRows] = useState([]);
   const [encryptMsgflag, setEncryptMsgflag] = useState(false)
   const [hashToDecrypt, setHashToDecrypt] = useState([])
+  const [decryptedMap, setDecryptedMap] = useState(new Map())
   global.isDarkMode = useColorScheme() === 'dark';
   global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
   global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";

@@ -1,17 +1,17 @@
 import { Keyboard, Alert } from 'react-native';
-import { rdxToPubKey, getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
+import { rdxToPubKey, rdxToPubKeyBytes, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
 const secp256k1 = require('secp256k1');
 import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import TransportHid from '@ledgerhq/react-native-hid';
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
-import { HDPathRadix, Message } from '@radixdlt/crypto'
+import { HDPathRadix, Message, PublicKey } from '@radixdlt/crypto'
 import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
 var SQLite = require('react-native-sqlite-storage');
-import { decrypt, CreateSharedSecret, encryptMessage, ECPointFromPublicKey, ECPointMullScalar } from '../helpers/encryption';
+import { decrypt, CreateSharedSecret, encryptMessage, ECPointMullScalar } from '../helpers/encryption';
 import prompt from 'react-native-prompt-android';
 var bigDecimal = require('js-big-decimal');
-
+import { KeyPair,PrivateKey, MessageEncryption} from '@radixdlt/crypto';
 
 export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, encryptMsgflag){
 
@@ -73,23 +73,56 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
 
 
       
-          var privKey = Buffer.from(new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16))));
+          // var privKey = Buffer.from(new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16))));
   
-          console.log("PRIV KEY OF me ACCT3: "+privKey.toString('hex'))
+          // alert("0x"+decrypt(privKey_enc, Buffer.from(password)))
+
+
+
+
           //a4695759fc0c9223d3203c9c11074a24c4b370ec08f4efab3ef9093924d3884e
         //   alert("privk: "+privKey)
-          if(encryptMsgflag){
+          if(encryptMsgflag ){
               
            if(message != undefined && message.length > 0){
+
+
+            var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey("rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"),'hex'),'hex')
+            var privKeyObj = PrivateKey.fromHex(decrypt(privKey_enc, Buffer.from(password)))
+     
+            var keypair = KeyPair.fromPrivateKey(privKeyObj.value)
+            // alert("PRIV KEY OF me ACCT3: "+JSON.stringify(targetPubKey.value))
+  
+            // var input =MessageEncryptionInput
+            // MessageEncryption.encrypt("ttt",privKeyObj.value.diffieHellman)
+  
+            var to = targetPubKey.value;
+  
+            var plaintext = "ttt"
+            MessageEncryption.encrypt({
+              plaintext,
+              diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(
+                null,
+                to,
+              ),
+            }).then( (res) => {
+              
+              // alert(JSON.stringify(res.value.combined().toString('hex')))
+
+              buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+ 
+            
+            })
+  
             //    alert("pubk: " +public_key)
 
                 // JDZ PRIVE KEY - ME PUBKEY
-                alert(xrdAddr)
-                var sharedKey = CreateSharedSecret(Buffer.from(privKey, 'hex'),Buffer.from(rdxToPubKey("rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"),'hex'));
+                // alert(xrdAddr)
+                // var sharedKey = CreateSharedSecret(Buffer.from(privKey, 'hex'),Buffer.from(rdxToPubKey("rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"),'hex'));
                 //39d24bbfaa22c6b569a304e38dca8c0be212ca943e6d8a2b8e56b4c6325b4c8d - me PRIV KEY
 
                 //040fe69bd2c620e59a8a4917415107c647451a5aaa80cb0b90a0db138e148fe7ed4ea5dc499a01d0d62e3a5871eefc52814c9e11ed2e9cc032f6bacdc8cc6fe75e
-                 alert(sharedKey.toString('hex'))
+                //  alert(sharedKey.toString('hex'))
 
                  //SS 04d338b365a2e57dab3257ee87064afb08239cc5375f7d690602840c9f6132bc9f893a82270270166cbd28b13a65b091363b7e4e118471b57ef933fd92c79d7c04
 
@@ -101,18 +134,18 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                 // alert("css2.5")
                 // const secret1key = Buffer.from("04"+ secret1[0].toString(16).padStart(64, '0')+ secret1[1].toString(16).padStart(64, '0'), 'hex');
                 // alert("css2.6")
-                encryptMessage(message, sharedKey).then((message)=>{
-                    console.log("CUSTOM LIB ENC HEX: " + message.toString('hex'))
-                    //01ff03721bb241b760666e0433dd871bae8a4eb8c67c870f2d674b69bf28ab0b0d4537ca0fcc7ddad16c7213268ec741c9e75c040f3135ed682bc059f0eb64495193 <-- function
-                    //01ff027dc61ef9b7e476a8c2c93ec50641a9231b892b9b54701e62889de85c8e175106d866c5da6de9312b7272cd51000456e1cdbaf86398496204eaa2c6a64174f4 <-- desktop
+                // encryptMessage(message, sharedKey).then((message)=>{
+                //     console.log("CUSTOM LIB ENC HEX: " + message.toString('hex'))
+                //     //01ff03721bb241b760666e0433dd871bae8a4eb8c67c870f2d674b69bf28ab0b0d4537ca0fcc7ddad16c7213268ec741c9e75c040f3135ed682bc059f0eb64495193 <-- function
+                //     //01ff027dc61ef9b7e476a8c2c93ec50641a9231b892b9b54701e62889de85c8e175106d866c5da6de9312b7272cd51000456e1cdbaf86398496204eaa2c6a64174f4 <-- desktop
                     
-                    //01ff0335146ad123350b3d547e83e2ea76518e8eeef7fbd132fbd4384f98da11406c59392be35d7b917cd7d6e28f0ecfa509bfd9d1292b8cd791b052564fae9cb168
+                //     //01ff0335146ad123350b3d547e83e2ea76518e8eeef7fbd132fbd4384f98da11406c59392be35d7b917cd7d6e28f0ecfa509bfd9d1292b8cd791b052564fae9cb168
 
-                    //01ff0222569aeec8303a8a8e2cb25fc6bffdfbd396615cae41a014c3f0957631512ecb223bb2db04a6ddef3bb1e0399132b466ececa9635b3ce6d1da4862d34be6a1 <-- uncompressed
-                    buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message.toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+                //     //01ff0222569aeec8303a8a8e2cb25fc6bffdfbd396615cae41a014c3f0957631512ecb223bb2db04a6ddef3bb1e0399132b466ececa9635b3ce6d1da4862d34be6a1 <-- uncompressed
+                //     buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message.toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
  
                 
-                })
+                // })
 
                 
             }  
@@ -124,7 +157,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
             if(message != undefined && message.length > 0){
                 message = "0000" + message.hexEncode();
             }
-            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+            // buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
 
         }
   

@@ -14,6 +14,7 @@ import { bech32 } from 'bech32';
 const hexyjs = require("hexyjs");
 import { convertbits } from '../helpers/encryption';
 var elliptic = require('elliptic');
+import prompt from 'react-native-prompt-android';
 
 
 export function useInterval(callback, delay) {
@@ -328,6 +329,16 @@ String.prototype.hexDecode = function() {
   }
 }
 
+export function rdxToPubKeyBytes(address) {
+
+  var pubKeyIntermediate = bech32.decode(address)
+  var prefix = pubKeyIntermediate.prefix
+  var words = pubKeyIntermediate.words
+  var pubkey_bytes = convertbits(words, 5, 8, false);
+
+  return pubkey_bytes
+}
+
 export function rdxToPubKey(address) {
 
   var pubKeyIntermediate = bech32.decode(address)
@@ -352,7 +363,7 @@ export function getWalletPrivKey(privKey_enc, wallet_password){
   return privKey;
 }
 
-export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt){
+export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, decryptedMap){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -408,23 +419,37 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
 
                     try{
 
-                    console.log("calculated pubkey bytes: "+ rdxToPubKey(action.to_account.address))
+                    // console.log("calculated pubkey bytes: "+ rdxToPubKey(action.to_account.address))
                     } catch(error){
                       // do nothing, to_account address not found
                     }
+
+
+
+      
+
+                    console.log("before ss")
 
                     if(hashToDecrypt.includes(txn_id) && txn.metadata.message != undefined && txn.metadata.message.startsWith("01") && wallet_password != undefined){
                       sharedKey = CreateSharedSecret(Buffer.from(getWalletPrivKey(privKey_enc, wallet_password), 'hex'),Buffer.from(rdxToPubKey(action.to_account.address),'hex'));
                       // alert(sharedKey.toString('hex'))
                     }
+
+                    console.log("after ss")
+
                     var message = raw_message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
                       
                       hashToDecrypt.includes(txn_id) && raw_message.startsWith("01") && sharedKey != undefined ?
-                         decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) : raw_message.hexDecode()
+                         decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) 
+                        // raw_message.hexDecode()
+                         : raw_message.hexDecode()
     
-                      }  {raw_message.startsWith("01") && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
+                      }  {raw_message.startsWith("01") 
+                      // && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" 
+                      ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
                       onPress={() => {showPasswordPrompt(hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...", setHashToDecrypt)}}>[Decrypt]</Text>: ""}</Text></View>
                       
+                      console.log("after ss2")
 
 
                     var stakeFilter;
@@ -556,6 +581,8 @@ const styles = StyleSheet.create({
 });
 
 export function showPasswordPrompt(hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse){
+ 
+  var promptFunc = ""
   if(Platform.OS === 'ios'){
     promptFunc = Alert.prompt;
     } else{
@@ -574,6 +601,24 @@ export function showPasswordPrompt(hashToDecrypt, setHashToDecrypt, txn_id, setW
         {
           text: "OK",
           onPress: password => {
+
+            if(txn.metadata.message.startsWith("01") && action.to_account.address != null){
+              MessageEncryption.decrypt({
+                encryptedMessage,
+                diffieHellmanPoint: diffieHellman.bind(
+                  null,
+                  publicKeyOfOtherParty,
+                ),
+              }).then( (res) => {
+
+                var finalResult =  res.map(b => b.toString('utf-8'))
+                decryptedMap.set(txn_id, finalResult)
+
+              })
+            }
+
+
+
             var hashToDecryptCopy = [...hashToDecrypt];
             hashToDecryptCopy.push(txn_id)
             setWallet_password(password)

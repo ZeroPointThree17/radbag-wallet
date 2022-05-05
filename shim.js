@@ -11,7 +11,7 @@ if (typeof process === 'undefined') {
   }
 }
 
-if (typeof BigInt === 'undefined') global.BigInt = require('big-integer')
+if (typeof BigInt === 'undefined') global.BigInt = require('jsbn').BigInteger;
 
 process.browser = false
 if (typeof Buffer === 'undefined') global.Buffer = require('buffer').Buffer

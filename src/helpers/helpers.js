@@ -16,6 +16,7 @@ import { convertbits } from '../helpers/encryption';
 var elliptic = require('elliptic');
 import prompt from 'react-native-prompt-android';
 import { PublicKey, PrivateKey, MessageEncryption, Message, SealedMessage, EncryptionScheme } from '@radixdlt/crypto';
+var SQLite = require('react-native-sqlite-storage');
 
 
 export function useInterval(callback, delay) {
@@ -356,12 +357,11 @@ export function getWalletPrivKey(privKey_enc, wallet_password){
   return privKey;
 }
 
-export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, decryptedMap){
+export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
   }
-
 
   if(address == undefined || address.length==0){
     alert("Address is required")
@@ -442,7 +442,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                       }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id)
                       // && decryptMessage(raw_message, Buffer.from(sharedKey.toString('hex'),'hex')) == "<encrypted>" 
                       ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
-                      onPress={() => {showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...",decryptedMap, action.to_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...", setDecryptedMap, decryptedMap, action.to_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
                       
                       console.log("after ss2")
 
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
    
 });
 
-export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse, decryptedMap, to_account, raw_message){
+export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse, setDecryptedMap, decryptedMap, to_account, raw_message){
  
   var promptFunc = ""
   if(Platform.OS === 'ios'){
@@ -597,68 +597,72 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
           text: "OK",
           onPress: password => {
 
-            
-
-            if(raw_message.startsWith("01") && to_account != null && privKey_enc != undefined){
-
-              var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(to_account),'hex'),'hex')
-              var privKeyObj = PrivateKey.fromHex(decrypt(privKey_enc, Buffer.from(password)))
-       
-              const bData = Buffer.from(raw_message, 'hex');
-
-              //convert data to buffers
-              // the first two byte are "01FF" 
-              //   "01"_stands for encrypted 
-              //   "FF" stands for the methode used (DH_ADD_EPH_AESGCM256_SCRYPT_000)
-              // const EphemeralPublicKey = PublicKey.fromBuffer(bData.slice(2, 35),'hex')
-              // // alert()/
-              // const nonce = bData.slice(35, 47);
-              // const AuthTag = bData.slice(47, 63);
-              // const text = bData.slice(63);
-              // alert(JSON.stringify(EphemeralPublicKey.value.asData({ compressed: true })))
-
-              // alert(bData.slice(2, 35).toString('hex'))
-              // if(EphemeralPublicKey != undefined && nonce !=undefined && AuthTag !=undefined && text!=undefined){
-                
 
 
+            if(raw_message.startsWith("01") && to_account != null){
 
+              var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+      
+              db.transaction((tx) => {
+                tx.executeSql("SELECT address.privatekey_enc FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
+                  var len = results.rows.length;
+                  var tempPrivkey_enc = "default_val";
 
-              var msg = Buffer.from(raw_message, 'hex')
+                    for (let i = 0; i < len; i++) {
+                        let row = results.rows.item(i);
+                        tempPrivkey_enc = row.privatekey_enc;
+                    }
+
+                    try{
+                      decrypt(tempPrivkey_enc, Buffer.from(password))
+                    } catch(err){
+                      alert("Password incorrect")
+                    }
+
+                    var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(to_account),'hex'),'hex')
+                    var privKeyObj = PrivateKey.fromHex(decrypt(tempPrivkey_enc, Buffer.from(password)))
+                    var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
+               
+                    // alert(JSON.stringify(sealedMsg))
+      
+                    var encryptedM = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).value
+      
+                    // alert(JSON.stringify(encryptedMsg))
+      
+                    MessageEncryption.decrypt({
+                      encryptedMessage: encryptedM,
+                      diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(
+                        null,
+                        targetPubKey.value,
+                      ),
+                    }).then( (res) => {
+      
+                      var finalResult = res.map(b => b.toString('utf-8'))
+                      // alert(JSON.stringify(finalResult.value))
+                     
+                      var newMap = new Map(decryptedMap)
+                      newMap.set(txn_id, finalResult.value)
+                      setDecryptedMap(newMap);
+      
+                      var hashToDecryptCopy = [...hashToDecrypt];
+                      hashToDecryptCopy.push(txn_id)
+                      setWallet_password(password)
+                      setHashToDecrypt(hashToDecryptCopy)
+                      if(successResponse != "NO_RESPONSE"){
+                        showMessage({
+                          message: successResponse,
+                          type: "info",
+                          });
+                        // alert(successResponse)
+                      }
+      
+                    })
+                  });
+                }, errorCB);
               
-              var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
-         
-              // alert(JSON.stringify(sealedMsg))
 
-              var encryptedM = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).value
 
-              // alert(JSON.stringify(encryptedMsg))
 
-              MessageEncryption.decrypt({
-                encryptedMessage: encryptedM,
-                diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(
-                  null,
-                  targetPubKey.value,
-                ),
-              }).then( (res) => {
-
-                var finalResult = res.map(b => b.toString('utf-8'))
-                alert(JSON.stringify(finalResult.value))
-                decryptedMap.set(txn_id, finalResult.value)
-
-                var hashToDecryptCopy = [...hashToDecrypt];
-                hashToDecryptCopy.push(txn_id)
-                setWallet_password(password)
-                setHashToDecrypt(hashToDecryptCopy)
-                if(successResponse != "NO_RESPONSE"){
-                  showMessage({
-                    message: successResponse,
-                    type: "info",
-                    });
-                  // alert(successResponse)
-                }
-
-              })
             }
           }
         }

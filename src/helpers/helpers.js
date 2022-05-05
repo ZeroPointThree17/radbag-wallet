@@ -175,7 +175,6 @@ export function formatCurrencyForHomeDisplay(number, currencySymbol) {
 }
 
 
-
 export async function startScan(setTransport, setDeviceID, setDeviceName, scanStarted, setScanStarted, firstTimeString) {
 
   if(scanStarted == undefined){
@@ -277,8 +276,8 @@ export async function startScan(setTransport, setDeviceID, setDeviceName, scanSt
     setScanStarted(true)
   }
 
-
 };
+
 
 export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 
@@ -302,7 +301,6 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 
   }
 }
-
 
 
 String.prototype.hexDecode = function() {
@@ -501,6 +499,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
   
 }
 
+
 export function setNewGatewayIdx(gatewayIdx){
 
   showMessage({
@@ -527,6 +526,7 @@ const styles = StyleSheet.create({
     },
    
 });
+
 
 export function decryptMessage(hashToDecrypt, setHashToDecrypt, txn_id, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
  

@@ -339,14 +339,14 @@ export function rdxToPubKey(address) {
   var prefix = pubKeyIntermediate.prefix
   var words = pubKeyIntermediate.words
   var pubkey_bytes = convertbits(words, 5, 8, false);
-
   var ec = new elliptic.ec('secp256k1');
+  
 
   var compressed = pubkey_bytes.map(function(byte) {
-    return (byte & 0xFF).toString(16)
+    return (byte & 0xFF).toString(16).padStart(2, '0')
   }).join('').replace("4","0")
 
-  var uncompressed = ec.keyFromPublic(compressed, 'hex').getPublic(false, 'hex');
+  var uncompressed = ec.keyFromPublic(compressed.substring(2), 'hex').getPublic(false, 'hex');
 
   return uncompressed
 }
@@ -410,26 +410,6 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
        
                   txn.actions.forEach(action => {
 
-                    try{
-
-                    // console.log("calculated pubkey bytes: "+ rdxToPubKey(action.to_account.address))
-                    } catch(error){
-                      // do nothing, to_account address not found
-                    }
-
-
-
-      
-
-                    // console.log("before ss")
-
-                    // if(hashToDecrypt.includes(txn_id) && txn.metadata.message != undefined && txn.metadata.message.startsWith("01") && wallet_password != undefined){
-                    //   sharedKey = CreateSharedSecret(Buffer.from(getWalletPrivKey(privKey_enc, wallet_password), 'hex'),Buffer.from(rdxToPubKey(action.to_account.address),'hex'));
-                    //   // alert(sharedKey.toString('hex'))
-                    // }
-
-                    // console.log("after ss")
-
                     var message = raw_message===undefined ? undefined : <View style={styles.rowStyle}><Text style={getAppFont("black")}>Message: {
                       
                       hashToDecrypt.includes(txn_id) && raw_message.startsWith("01") ?
@@ -437,7 +417,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
     
                       }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id)
                       ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
-                      onPress={() => {showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...", setDecryptedMap, decryptedMap, action.to_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
 
 
                     var stakeFilter;
@@ -568,7 +548,7 @@ const styles = StyleSheet.create({
    
 });
 
-export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse, setDecryptedMap, decryptedMap, to_account, raw_message){
+export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
  
   var promptFunc = ""
   if(Platform.OS === 'ios'){
@@ -591,8 +571,7 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
           onPress: password => {
 
 
-
-            if(raw_message.startsWith("01") && to_account != null){
+            if(raw_message.startsWith("01") && account != null){
 
               if(successResponse != "NO_RESPONSE"){
                 showMessage({
@@ -604,6 +583,7 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
             
               var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
       
+              // alert(JSON.stringify(account))
               db.transaction((tx) => {
                 tx.executeSql("SELECT address.privatekey_enc FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
                  
@@ -622,15 +602,10 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
                       alert("Password incorrect")
                     }
 
-                    var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(to_account),'hex'),'hex')
+                    var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex')
                     var privKeyObj = PrivateKey.fromHex(decrypt(tempPrivkey_enc, Buffer.from(password)))
                     var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
-               
-                    // alert(JSON.stringify(sealedMsg))
-      
                     var encryptedM = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).value
-      
-                    // alert(JSON.stringify(encryptedMsg))
       
                     MessageEncryption.decrypt({
                       encryptedMessage: encryptedM,
@@ -641,8 +616,7 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
                     }).then( (res) => {
       
                       var finalResult = res.map(b => b.toString('utf-8'))
-                      // alert(JSON.stringify(finalResult.value))
-                     
+
                       var newMap = new Map(decryptedMap)
                       newMap.set(txn_id, finalResult.value)
                       setDecryptedMap(newMap);
@@ -651,7 +625,6 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
                       hashToDecryptCopy.push(txn_id)
                       setWallet_password(password)
                       setHashToDecrypt(hashToDecryptCopy)
-                     
       
                     })
                   });

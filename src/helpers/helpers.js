@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useRef, useEffect} from 'react';
 import { StyleSheet, View, Alert, Platform, PermissionsAndroid, TouchableOpacity, Linking} from "react-native";
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
@@ -7,9 +7,9 @@ import {showMessage} from "react-native-flash-message";
 import Clipboard from '@react-native-clipboard/clipboard';
 var bigDecimal = require('js-big-decimal');
 import IconFeather from 'react-native-vector-icons/Feather';
-import { Text, Card, Button, Icon } from 'react-native-elements';
+import { Text, Card } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { decrypt, CreateSharedSecret } from './encryption';
+import { decrypt } from './encryption';
 import { bech32 } from 'bech32';
 const hexyjs = require("hexyjs");
 import { convertbits } from '../helpers/encryption';

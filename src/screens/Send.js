@@ -215,23 +215,25 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
       placeholderTextColor="#d3d3d3"
       onChangeText={value => onChangeMessage(value)}
     />
-    
-<View style={{textAlign:"center", alignContent:"flex-end", justifyContent:"center"}}>
- <Text style={[{fontSize:12, textAlign:"center"},getAppFont("black")]}> Encrypt?</Text>
- <CheckboxBouncy
-    fillColor="#4DA892"
-    style={[{fontSize:12, textAlign:"center", flexDirection:"column"},getAppFont("black")]}
-    iconStyle={[{ borderColor: global.modeTranslation }]}
-    isChecked={encryptMsgflag}
-    onPress={()=>{
-      if(encryptMsgflag==false){
-      setEncryptMsgflag(true);
-      }
-      else setEncryptMsgflag(false);
-    }}
-    />
+  
+  {isHWBool==false && <React.Fragment>
+      <View style={{textAlign:"center", alignContent:"flex-end", justifyContent:"center"}}>
+      <Text style={[{fontSize:12, textAlign:"center"},getAppFont("black")]}> Encrypt?</Text>
+      <CheckboxBouncy
+          fillColor="#4DA892"
+          style={[{marginTop: 4, fontSize:12, textAlign:"center", flexDirection:"column"},getAppFont("black")]}
+          iconStyle={[{ borderColor: global.modeTranslation }]}
+          isChecked={encryptMsgflag}
+          onPress={()=>{
+            if(encryptMsgflag==false){
+            setEncryptMsgflag(true);
+            }
+            else setEncryptMsgflag(false);
+          }}
+          />
 
-</View>
+      </View>
+  </React.Fragment>}
 
     </View>
 <Separator/>

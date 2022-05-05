@@ -22,9 +22,6 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
     if (amount != undefined){
       amount = amount.replace(/,/g, '');
     }
-  
-
-
 
 
     // alert(rri)
@@ -71,6 +68,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
       
         try{
 
+          decrypt(privKey_enc, Buffer.from(password))
 
       
           // var privKey = Buffer.from(new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16))));
@@ -157,7 +155,8 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
             if(message != undefined && message.length > 0){
                 message = "0000" + message.hexEncode();
             }
-            // buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+            // alert(privKey_enc)
+            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
 
         }
   
@@ -276,7 +275,6 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
     gatewayIdx, rri, usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
     {
 
-
   setShow(false);
 
   var passwordStr = ""
@@ -284,6 +282,7 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
 
 
   if(isHW != true){
+
 
     var finalSig = ""
 

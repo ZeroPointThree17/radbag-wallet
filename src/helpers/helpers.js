@@ -617,11 +617,13 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
               const text = bData.slice(63);
               // alert(JSON.stringify(EphemeralPublicKey.value))
 
-              // alert(text)
+              // alert(bData.slice(2, 35).toString('hex'))
+              
               var sealedMsg = SealedMessage.create(EphemeralPublicKey.value, nonce, AuthTag, text)
          
+              alert(JSON.stringify(sealedMsg))
 
-              encryptedMsg = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg)
+              var encryptedMsg = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg)
 
               MessageEncryption.decrypt({
                 encryptedMsg,

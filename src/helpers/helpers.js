@@ -627,9 +627,9 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
               
               var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
          
-              alert(JSON.stringify(sealedMsg))
+              // alert(JSON.stringify(sealedMsg))
 
-              var encryptedMsg = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg)
+              var encryptedMsg = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).
 
               MessageEncryption.decrypt({
                 encryptedMsg,

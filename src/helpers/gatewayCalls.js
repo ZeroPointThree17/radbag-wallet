@@ -91,7 +91,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
               if(message != undefined && message.length > 0){
                   message = "0000" + message.hexEncode();
               }
-              // alert(privKey_enc)
+
               buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
 
           }
@@ -114,12 +114,12 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
             if(message != undefined && message.length > 0){
                 message = "0000" + message.hexEncode();
             }
-            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
       } else{
         if(message != undefined && message.length > 0){
             message = "0000" + message.hexEncode();
         }
-            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
       }
     }
   }
@@ -203,33 +203,18 @@ export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, mes
 
   setShow(false);
 
-  var passwordStr = ""
-  var promptFunc = null
-
-
   if(isHW != true){
+    var finalSig = ""
+    console.log("unsigned_transaction: "+unsigned_transaction)
+    var signature = "";
+    var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+    signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
+    var result=new Uint8Array(72);
+    secp256k1.signatureExport(signature.signature,result);
 
+    finalSig = Buffer.from(result).toString('hex');
 
-  var finalSig = ""
-
-  console.log("unsigned_transaction: "+unsigned_transaction)
-
-  var signature = "";
-
-  var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-
-
-  signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
-
-
-  var result=new Uint8Array(72);
-  secp256k1.signatureExport(signature.signature,result);
-
-
-  finalSig = Buffer.from(result).toString('hex');
-
-
-  finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
+    finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
   } else{
 

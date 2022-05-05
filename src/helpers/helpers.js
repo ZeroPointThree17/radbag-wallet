@@ -307,7 +307,6 @@ export async function getUSB(setTransport, setUsbConn, setDeviceName) {
 
 String.prototype.hexDecode = function() {
   
-  // console.log("decoding hex: " + this)
   if(this.startsWith("01")){
 
     return "<Encrypted>"
@@ -332,7 +331,6 @@ String.prototype.hexDecode = function() {
 }
 
 
-
 export function rdxToPubKey(address) {
 
   var pubKeyIntermediate = bech32.decode(address)
@@ -341,7 +339,6 @@ export function rdxToPubKey(address) {
   var pubkey_bytes = convertbits(words, 5, 8, false);
   var ec = new elliptic.ec('secp256k1');
   
-
   var compressed = pubkey_bytes.map(function(byte) {
     return (byte & 0xFF).toString(16).padStart(2, '0')
   }).join('').replace("4","0")

@@ -147,8 +147,8 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
                   "address": sourceXrdAddr
                 },
                 "to_account": {
-                  // "address": xrdAddr
-                  "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+                  "address": xrdAddr
+                  // "address": "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
                 },
                 "amount": {
                   "token_identifier": {

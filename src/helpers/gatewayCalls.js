@@ -98,7 +98,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
   
             var to = targetPubKey.value;
   
-            var plaintext = "ttt"
+            var plaintext = message
             MessageEncryption.encrypt({
               plaintext,
               diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(

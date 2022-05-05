@@ -310,7 +310,7 @@ String.prototype.hexDecode = function() {
   // console.log("decoding hex: " + this)
   if(this.startsWith("01")){
 
-    return " <Encrypted>"
+    return "<Encrypted>"
   } else if(this.startsWith("3030")){
     return hexyjs.hexToStr(hexyjs.hexToStr(this).slice(4));
   } else if(this.startsWith("0000")){

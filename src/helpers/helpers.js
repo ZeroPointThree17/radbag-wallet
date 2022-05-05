@@ -610,16 +610,22 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
               // the first two byte are "01FF" 
               //   "01"_stands for encrypted 
               //   "FF" stands for the methode used (DH_ADD_EPH_AESGCM256_SCRYPT_000)
-              const EphemeralPublicKey = PublicKey.fromBuffer(bData.slice(2, 35),'hex')
-              // alert()/
-              const nonce = bData.slice(35, 47);
-              const AuthTag = bData.slice(47, 63);
-              const text = bData.slice(63);
-              // alert(JSON.stringify(EphemeralPublicKey.value))
+              // const EphemeralPublicKey = PublicKey.fromBuffer(bData.slice(2, 35),'hex')
+              // // alert()/
+              // const nonce = bData.slice(35, 47);
+              // const AuthTag = bData.slice(47, 63);
+              // const text = bData.slice(63);
+              // alert(JSON.stringify(EphemeralPublicKey.value.asData({ compressed: true })))
 
               // alert(bData.slice(2, 35).toString('hex'))
+              // if(EphemeralPublicKey != undefined && nonce !=undefined && AuthTag !=undefined && text!=undefined){
+                
+
+
+
+
               
-              var sealedMsg = SealedMessage.create(EphemeralPublicKey.value, nonce, AuthTag, text)
+              var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
          
               alert(JSON.stringify(sealedMsg))
 

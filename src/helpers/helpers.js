@@ -9,7 +9,7 @@ var bigDecimal = require('js-big-decimal');
 import IconFeather from 'react-native-vector-icons/Feather';
 import { Text, Card, Button, Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { decrypt, CreateSharedSecret, decryptMessage } from './encryption';
+import { decrypt, CreateSharedSecret } from './encryption';
 import { bech32 } from 'bech32';
 const hexyjs = require("hexyjs");
 import { convertbits } from '../helpers/encryption';
@@ -357,7 +357,7 @@ export function getWalletPrivKey(privKey_enc, wallet_password){
   return privKey;
 }
 
-export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap){
+export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -415,9 +415,9 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                       hashToDecrypt.includes(txn_id) && raw_message.startsWith("01") ?
                          decryptedMap.get(txn_id) : raw_message.hexDecode()
     
-                      }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id)
+                      }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id) && isHW == false
                       ? <Text style={[{fontSize: 14, color: '#4DA892', textAlign:"center"}]}
-                      onPress={() => {showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {decryptMessage(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
 
 
                     var stakeFilter;
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
    
 });
 
-export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
+export function decryptMessage(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
  
   var promptFunc = ""
   if(Platform.OS === 'ios'){
@@ -570,6 +570,10 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
           text: "OK",
           onPress: password => {
 
+            showMessage({
+              message: "Decrypting. Please wait...",
+              type: "info",
+              });
 
             if(raw_message.startsWith("01") && account != null){
 

@@ -77,7 +77,7 @@ String.prototype.hexEncode = function(){
            
     getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap)
+    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool)
     })
   
 },[]);
@@ -92,7 +92,7 @@ useInterval(() => {
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
           
   getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-  fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap);
+  fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool);
   })
 }, 10000);
 

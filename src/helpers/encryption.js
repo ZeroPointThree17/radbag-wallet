@@ -1,7 +1,7 @@
 import { Alert } from 'react-native';
 
 const _crypto = require('crypto');
-import { scrypt } from 'react-native-fast-crypto';
+
 var elliptic = require('elliptic');
 import {syncScrypt} from 'scrypt-js';
 import { KeyPair } from '@radixdlt/crypto';
@@ -413,7 +413,10 @@ export function decrypt (encdata, masterkey){
 // alert("1")
   // key    
   // try{
-  const key = await scrypt(MasterKey, salt, 8192, 8, 1, 32)
+  const key = ""
+  //await scrypt(MasterKey, salt, 8192, 8, 1, 32)
+  
+  
   // } catch (err) {
   //   alert("Scrypt err: "+err)
   // }

@@ -351,13 +351,8 @@ export function rdxToPubKey(address) {
   return uncompressed
 }
 
-export function getWalletPrivKey(privKey_enc, wallet_password){
-  var privKey = Buffer.from(new Uint8Array(decrypt(privKey_enc, Buffer.from(wallet_password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16))));
-  
-  return privKey;
-}
 
-export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, privKey_enc, setWallet_password, wallet_password, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW){
+export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -391,13 +386,6 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
               }  
         )
       }).then((response) => response.json()).then((json) => {
-
-
-        // console.log("FROM HISTORY ENC: "+this)
-        // var sharedKey = CreateSharedSecret(Buffer.from(privKey, 'hex'),Buffer.from("04ea74a893f84afbd640c535128dc8d944f4b8cd109a746a4c2abb6f4c1f814471e6537b9205a568f188ba4c75bbb306befb6c9361daa58c2ed6e3d8ed740954e5",'hex'));
-                   
-
-        // alert(JSON.stringify(json))
        
           var historyRows = [];
 
@@ -417,7 +405,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
     
                       }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id) && isHW == false
                       ? <Text style={[{fontSize: 14, color: '#4DA892', textAlign:"center"}]}
-                      onPress={() => {decryptMessage(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {decryptMessage(hashToDecrypt, setHashToDecrypt, txn_id, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
 
 
                     var stakeFilter;
@@ -485,9 +473,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                                 details.push(tkn_supply)
                                   details.push(tkn_rri)
                                     details.push(tkn_ismutable)
-                // + message;
 
-                // alert(JSON.stringify(action))
                 historyRows.push(
                   <View key={count} style={{backgroundColor: global.reverseModeTranslation}}>
                   <Card containerStyle={{ backgroundColor: global.reverseModeTranslation }}>
@@ -499,9 +485,6 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                   </View>
                 </Card>
                 </View>
-                // <ScrollView nestedScrollEnabled={true} horizontal={true}><Text style={{fontSize: 12, textAlign:"center"}} numberOfLines={4}>{details}</Text><Separator/></ScrollView>
-
-                    // }
                   )  
                 }
               });
@@ -548,7 +531,7 @@ const styles = StyleSheet.create({
    
 });
 
-export function decryptMessage(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
+export function decryptMessage(hashToDecrypt, setHashToDecrypt, txn_id, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
  
   var promptFunc = ""
   if(Platform.OS === 'ios'){
@@ -579,7 +562,6 @@ export function decryptMessage(privKey_enc, hashToDecrypt, setHashToDecrypt, txn
 
               var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
       
-              // alert(JSON.stringify(account))
               db.transaction((tx) => {
                 tx.executeSql("SELECT address.privatekey_enc FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
                  
@@ -605,7 +587,6 @@ export function decryptMessage(privKey_enc, hashToDecrypt, setHashToDecrypt, txn
                         message: successResponse,
                         type: alertType,
                         });
-                      // alert(successResponse)
                     }
             
                     var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex')
@@ -629,16 +610,11 @@ export function decryptMessage(privKey_enc, hashToDecrypt, setHashToDecrypt, txn
       
                       var hashToDecryptCopy = [...hashToDecrypt];
                       hashToDecryptCopy.push(txn_id)
-                      setWallet_password(password)
                       setHashToDecrypt(hashToDecryptCopy)
       
                     })
                   });
                 }, errorCB);
-              
-
-
-
             }
           }
         }

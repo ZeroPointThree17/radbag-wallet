@@ -624,15 +624,18 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
 
 
 
+              var msg = Buffer.from(raw_message, 'hex')
               
               var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
          
               // alert(JSON.stringify(sealedMsg))
 
-              var encryptedMsg = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).
+              var encryptedM = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).value
+
+              // alert(JSON.stringify(encryptedMsg))
 
               MessageEncryption.decrypt({
-                encryptedMsg,
+                encryptedMessage: encryptedM,
                 diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(
                   null,
                   targetPubKey.value,
@@ -640,8 +643,8 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
               }).then( (res) => {
 
                 var finalResult = res.map(b => b.toString('utf-8'))
-                alert(finalResult)
-                decryptedMap.set(txn_id, finalResult)
+                alert(JSON.stringify(finalResult.value))
+                decryptedMap.set(txn_id, finalResult.value)
 
                 var hashToDecryptCopy = [...hashToDecrypt];
                 hashToDecryptCopy.push(txn_id)

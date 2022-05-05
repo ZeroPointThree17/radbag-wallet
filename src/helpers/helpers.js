@@ -416,7 +416,7 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                          decryptedMap.get(txn_id) : raw_message.hexDecode()
     
                       }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id)
-                      ? <Text style={[{fontSize: 14, color: 'blue', textAlign:"center"}, getAppFont("blue")]}
+                      ? <Text style={[{fontSize: 14, color: '#4DA892', textAlign:"center"}]}
                       onPress={() => {showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt, txn_id, setWallet_password, "NO_RESPONSE", "Decrypting in a few seconds...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
 
 
@@ -573,14 +573,6 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
 
             if(raw_message.startsWith("01") && account != null){
 
-              if(successResponse != "NO_RESPONSE"){
-                showMessage({
-                  message: successResponse,
-                  type: "info",
-                  });
-                // alert(successResponse)
-              }
-            
               var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
       
               // alert(JSON.stringify(account))
@@ -596,12 +588,22 @@ export function showPasswordPrompt(privKey_enc, hashToDecrypt, setHashToDecrypt,
                         tempPrivkey_enc = row.privatekey_enc;
                     }
 
+                    var alertType = "info"
                     try{
                       decrypt(tempPrivkey_enc, Buffer.from(password))
                     } catch(err){
-                      alert("Password incorrect")
+                      successResponse = "Password incorrect"
+                      alertType = "danger"
                     }
 
+                    if(successResponse != "NO_RESPONSE"){
+                      showMessage({
+                        message: successResponse,
+                        type: alertType,
+                        });
+                      // alert(successResponse)
+                    }
+            
                     var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex')
                     var privKeyObj = PrivateKey.fromHex(decrypt(tempPrivkey_enc, Buffer.from(password)))
                     var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))

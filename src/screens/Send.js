@@ -204,10 +204,10 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
 <Separator/>
    
    <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Message (optional):</Text>
-   <View style={[styles.rowStyle]}>
+   <View style={[styles.rowStyleCenter]}>
 
       <TextInput ref={msgRef}
-      style={[{padding:10, borderWidth:1, height:55, flex:1, borderRadius: 15, borderColor: global.modeTranslation, textAlignVertical: 'top'}, getAppFont("black")]}
+      style={[{flex:1, padding:10, borderWidth:1, height:55, borderRadius: 15, borderColor: global.modeTranslation, textAlignVertical: 'top'}, getAppFont("black")]}
       multiline={true}
       numberOfLines={4}
       autoCapitalize='none'
@@ -216,23 +216,23 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
       onChangeText={value => onChangeMessage(value)}
     />
     
- <View style={[{justifyContent: "center", alignSelf: "center", alignItems: "center", flexDirection: "column"}]}> 
- <Text style={[styles.title2,{fontSize:12},getAppFont("black")]}>Encrypt?</Text>
- <View style={[styles.rowStyle]}>
- <Text style={[styles.title2]}> </Text>
-<CheckboxBouncy
-fillColor="#183A81"
-iconStyle={[{ borderColor: "black"}, styles.checkbox]}
-isChecked={encryptMsgflag}
-onPress={()=>{
-  if(encryptMsgflag==false){
-  setEncryptMsgflag(true);
-  }
-  else setEncryptMsgflag(false);
-}}
-/>
-</View> 
-</View >
+<View style={{textAlign:"center", alignContent:"flex-end", justifyContent:"center"}}>
+ <Text style={[{fontSize:12, textAlign:"center"},getAppFont("black")]}> Encrypt?</Text>
+ <CheckboxBouncy
+    fillColor="#4DA892"
+    style={[{fontSize:12, textAlign:"center", flexDirection:"column"},getAppFont("black")]}
+    iconStyle={[{ borderColor: global.modeTranslation }]}
+    isChecked={encryptMsgflag}
+    onPress={()=>{
+      if(encryptMsgflag==false){
+      setEncryptMsgflag(true);
+      }
+      else setEncryptMsgflag(false);
+    }}
+    />
+
+</View>
+
     </View>
 <Separator/>
 
@@ -361,6 +361,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start"
    },
   rowStyle: {
+    flexDirection: 'row',
+    fontSize: 4,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    marginVertical:5
+  },
+  rowStyleCenter: {
     flexDirection: 'row',
     fontSize: 4,
     alignItems: 'flex-start',

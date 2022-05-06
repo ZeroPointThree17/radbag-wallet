@@ -216,7 +216,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
       onChangeText={value => onChangeMessage(value)}
     />
   
-  {isHWBool==false && <React.Fragment>
+  <React.Fragment>
       <View style={{textAlign:"center", alignContent:"flex-end", justifyContent:"center"}}>
       <Text style={[{fontSize:12, textAlign:"center"},getAppFont("black")]}> Encrypt?</Text>
       <CheckboxBouncy
@@ -233,7 +233,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
           />
 
       </View>
-  </React.Fragment>}
+  </React.Fragment>
 
     </View>
 <Separator/>

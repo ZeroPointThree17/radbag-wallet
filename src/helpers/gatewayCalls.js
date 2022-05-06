@@ -2,14 +2,16 @@ import { Keyboard, Alert } from 'react-native';
 import { rdxToPubKey, openCB, errorCB, shortenAddress, formatNumForDisplay, setNewGatewayIdx } from '../helpers/helpers';
 const secp256k1 = require('secp256k1');
 import { Transaction } from '@radixdlt/tx-parser'
-import { RadixAPDU } from '../helpers/apdu'
+import { RadixAPDU, resultToAsync } from '../helpers/apdu'
 import TransportHid from '@ledgerhq/react-native-hid';
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
-import { HDPathRadix, PublicKey, PrivateKey, MessageEncryption } from '@radixdlt/crypto'
+import { HDPathRadix, PublicKey, PrivateKey, MessageEncryption, ECPointOnCurve } from '@radixdlt/crypto'
+import {toObservableFromResult} from '@radixdlt/util'
 import { throwError } from 'rxjs'
 var SQLite = require('react-native-sqlite-storage');
 import { decrypt } from '../helpers/encryption';
 import prompt from 'react-native-prompt-android';
+import { showMessage } from 'react-native-flash-message';
 var bigDecimal = require('js-big-decimal');
 
 
@@ -70,10 +72,8 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                 
             if(message != undefined && message.length > 0){
 
-                var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(destAddr),'hex'),'hex')
+                var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(destAddr),'hex'),'hex').value;
                 var privKeyObj = PrivateKey.fromHex(decrypt(privKey_enc, Buffer.from(password)))
-      
-                var to = targetPubKey.value;
       
                 var plaintext = message
                 MessageEncryption.encrypt({
@@ -111,10 +111,51 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
 
 
         if(encryptMsgflag){
-            if(message != undefined && message.length > 0){
-                message = "0000" + message.hexEncode();
+
+            if (usbConn == true) {
+              transport = await TransportHid.create()
             }
-            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
+          
+            if(transport == undefined && deviceID == undefined){
+              alert("Please open the Radix app in the hardware wallet first")
+            } else{
+          
+              if(deviceID != undefined){
+                transport = await TransportBLE.open(deviceID);
+              }
+          
+                const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
+                var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(destAddr),'hex'),'hex').value
+    
+              //  alert(JSON.stringify(targetPubKey))
+                var apdu1 =  RadixAPDU.doKeyExchange(
+                  hdpath,
+                  to,
+                  'encrypt'
+              )
+          
+              alert("Please wait a few seconds for encrypted message to be constructed")
+              alert("Please confirm the message encryption in the hardware wallet")
+
+              transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
+
+                  var sharedKeyPointBytes = result.slice(1,result.length-2)
+
+                  var dfPoint =  resultToAsync(ECPointOnCurve.fromBuffer(sharedKeyPointBytes))
+
+                  MessageEncryption.encrypt({
+                    plaintext: message,
+                    diffieHellmanPoint: () => {return dfPoint},
+                  }).then( (res) => {
+                    buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
+                  })
+                
+   
+                }).catch((error) => {
+
+                })
+              }
+              
       } else{
         if(message != undefined && message.length > 0){
             message = "0000" + message.hexEncode();
@@ -268,8 +309,8 @@ export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, mes
             console.log("INSTRUCTIONS: "+instructions)
             const instructionBytes = instructionToSend.toBuffer();
 
-            const displayInstructionContentsOnLedgerDevice = false
-            const displayTXSummaryOnLedgerDevice = false
+            const displayInstructionContentsOnLedgerDevice = true
+            const displayTXSummaryOnLedgerDevice = true
 
             var apdu2 =  RadixAPDU.signTX.singleInstruction({
               instructionBytes,
@@ -508,3 +549,4 @@ export function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, 
           setNewGatewayIdx(gatewayIdx);
         });
 }
+

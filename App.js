@@ -67,7 +67,7 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
   <React.Fragment>
     <View style={{ alignItems: "center",  backgroundColor: global.isDarkMode? "black" : "#183A81",height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
     <ScrollView contentContainerStyle={{alignContents: "center", justifyContent: "center"}}>
-      <View style={{ marginVertical: "25%", alignContents: "center", backgroundColor: "#183A81",height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
+      <View style={{ marginVertical: "18%", alignContents: "center", backgroundColor: "#183A81",height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
     <PinCode allowReset="false" mode={PinCodeT.Modes.Enter} visible={firstTimer == false && correctPin == false && isPINEnabled} 
 textOptions={customTexts}
 onEnterSuccess={(pin) => setCorrectPin(true)}

@@ -11,6 +11,11 @@ import {
     RadixAPDUT,
     radixCLA,
 } from './_types'
+import {
+    Result,
+    okAsync,
+    ResultAsync,
+  } from 'neverthrow'
 
 
 // ##### Follows https://github.com/radixdlt/radixdlt-ledger-app/blob/main/APDUSPEC.md #####
@@ -100,6 +105,8 @@ const doKeyExchange = (
     publicKeyOfOtherParty: PublicKeyT,
     display?: 'encrypt' | 'decrypt',
 ): RadixAPDUT => {
+
+    // console.log(JSON.stringify(path))
     const p1 =
         display === 'encrypt' ? 0x01 : display === 'decrypt' ? 0x02 : 0x00
 
@@ -254,4 +261,12 @@ export const RadixAPDU = {
         initialSetup: signTxInitialSetupPackage,
         singleInstruction: signTxSingleInstruction,
     },
+}
+
+export const resultToAsync = <T, E>(
+	result: Result<T, E>,
+): ResultAsync<T, E> => {
+	return result.asyncAndThen((value) => {
+		return okAsync(value)
+	})
 }

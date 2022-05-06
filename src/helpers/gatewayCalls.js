@@ -134,7 +134,6 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                   'encrypt'
               )
           
-              alert("Please wait a few seconds for encrypted message to be constructed")
               alert("Please confirm the message encryption in the hardware wallet")
 
               transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {

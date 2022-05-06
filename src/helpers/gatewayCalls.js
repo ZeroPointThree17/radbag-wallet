@@ -150,8 +150,6 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                   })
                 
    
-                }).catch((error) => {
-
                 })
               }
               

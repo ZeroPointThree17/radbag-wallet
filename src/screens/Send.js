@@ -74,10 +74,11 @@ String.prototype.hexEncode = function(){
 
   useEffect( () => {
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
-           
-    getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool)
+      getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+      getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+      // if(transport != undefined){
+       fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex)
+      // }
     })
   
 },[]);
@@ -89,12 +90,14 @@ useInterval(() => {
     getUSB(setTransport, setUsbConn, setDeviceName);
   }
 
-  AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
-          
-  getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-  fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool);
+  AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {    
+    getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+    
+    // if(transport != undefined){
+      fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
+    // }
   })
-}, 10000);
+}, 5000);
 
 
 // alert(defaultSymbol)

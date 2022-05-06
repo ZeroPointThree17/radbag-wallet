@@ -15,8 +15,9 @@ const hexyjs = require("hexyjs");
 import { convertbits } from '../helpers/encryption';
 var elliptic = require('elliptic');
 import prompt from 'react-native-prompt-android';
-import { PublicKey, PrivateKey, MessageEncryption, Message, SealedMessage, EncryptionScheme } from '@radixdlt/crypto';
+import { PublicKey, PrivateKey, MessageEncryption, Message, SealedMessage, EncryptionScheme, HDPathRadix, ECPointOnCurve } from '@radixdlt/crypto';
 var SQLite = require('react-native-sqlite-storage');
+import { RadixAPDU, resultToAsync } from '../helpers/apdu'
 
 
 export function useInterval(callback, delay) {
@@ -347,7 +348,7 @@ export function rdxToPubKey(address) {
 }
 
 
-export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW){
+export async function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW, transport, deviceID, hdpathIndex){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -398,10 +399,9 @@ export function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly
                       hashToDecrypt.includes(txn_id) && raw_message.startsWith("01") ?
                          decryptedMap.get(txn_id) : raw_message.hexDecode()
     
-                      }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id) && isHW == false
+                      }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id) 
                       ? <Text style={[{fontSize: 14, color: '#4DA892', textAlign:"center"}]}
-                      onPress={() => {decryptMessage(hashToDecrypt, setHashToDecrypt, txn_id, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
-
+                      onPress={() => {decryptMessage(isHW, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
 
                     var stakeFilter;
                     if(stakingOnly){
@@ -528,95 +528,163 @@ const styles = StyleSheet.create({
 });
 
 
-export function decryptMessage(hashToDecrypt, setHashToDecrypt, txn_id, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
+export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
  
-  var promptFunc = ""
-  if(Platform.OS === 'ios'){
-    promptFunc = Alert.prompt;
-    } else{
-    promptFunc = prompt
-    }
+  if(isHW){
 
-    promptFunc(
-      "Enter wallet password",
-      "Enter the wallet password to perform this action",
-      [
-        {
-          text: "Cancel",
-          onPress: () => { if(cancelResponse != "NO_RESPONSE"){alert(cancelResponse)}},
-          style: "cancel"
-        },
-        {
-          text: "OK",
-          onPress: password => {
+    // if(transport == undefined && deviceID == undefined){
+    //   alert(transport)
+    //   alert(deviceID)
+    //   alert("Please open the Radix app in the hardware wallet first")
 
-            showMessage({
-              message: "Decrypting. Please wait...",
-              type: "info",
-              });
+    // } else{
+  
+      // if(deviceID != undefined){
+        var transport = await TransportBLE.open(deviceID).then( (transport ) => {
 
-            if(raw_message.startsWith("01") && account != null){
+          const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
+          var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex').value
+  
+          var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
+          var encryptedM = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).value
+  
+          var apdu1 =  RadixAPDU.doKeyExchange(
+            hdpath,
+            to,
+            'decrypt'
+        )
+        alert("Please confirm the message decryption in the hardware wallet")
 
-              var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
-      
-              db.transaction((tx) => {
-                tx.executeSql("SELECT address.privatekey_enc FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
-                 
+        transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
 
-                  var len = results.rows.length;
-                  var tempPrivkey_enc = "default_val";
-
-                    for (let i = 0; i < len; i++) {
-                        let row = results.rows.item(i);
-                        tempPrivkey_enc = row.privatekey_enc;
-                    }
-
-                    var alertType = "info"
-                    try{
-                      decrypt(tempPrivkey_enc, Buffer.from(password))
-                    } catch(err){
-                      successResponse = "Password incorrect"
-                      alertType = "danger"
-                    }
-
-                    if(successResponse != "NO_RESPONSE"){
-                      showMessage({
-                        message: successResponse,
-                        type: alertType,
-                        });
-                    }
+          showMessage({
+            message: "Decrypting. Please wait...",
+            type: "info",
+            });
             
-                    var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex')
-                    var privKeyObj = PrivateKey.fromHex(decrypt(tempPrivkey_enc, Buffer.from(password)))
-                    var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
-                    var encryptedM = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).value
-      
-                    MessageEncryption.decrypt({
-                      encryptedMessage: encryptedM,
-                      diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(
-                        null,
-                        targetPubKey.value,
-                      ),
-                    }).then( (res) => {
-      
-                      var finalResult = res.map(b => b.toString('utf-8'))
+          var sharedKeyPointBytes = result.slice(1,result.length-2)
 
-                      var newMap = new Map(decryptedMap)
-                      newMap.set(txn_id, finalResult.value)
-                      setDecryptedMap(newMap);
+          var dfPoint =  resultToAsync(ECPointOnCurve.fromBuffer(sharedKeyPointBytes))
+
+          MessageEncryption.decrypt({
+            encryptedMessage: encryptedM,
+            diffieHellmanPoint: () => {return dfPoint},
+          }).then( (res) => {
+
+            var finalResult = res.map(b => b.toString('utf-8'))
+
+            var newMap = new Map(decryptedMap)
+            newMap.set(txn_id, finalResult.value)
+            setDecryptedMap(newMap);
+
+            var hashToDecryptCopy = [...hashToDecrypt];
+            hashToDecryptCopy.push(txn_id)
+            setHashToDecrypt(hashToDecryptCopy)
+
+          })
+
+        })
+        }).catch((err) => { alert("Hardware wallet not yet found. Still scanning...")})
+
+        // if(transport == undefined){
+        //   alert("Still scanning for hardware wallet...")
+        // }
+
       
-                      var hashToDecryptCopy = [...hashToDecrypt];
-                      hashToDecryptCopy.push(txn_id)
-                      setHashToDecrypt(hashToDecryptCopy)
-      
-                    })
-                  });
-                }, errorCB);
+
+    // }
+
+      // }
+  }
+  else{
+    var promptFunc = ""
+    if(Platform.OS === 'ios'){
+      promptFunc = Alert.prompt;
+      } else{
+      promptFunc = prompt
+      }
+
+      promptFunc(
+        "Enter wallet password",
+        "Enter the wallet password to perform this action",
+        [
+          {
+            text: "Cancel",
+            onPress: () => { if(cancelResponse != "NO_RESPONSE"){alert(cancelResponse)}},
+            style: "cancel"
+          },
+          {
+            text: "OK",
+            onPress: password => {
+
+              showMessage({
+                message: "Decrypting. Please wait...",
+                type: "info",
+                });
+
+              if(raw_message.startsWith("01") && account != null){
+
+                var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+        
+                db.transaction((tx) => {
+                  tx.executeSql("SELECT address.privatekey_enc FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
+                  
+
+                    var len = results.rows.length;
+                    var tempPrivkey_enc = "default_val";
+
+                      for (let i = 0; i < len; i++) {
+                          let row = results.rows.item(i);
+                          tempPrivkey_enc = row.privatekey_enc;
+                      }
+
+                      var alertType = "info"
+                      try{
+                        decrypt(tempPrivkey_enc, Buffer.from(password))
+                      } catch(err){
+                        successResponse = "Password incorrect"
+                        alertType = "danger"
+                      }
+
+                      if(successResponse != "NO_RESPONSE"){
+                        showMessage({
+                          message: successResponse,
+                          type: alertType,
+                          });
+                      }
+              
+                      var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex')
+                      var privKeyObj = PrivateKey.fromHex(decrypt(tempPrivkey_enc, Buffer.from(password)))
+                      var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
+                      var encryptedM = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).value
+        
+                      MessageEncryption.decrypt({
+                        encryptedMessage: encryptedM,
+                        diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(
+                          null,
+                          targetPubKey.value,
+                        ),
+                      }).then( (res) => {
+        
+                        var finalResult = res.map(b => b.toString('utf-8'))
+
+                        var newMap = new Map(decryptedMap)
+                        newMap.set(txn_id, finalResult.value)
+                        setDecryptedMap(newMap);
+        
+                        var hashToDecryptCopy = [...hashToDecrypt];
+                        hashToDecryptCopy.push(txn_id)
+                        setHashToDecrypt(hashToDecryptCopy)
+        
+                      })
+                    });
+                  }, errorCB);
+              }
             }
           }
-        }
-      ]
-    )
+        ]
+      )
+  }
 }
 
 

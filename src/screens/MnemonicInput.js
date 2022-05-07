@@ -14,37 +14,49 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
 
       mnemonicArr = mnemonic.split(" ");
 
+      const words12sub = [];
+      const word13sub = [];
+  
+      var words12 = ""; 
+      var word13 = "";
+
     if(mnemonicArr.length <= 13){
 
-        const words12sub = mnemonicArr.slice(0, 12);
-        const word13sub = mnemonicArr.slice(12);
+        words12sub = mnemonicArr.slice(0, 12);
+        word13sub = mnemonicArr.slice(12);
     
-        var words12 = words12sub.join(' '); 
-        var word13 = word13sub[0];
+        words12 = words12sub.join(' '); 
+        word13 = word13sub[0];
+
         if(word13 === undefined){
             word13="";
         }
-   } else if(mnemonicArr.length <= 19){
+        
+    } else if(mnemonicArr.length <= 19){
 
-    const words12sub = mnemonicArr.slice(0, 18);
-    const word13sub = mnemonicArr.slice(18);
+      words12sub = mnemonicArr.slice(0, 18);
+      word13sub = mnemonicArr.slice(18);
 
-    var words12 = words12sub.join(' '); 
-    var word13 = word13sub[0];
-    if(word13 === undefined){
-        word13="";
+      words12 = words12sub.join(' '); 
+      word13 = word13sub[0];
+      
+      if(word13 === undefined){
+          word13="";
+      }
+
+    } else if(mnemonicArr.length <= 25){
+
+      words12sub = mnemonicArr.slice(0, 24);
+      word13sub = mnemonicArr.slice(24);
+
+      words12 = words12sub.join(' '); 
+      word13 = word13sub[0];
+
+      if(word13 === undefined){
+          word13="";
+      }
+
     }
-  } else if(mnemonicArr.length <= 25){
-
-    const words12sub = mnemonicArr.slice(0, 24);
-    const word13sub = mnemonicArr.slice(24);
-
-    var words12 = words12sub.join(' '); 
-    var word13 = word13sub[0];
-    if(word13 === undefined){
-        word13="";
-    }
-  }
 
     if(bip39.validateMnemonic(words12)){
     const pushAction = StackActions.push('Wallet Password', {
@@ -58,14 +70,14 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
     } else{
         alert("Mnemonic is not valid")
     }
-} else{
-    alert("Mnemonic cannot be empty")
-}
 
+  } else{
+    alert("Mnemonic cannot be empty")
   }
+}
   
 
- const MnemonicInput = ({route, navigation}) => {
+const MnemonicInput = ({route, navigation}) => {
 
     const { firstTimeStr } = route.params;
     var firstTime = JSON.stringify(firstTimeStr).replace(/"/g, '');

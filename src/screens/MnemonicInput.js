@@ -8,22 +8,22 @@ import { getAppFont } from '../helpers/helpers';
 
 function navigateAppPassword(navigation, mnemonic, firstTime){
 
-    if(mnemonic.length > 0){
-    mnemonic = mnemonic.replace(/\s\s+/g, ' ').replace(/(\r\n|\n|\r)/gm, "");
-    mnemonic = mnemonic.trim();
+  if(mnemonic.length > 0){
+      mnemonic = mnemonic.replace(/\s\s+/g, ' ').replace(/(\r\n|\n|\r)/gm, "");
+      mnemonic = mnemonic.trim();
 
-    mnemonicArr = mnemonic.split(" ");
+      mnemonicArr = mnemonic.split(" ");
 
     if(mnemonicArr.length <= 13){
 
-      const words12sub = mnemonicArr.slice(0, 12);
-      const word13sub = mnemonicArr.slice(12);
-  
-      var words12 = words12sub.join(' '); 
-      var word13 = word13sub[0];
-      if(word13 === undefined){
-          word13="";
-      }
+        const words12sub = mnemonicArr.slice(0, 12);
+        const word13sub = mnemonicArr.slice(12);
+    
+        var words12 = words12sub.join(' '); 
+        var word13 = word13sub[0];
+        if(word13 === undefined){
+            word13="";
+        }
    } else if(mnemonicArr.length <= 19){
 
     const words12sub = mnemonicArr.slice(0, 18);

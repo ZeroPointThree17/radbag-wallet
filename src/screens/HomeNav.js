@@ -24,14 +24,17 @@ export default function HomeNav({route, navigation}) {
   
     <Tab.Navigator  
     tabBarOptions={{
-      keyboardHidesTabBar: true
+      keyboardHidesTabBar: true,
+      activeTintColor: 'white',
+      inactiveTintColor: 'grey',
    }} 
     screenOptions={{
       headerShown: false,
       alignSelf: 'center',
       headerTitleAlign: 'center',
       headerStyle: {
-        backgroundColor: '#183A81',
+        backgroundColor: '#132e67',
+        // backgroundColor: '#183A81',
         borderWidth:0,
         shadowRadius: 0,
         textAlign:'center',
@@ -55,7 +58,8 @@ export default function HomeNav({route, navigation}) {
         paddingTop: 10,
         marginTop:0,
         paddingBottom: 25,
-        backgroundColor: '#183A81',
+        // backgroundColor: '#183A81',
+        backgroundColor: '#132e67',
         position: 'absolute',
         borderTopWidth: 0,
     },

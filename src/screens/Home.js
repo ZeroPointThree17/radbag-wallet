@@ -763,7 +763,10 @@ console.log("WALLETS: "+JSON.stringify(wallets));
                 
                 <View style={styles.rowStyle}>
 
-                <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>
+                
+                <LinearGradient colors={['#132e67','#3D8674', '#3D8674']} useAngle={true} angle={11} style={styles.surface}>
+            
+                {/* <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}> */}
             
             <View style={styles.rowStyle}>
 <Dropdown

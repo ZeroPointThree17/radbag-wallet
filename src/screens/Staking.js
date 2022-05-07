@@ -647,19 +647,19 @@ function renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScree
 
     <View style={styles.rowStyle}>
     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(valAddr)}}>
-    < Text style={[{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("blue")]}>[Copy Address]</Text>
+    <Text style={[{color:"#4DA892",marginTop:0,fontSize:14, justifyContent:'flex-end'}]}>[Copy Address]</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.button} onPress={ () => {  showMessage({
     message: "Validator selected",
     type: "info",
     }); setUnstakeValAddr(valAddr); setStakingScreenActive(false)}}>
-    < Text style={[{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("blue")]}>  [Reduce Stake]</Text>
+    <Text style={[{color:"#4DA892",marginTop:0,fontSize:14, justifyContent:'flex-end'}]}>  [Reduce Stake]</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.button} onPress={ () => {  showMessage({
     message: "Validator selected",
     type: "info",
     });setValAddr(valAddr); setStakingScreenActive(true)}}>
-    < Text style={[{color:"blue",marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("blue")]}>  [Add to Stake]</Text>
+    <Text style={[{color:"#4DA892",marginTop:0,fontSize:14, justifyContent:'flex-end'}]}>  [Add to Stake]</Text>
     </TouchableOpacity>
      </View>   
 
@@ -759,7 +759,8 @@ const stakingStats = (showStakingStats) => {
     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Total Balance: {new bigDecimal(((new bigDecimal(formatNumForDisplay(currentlyLiquid).replace(/,/g, '')).add(new bigDecimal(formatNumForDisplay(currentlyStaked).replace(/,/g, '')))).getValue())).getPrettyValue()} XRD</Text>
     <Separator/>
-    <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>    
+    <LinearGradient colors={['#132e67','#3D8674', '#3D8674']} useAngle={true} angle={11} style={styles.surface}>  
+    {/* <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>     */}
        <Image style={{margin: 0, width: 70, height: 90, marginBottom:4, alignSelf:'center'}}
     source={Raddish}/>
        <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center'}, getAppFont("white")]}>Please consider staking with the RadBag Validator to support products like this wallet app and more to come!{"\n"}We are one of the top Radix validators with a low 1% fee!</Text>
@@ -804,7 +805,7 @@ onPress={() => {setStakingScreenActive(false)}}>
       <View style={[styles.rowStyle,{backgroundColor:global.reverseModeTranslation}]}>
      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, borderRadius: 15}, getAppFont("black")]}>Validator Address{"\n"}(Default: RadBag Validator):</Text>
      <Text
-       style={[{color: 'blue', textAlign: "center" , fontSize:12, flex:0.5}, getAppFont("blue")]}
+       style={[{color: '#4DA892', textAlign: "center" , fontSize:12, flex:0.5}]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/validators')}}
      >
        [Validator List]
@@ -1035,7 +1036,8 @@ const styles = StyleSheet.create({
   },
   appButtonContainer: {
     elevation: 8,
-    backgroundColor: "#009688",
+    // backgroundColor: "#009688",
+    backgroundColor: "#3d8674",
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12

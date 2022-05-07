@@ -46,17 +46,29 @@ const radioButtonsData =
   id: '1', // acts as primary key, should be unique and non-empty string
   label: '12 Words',
   value: '128',
-  selected: true
+  selected: true,
+  containerStyle:{color: global.modeTranslation},
+  color: global.modeTranslation,
+  borderColor: global.modeTranslation,
+  labelStyle:{color: global.modeTranslation}
 }, {
   id: '2',
   label: '18 Words',
   value: '192',
-  selected: false
+  selected: false,
+  containerStyle:{color: global.modeTranslation},
+  color: global.modeTranslation,
+  borderColor: global.modeTranslation,
+  labelStyle:{color: global.modeTranslation}
 }, {
   id: '3',
   label: '24 Words',
   value: '256',
-  selected: false
+  selected: false,
+  containerStyle:{color: global.modeTranslation},
+  color: global.modeTranslation,
+  borderColor: global.modeTranslation,
+  labelStyle:{color: global.modeTranslation}
 }
 ]
 
@@ -85,6 +97,9 @@ function onPressRadioButton(radioButtonsArray) {
       <Text style={[styles.title,getAppFont("black")]}>Select the number of words you want the mnemonic to be:</Text>
  
       <RadioGroup layout = "row"
+                  color= "#555"
+                  containerStyle={{color:"white"}}
+                  borderColor= "white"
                   radioButtons={radioButtons} 
                   onPress={onPressRadioButton} 
               />

@@ -14,14 +14,37 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
 
     mnemonicArr = mnemonic.split(" ");
 
-    const words12sub = mnemonicArr.slice(0, 12);
-    const word13sub = mnemonicArr.slice(12);
- 
+    if(mnemonicArr.length <= 13){
+
+      const words12sub = mnemonicArr.slice(0, 12);
+      const word13sub = mnemonicArr.slice(12);
+  
+      var words12 = words12sub.join(' '); 
+      var word13 = word13sub[0];
+      if(word13 === undefined){
+          word13="";
+      }
+   } else if(mnemonicArr.length <= 19){
+
+    const words12sub = mnemonicArr.slice(0, 18);
+    const word13sub = mnemonicArr.slice(18);
+
     var words12 = words12sub.join(' '); 
     var word13 = word13sub[0];
     if(word13 === undefined){
         word13="";
     }
+  } else if(mnemonicArr.length <= 25){
+
+    const words12sub = mnemonicArr.slice(0, 24);
+    const word13sub = mnemonicArr.slice(24);
+
+    var words12 = words12sub.join(' '); 
+    var word13 = word13sub[0];
+    if(word13 === undefined){
+        word13="";
+    }
+  }
 
     if(bip39.validateMnemonic(words12)){
     const pushAction = StackActions.push('Wallet Password', {
@@ -52,7 +75,7 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
  return ( 
      <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}> 
      <Separator/>
-<Text style={[getAppFont("black"), {margin: 20}]}>Enter your mnemonic below with words separated by a single space. Include 13th word if any.</Text>
+<Text style={[getAppFont("black"), {margin: 20}]}>Enter your mnemonic below with words separated by a single space. Include custom word if any.</Text>
 
 <TextInput
     editable = {true}

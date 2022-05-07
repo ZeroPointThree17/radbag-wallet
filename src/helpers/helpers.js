@@ -532,19 +532,19 @@ export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, has
  
   if(isHW){
 
-    if(transport == undefined && deviceID == undefined){
-      alert("Please open the Radix app in the hardware wallet first1")
+    // if(transport == undefined && deviceID == undefined){
+    //   alert("Please open the Radix app in the hardware wallet first")
 
-    } else{
+    // } else{
   
-
       
-      if(deviceID != undefined){
+      // if(deviceID != undefined){
         
+        // await TransportBLE.disconnect(deviceID);
         TransportBLE.open(deviceID).then( (transport ) => {
 
           if(transport == undefined){
-            alert("Please open the Radix app in the hardware wallet first2")
+            alert("Please open the Radix app in the hardware wallet first")
           } else {
           const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
           var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex').value
@@ -558,9 +558,14 @@ export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, has
             'decrypt'
         )
 
-        transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
+        // alert("Please confirm the message decryption in the hardware wallet")
 
-          alert("Please confirm the message decryption in the hardware wallet")
+        showMessage({
+          message: "Please confirm in hardware wallet",
+          type: "info",
+          });
+
+        transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
 
           showMessage({
             message: "Decrypting. Please wait...",
@@ -588,10 +593,18 @@ export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, has
 
           }).catch((err) => { alert("Decryption failed. Error: " + err)})
 
-        }).catch((err) => { alert("Hardware wallet not yet found. Still scanning...1")})
+        }).catch((err) => {   
+            if(err.message.includes("denied by the user?")){
+            alert("Decryption process cancelled")
+          } else{
+            alert("Hardware wallet not yet found. Still scanning...")
+          }
+        })
       }
         
-        }).catch((err) => { alert("Hardware wallet not yet found. Still scanning...2: "+err)})
+        }).catch((err) => { 
+              alert("Hardware wallet not yet found. Still scanning...")
+        })
 
         // if(transport == undefined){
         //   alert("Still scanning for hardware wallet...")
@@ -599,9 +612,9 @@ export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, has
 
       
 
-    }
+    // }
 
-      }
+      // }
   }
   else{
     var promptFunc = ""

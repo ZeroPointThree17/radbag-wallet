@@ -558,12 +558,7 @@ export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, has
             'decrypt'
         )
 
-        // alert("Please confirm the message decryption in the hardware wallet")
-
-        showMessage({
-          message: "Please confirm in hardware wallet",
-          type: "info",
-          });
+        alert("Please confirm the message decryption in the hardware wallet. After confirmation, decryption will take a few seconds.")
 
         transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
 

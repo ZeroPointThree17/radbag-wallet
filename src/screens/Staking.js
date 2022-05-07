@@ -712,6 +712,8 @@ function renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScree
       const [usbConn, setUsbConn] = useState(false);
       const [deviceName, setDeviceName] = useState("Looking for device...");
       const [historyRows, setHistoryRows] = useState([]);
+      const [hashToDecrypt, setHashToDecrypt] = useState([])
+      const [decryptedMap, setDecryptedMap] = useState(new Map())
 
       const stakeValRef = useRef();
       const stakeAmtRef = useRef();
@@ -730,7 +732,7 @@ function renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScree
 useInterval(() => {
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {     
     getStakeData(gatewayIdx, gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
-    fetchTxnHistory(gatewayIdx, currAddr, setHistoryRows, true)
+    fetchTxnHistory(gatewayIdx, currAddr, setHistoryRows, true, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
   })
 
   if (transport == undefined) {

@@ -33,7 +33,7 @@ export default function HomeNav({route, navigation}) {
       alignSelf: 'center',
       headerTitleAlign: 'center',
       headerStyle: {
-        backgroundColor: '#132e67',
+        backgroundColor: global.appBlue,
         // backgroundColor: '#183A81',
         borderWidth:0,
         shadowRadius: 0,
@@ -59,7 +59,7 @@ export default function HomeNav({route, navigation}) {
         marginTop:0,
         paddingBottom: 25,
         // backgroundColor: '#183A81',
-        backgroundColor: '#132e67',
+        backgroundColor: global.appBlue,
         position: 'absolute',
         borderTopWidth: 0,
     },

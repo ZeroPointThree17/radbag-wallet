@@ -145,6 +145,9 @@ const App: () => Node = () => {
   global.isDarkMode = useColorScheme() === 'dark';
   global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
   global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
+  global.appGreen = useColorScheme() === 'dark' ? "#3D8674" : "#4DA892";
+  global.appGreenAlt = useColorScheme() === 'dark' ? "#3D8674" : "#009688";
+  global.appBlue = useColorScheme() === 'dark' ? "#132e67" : "#183A81"
  
 
   useEffect(() => {

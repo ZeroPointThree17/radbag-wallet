@@ -759,7 +759,7 @@ const stakingStats = (showStakingStats) => {
     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Total Balance: {new bigDecimal(((new bigDecimal(formatNumForDisplay(currentlyLiquid).replace(/,/g, '')).add(new bigDecimal(formatNumForDisplay(currentlyStaked).replace(/,/g, '')))).getValue())).getPrettyValue()} XRD</Text>
     <Separator/>
-    <LinearGradient colors={['#132e67','#3D8674', '#3D8674']} useAngle={true} angle={11} style={styles.surface}>  
+    <LinearGradient colors={[global.appBlue, global.appGreen, global.appGreen]} useAngle={true} angle={11} style={styles.surface}>  
     {/* <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>     */}
        <Image style={{margin: 0, width: 70, height: 90, marginBottom:4, alignSelf:'center'}}
     source={Raddish}/>
@@ -794,7 +794,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 {stakingScreenActive && <React.Fragment>
   <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}>
  
-  <TouchableOpacity style={styles.appButtonContainer} onPress={ () => setShowStakingStats(!showStakingStats) }>
+  <TouchableOpacity style={[styles.appButtonContainer,{backgroundColor: global.appGreenAlt}]} onPress={ () => setShowStakingStats(!showStakingStats) }>
   < Text style={[styles.appButtonText, getAppFont("white")]}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
     </TouchableOpacity>
 
@@ -1036,8 +1036,6 @@ const styles = StyleSheet.create({
   },
   appButtonContainer: {
     elevation: 8,
-    // backgroundColor: "#009688",
-    backgroundColor: "#3d8674",
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12

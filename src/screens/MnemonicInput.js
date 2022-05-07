@@ -79,8 +79,8 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
 
 const MnemonicInput = ({route, navigation}) => {
 
-    const { firstTimeStr } = route.params;
-    var firstTime = JSON.stringify(firstTimeStr).replace(/"/g, '');
+  const { firstTimeStr } = route.params;
+  var firstTime = JSON.stringify(firstTimeStr).replace(/"/g, '');
 
   const [mnemonic, setMnemonic] = useState("");
   

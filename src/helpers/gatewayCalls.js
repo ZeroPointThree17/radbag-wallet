@@ -265,9 +265,13 @@ export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, mes
   } else{
 
     if(deviceID != undefined){
-      transport = await TransportBLE.open(deviceID);
-    }
+       TransportBLE.open(deviceID).then( (transport) => {
+       
+    if(transport == undefined){
+      alert("Please open the Radix app in the hardware wallet first")
+    } else {
 
+      console.log(transport)
       const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
 
       const transactionRes = Transaction.fromBuffer(
@@ -324,7 +328,12 @@ export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, mes
           alert("Please open the hardware wallet and the Radix app in the wallet first")
         })
       }
+    } ).catch( (err) =>{
+      alert("Please open the Radix app in the hardware wallet first")
+    })
+  }
     }
+  }
 }
 
 

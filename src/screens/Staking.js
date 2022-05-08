@@ -889,7 +889,7 @@ onPress={() => {setStakingScreenActive(false)}}>
         autoCapitalize='none'
         multiline={true}
         numberOfLines={2}
-        placeholder='Click REDUCE STAKE on a validator below'
+        placeholder='Click REDUCE STAKE on a validator below (no list will show if you do not have any stakes)'
         placeholderTextColor="#d3d3d3"
         value={unstakeValAddr}
         maxLength={199}
@@ -916,22 +916,25 @@ onPress={() => {setStakingScreenActive(false)}}>
 
       <Separator/>
       <Separator/>
-<TouchableOpacity style={styles.button} onPress={() => {
-     unstakeValRef.current.blur();
-     unstakeAmtRef.current.blur();
-     Keyboard.dismiss;
+      <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("red")]}>REMEMBER TO PRESS "REDUCE STAKE" FROM THE CORRECT VALIDATOR IN THE LIST BELOW. LIST WILL NOT APPEAR IF YOU DO NOT HAVE ANY STAKES.</Text>
+      <Separator/>
+      <Separator/>
+      <TouchableOpacity style={styles.button} onPress={() => {
+            unstakeValRef.current.blur();
+            unstakeAmtRef.current.blur();
+            Keyboard.dismiss;
 
-     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {  
-      buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, currAddr, unstakeValAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled )
-     })
-    }}>
-        <View style={[styles.sendRowStyle]}>
-        <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 8, backgroundColor:"#183A81"}]}>
+            AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {  
+              buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, currAddr, unstakeValAddr, unstakeAmt , "unstake", currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHWBool, transport, deviceID, setSubmitEnabled )
+            })
+            }}>
+          <View style={[styles.sendRowStyle]}>
+          <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 8, backgroundColor:"#183A81"}]}>
 
-        <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}>
-        <IconFeather name="arrow-down-circle" size={18} color="white"/> Unstake</Text>
-        </View>
-        </View>
+          <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("white")]}>
+          <IconFeather name="arrow-down-circle" size={18} color="white"/> Unstake</Text>
+          </View>
+          </View>
         </TouchableOpacity>
         {isHWBool==true && <React.Fragment><Separator/><Separator/>
         <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Hardware Wallet: {deviceName}</Text></React.Fragment>}

@@ -17,7 +17,7 @@ var bigDecimal = require('js-big-decimal');
 
 export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, encryptMsgflag){
 
-  // destAddr = "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+  destAddr = "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
   Keyboard.dismiss; 
   setSubmitEnabled(false);
 
@@ -91,6 +91,13 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                       ),
                     }).then( (res) => {
                       hideMessage();
+
+                      showMessage({
+                        message: "Building Transaction...",
+                        type: "info",
+                        autoHide: false
+                      });
+
                       buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
                     })
                   }  
@@ -99,6 +106,12 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
               if(message != undefined && message.length > 0){
                   message = "0000" + message.hexEncode();
               }
+
+              showMessage({
+                message: "Building Transaction...",
+                type: "info",
+                autoHide: false
+              });
 
               buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
 
@@ -160,16 +173,30 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                     diffieHellmanPoint: () => {return dfPoint},
                   }).then( (res) => {
                     hideMessage();
+
+                    showMessage({
+                      message: "Building Transaction...",
+                      type: "info",
+                      autoHide: false
+                    });
+
                     buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
                   })
                 })
               }
               
       } else{
-        if(message != undefined && message.length > 0){
-            message = "0000" + message.hexEncode();
-        }
-            buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
+          if(message != undefined && message.length > 0){
+              message = "0000" + message.hexEncode();
+          }
+
+          showMessage({
+            message: "Building Transaction...",
+            type: "info",
+            autoHide: false
+          });
+
+          buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
       }
     }
   }
@@ -217,31 +244,36 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
         )
       }).then((response) => response.json()).then((json) => {
           if(json.code == 400 && json.message == "Account address is invalid"){
+            hideMessage();
             alert("You've entered an invalid address")
           }
           else if(json.code == 400 && json.details.type == "NotEnoughTokensForTransferError"){
-          alert("Insufficient balance for this transaction")
+            hideMessage();
+            alert("Insufficient balance for this transaction")
           }
           else if(json.code == 400 || json.code == 500){
-          alert(json.message)
+            hideMessage();
+            alert(json.message)
           }
           else{
-        
-        Alert.alert(
-          "Commit Transaction?",
-          "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for a tranfer of "+amount+" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: "OK", onPress: () => submitTxn(gatewayIdx, rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password) }
-          ]
-        );
 
-        }
+              hideMessage();
+              
+              Alert.alert(
+                "Commit Transaction?",
+                "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for a tranfer of "+amount+" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => submitTxn(gatewayIdx, rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password) }
+                ]
+              );
+          }
       }).catch((error) => {
+          hideMessage();
           console.error(error);
           setNewGatewayIdx(gatewayIdx);
         });
@@ -251,6 +283,12 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
 export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password){
 
   setShow(false);
+
+  showMessage({
+    message: "Submitting Transaction...",
+    type: "info",
+    autoHide: false
+  });
 
   if(isHW != true){
     var finalSig = ""
@@ -263,23 +301,26 @@ export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, mes
 
     finalSig = Buffer.from(result).toString('hex');
 
+    hideMessage();
     finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
   } else{
 
-  if (usbConn == true) {
-    transport = await TransportHid.create()
-  }
+    if (usbConn == true) {
+      transport = await TransportHid.create()
+    }
 
-  if(transport == undefined && deviceID == undefined){
-    alert("Please open the Radix app in the hardware wallet first")
-  } else{
+    if(transport == undefined && deviceID == undefined){
+      hideMessage();
+      alert("Please open the Radix app in the hardware wallet first")
+    } else{
 
     if(deviceID != undefined){
        transport = await TransportBLE.open(deviceID);
     }
        
     if(transport == undefined){
+      hideMessage();
       alert("Please open the Radix app in the hardware wallet first")
     } else {
 
@@ -310,7 +351,8 @@ export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, mes
     
     transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
 
-    alert("Please confirm this transaction on the device");
+      hideMessage();
+      alert("Please confirm this transaction on the device");
 
       var apdus = []
 
@@ -336,6 +378,7 @@ export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, mes
         transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
 
         }).catch((error) => {
+          hideMessage();
           alert("Please open the hardware wallet and the Radix app in the wallet first")
         })
       }
@@ -550,12 +593,17 @@ export function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, 
           )
         }).then((response) => response.json()).then((json) => {
       
-         var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
-        
-         Keyboard.dismiss; 
-         setShow(true);
-         setTxHash(txnHash);
-         setSubmitEnabled(true);
+          var txnHash = JSON.stringify(json.transaction_identifier.hash).replace(/["']/g, "")
+          
+          Keyboard.dismiss; 
+          setShow(true);
+          setTxHash(txnHash);
+          setSubmitEnabled(true);
+
+          showMessage({
+            message: "Transaction submitted",
+            type: "info"
+          });
       
         }).catch((error) => {
           console.error(error);

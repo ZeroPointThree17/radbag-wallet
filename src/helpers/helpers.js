@@ -588,12 +588,16 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
 
             hideMessage();
 
-        }).catch((err) => { alert("Decryption failed. Error: " + err)})
-
+        }).catch((err) => { 
+          hideMessage();
+          alert("Decryption failed. Error: " + err)
+        })
       }).catch((err) => {   
         if(err.message.includes("denied by the user?")){
+          hideMessage();
           alert("Decryption process cancelled")
         } else{
+          hideMessage();
           alert("Hardware wallet not yet found. Still scanning...")
         }
       })

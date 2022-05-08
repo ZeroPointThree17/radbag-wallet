@@ -17,7 +17,7 @@ var bigDecimal = require('js-big-decimal');
 
 export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, encryptMsgflag){
 
-  destAddr = "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
+  // destAddr = "rdx1qsp75a9gj0uy477kgrzn2y5derv5fa9ce5gf5ar2fs4tkm6vr7q5gugnnw9me"
   Keyboard.dismiss; 
   setSubmitEnabled(false);
 

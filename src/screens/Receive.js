@@ -34,8 +34,8 @@ const Receive = ({route, navigation}) => {
  
    <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(xrdAddress)}}>
    <View style={styles.rowStyle}>
-   <IconFeather name="copy" size={20} color={global.modeTranslation} />
-<Text style={getAppFont("black")}> Copy address to clipboard</Text>
+   <IconFeather name="copy" size={20} color="#4DA892" />
+<Text style={getAppFont("#4DA892")}> Copy address to clipboard</Text>
 </View>
 </TouchableOpacity>
 

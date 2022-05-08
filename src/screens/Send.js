@@ -76,7 +76,7 @@ String.prototype.hexEncode = function(){
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
       getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
       getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames); 
-      fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
+      fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
     })
   
 },[]);
@@ -90,7 +90,7 @@ useInterval(() => {
 
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {    
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
+    fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
   })
 }, 5000);
 
@@ -146,7 +146,7 @@ useInterval(() => {
      </View>
      {/* <Text style={[{color: 'black', textAlign: "center"}, getAppFont("black")]}>Token RRI: {shortenAddress(symbolToRRI.get(symbol))}</Text> */}
      <Text
-       style={[{marginVertical:4, textAlign: "center", textDecorationLine: "underline"}, getAppFont("blue")]}
+       style={[{marginVertical:4, textAlign: "center", textDecorationLine: "underline"}, getAppFont("#4DA892")]}
        disabled = {symbolToRRI.get(symbol) == undefined}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/tokens/'+symbolToRRI.get(symbol))}}
      >Token Details</Text>
@@ -313,7 +313,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
 
 { show == true &&
 <React.Fragment><Text
-       style={[{color: 'blue', textAlign: "center"}, getAppFont("blue")]}
+       style={[{textAlign: "center"}, getAppFont("#4DA892")]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
      >
        Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.

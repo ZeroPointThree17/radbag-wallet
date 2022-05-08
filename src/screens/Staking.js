@@ -648,19 +648,19 @@ function renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScree
 
     <View style={styles.rowStyle}>
     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(valAddr)}}>
-    <Text style={[{color:"#4DA892",marginTop:0,fontSize:14, justifyContent:'flex-end'}]}>[Copy Address]</Text>
+    <Text style={[{marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("#4DA892")]}>[Copy Address]</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.button} onPress={ () => {  showMessage({
     message: "Validator selected",
     type: "info",
     }); setUnstakeValAddr(valAddr); setStakingScreenActive(false)}}>
-    <Text style={[{color:"#4DA892",marginTop:0,fontSize:14, justifyContent:'flex-end'}]}>  [Reduce Stake]</Text>
+    <Text style={[{marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("#4DA892")]}>  [Reduce Stake]</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.button} onPress={ () => {  showMessage({
     message: "Validator selected",
     type: "info",
     });setValAddr(valAddr); setStakingScreenActive(true)}}>
-    <Text style={[{color:"#4DA892",marginTop:0,fontSize:14, justifyContent:'flex-end'}]}>  [Add to Stake]</Text>
+    <Text style={[{marginTop:0,fontSize:14, justifyContent:'flex-end'}, getAppFont("#4DA892")]}>  [Add to Stake]</Text>
     </TouchableOpacity>
      </View>   
 
@@ -733,7 +733,7 @@ function renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScree
 useInterval(() => {
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {     
     getStakeData(gatewayIdx, gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
-    fetchTxnHistory(db, gatewayIdx, currAddr, setHistoryRows, true, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
+    fetchTxnHistory(db, gatewayIdx, currAddr, setHistoryRows, true, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
   })
 
   if (transport == undefined) {
@@ -806,7 +806,7 @@ onPress={() => {setStakingScreenActive(false)}}>
       <View style={[styles.rowStyle,{backgroundColor:global.reverseModeTranslation}]}>
      <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, borderRadius: 15}, getAppFont("black")]}>Validator Address{"\n"}(Default: RadBag Validator):</Text>
      <Text
-       style={[{color: '#4DA892', textAlign: "center" , fontSize:12, flex:0.5}]}
+       style={[{textAlign: "center" , fontSize:12, flex:0.5}, getAppFont("#4DA892")]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/validators')}}
      >
        [Validator List]
@@ -876,7 +876,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}>
       
 <TouchableOpacity style={[styles.appButtonContainer, {backgroundColor: global.appGreenAlt}]} onPress={ () => setShowStakingStats(!showStakingStats) }>
-    < Text style={[styles.appButtonText]}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
+    < Text style={[styles.appButtonText, getAppFont("white")]}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
     </TouchableOpacity>
 
        {stakingStats(showStakingStats)}
@@ -943,7 +943,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 { show == true &&
 <React.Fragment>
 <Text
-       style={[{textAlign: "center"}, getAppFont("blue")]}
+       style={[{textAlign: "center"}, getAppFont("#4DA892")]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
      >
        Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.

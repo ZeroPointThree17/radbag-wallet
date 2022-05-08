@@ -348,7 +348,7 @@ export function rdxToPubKey(address) {
 }
 
 
-export async function fetchTxnHistory(db, gatewayIdx, address, setHistoryRows, stakingOnly, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW, transport, deviceID, hdpathIndex){
+export async function fetchTxnHistory(db, gatewayIdx, address, setHistoryRows, stakingOnly, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW, usbConn, transport, deviceID, hdpathIndex){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -358,7 +358,6 @@ export async function fetchTxnHistory(db, gatewayIdx, address, setHistoryRows, s
     alert("Address is required")
   }
 
-  var count = 0;
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
    
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
@@ -388,7 +387,6 @@ export async function fetchTxnHistory(db, gatewayIdx, address, setHistoryRows, s
           var count = 0;
            json.transactions.forEach( (txn) => 
               {
-                var sharedKey = ""
                 var raw_message =  txn.metadata.message
                 var txn_id = txn.transaction_identifier.hash
        
@@ -401,7 +399,7 @@ export async function fetchTxnHistory(db, gatewayIdx, address, setHistoryRows, s
     
                       }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id) 
                       ? <Text style={[{fontSize: 14, color: '#4DA892', textAlign:"center"}]}
-                      onPress={() => {decryptMessage(db, isHW, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {decryptMessage(db, isHW, usbConn, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
 
                     var stakeFilter;
                     if(stakingOnly){
@@ -417,25 +415,25 @@ export async function fetchTxnHistory(db, gatewayIdx, address, setHistoryRows, s
                     count++;
                     var from_account = action.from_account===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>From: {shortenAddress(action.from_account.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.from_account.address)}}>
-                    <IconFeather name="copy" size={16} color={global.isDarkMode?"white":"#183A81"} />
+                    <IconFeather name="copy" size={16} color="#4DA892" />
                     </TouchableOpacity>
                     </View>
                     ;
                     var to_account = action.to_account===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>To: {shortenAddress(action.to_account.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.to_account.address)}}>
-                    <IconFeather name="copy" size={16} color={global.isDarkMode?"white":"#183A81"} />
+                    <IconFeather name="copy" size={16} color="#4DA892" />
                     </TouchableOpacity>
                     </View>
                     ;
                     var to_validator = action.to_validator===undefined ? undefined : <View style={[styles.rowStyle, {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>To Validator: {shortenAddress(action.to_validator.address)}  </Text>
                     <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.to_validator.address)}}>
-                    <IconFeather name="copy" size={16} color={global.isDarkMode?"white":"#183A81"} />
+                    <IconFeather name="copy" size={16} color="#4DA892" />
                     </TouchableOpacity>
                     </View>
                     ;
                     var from_validator = action.from_validator===undefined ? undefined : <View style={[styles.rowStyle, , {backgroundColor: global.reverseModeTranslation}]}><Text style={getAppFont("black")}>From Validator: {shortenAddress(action.from_validator.address)}  </Text>
                                         <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(action.from_validator.address)}}>
-                    <IconFeather name="copy" size={16} color={global.isDarkMode?"white":"#183A81"} />
+                    <IconFeather name="copy" size={16} color="#4DA892" />
                     </TouchableOpacity>
                     </View>
                     ;
@@ -528,39 +526,40 @@ const styles = StyleSheet.create({
 });
 
 
-export async function decryptMessage(db, isHW, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
+export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
  
   if(isHW){
 
-    // if(transport == undefined && deviceID == undefined){
-    //   alert("Please open the Radix app in the hardware wallet first")
+    if (usbConn == true) {
+      transport = await TransportHid.create()
+    }
 
-    // } else{
+    if(transport == undefined && deviceID == undefined){
+      alert("Still scanning for hardware wallet...")
+    } else{
+
+        if(deviceID != undefined){
+          transport = await TransportBLE.open(deviceID);
+        }
   
-      
-      // if(deviceID != undefined){
-        
-        // await TransportBLE.disconnect(deviceID);
-        TransportBLE.open(deviceID).then( (transport ) => {
-
-          if(transport == undefined){
-            alert("Please open the Radix app in the hardware wallet first")
-          } else {
+        if(transport == undefined){
+          alert("Still scanning for hardware wallet...")
+        } else {
           const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
           var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex').value
-  
+
           var sealedMsg = SealedMessage.fromBuffer(Buffer.from(raw_message, 'hex').slice(2))
           var encryptedM = Message.createEncrypted(EncryptionScheme.DH_ADD_EPH_AESGCM256_SCRYPT_000, sealedMsg.value).value
-  
+
           var apdu1 =  RadixAPDU.doKeyExchange(
             hdpath,
             to,
             'decrypt'
-        )
+          )
 
-        alert("Please confirm the message decryption in the hardware wallet. After confirmation, decryption will take a few seconds.")
+          alert("Please confirm the message decryption in the hardware wallet. After confirmation, decryption will take a few seconds.")
 
-        transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
+          transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
 
           showMessage({
             message: "Decrypting. Please wait...",
@@ -576,41 +575,28 @@ export async function decryptMessage(db, isHW, transport, deviceID, hdpathIndex,
             diffieHellmanPoint: () => {return dfPoint},
           }).then( (res) => {
 
-            var finalResult = res.map(b => b.toString('utf-8'))
+          var finalResult = res.map(b => b.toString('utf-8'))
 
-            var newMap = new Map(decryptedMap)
-            newMap.set(txn_id, finalResult.value)
-            setDecryptedMap(newMap);
+          var newMap = new Map(decryptedMap)
+          newMap.set(txn_id, finalResult.value)
+          setDecryptedMap(newMap);
 
-            var hashToDecryptCopy = [...hashToDecrypt];
-            hashToDecryptCopy.push(txn_id)
-            setHashToDecrypt(hashToDecryptCopy)
+          var hashToDecryptCopy = [...hashToDecrypt];
+          hashToDecryptCopy.push(txn_id)
+          setHashToDecrypt(hashToDecryptCopy)
 
-          }).catch((err) => { alert("Decryption failed. Error: " + err)})
+        }).catch((err) => { alert("Decryption failed. Error: " + err)})
 
-        }).catch((err) => {   
-            if(err.message.includes("denied by the user?")){
-            alert("Decryption process cancelled")
-          } else{
-            alert("Hardware wallet not yet found. Still scanning...")
-          }
-        })
-      }
-        
-        }).catch((err) => { 
-              alert("Hardware wallet not yet found. Still scanning...")
-        })
-
-        // if(transport == undefined){
-        //   alert("Still scanning for hardware wallet...")
-        // }
-
-      
-
-    // }
-
-      // }
-  }
+      }).catch((err) => {   
+          if(err.message.includes("denied by the user?")){
+          alert("Decryption process cancelled")
+        } else{
+          alert("Hardware wallet not yet found. Still scanning...")
+        }
+      })
+     }
+   }
+ }
   else{
     var promptFunc = ""
     if(Platform.OS === 'ios'){

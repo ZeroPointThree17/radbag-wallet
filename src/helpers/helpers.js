@@ -591,7 +591,7 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
         }).catch((err) => { alert("Decryption failed. Error: " + err)})
 
       }).catch((err) => {   
-          if(err.message.includes("denied by the user?")){
+        if(err.message.includes("denied by the user?")){
           alert("Decryption process cancelled")
         } else{
           alert("Hardware wallet not yet found. Still scanning...")

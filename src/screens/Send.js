@@ -17,6 +17,7 @@ import * as Progress from 'react-native-progress';
 import CheckboxBouncy from "react-native-bouncy-checkbox";
 import { log, BufferReader } from '@radixdlt/util'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { hideMessage, showMessage } from 'react-native-flash-message';
 var SQLite = require('react-native-sqlite-storage');
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -288,65 +289,64 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
 <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>
 
 {isHWBool==true && <React.Fragment><Separator/><Separator/>
-<Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Hardware Wallet: {deviceName}</Text></React.Fragment>}
+  <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Hardware Wallet: {deviceName}</Text></React.Fragment>}
 
-<Separator/>
-<Separator/>
-<Separator/>
-<TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();
-  
-  AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
-     
-  buildTxn(gatewayIdx, usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID, encryptMsgflag)
-  })
-  
-  }}>
-        <View style={[styles.sendRowStyle]}>
+  <Separator/>
+  <Separator/>
+  <Separator/>
+  <TouchableOpacity enabled={submitEnabled} onPress={() => {addrFromRef.current.blur();addrToRef.current.blur();amountRef.current.blur();
+    
+      AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+        buildTxn(gatewayIdx, usbConn, setSubmitEnabled,symbolToRRI.get(symbol), sourceXrdAddr, destAddr, symbol, amount, message, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHWBool, transport, deviceID, encryptMsgflag)
+      })
+      
+      }}>
+      <View style={[styles.sendRowStyle]}>
         <View style ={[styles.sendRowStyle,{borderWidth:1, borderRadius:15, padding: 10, backgroundColor:"#183A81"}]}>
-       
-        <Text style={[{fontSize: 19, color:"black", alignSelf:"center"}, getAppFont("white")]}>
-        <IconFeather name="send" size={19} color="white" style={{alignSelf:"center"}}/> Send</Text>
+          <Text style={[{fontSize: 19, color:"black", alignSelf:"center"}, getAppFont("white")]}>
+          <IconFeather name="send" size={19} color="white" style={{alignSelf:"center"}}/> Send</Text>
         </View>
-        </View>
-        </TouchableOpacity>
-<Separator/>
-<Separator/>
-<Separator/>
+      </View>
 
-{ show == true &&
-<React.Fragment><Text
-       style={[{textAlign: "center"}, getAppFont("#4DA892")]}
-       onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
-     >
-       Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.
-     </Text>
-     <Separator/>
-     <Separator/>
-</React.Fragment>
- }
+  </TouchableOpacity>
+  <Separator/>
+  <Separator/>
+  <Separator/>
 
-<Separator/>
+  { show == true &&
+  <React.Fragment><Text
+        style={[{textAlign: "center"}, getAppFont("#4DA892")]}
+        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/transactions/'+txnHash)}}
+      >
+        Transaction has been submitted.{"\n\n"}Transaction hash is: {txnHash}{"\n\n"}Click here for transaction details. Refresh page if transaction does not immediately display.
+      </Text>
+      <Separator/>
+      <Separator/>
+  </React.Fragment>
+  }
+
+  <Separator/>
 
 
-{historyRows.length > 0 && 
-<React.Fragment>
-  <Text style={[{fontSize: 14, alignSelf:"center"}, getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
-  {historyRows}
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-  <Separator/>
-</React.Fragment>
-}
+  {historyRows.length > 0 && 
+    <React.Fragment>
+      <Text style={[{fontSize: 14, alignSelf:"center"}, getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
+      {historyRows}
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+      <Separator/>
+    </React.Fragment>
+  }
   </ScrollView>
 
   </View>)

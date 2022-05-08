@@ -38,18 +38,23 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
     alert("Amount must be greater than 0")
   }
   else{
-  
-  var xrdAddr = destAddr.trim();
-  var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
 
+    showMessage({
+      message: "Building Transaction...",
+      type: "info",
+      autoHide: false
+    });
 
-  if(isHW != true){
+    var xrdAddr = destAddr.trim();
+    var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
+
+    if(isHW != true){
           var promptFunc = null
 
           if(Platform.OS === 'ios'){
-          promptFunc = Alert.prompt;
+            promptFunc = Alert.prompt;
           } else{
-          promptFunc = prompt
+            promptFunc = prompt
           }
 
           promptFunc(
@@ -58,19 +63,27 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
             [
               {
                 text: "Cancel",
-                onPress: () => alert("Transaction not performed"),
+                onPress: () => {hideMessage(); alert("Transaction not performed")},
                 style: "cancel"
               },
               {
                 text: "OK",
                 onPress: password => {
         
-          try{
+            try{
 
-            decrypt(privKey_enc, Buffer.from(password))
+              showMessage({
+                message: "Building Transaction...",
+                type: "info",
+                autoHide: false
+              });
+              
+              decrypt(privKey_enc, Buffer.from(password));
 
-            if(encryptMsgflag){
-                
+              hideMessage();
+
+              if(encryptMsgflag){
+                  
                 if(message != undefined && message.length > 0){
 
                     showMessage({
@@ -118,7 +131,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
           }
     
         } catch(err){
-    
+          hideMessage();
           alert("Password incorrect")
         }
         
@@ -265,7 +278,7 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
                 [
                   {
                     text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
+                    onPress: () => {hideMessage(); console.log("Cancel Pressed")},
                     style: "cancel"
                   },
                   { text: "OK", onPress: () => submitTxn(gatewayIdx, rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password) }
@@ -333,6 +346,7 @@ export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, mes
         const errMsg = `Failed to parse tx, underlying error: ${msgFromError(
           transactionRes.error,
         )}`
+        hideMessage();
         log.error(errMsg)
         return throwError(() => hardwareError(errMsg))
       }
@@ -541,7 +555,7 @@ export function getBalances(gatewayIdx, defaultRri, firstTime, setGettingBalance
                 
             } );
   
-          setBalances(balances);
+           setBalances(balances);
   
            var initialSymbolToRRIMap = new Map();
            initialSymbolToRRIMap.set("XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")","xrd_rr1qy5wfsfh")
@@ -600,10 +614,7 @@ export function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, 
           setTxHash(txnHash);
           setSubmitEnabled(true);
 
-          showMessage({
-            message: "Transaction submitted",
-            type: "info"
-          });
+          alert("Transaction submitted");
       
         }).catch((error) => {
           console.error(error);

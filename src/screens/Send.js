@@ -75,7 +75,7 @@ String.prototype.hexEncode = function(){
 
   useEffect( () => {
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
-      getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+      getBalances(gatewayIdx, defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
       getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames); 
       fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
     })
@@ -93,7 +93,7 @@ useInterval(() => {
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
     fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
   })
-}, 3000);
+}, 4000);
 
 
 // alert(defaultSymbol)

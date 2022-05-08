@@ -29,6 +29,10 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
     alert("Destination address is required")
   }
   else 
+  if(destAddr == undefined || destAddr.length < 65){
+    alert("Destination address is too short")
+  }
+  else 
   if ( isNaN(amount) ){
     alert("Amount entered must be a number")
   } else if(amount == undefined || amount.length==0){
@@ -72,25 +76,11 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
         
             try{
 
-              showMessage({
-                message: "Building Transaction...",
-                type: "info",
-                autoHide: false
-              });
-              
               decrypt(privKey_enc, Buffer.from(password));
-
-              hideMessage();
 
               if(encryptMsgflag){
                   
                 if(message != undefined && message.length > 0){
-
-                    showMessage({
-                      message: "Encrypting message...",
-                      type: "info",
-                      autoHide: false
-                    });
 
                     var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(destAddr),'hex'),'hex').value;
                     var privKeyObj = PrivateKey.fromHex(decrypt(privKey_enc, Buffer.from(password)))
@@ -175,15 +165,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                   'encrypt'
               )
           
-              hideMessage();
-
               alert("Please confirm the message encryption in the hardware wallet")
-
-              showMessage({
-                message: "Encrypting message...",
-                type: "info",
-                autoHide: false
-              });
 
               transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
 

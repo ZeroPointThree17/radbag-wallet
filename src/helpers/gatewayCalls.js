@@ -148,7 +148,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
         if(encryptMsgflag){
 
            if(message == undefined || message.length == 0){
-            alert("Cannot encrypt an empty message")
+              alert("Cannot encrypt an empty message")
            }
            else{
             if (usbConn == true) {
@@ -173,15 +173,17 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                   'encrypt'
               )
           
+              hideMessage();
+              
               alert("Please confirm the message encryption in the hardware wallet")
 
-              transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
+              showMessage({
+                message: "Encrypting message...",
+                type: "info",
+                autoHide: false
+              });
 
-                  showMessage({
-                    message: "Encrypting message...",
-                    type: "info",
-                    autoHide: false
-                  });
+              transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
 
                   var sharedKeyPointBytes = result.slice(1,result.length-2)
 
@@ -201,6 +203,14 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
 
                     buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
                   })
+                }).catch((err) => {   
+                  if(err.message.includes("denied by the user?")){
+                    hideMessage();
+                    alert("Decryption process cancelled")
+                  } else{
+                    hideMessage();
+                    alert("Hardware wallet not yet found. Still scanning...")
+                  }
                 })
               }
             }
@@ -284,7 +294,7 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
                 type: "info",
                 autoHide: false
               });
-              
+
               Alert.alert(
                 "Commit Transaction?",
                 "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for a tranfer of "+amount+" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",

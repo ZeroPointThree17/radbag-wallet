@@ -14,8 +14,8 @@ function navigateAppPassword(navigation, mnemonic, firstTime){
 
       mnemonicArr = mnemonic.split(" ");
 
-      const words12sub = [];
-      const word13sub = [];
+      var words12sub = [];
+      var word13sub = [];
   
       var words12 = ""; 
       var word13 = "";

@@ -69,29 +69,29 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
 
             decrypt(privKey_enc, Buffer.from(password))
 
-            showMessage({
-              message: "Encrypting message...",
-              type: "info",
-            });
-
             if(encryptMsgflag){
                 
-            if(message != undefined && message.length > 0){
+                if(message != undefined && message.length > 0){
 
-                var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(destAddr),'hex'),'hex').value;
-                var privKeyObj = PrivateKey.fromHex(decrypt(privKey_enc, Buffer.from(password)))
-      
-                var plaintext = message
-                MessageEncryption.encrypt({
-                  plaintext,
-                  diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(
-                    null,
-                    to,
-                  ),
-                }).then( (res) => {
-                  buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
-                })
-              }  
+                    showMessage({
+                      message: "Encrypting message...",
+                      type: "info",
+                    });
+
+                    var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(destAddr),'hex'),'hex').value;
+                    var privKeyObj = PrivateKey.fromHex(decrypt(privKey_enc, Buffer.from(password)))
+          
+                    var plaintext = message
+                    MessageEncryption.encrypt({
+                      plaintext,
+                      diffieHellmanPoint: privKeyObj.value.diffieHellman.bind(
+                        null,
+                        to,
+                      ),
+                    }).then( (res) => {
+                      buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
+                    })
+                  }  
             } else{
 
               if(message != undefined && message.length > 0){

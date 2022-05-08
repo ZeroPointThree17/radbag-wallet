@@ -348,7 +348,7 @@ export function rdxToPubKey(address) {
 }
 
 
-export async function fetchTxnHistory(gatewayIdx, address, setHistoryRows, stakingOnly, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW, transport, deviceID, hdpathIndex){
+export async function fetchTxnHistory(db, gatewayIdx, address, setHistoryRows, stakingOnly, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHW, transport, deviceID, hdpathIndex){
 
   if(stakingOnly === undefined){
     stakingOnly = false;
@@ -360,7 +360,7 @@ export async function fetchTxnHistory(gatewayIdx, address, setHistoryRows, staki
 
   var count = 0;
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
-           
+   
   // alert("src addr: "+sourceXrdAddr+" dest: "+xrdAddr+ " token rri: "+reverseTokenMetadataMap.get(symbol) + " amount "+amountStr)
   fetch(global.gateways[gatewayIdx] + '/account/transactions', {
         method: 'POST',
@@ -401,7 +401,7 @@ export async function fetchTxnHistory(gatewayIdx, address, setHistoryRows, staki
     
                       }  {raw_message.startsWith("01") && !hashToDecrypt.includes(txn_id) 
                       ? <Text style={[{fontSize: 14, color: '#4DA892', textAlign:"center"}]}
-                      onPress={() => {decryptMessage(isHW, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
+                      onPress={() => {decryptMessage(db, isHW, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, "NO_RESPONSE", "Decrypting. Please wait...", setDecryptedMap, decryptedMap, action.from_account.address == address ? action.to_account.address : action.from_account.address, raw_message)}}>[Decrypt]</Text>: ""}</Text></View>
 
                     var stakeFilter;
                     if(stakingOnly){
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
 });
 
 
-export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
+export async function decryptMessage(db, isHW, transport, deviceID, hdpathIndex, hashToDecrypt, setHashToDecrypt, txn_id, cancelResponse, successResponse, setDecryptedMap, decryptedMap, account, raw_message){
  
   if(isHW){
 
@@ -639,8 +639,6 @@ export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, has
 
               if(raw_message.startsWith("01") && account != null){
 
-                var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
-        
                 db.transaction((tx) => {
                   tx.executeSql("SELECT address.privatekey_enc FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
                   

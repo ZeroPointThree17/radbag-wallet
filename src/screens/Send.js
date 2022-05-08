@@ -14,11 +14,11 @@ var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
 var GenericTokenInverted = require("../assets/generic_token_inverted.png");
 import * as Progress from 'react-native-progress';
-
 import CheckboxBouncy from "react-native-bouncy-checkbox";
-
 import { log, BufferReader } from '@radixdlt/util'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+var SQLite = require('react-native-sqlite-storage');
+var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
 
 String.prototype.hexEncode = function(){
@@ -76,7 +76,7 @@ String.prototype.hexEncode = function(){
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
       getBalances(gatewayIdx,defaultRri, true, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
       getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames); 
-      fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
+      fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
     })
   
 },[]);
@@ -90,7 +90,7 @@ useInterval(() => {
 
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {    
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
-    fetchTxnHistory(gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
+    fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
   })
 }, 5000);
 

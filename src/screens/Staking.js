@@ -21,6 +21,7 @@ import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showMessage} from "react-native-flash-message";
+var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
 
 function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourceXrdAddr, destAddr, amount , actionType, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn){
@@ -732,7 +733,7 @@ function renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScree
 useInterval(() => {
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {     
     getStakeData(gatewayIdx, gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, setStakingScreenActive, setStakeValidators, setValidatorData, setTotalUnstaking, setRenderedStakeValidatorRows,setPrivKey_enc,setPublic_key,setPendingStake, setPendingUnstake, setCurrentlyLiquid, setCurrentlyStaked)
-    fetchTxnHistory(gatewayIdx, currAddr, setHistoryRows, true, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
+    fetchTxnHistory(db, gatewayIdx, currAddr, setHistoryRows, true, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, transport, deviceID, hdpathIndex);
   })
 
   if (transport == undefined) {

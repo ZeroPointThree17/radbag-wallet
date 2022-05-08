@@ -1044,7 +1044,6 @@ const styles = StyleSheet.create({
   appButtonText: {
     fontSize: 18,
     color: "#fff",
-    fontWeight: "bold",
     alignSelf: "center"
   }
 });

@@ -279,6 +279,12 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
 
               hideMessage();
               
+              showMessage({
+                message: "Submitting Transaction...",
+                type: "info",
+                autoHide: false
+              });
+              
               Alert.alert(
                 "Commit Transaction?",
                 "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for a tranfer of "+amount+" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
@@ -288,7 +294,9 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
                     onPress: () => {hideMessage(); console.log("Cancel Pressed")},
                     style: "cancel"
                   },
-                  { text: "OK", onPress: () => submitTxn(gatewayIdx, rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password) }
+                  { text: "OK", onPress: () => {
+                    submitTxn(gatewayIdx, rri, usbConn, setSubmitEnabled, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password) }
+                  }
                 ]
               );
           }
@@ -303,12 +311,6 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
 export async function submitTxn (gatewayIdx, rri, usbConn, setSubmitEnabled, message,unsigned_transaction,public_key,privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password){
 
   setShow(false);
-
-  showMessage({
-    message: "Submitting Transaction...",
-    type: "info",
-    autoHide: false
-  });
 
   if(isHW != true){
     var finalSig = ""

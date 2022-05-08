@@ -113,7 +113,9 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
 
                       buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
                     })
-                  }  
+                  } else{
+                    alert("Cannot encrypt an empty message")
+                  }
             } else{
 
               if(message != undefined && message.length > 0){
@@ -145,6 +147,10 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
 
         if(encryptMsgflag){
 
+           if(message == undefined || message.length == 0){
+            alert("Cannot encrypt an empty message")
+           }
+           else{
             if (usbConn == true) {
               transport = await TransportHid.create()
             }
@@ -197,6 +203,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                   })
                 })
               }
+            }
               
       } else{
           if(message != undefined && message.length > 0){
@@ -416,10 +423,7 @@ function transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned
       if(finalSig.length < 10){
         alert("Transaction not submitted.")
       } else{
-        alert("Transaction submitted.")
-
         finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
-
       }
     })
   } else{

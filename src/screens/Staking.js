@@ -20,7 +20,7 @@ import { from, Observable, of, Subject, Subscription, throwError } from 'rxjs'
 import { Transaction } from '@radixdlt/tx-parser'
 import { APDUGetPublicKeyInput, RadixAPDU } from '../helpers/apdu'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {showMessage} from "react-native-flash-message";
+import {showMessage, hideMessage} from "react-native-flash-message";
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
 
@@ -33,7 +33,7 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
   }
  else if(amount == undefined || amount.length==0){
   alert("Amount is required")
-}
+ }
   else if ( isNaN(amount) ){
     alert("Amount entered must be a number")
   }
@@ -42,115 +42,126 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
   }
   else{
 
-  var xrdAddr=destAddr.trim();
-  var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
+    showMessage({
+      message: "Building Transaction...",
+      type: "info",
+      autoHide: false
+    });
 
-  var jsonBody = null;
-  var alertWording = "";
+    var xrdAddr=destAddr.trim();
+    var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
 
-  if(actionType == "stake"){
+    var jsonBody = null;
+    var alertWording = "";
 
-    alertWording = "to"
+    if(actionType == "stake"){
 
-    jsonBody =
-    {
-      "network_identifier": {
-        "network": "mainnet"
-      },
-      "actions": [
-        {
-          "type": "StakeTokens",
-          "from_account": {
-            "address": sourceXrdAddr
-          },
-          "to_validator": {
-            "address": xrdAddr
-            // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
-          },
-          "amount": {
-            "token_identifier": {
-              "rri": "xrd_rr1qy5wfsfh"
-            },
-            "value": amountStr
-          }
-        }
-      ],
-      "fee_payer": {
-        "address": sourceXrdAddr
-      },
-      "disable_token_mint_and_burn": true
-    };
-  } else if (actionType == "unstake"){
+      alertWording = "to"
 
-    alertWording = "from"
-    
-    jsonBody =
-    {
-      "network_identifier": {
-        "network": "mainnet"
-      },
-      "actions": [
-        {
-          "type": "UnstakeTokens",
-          "from_validator": {
-            "address": xrdAddr
-          },
-          "to_account": {
-            "address": sourceXrdAddr
-            // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
-          },
-          "amount": {
-            "token_identifier": {
-              "rri": "xrd_rr1qy5wfsfh"
-            },
-            "value": amountStr
-          }
-        }
-      ],
-      "fee_payer": {
-        "address": sourceXrdAddr
-      },
-      "disable_token_mint_and_burn": true
-    };
-  }
-
-  fetch(global.gateways[gatewayIdx] + '/transaction/build', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
+      jsonBody =
+      {
+        "network_identifier": {
+          "network": "mainnet"
         },
-        body: JSON.stringify(jsonBody)
-      }).then((response) => response.json()).then((json) => {
-         if(json.code == 400 && json.message == "Account address is invalid"){
-           alert("You've entered an invalid address")
-         }
-         else if(json.code == 400 && json.details.type == "NotEnoughTokensForTransferError"){
-          alert("Insufficient balance for this transaction")
-         }
-         else if(json.code == 400 || json.code == 500){
-          alert(json.message)
-         }
-         else{
-       
-        Alert.alert(
-          "Commit Transaction?",
-          "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this "+actionType+" action of "+amount+" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
+        "actions": [
+          {
+            "type": "StakeTokens",
+            "from_account": {
+              "address": sourceXrdAddr
             },
-            { text: "OK", onPress: () => submitTxn(gatewayIdx, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn) }
-          ]
-        );
+            "to_validator": {
+              "address": xrdAddr
+              // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
+            },
+            "amount": {
+              "token_identifier": {
+                "rri": "xrd_rr1qy5wfsfh"
+              },
+              "value": amountStr
+            }
+          }
+        ],
+        "fee_payer": {
+          "address": sourceXrdAddr
+        },
+        "disable_token_mint_and_burn": true
+      };
+    } else if (actionType == "unstake"){
 
-        }
-      }).catch((error) => {
-        setNewGatewayIdx(gatewayIdx);
-      });
-}
+      alertWording = "from"
+      
+      jsonBody =
+      {
+        "network_identifier": {
+          "network": "mainnet"
+        },
+        "actions": [
+          {
+            "type": "UnstakeTokens",
+            "from_validator": {
+              "address": xrdAddr
+            },
+            "to_account": {
+              "address": sourceXrdAddr
+              // "address": "rdx1qspqle5m6trzpev63fy3ws23qlryw3g6t24gpjctjzsdkyuwzj870mg4mgjdz"
+            },
+            "amount": {
+              "token_identifier": {
+                "rri": "xrd_rr1qy5wfsfh"
+              },
+              "value": amountStr
+            }
+          }
+        ],
+        "fee_payer": {
+          "address": sourceXrdAddr
+        },
+        "disable_token_mint_and_burn": true
+      };
+    }
+
+    fetch(global.gateways[gatewayIdx] + '/transaction/build', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(jsonBody)
+        }).then((response) => response.json()).then((json) => {
+          if(json.code == 400 && json.message == "Account address is invalid"){
+            hideMessage();
+            alert("You've entered an invalid address")
+          }
+          else if(json.code == 400 && json.details.type == "NotEnoughTokensForTransferError"){
+            hideMessage();
+            alert("Insufficient balance for this transaction")
+          }
+          else if(json.code == 400 || json.code == 500){
+            hideMessage();
+            alert(json.message)
+          }
+          else{
+
+            hideMessage();
+
+            Alert.alert(
+              "Commit Transaction?",
+              "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this "+actionType+" action of "+amount+" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel"
+                },
+                { text: "OK", onPress: () => submitTxn(gatewayIdx, json.transaction_build.payload_to_sign, json.transaction_build.unsigned_transaction, public_key, privKey_enc, setShow, setTxHash, currentlyStaked, setCurrentlyStaked, totalUnstaking, setTotalUnstaking, actionType, amount, currentlyLiquid, setCurrentlyLiquid, hdpathIndex, isHW, transport, deviceID, setSubmitEnabled, usbConn) }
+              ]
+            );
+          }
+    }).catch((error) => {
+      hideMessage();
+      setNewGatewayIdx(gatewayIdx);
+    });
+  }
 }
 
 
@@ -178,7 +189,7 @@ function transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned
       }
     })
   } else{
-     transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
+      transport.send(currApdu.cla, currApdu.ins, currApdu.p1, currApdu.p2, currApdu.data, currApdu.requiredResponseStatusCodeFromDevice).then((result) => {
       console.log("INSIDE RESULTS: "+result.toString('hex'))
       transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash)
     })
@@ -188,8 +199,6 @@ function transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned
 
 function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash){
   
-// alert(unsigned_transaction +" "+public_key+" "+ finalSig)
-
   fetch(global.gateways[gatewayIdx] + '/transaction/finalize', {
     method: 'POST',
     headers: {
@@ -221,6 +230,11 @@ function finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_
    setShow(true);
    setTxHash(txnHash);
    setSubmitEnabled(true);
+
+   showMessage({
+    message: "Transaction submitted",
+    type: "info"
+   });
 
   }).catch((error) => {
     setNewGatewayIdx(gatewayIdx);
@@ -257,48 +271,45 @@ async function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,pri
         text: "OK",
         onPress: password => {
 
-  try{
+          try{
 
-    var signature = "";
-  var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-         // privatekey = decrypt(privKey_enc, Buffer.from("c"));
-  // alert("Privekey unc: "+privatekey)
-  signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
+            var signature = "";
+            var privatekey = new Uint8Array(decrypt(privKey_enc, Buffer.from(password)).match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+                  // privatekey = decrypt(privKey_enc, Buffer.from("c"));
+            // alert("Privekey unc: "+privatekey)
+            signature = secp256k1.ecdsaSign(Uint8Array.from(Buffer.from(message,'hex')), Uint8Array.from(privatekey))
 
 
-  var result=new Uint8Array(72);
-  secp256k1.signatureExport(signature.signature,result);
-  
-  var finalSig = Buffer.from(result).toString('hex');
+            var result=new Uint8Array(72);
+            secp256k1.signatureExport(signature.signature,result);
+            
+            var finalSig = Buffer.from(result).toString('hex');
 
-  finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
+            finalizeTxn(gatewayIdx, setSubmitEnabled, unsigned_transaction, public_key, finalSig, setShow, setTxHash);
 
-   
-} catch(err){
-    alert("Password incorrect")
-  }
-  
+          } catch(err){
+              alert("Password incorrect")
+          }
         }
       }
     ],
     "secure-text"
-  );
-
-} else{
-    
-  if (usbConn == true) {
-    transport = await TransportHid.create()
-  }
-  
-  if(transport == undefined && deviceID == undefined){
-    alert("Please open the hardware wallet and the Radix app in the wallet first")
+    );
   } else{
-
-    if(deviceID != undefined){
-      transport = await TransportBLE.open(deviceID);
+    
+    if (usbConn == true) {
+      transport = await TransportHid.create()
     }
+    
+    if(transport == undefined && deviceID == undefined){
+      alert("Please open the hardware wallet and the Radix app in the wallet first")
+    } else{
 
-     const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
+      if(deviceID != undefined){
+        transport = await TransportBLE.open(deviceID);
+      }
+
+      const hdpath = HDPathRadix.create({ address: { index: hdpathIndex, isHardened: true } });
 
       const transactionRes = Transaction.fromBuffer(
         Buffer.from(unsigned_transaction, 'hex'),
@@ -316,15 +327,14 @@ async function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,pri
   
       // alert("numberOfInstructions: "+numberOfInstructions)
 
-     var apdu1 =  RadixAPDU.signTX.initialSetup({
+      var apdu1 =  RadixAPDU.signTX.initialSetup({
         path: hdpath,
         txByteCount: unsigned_transaction.length / 2, // 2 hex chars per byte
         numberOfInstructions,
         // nonNativeTokenRriHRP: input.nonXrdHRP,
-    })
+      })
 
-   console.log("BEFORE SEND HW")
-
+      console.log("BEFORE SEND HW")
 
           transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result0) => {
     
@@ -335,32 +345,32 @@ async function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,pri
 
             var apdus = []
 
-      while( instructions.length > 0){
+            while( instructions.length > 0){
 
-            const instructionToSend = instructions.shift() // "pop first"
+                  const instructionToSend = instructions.shift() // "pop first"
 
-            console.log("INSTRUCTIONS: "+instructions)
-            const instructionBytes = instructionToSend.toBuffer();
+                  console.log("INSTRUCTIONS: "+instructions)
+                  const instructionBytes = instructionToSend.toBuffer();
 
-            const displayInstructionContentsOnLedgerDevice = false
-            const displayTXSummaryOnLedgerDevice = false
+                  const displayInstructionContentsOnLedgerDevice = false
+                  const displayTXSummaryOnLedgerDevice = false
 
-            var apdu2 =  RadixAPDU.signTX.singleInstruction({
-              instructionBytes,
-              isLastInstruction: instructions.length==0?true:false,
-              displayInstructionContentsOnLedgerDevice,
-              displayTXSummaryOnLedgerDevice,
-            })
-            apdus.push(apdu2)
-      }
+                  var apdu2 =  RadixAPDU.signTX.singleInstruction({
+                    instructionBytes,
+                    isLastInstruction: instructions.length==0?true:false,
+                    displayInstructionContentsOnLedgerDevice,
+                    displayTXSummaryOnLedgerDevice,
+                  })
+                  apdus.push(apdu2)
+            }
             
             transport_send(gatewayIdx, setSubmitEnabled, transport, apdus, unsigned_transaction, public_key, setShow, setTxHash);
 
         }).catch((error) => {
         alert("Please open the hardware wallet and the Radix app in the wallet first")
       })
-      }
     }
+  }
 }
 
 

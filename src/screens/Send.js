@@ -92,7 +92,7 @@ useInterval(() => {
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
     fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
   })
-}, 5000);
+}, 3500);
 
 
 // alert(defaultSymbol)

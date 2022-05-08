@@ -645,8 +645,10 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
                       try{
                         decrypt(tempPrivkey_enc, Buffer.from(password))
                       } catch(err){
-                        successResponse = "Password incorrect"
-                        alertType = "danger"
+                        showMessage({
+                          message: "Password incorrect",
+                          type: "danger"
+                        });
                       }
               
                       var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex')

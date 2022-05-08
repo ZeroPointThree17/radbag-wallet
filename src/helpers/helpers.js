@@ -559,34 +559,34 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
 
           alert("Please confirm the message decryption in the hardware wallet. After confirmation, decryption will take a few seconds.")
 
-          transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
-
           showMessage({
             message: "Decrypting. Please wait...",
             type: "info",
             autoHide: false
           });
+          
+          transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
 
-          var sharedKeyPointBytes = result.slice(1,result.length-2)
+            var sharedKeyPointBytes = result.slice(1,result.length-2)
 
-          var dfPoint =  resultToAsync(ECPointOnCurve.fromBuffer(sharedKeyPointBytes))
+            var dfPoint =  resultToAsync(ECPointOnCurve.fromBuffer(sharedKeyPointBytes))
 
-          MessageEncryption.decrypt({
-            encryptedMessage: encryptedM,
-            diffieHellmanPoint: () => {return dfPoint},
-          }).then( (res) => {
+            MessageEncryption.decrypt({
+              encryptedMessage: encryptedM,
+              diffieHellmanPoint: () => {return dfPoint},
+            }).then( (res) => {
 
-          var finalResult = res.map(b => b.toString('utf-8'))
+            var finalResult = res.map(b => b.toString('utf-8'))
 
-          var newMap = new Map(decryptedMap)
-          newMap.set(txn_id, finalResult.value)
-          setDecryptedMap(newMap);
+            var newMap = new Map(decryptedMap)
+            newMap.set(txn_id, finalResult.value)
+            setDecryptedMap(newMap);
 
-          var hashToDecryptCopy = [...hashToDecrypt];
-          hashToDecryptCopy.push(txn_id)
-          setHashToDecrypt(hashToDecryptCopy)
+            var hashToDecryptCopy = [...hashToDecrypt];
+            hashToDecryptCopy.push(txn_id)
+            setHashToDecrypt(hashToDecryptCopy)
 
-          hideMessage();
+            hideMessage();
 
         }).catch((err) => { alert("Decryption failed. Error: " + err)})
 

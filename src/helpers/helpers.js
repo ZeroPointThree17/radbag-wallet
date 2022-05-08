@@ -565,7 +565,7 @@ export async function decryptMessage(isHW, transport, deviceID, hdpathIndex, has
           showMessage({
             message: "Decrypting. Please wait...",
             type: "info",
-            });
+          });
 
           var sharedKeyPointBytes = result.slice(1,result.length-2)
 

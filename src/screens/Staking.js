@@ -875,8 +875,8 @@ onPress={() => {setStakingScreenActive(false)}}>
 {stakingScreenActive==false && <React.Fragment>
 <View style={[styles.container,{backgroundColor:global.reverseModeTranslation}]}>
       
-<TouchableOpacity style={styles.appButtonContainer} onPress={ () => setShowStakingStats(!showStakingStats) }>
-    < Text style={[styles.appButtonText, getAppFont("white")]}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
+<TouchableOpacity style={[styles.appButtonContainer, {backgroundColor: global.appGreenAlt}]} onPress={ () => setShowStakingStats(!showStakingStats) }>
+    < Text style={[styles.appButtonText]}>{showStakingStats==false?"Show":"Hide"} Staking Stats</Text>
     </TouchableOpacity>
 
        {stakingStats(showStakingStats)}

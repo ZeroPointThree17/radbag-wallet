@@ -11,7 +11,7 @@ import { throwError } from 'rxjs'
 var SQLite = require('react-native-sqlite-storage');
 import { decrypt } from '../helpers/encryption';
 import prompt from 'react-native-prompt-android';
-import { showMessage } from 'react-native-flash-message';
+import { hideMessage, showMessage } from 'react-native-flash-message';
 var bigDecimal = require('js-big-decimal');
 
 
@@ -76,6 +76,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                     showMessage({
                       message: "Encrypting message...",
                       type: "info",
+                      autoHide: false
                     });
 
                     var to = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(destAddr),'hex'),'hex').value;
@@ -89,6 +90,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                         to,
                       ),
                     }).then( (res) => {
+                      hideMessage();
                       buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, password)
                     })
                   }  
@@ -146,6 +148,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                   showMessage({
                     message: "Encrypting message...",
                     type: "info",
+                    autoHide: false
                   });
 
                   var sharedKeyPointBytes = result.slice(1,result.length-2)
@@ -156,10 +159,9 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
                     plaintext: message,
                     diffieHellmanPoint: () => {return dfPoint},
                   }).then( (res) => {
+                    hideMessage();
                     buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, sourceXrdAddr, xrdAddr, symbol, amount, amountStr, res.value.combined().toString('hex'), public_key, privKey_enc, setShow, setTxHash, hdpathIndex, isHW, transport, deviceID, "")
                   })
-                
-   
                 })
               }
               

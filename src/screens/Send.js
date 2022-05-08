@@ -224,9 +224,11 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
           isChecked={encryptMsgflag}
           onPress={()=>{
             if(encryptMsgflag==false){
-            setEncryptMsgflag(true);
+              setEncryptMsgflag(true);
             }
-            else setEncryptMsgflag(false);
+            else{
+              setEncryptMsgflag(false);
+            }
           }}
           />
 

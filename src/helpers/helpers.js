@@ -3,7 +3,7 @@ import { StyleSheet, View, Alert, Platform, PermissionsAndroid, TouchableOpacity
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import TransportHid from '@ledgerhq/react-native-hid';
-import {showMessage} from "react-native-flash-message";
+import {hideMessage, showMessage} from "react-native-flash-message";
 import Clipboard from '@react-native-clipboard/clipboard';
 var bigDecimal = require('js-big-decimal');
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -114,9 +114,9 @@ export function copyToClipboard(string)  {
   Clipboard.setString(string)
 
       showMessage({
-message: "Address copied to clipboard",
-type: "info",
-});
+        message: "Address copied to clipboard",
+        type: "info",
+      });
 }
 
 export function hexToBytes(hex) {
@@ -564,6 +564,7 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
           showMessage({
             message: "Decrypting. Please wait...",
             type: "info",
+            autoHide: false
           });
 
           var sharedKeyPointBytes = result.slice(1,result.length-2)
@@ -585,6 +586,8 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
           hashToDecryptCopy.push(txn_id)
           setHashToDecrypt(hashToDecryptCopy)
 
+          hideMessage();
+
         }).catch((err) => { alert("Decryption failed. Error: " + err)})
 
       }).catch((err) => {   
@@ -600,9 +603,9 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
   else{
     var promptFunc = ""
     if(Platform.OS === 'ios'){
-      promptFunc = Alert.prompt;
+        promptFunc = Alert.prompt;
       } else{
-      promptFunc = prompt
+        promptFunc = prompt
       }
 
       promptFunc(
@@ -618,12 +621,13 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
             text: "OK",
             onPress: password => {
 
-              showMessage({
-                message: "Decrypting. Please wait...",
-                type: "info",
-                });
-
               if(raw_message.startsWith("01") && account != null){
+
+                showMessage({
+                  message: "Decrypting. Please wait...",
+                  type: "info",
+                  autoHide: false
+                });
 
                 db.transaction((tx) => {
                   tx.executeSql("SELECT address.privatekey_enc FROM address INNER JOIN active_address ON address.id=active_address.id", [], (tx, results) => {
@@ -643,13 +647,6 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
                       } catch(err){
                         successResponse = "Password incorrect"
                         alertType = "danger"
-                      }
-
-                      if(successResponse != "NO_RESPONSE"){
-                        showMessage({
-                          message: successResponse,
-                          type: alertType,
-                          });
                       }
               
                       var targetPubKey = PublicKey.fromBuffer(Buffer.from(rdxToPubKey(account),'hex'),'hex')
@@ -674,6 +671,8 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
                         var hashToDecryptCopy = [...hashToDecrypt];
                         hashToDecryptCopy.push(txn_id)
                         setHashToDecrypt(hashToDecryptCopy)
+
+                        hideMessage();
         
                       })
                     });

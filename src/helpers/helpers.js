@@ -468,16 +468,16 @@ export async function fetchTxnHistory(db, gatewayIdx, address, setHistoryRows, s
                                     details.push(tkn_ismutable)
 
                 historyRows.push(
-                  <View key={count} style={{backgroundColor: global.reverseModeTranslation}}>
-                  <Card containerStyle={{ backgroundColor: global.reverseModeTranslation }}>
-              
-                  <Card.Title style={{backgroundColor: global.reverseModeTranslation}}>{title}</Card.Title>
-                  <Card.Divider />
-                  <View style={{backgroundColor: global.reverseModeTranslation}}>
-                  {details}
+                  <View key={count} style={{ backgroundColor: global.reverseModeTranslation }}>
+                    <Card containerStyle={{ backgroundColor: global.reverseModeTranslation }}>
+                
+                    <Card.Title style={{backgroundColor: global.reverseModeTranslation}}>{title}</Card.Title>
+                    <Card.Divider />
+                    <View style={{ backgroundColor: global.reverseModeTranslation }}>
+                    {details}
+                    </View>
+                    </Card>
                   </View>
-                </Card>
-                </View>
                   )  
                 }
               });
@@ -564,7 +564,7 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
             type: "info",
             autoHide: false
           });
-          
+
           transport.send(apdu1.cla, apdu1.ins, apdu1.p1, apdu1.p2, apdu1.data, apdu1.requiredResponseStatusCodeFromDevice).then((result) => {
 
             var sharedKeyPointBytes = result.slice(1,result.length-2)

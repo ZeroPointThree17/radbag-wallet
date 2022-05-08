@@ -926,7 +926,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 
       <Separator/>
       <Separator/>
-      <Text style={[{fontSize: 18, color:"black", alignSelf:"center"}, getAppFont("red")]}>REMEMBER TO PRESS "REDUCE STAKE" FROM THE CORRECT VALIDATOR IN THE LIST BELOW. LIST WILL NOT APPEAR IF YOU DO NOT HAVE ANY STAKES.</Text>
+      <Text style={[{fontSize: 18, color:"black", textAlign: "center", alignSelf:"center"}, getAppFont("red")]}>REMEMBER TO PRESS "REDUCE STAKE" FROM THE CORRECT VALIDATOR IN THE LIST BELOW. LIST WILL NOT APPEAR IF YOU DO NOT HAVE ANY STAKES.</Text>
       <Separator/>
       <Separator/>
       <TouchableOpacity style={styles.button} onPress={() => {

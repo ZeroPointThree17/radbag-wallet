@@ -53,12 +53,15 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
     var amountStr = new bigDecimal(amount).multiply(new bigDecimal(1000000000000000000)).getValue();
 
     if(isHW != true){
-          var promptFunc = null
 
+          var promptFunc = ""
+          var secureTextSetting = ""
           if(Platform.OS === 'ios'){
             promptFunc = Alert.prompt;
+            secureTextSetting = "secure-text"
           } else{
             promptFunc = prompt
+            secureTextSetting = { type: "secure-text" }
           }
 
           promptFunc(
@@ -131,7 +134,7 @@ export async function buildTxn(gatewayIdx, usbConn, setSubmitEnabled, rri, sourc
               }
             }
           ],
-          "secure-text"
+          secureTextSetting
         );
 
     } else{

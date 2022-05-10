@@ -605,11 +605,16 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
    }
  }
   else{
-    var promptFunc = ""
-    if(Platform.OS === 'ios'){
+
+      var promptFunc = ""
+      var secureTextSetting = ""
+      
+      if(Platform.OS === 'ios'){
         promptFunc = Alert.prompt;
+        secureTextSetting = "secure-text"
       } else{
         promptFunc = prompt
+        secureTextSetting = { type: "secure-text" }
       }
 
       promptFunc(
@@ -686,7 +691,8 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
               }
             }
           }
-        ]
+        ],
+        secureTextSetting
       )
   }
 }

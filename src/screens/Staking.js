@@ -247,13 +247,14 @@ async function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,pri
 
   setShow(false);
 
-  var passwordStr = ""
-  var promptFunc = null
-  
+  var promptFunc = ""
+  var secureTextSetting = ""
   if(Platform.OS === 'ios'){
     promptFunc = Alert.prompt;
+    secureTextSetting = "secure-text"
   } else{
     promptFunc = prompt
+    secureTextSetting = { type: "secure-text" }
   }
 
   if(isHW != true){
@@ -293,7 +294,7 @@ async function submitTxn(gatewayIdx, message,unsigned_transaction,public_key,pri
         }
       }
     ],
-    "secure-text"
+    secureTextSetting
     );
   } else{
     

@@ -1,4 +1,4 @@
-import { RefreshControl, ImageBackground, Image, useColorScheme,ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { RefreshControl, TextInput, Image, useColorScheme,ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
 var GenericToken = require("../assets/generic_token.png");
 var GenericTokenInverted = require("../assets/generic_token_inverted.png");
@@ -19,6 +19,8 @@ var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
 var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SearchList from 'react-native-search-list';
+
 
 
 function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
@@ -131,7 +133,7 @@ function addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, set
 }
 
 
-function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
+function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
@@ -177,6 +179,13 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
 
     var balance = entry[1]
     var rri = entry[0]
+
+    if(!balance[2].toUpperCase().includes(tokenFilter.toUpperCase()) 
+        && !balance[1].toUpperCase().includes(tokenFilter.toUpperCase())
+          // && !rri.toUpperCase().includes(tokenFilter.toUpperCase())
+          ){
+      return;
+    }
 
     try{
 // alert(balance[2])
@@ -367,6 +376,56 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
         />
       </View> )
     }
+
+    // var searchList = []
+    // searchList.push(
+    //   <SearchList 
+    //   style={{alignSelf: "center", backgroundColor:"#183A81"}}
+    //   data={[]}
+    //   renderRow={() => {}}
+    //   renderEmptyResult={() => {renderEmpty()}}
+    //   renderBackButton={() => null}
+    //   renderEmpty={() => {}}
+
+    //   rowHeight={12}
+
+    //   // colors = {toolbarBackgroundColor='#183A81'}
+    //   // toolbarWidth={'auto'}
+    //   title='Token Search'
+    //   cancelTitle='Cancel'
+    //   onClickBack={() => {}}
+
+    //   searchListBackgroundColor={'white'}
+    //   searchListStyle={{width:'auto', backgroundColor:"#183A81", color:"#183A81"}}
+
+    //   searchBarToggleDuration={300}
+    //   searchInputStyle={{width:'auto'}}
+    //   searchBarStyle={{width:'auto', backgroundColor:"#183A81", color:"#183A81"}}
+
+    //   searchInputBackgroundColor={'white'}
+    //   searchInputBackgroundColorActive={'#183A81'}
+    //   searchInputPlaceholderColor={'#183A81'}
+    //   searchInputTextColor={'#183A81'}
+    //   searchInputTextColorActive={'#183A81'}
+    //   searchInputPlaceholder='Search'
+    //   sectionIndexTextColor={'#183A81'}
+    //   searchBarBackgroundColor={'white'}
+    // />
+    // )
+
+    // var alphabet = [];
+
+    // alphabet.push(
+    //   <View style = {styles.rowStyle}>
+    //     <Text>A</Text><Text> </Text><Text>B</Text><Text> </Text>
+    //     <Text>C</Text><Text> </Text><Text>D</Text><Text> </Text>
+    //     <Text>E</Text><Text> </Text><Text>F</Text><Text> </Text>
+    //     <Text>G</Text><Text> </Text><Text>H</Text><Text> </Text>
+    //     <Text>I</Text><Text> </Text><Text>J</Text><Text> </Text>
+    //     <Text>K</Text><Text> </Text><Text>L</Text><Text> </Text>
+    //     <Text>M</Text><Text> </Text><Text>N</Text><Text> </Text>
+    //   </View>
+    // );
 
     return (headerRow.concat(xrdRow).concat(rows))
 
@@ -630,6 +689,7 @@ const Home = ({route, navigation}) => {
     const [isHW, setIsHW] = useState()
     const [historyRows, setHistoryRows] = useState();
     const [tokenPrices, setTokenPrices] = useState();
+    const [tokenFilter, setTokenFilter] = useState("");
     global.isDarkMode = useColorScheme() === 'dark';
     global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
     global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
@@ -943,7 +1003,7 @@ navigation.dispatch(pushAction);
 </View>
 
 
-<View style={{margin:14}}>
+<View style={{margin:10, marginTop: 6}}>
 <View style={styles.rowStyle}>
 {/* 
 <Dropdown
@@ -973,7 +1033,15 @@ navigation.dispatch(pushAction);
 
         </View>
 
-{renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
+        <TextInput
+      value={tokenFilter}
+      autoCapitalize = "none"
+      placeholder = "Filter tokens"
+      onChangeText={text => setTokenFilter(text)}
+      style={{borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5}}
+    />
+    <Separator/>
+{renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
 
 </View> 
         <Separator/>

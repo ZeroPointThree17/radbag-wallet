@@ -147,13 +147,39 @@ function renderAddressRows(isFocus, setIsFocus, storeCurrData, setCurrLabel, set
         //   symbolCnts.set(balance[1],0)
         // })
 
+        // var newBalances = new Map([...balances.entries()].sort((a, b) => b[1].toString().toUpperCase() < a[1].toString().toUpperCase()));
 
-    balances.forEach((balance, rri) =>  
+        // var balancesSorted = Array.from(balances.values());
 
+        // var ordered = []
+      
+        // // Array.from(balances.values()).forEach( (balance) => {ordered.push(balance[2].toUpperCase())})
+        // Array.from(balances.values()).forEach( (balance) => {ordered.push(balance[2].toUpperCase())})
+
+
+      var balancesArry = Array.from(balances.entries())
+
+      balancesArry.sort(function(a, b){
+          return a[1][2].toUpperCase() > b[1][2].toUpperCase();
+      });
+
+      // alert(JSON.stringify(balancesJSON))
+        // ordered.forEach( (name) => {ordered.push(balance[2].toUpperCase())})
+
+      //   balances[Symbol.iterator] = function* () {
+      //     yield* [...this.entries()].sort((a, b) => a[1][2] - b[1][2]);
+      // }
+
+      // alert(balances.keys())
+
+      balancesArry.forEach((entry) =>  
    {
 
-    try{
+    var balance = entry[1]
+    var rri = entry[0]
 
+    try{
+// alert(balance[2])
       var symbol = balance[1];
 
       // symbolCnts.set(balance[1],symbolCnts.get(balance[1])+1)

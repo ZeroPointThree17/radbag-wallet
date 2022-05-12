@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { Keyboard, Image, ImageBackground, useColorScheme, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
+import { RefreshControl, Image, ImageBackground, useColorScheme, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { decrypt } from '../helpers/encryption';
 import SelectDropdown from 'react-native-select-dropdown'
@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { hideMessage, showMessage } from 'react-native-flash-message';
 var SQLite = require('react-native-sqlite-storage');
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+import { Dropdown } from 'react-native-element-dropdown';
 
 
 String.prototype.hexEncode = function(){
@@ -35,6 +36,7 @@ String.prototype.hexEncode = function(){
  const Send = ({route, navigation}) => {
  
   var { defaultRri, defaultSymbol, sourceXrdAddr, hdpathIndex, isHWBool } = route.params;
+  const [refreshing, setRefreshing] = React.useState(false);
   const [privKey_enc, setPrivKey_enc] = useState();
   const [wallet_password, setWallet_password] = useState();
   const [public_key, setPublic_key] = useState();
@@ -47,6 +49,7 @@ String.prototype.hexEncode = function(){
   const [cameraOn, setCameraOn] = useState(false);
   // const [currentBalance, setCurrentBalance] = useState(false);
   const [symbols, setSymbols] = useState([]);
+  const [symbolFilter, setSymbolFilter] = useState();
   // const [rri, setRRI] = useState();
   const [balances, setBalances] = useState(new Map());
   const [symbolToRRI, setSymbolToRRI] = useState(new Map());
@@ -67,11 +70,22 @@ String.prototype.hexEncode = function(){
   global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
   global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
   global.linkModeTranslation = useColorScheme() === 'dark' ? "white" : "blue";
+  const [isFocus, setIsFocus] = useState(false);
+  const [currLabel, setCurrLabel] = useState();
+  const [currValue, setCurrValue] = useState();
+
 
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
   // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
   // sourceXrdAddr = "rdx1qspa05gfcxux87nlw7rrky86pptmwc9hsev73retl57tykgs9llwqrswl9jrg"
   // sourceXrdAddr = "rdx1qspz0gxzprhegk8dsf8u5zknmpf68f5g8c4dhlex0n3uypky3f5z6dqsxwleh"
+
+  const onRefresh = React.useCallback(() => {
+    AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {    
+      getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
+      fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
+    })
+   }, []);
 
   useEffect( () => {
     AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
@@ -79,21 +93,21 @@ String.prototype.hexEncode = function(){
       getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames); 
       fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
     })
-  
-},[]);
+  },[]);
 
 useInterval(() => {
-
   if(transport == undefined){
     startScan(setTransport, setDeviceID, setDeviceName);
     getUSB(setTransport, setUsbConn, setDeviceName);
   }
+}, 3500);
 
+useInterval(() => {
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {    
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
     fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
   })
-}, 5000);
+}, 15000);
 
 
 // alert(defaultSymbol)
@@ -110,9 +124,32 @@ useInterval(() => {
   const msgRef = useRef();
   const [error, setError]=useState(false);
 
+  var symbolsDD = []
+  symbols.forEach( (symbol) => {
+    if(symbolFilter == undefined || symbol.includes(symbolFilter)){
+     if(symbol != "XRD (xrd_rr1...wfsfh)")
+       symbolsDD.push({label: symbol, value: symbol})
+    }
+   }
+  )
+
+  symbolsDD.sort(function(a, b)
+  {
+   var x = a.label; var y = b.label;
+   return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+  });
+
+  if(symbolFilter == undefined || "XRD (xrd_rr1...wfsfh)".includes(symbolFilter))
+    symbolsDD.unshift({label: "XRD (xrd_rr1...wfsfh)", value: "XRD (xrd_rr1...wfsfh)"})
+
+
  return ( 
    <View style={[styles.container, {backgroundColor: global.reverseModeTranslation}]}>
-     <ScrollView nestedScrollEnabled={true}> 
+     <ScrollView nestedScrollEnabled={true} refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}/>
+            }>
 
 <View style={[styles.rowStyle, {alignSelf: "center"}]}>
 
@@ -264,8 +301,36 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
 <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Token type:</Text>
 { symbols.length > 0 &&
 <React.Fragment>
-  <View style={{alignSelf: 'center'}}>
-<SelectDropdown
+  <View style={{alignSelf: 'center', width: '100%',}}>
+
+  <Dropdown
+         style={[getAppFont("black"),  {  height: 44,borderWidth:1, backgroundColor: '#183A81', borderRadius: 15, borderColor: global.modeTranslation }]}
+          placeholderStyle={[getAppFont("white"),{textAlign: "center" }]}
+          selectedTextStyle={[getAppFont("white"),{textAlign: "center"}]}
+          inputSearchStyle={[getAppFont("white")]}
+          iconStyle={[getAppFont("black")]}
+          containerStyle ={[getAppFont("black"), {backgroundColor: '#183A81'}]}
+          data={symbolsDD}
+          activeColor="#4DA892"
+          search
+          maxHeight={300}
+          // disable={true}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? symbol : '...'}
+          searchPlaceholder="Search..."
+          label={currLabel}
+          value={currValue}
+          onFocus={() => {setIsFocus(true)}}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            onChangeSymbol(item.value)
+            setCurrLabel(item.label);
+            setCurrValue(item.value);
+            setIsFocus(true);
+          }}
+        />
+{/* <SelectDropdown
  buttonStyle={[{height: 44, backgroundColor:"#183A81", width: '100%', borderWidth:1, marginRight:0, borderRadius: 15}, getAppFont("black")]}
  buttonTextStyle={{color:"white", size:16}}
 	data={symbols}
@@ -283,7 +348,8 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
 		// if data array is an array of objects then return item.property to represent item in dropdown
 		return item
 	}}
-/></View></React.Fragment>}
+/> */}
+</View></React.Fragment>}
 {/* </View> */}
 <Separator/>
 <Text style={[{fontSize: 12, color:"black"}, getAppFont("black")]}>Current liquid balance: {formatNumForDisplay(balances.get(symbolToRRI.get(symbol)))} {symbol.trim()}</Text>

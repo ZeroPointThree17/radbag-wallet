@@ -1,4 +1,4 @@
-import { RefreshControl, TextInput, Image, useColorScheme,ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { RefreshControl, TextInput, Image, useColorScheme,ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 var GenericToken = require("../assets/generic_token.png");
 var GenericTokenInverted = require("../assets/generic_token_inverted.png");
@@ -68,7 +68,7 @@ function getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCu
 
                 var data = {label: row.name + suffix, value: row.id}
                  wallets.push(data);
-            }
+             }
             
              setWallets(wallets);
     
@@ -690,6 +690,8 @@ const Home = ({route, navigation}) => {
     const [historyRows, setHistoryRows] = useState();
     const [tokenPrices, setTokenPrices] = useState();
     const [tokenFilter, setTokenFilter] = useState("");
+    const [walletFilter, setWalletFilter] = useState();
+    const [addressFilter, setAddressFilter] = useState();
     global.isDarkMode = useColorScheme() === 'dark';
     global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
     global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
@@ -740,19 +742,19 @@ const Home = ({route, navigation}) => {
  
     // walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)]
 
-    enabledAddresses.forEach((element, id)=> 
+    enabledAddresses.forEach((element)=> 
         {
-        console.log("EnabledAddress: "+JSON.stringify(element));
-        dropdownVals.push(element);
-
+        console.log("Enabled Address: "+JSON.stringify(element));
+        // if(addressFilter == undefined || element.label.includes(addressFilter))
+          dropdownVals.push(element);
         }
     )
 
     wallets.forEach((element)=> 
     {
-    console.log(JSON.stringify(element));
-    walletDropdownVals.push(element);
-
+    console.log("Enabled Wallet: "+JSON.stringify(element));
+    // if(walletFilter == undefined || walletFilter == '' || element.label.includes(walletFilter))
+      walletDropdownVals.push(element);
     }
 )
         useEffect(() => {
@@ -770,7 +772,7 @@ const Home = ({route, navigation}) => {
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
           // fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
         })
-        }, 10000);
+        }, 20000);
 
         // useEffect(() => {
           
@@ -855,6 +857,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
                 {/* <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}> */}
             
             <View style={styles.rowStyle}>
+
 <Dropdown
          style={[getAppFont("white"), styles.dropdown, isFocus && { borderColor: 'blue' }]}
           placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
@@ -880,7 +883,8 @@ console.log("WALLETS: "+JSON.stringify(wallets));
             setValue(item.value);
             setIsFocus(true);
           }}
-        />
+        /> 
+
       <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""))}}>
 <IconFeather name="copy" size={20} color="white" />
 </TouchableOpacity>
@@ -900,10 +904,11 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           valueField="value"
           placeholder={!isFocusAddr ? 'Select Address' : '...'}
           searchPlaceholder="Search..."
-          label={ dropdownVals[getDDIndex(dropdownVals,activeAddress)].label}
-          value={ dropdownVals[getDDIndex(dropdownVals,activeAddress)].value}
+          label={ dropdownVals[getDDIndex(dropdownVals,activeAddress)] == undefined ? "Setting up..." : dropdownVals[getDDIndex(dropdownVals,activeAddress)].label}
+          value={ dropdownVals[getDDIndex(dropdownVals,activeAddress)] == undefined ? "Setting up..." : dropdownVals[getDDIndex(dropdownVals,activeAddress)].value}
           onFocus={() => setIsFocusAddr(true)}
           onBlur={() => setIsFocusAddr(false)}
+          // onInput={(text) => { setAddressFilter(text) }}
           onChange={item => {
             updateActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
             setLabelAddr(item.label);
@@ -1067,6 +1072,10 @@ navigation.dispatch(pushAction);
   )
   ;
 };
+
+function onSearch(text){
+  alert(text)
+}
 
 
 const styles = StyleSheet.create({

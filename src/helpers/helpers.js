@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import { StyleSheet, View, Alert, Platform, PermissionsAndroid, TouchableOpacity, Linking} from "react-native";
+import { ActionSheetIOS, StyleSheet, View, Alert, Platform, PermissionsAndroid, TouchableOpacity, Linking} from "react-native";
 import { Observable } from "rxjs";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 import TransportHid from '@ledgerhq/react-native-hid';
@@ -696,6 +696,19 @@ export async function decryptMessage(db, isHW, usbConn, transport, deviceID, hdp
       )
   }
 }
+
+
+export function openContextMenu(event, callback) {
+  ActionSheetIOS.showActionSheetWithOptions({
+    options: ['Copy Username', 'Call User', 'Add to favorites', 'Cancel'],
+    cancelButtonIndex: [3],
+    title: 'Hey',
+    message : 'What do you want to do now?'
+  }, (buttonIndexThatSelected) => {
+    // Do something with result
+    if(callback && typeof callback === 'function') callback();
+  });
+};
 
 
 export const currencyList = [

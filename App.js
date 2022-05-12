@@ -28,7 +28,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { gateways, linkingPrefixes } from './src/helpers/config';
 import DeepLinking from 'react-native-deep-linking';
 import { Linking } from 'react-native';
- 
+import { MenuProvider } from 'react-native-popup-menu';
+
 
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 
@@ -64,69 +65,71 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
   }
 
   navContainerJSX.push(
+  <MenuProvider>
   <React.Fragment>
     <View style={{ alignItems: "center",  backgroundColor: global.isDarkMode? "black" : "#183A81",height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
     <ScrollView contentContainerStyle={{alignContents: "center", justifyContent: "center"}}>
       <View style={{ marginVertical: "18%", alignContents: "center", backgroundColor: "#183A81",height: correctPin == false && isPINEnabled? "100%" : "0%"}}>
     <PinCode allowReset="false" mode={PinCodeT.Modes.Enter} visible={firstTimer == false && correctPin == false && isPINEnabled} 
-textOptions={customTexts}
-onEnterSuccess={(pin) => setCorrectPin(true)}
+        textOptions={customTexts}
+        onEnterSuccess={(pin) => setCorrectPin(true)}
 
-options={{
-  pinLength: 6,
-  maxAttempt: 999999999,
-  lockDuration: 10000,
-  allowedReset: false,
-  disableLock: false,
-  dotColor: "white"  
-}}
+        options={{
+          pinLength: 6,
+          maxAttempt: 999999999,
+          lockDuration: 10000,
+          allowedReset: false,
+          disableLock: false,
+          dotColor: "white"  
+        }}
 
-styles={{ 
-  main: { backgroundColor: global.isDarkMode? "black" : "#183A81" },
-  enter: {
-    titleContainer: { borderWidth: 0 },
-    title: { color: 'white' },
-    subTitle: { color: 'white' },
-    buttonContainer: { borderWidth: 0 , color: 'white' },
-    buttonText: { color: 'black' },
-    buttons: { backgroundColor: 'white', borderWidth: 1 },
-    footer: { borderWidth: 0 },
-    footerText: { color: 'purple' },
-    pinContainer: { borderWidth: 0,  },
-  }}
-}
- /> 
-  </View>
-  </ScrollView>
-  </View>
+        styles={{ 
+          main: { backgroundColor: global.isDarkMode? "black" : "#183A81" },
+          enter: {
+            titleContainer: { borderWidth: 0 },
+            title: { color: 'white' },
+            subTitle: { color: 'white' },
+            buttonContainer: { borderWidth: 0 , color: 'white' },
+            buttonText: { color: 'black' },
+            buttons: { backgroundColor: 'white', borderWidth: 1 },
+            footer: { borderWidth: 0 },
+            footerText: { color: 'purple' },
+            pinContainer: { borderWidth: 0,  },
+          }}
+        }
+        /> 
+    </View>
+    </ScrollView>
+    </View>
 
-<NavigationContainer linking={linking} onReady={() => RNBootSplash.hide()}>
+    <NavigationContainer linking={linking} onReady={() => RNBootSplash.hide()}>
 
-<Stack.Navigator screenOptions={{
-headerStyle: {
-backgroundColor: '#183A81',
-},
-headerTintColor: '#fff',
-headerTitleStyle: {
-fontWeight: 'bold'
-},
-}}>{ firstTimer == true
-?<Stack.Screen name="Welcome to the RadBag Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>:<Stack.Screen name="RadBag Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />}
-<Stack.Screen name="Mnemonic" component={CreateWallet} options={{ headerTitleAlign: 'center' }}/>
-<Stack.Screen name="Mnemonic Input" component={MnemonicInput} options={{ headerTitleAlign: 'center' }}/>
-<Stack.Screen name="Wallet Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
-<Stack.Screen name="RadBag Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
-<Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
-<Stack.Screen name="Sign" component={Sign} options={{ headerTitleAlign: 'center' }}/>
-<Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
-<Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
-<Stack.Screen name="Import Select" component={ImportSelect} options={{ headerTitleAlign: 'center' }}/>
-<Stack.Screen name="Hardware Wallet" component={HardwareWallet} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Navigator screenOptions={{
+      headerStyle: {
+      backgroundColor: '#183A81',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+      fontWeight: 'bold'
+      },
+      }}>{ firstTimer == true
+      ?<Stack.Screen name="Welcome to the RadBag Wallet!" component={Welcome} options={{ headerTitleAlign: 'center' }}/>:<Stack.Screen name="RadBag Wallet " component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />}
+      <Stack.Screen name="Mnemonic" component={CreateWallet} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Mnemonic Input" component={MnemonicInput} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Wallet Password" component={AppDataSave} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="RadBag Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
+      <Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Sign" component={Sign} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Import Select" component={ImportSelect} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Hardware Wallet" component={HardwareWallet} options={{ headerTitleAlign: 'center' }}/>
 
-</Stack.Navigator>
-<FlashMessage position="center" style={{height:60}}/>
-</NavigationContainer>
-</React.Fragment>
+      </Stack.Navigator>
+      <FlashMessage position="center" style={{height:60}}/>
+      </NavigationContainer>
+      </React.Fragment>
+      </MenuProvider>
 )
 
 return navContainerJSX;

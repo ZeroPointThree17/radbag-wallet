@@ -5,6 +5,7 @@ var GenericTokenInverted = require("../assets/generic_token_inverted.png");
  var SQLite = require('react-native-sqlite-storage');
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import NetInfo from "@react-native-community/netinfo";
 import { StackActions } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,14 +14,21 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay, currencyList, setNewGatewayIdx } from '../helpers/helpers';
+import { openContextMenu, getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay, currencyList, setNewGatewayIdx } from '../helpers/helpers';
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
 var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchList from 'react-native-search-list';
-
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+  SlideInMenu,
+  ContexrMenu
+} from 'react-native-popup-menu';
 
 
 function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
@@ -290,10 +298,18 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
 
         rows.push(
                
-          <View key={rri}>
 
+          <Menu renderer={ContexrMenu}>
+
+
+ 
  <SeparatorBorder/>
-  <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
+
+ <MenuTrigger triggerOnLongPress={true} onAlternativeAction={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}} disabled={isNaN(stakedAmount)} >
+ <View key={rri}>
+  
+ 
+  {/* <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}> */}
 
   <View style={styles.addrRowStyle}>
 
@@ -324,8 +340,22 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
   {/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
   </View> 
   </View> 
-  </TouchableOpacity>
-  </View>        )
+  {/* </TouchableOpacity> */}
+
+ 
+  </View>
+  </MenuTrigger>
+  {/* <View > */}
+          <MenuOptions style={{justifyContents:'flex-end',alignContents:"flex-end"}}>
+            <MenuOption  style={{alignSelf:"center"}} onSelect={() => alert(`Token now hidden`)} >
+              <Text style={{textAlign:'right', color:'red'}}>Hide</Text>
+            </MenuOption>
+         </MenuOptions>
+         {/* </View> */}
+
+  </Menu>
+  
+     )
 
       }
     }    
@@ -885,11 +915,11 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           }}
         /> 
 
-      <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""))}}>
-<IconFeather name="copy" size={20} color="white" />
-</TouchableOpacity>
- </View>
-<Dropdown
+        <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""))}}>
+            <IconFeather name="copy" size={20} color="white" />
+        </TouchableOpacity>
+    </View>
+    <Dropdown
          style={[getAppFont("white"), styles.dropdown, isFocusAddr && { borderColor: 'blue' }]}
           placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
           selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
@@ -1050,6 +1080,7 @@ navigation.dispatch(pushAction);
 
 </View> 
         <Separator/>
+
         { isNaN(stakedAmount) &&
 <Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
 }
@@ -1077,6 +1108,19 @@ function onSearch(text){
   alert(text)
 }
 
+// const triggerStyles = {
+//   triggerText: {
+//     color: 'white',
+//   },
+//   triggerWrapper: {
+//     padding: 5,
+//     backgroundColor: 'blue',
+//   },
+//   triggerTouchable: {
+//     underlayColor: 'darkblue',
+//     activeOpacity: 70,
+//   }
+// };
 
 const styles = StyleSheet.create({
 

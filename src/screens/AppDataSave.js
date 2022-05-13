@@ -372,11 +372,12 @@ if(hardwareWallletPubKeyArr.length > 0){
 }
 
   return (
+    <ScrollView>
     <SafeAreaView style={[styles.container,{backgroundColor: global.reverseModeTranslation}]}>
       <Separator/>
       <Separator/>
      <View > 
-     <ScrollView>
+
 
      { isActive
   &&
@@ -428,9 +429,9 @@ if(hardwareWallletPubKeyArr.length > 0){
 <Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
 <Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
 <Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
-</ScrollView>
   </View> 
   </SafeAreaView>
+  </ScrollView>
   )
   ;
 };

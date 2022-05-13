@@ -1,4 +1,4 @@
-import { Button, BackHandler, ActivityIndicator, SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { Button, ScrollView, ActivityIndicator, SafeAreaView, View, Text, StyleSheet } from 'react-native';
 const bip39 = require('bip39');
 import React, { useState, useEffect } from 'react';
 let { bech32 } = require('bech32')
@@ -372,10 +372,12 @@ if(hardwareWallletPubKeyArr.length > 0){
 }
 
   return (
+    <ScrollView>
     <SafeAreaView style={[styles.container,{backgroundColor: global.reverseModeTranslation}]}>
       <Separator/>
       <Separator/>
      <View > 
+
 
      { isActive
   &&
@@ -389,10 +391,13 @@ if(hardwareWallletPubKeyArr.length > 0){
 }
 { isActive
   &&
-  <Text style={[styles.title,getAppFont("black")]}>Setting up wallet for the first time. Please wait...</Text>
+  <React.Fragment>
+   <Text style={[styles.title,getAppFont("black")]}>Setting up wallet for the first time. Please wait...</Text>
+   <Separator/>
+   <Separator/>
+  </React.Fragment>
   }
-<Separator/>
-<Separator/>
+
 {hardwareWallletPubKeys.length==0 && <React.Fragment>
     <Text style={[styles.title,getAppFont("black")]}>Enter a password to protect the data in this wallet.</Text>
     <Separator/>
@@ -417,9 +422,16 @@ if(hardwareWallletPubKeyArr.length > 0){
   </React.Fragment>}
 <Separator/>
 <Separator/>
-
+<Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
+<Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
+<Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
+<Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
+<Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
+<Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
+<Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/><Separator/>
   </View> 
   </SafeAreaView>
+  </ScrollView>
   )
   ;
 };

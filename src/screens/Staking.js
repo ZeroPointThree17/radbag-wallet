@@ -850,7 +850,15 @@ onPress={() => {setStakingScreenActive(false)}}>
         placeholder='Amount'
         placeholderTextColor="#d3d3d3"
         value={stakeAmt}
-        onChangeText={value => setStakeAmt(value)}
+        onChangeText={ (value) => {
+          var cleanedVal = value.replace(/^0+/, '').replace(/,/g, '');
+          
+          if(!isNaN(cleanedVal)){
+            setStakeAmt(new bigDecimal(cleanedVal).getPrettyValue())
+          } else{
+            setStakeAmt(value);
+          }
+        }}
       />
       </View>
 
@@ -920,8 +928,16 @@ onPress={() => {setStakingScreenActive(false)}}>
         placeholder='Amount'
         placeholderTextColor="#d3d3d3"
         value={unstakeAmt}
-        onChangeText={value => setUnstakeAmt(value)}
-        // leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
+        onChangeText={ (value) => {
+            var cleanedVal = value.replace(/^0+/, '').replace(/,/g, '');
+            
+            if(!isNaN(cleanedVal)){
+              setUnstakeAmt(new bigDecimal(cleanedVal).getPrettyValue())
+            } else{
+              setUnstakeAmt(value);
+            }
+          }
+        }
       />
       </View>
 

@@ -1,5 +1,5 @@
 import { RefreshControl, TextInput, Image, useColorScheme,ScrollView, TouchableOpacity, SafeAreaView, View, Text, StyleSheet, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 var GenericToken = require("../assets/generic_token.png");
 var GenericTokenInverted = require("../assets/generic_token_inverted.png");
  var SQLite = require('react-native-sqlite-storage');
@@ -20,7 +20,6 @@ var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
 var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SearchList from 'react-native-search-list';
 import {
   Menu,
   MenuOptions,
@@ -29,6 +28,8 @@ import {
   SlideInMenu,
   ContexrMenu
 } from 'react-native-popup-menu';
+import { SwipeListView } from 'react-native-swipe-list-view';
+
 
 
 function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
@@ -140,9 +141,72 @@ function addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, set
 
 }
 
+function renderSingleAddressRow(symbol, tokenPrices, balance, stakedAmount, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW, entry){
+  
+
+  var totalWalletValue = new bigDecimal(0); 
+
+  var dogecubePrice = undefined;
+  
+  if(rri=="dgc_rr1qvnre767vp607yr9pqzqhlprg72q2ny5pj4agn53k0pqy6huxw"){
+
+    if(tokenPrices !=undefined){
+
+      dogecubePrice = tokenPrices.dogecube[currValue]
+      // alert(dogecubePrice)
+      totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)))
+    
+    }
+  }
+
+  var balance = entry[1]
+  var rri = entry[0]
+
+  return     (
+  <View key={rri}>
+<SeparatorBorder/>
+<TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
+
+<View style={styles.addrRowStyle}>
+
+{/* <ImageBackground
+style={{
+width: 36,
+height: 36,
+justifyContent: "flex-start",
+
+}}
+source={
+require("../assets/generic_token.png") //Indicator
+}> */}
+<Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
+defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
+source={{uri: balance[3]}} />
+{/* </ImageBackground> */}
+
+<View style={{flex:2}}>
+<Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
+<Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
+</View>
+{/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
+<View style={{ textAlign:"right", flex:1.5}}>
+<Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
+{dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
+
+{/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
+</View> 
+</View> 
+
+</TouchableOpacity>
+
+</View>  
+  )
+
+}
 
 function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
+  
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
         var totalWalletValue = new bigDecimal(0);
@@ -196,29 +260,7 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
     }
 
     try{
-// alert(balance[2])
       var symbol = balance[1];
-
-      // symbolCnts.set(balance[1],symbolCnts.get(balance[1])+1)
-
-      // // alert(symbolCnts.get(balance[1]))
-      // if(symbolCnts.get(balance[1]) > 1){
-      //   appendStr = symbolCnts.get(balance[1]);
-
-      //   for(let cnt = 0; cnt < parseInt(symbolCnts.get(balance[1])); cnt++){
-      //     //  alert(cnt)
-
-      //     if(Platform.OS === 'ios'){
-      //       symbol = symbol + " ";
-      //     } else{
-      //       symbol = " " + symbol + " ";
-      //     }
-          
-      //   }
-      // }
-
-      // alert(symbol)
-      // alert(balance[1] + "|"+symbolCnts.get(balance[1]));
 
       if(rri=="xrd_rr1qy5wfsfh"){
 
@@ -231,9 +273,6 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
           totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)))
           
         }
-         
-        // var finalNum = new bigDecimal(bigDecimal.multiply(balance[0],0.000000000000000001,1800));
-        //  alert(balance[0].getPrettyValue())
 
         xrdRow.push(
                
@@ -277,18 +316,7 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
       } else{
 
 
-        var dogecubePrice = undefined;
-  
-        if(rri=="dgc_rr1qvnre767vp607yr9pqzqhlprg72q2ny5pj4agn53k0pqy6huxw"){
 
-          if(tokenPrices !=undefined){
-  
-            dogecubePrice = tokenPrices.dogecube[currValue]
-            // alert(dogecubePrice)
-            totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)))
-          
-          }
-        }
 
         if(rri == blackListed){
           possScamToken = true;
@@ -296,67 +324,85 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
           possScamToken = false;
         }
 
+
+     var rowData = [{key: rri, data: {symbol, tokenPrices, balance, stakedAmount, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW, entry}}]
+
+    //  const item = rowData.item;
+
+    //  const renderSingleRow = useCallback(data => {
+      
+    //   var item  = data.entry[0]
+    //   renderSingleAddressRow(data.symbol, data.tokenPrices, data.balance, data.stakedAmount, data.navigation, data.enabledAddresses, data.activeAddress, data.hdpathIndexInput, data.isHW, data.entry)
+        
+    // }, []);
+
+    // const rowToId = useCallback(item => item, []);
+
+
+// const TrashRowBack = () => (
+//   <View >
+//     <Text>Trash</Text>
+//   </View>
+// );
+
+
+ 
+// const onSwipeValueChange = swipeData => {
+//   const { key, value } = swipeData;
+//   if (
+//       value < -Dimensions.get('window').width &&
+//       !animationIsRunning.current
+//   ) {
+//       animationIsRunning.current = true;
+//       Animated.timing(rowTranslateAnimatedValues[key], {
+//           toValue: 0,
+//           duration: 200,
+//           useNativeDriver: false,
+//       }).start(() => {
+//           const newData = [...listData];
+//           const prevIndex = listData.findIndex(item => item.key === key);
+//           newData.splice(prevIndex, 1);
+//           // setListData(newData);
+//           animationIsRunning.current = false;
+//       });
+//   }
+// };
+
+
         rows.push(
                
+        // <SwipeListView
+        // disableRightSwipe
+        // data={rowData}
+        // onSwipeValueChange={onSwipeValueChange}
+        // renderItem={ (rowData, rowMap) => { 
+          renderSingleAddressRow(symbol, tokenPrices, balance, stakedAmount, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW, entry)
+        // }
+        // }
+        // renderHiddenItem={ (data, rowMap) => (
+        //   <View style={styles.rowBack}>
+        //   <Text>Left</Text>
+        //   <TouchableOpacity
+        //       style={[styles.backRightBtn, styles.backRightBtnLeft]}
+        //       onPress={() => closeRow(rowMap, data.item.key)}
+        //   >
+    //           <Text style={styles.backTextWhite}>Close</Text>
+    //       </TouchableOpacity>
+    //       <TouchableOpacity
+    //           style={[styles.backRightBtn, styles.backRightBtnRight]}
+    //           onPress={() => deleteRow(rowMap, data.item.key)}
+    //       >
+    //           <Text style={styles.backTextWhite}>Delete</Text>
+    //       </TouchableOpacity>
+    //   </View>
+    //     )}
+    //     leftOpenValue={75}
+    //     rightOpenValue={-75}
+    //     useNativeDriver={false}
+    // />
 
-          <Menu renderer={ContexrMenu}>
-
-
- 
- <SeparatorBorder/>
-
- <MenuTrigger triggerOnLongPress={true} onAlternativeAction={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}} disabled={isNaN(stakedAmount)} >
- <View key={rri}>
-  
- 
-  {/* <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}> */}
-
-  <View style={styles.addrRowStyle}>
-
-  {/* <ImageBackground
-    style={{
-      width: 36,
-      height: 36,
-      justifyContent: "flex-start",
-     
-    }}
-    source={
-      require("../assets/generic_token.png") //Indicator
-    }> */}
-  <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
-  defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
-  source={{uri: balance[3]}} />
-    {/* </ImageBackground> */}
-
-    <View style={{flex:2}}>
-        <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
-        <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
-        </View>
-    {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
-  <View style={{ textAlign:"right", flex:1.5}}>
-  <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
-  {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
-   
-  {/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
-  </View> 
-  </View> 
-  {/* </TouchableOpacity> */}
-
- 
-  </View>
-  </MenuTrigger>
-  {/* <View > */}
-          <MenuOptions style={{justifyContents:'flex-end',alignContents:"flex-end"}}>
-            <MenuOption  style={{alignSelf:"center"}} onSelect={() => alert(`Token now hidden`)} >
-              <Text style={{textAlign:'right', color:'red'}}>Hide</Text>
-            </MenuOption>
-         </MenuOptions>
-         {/* </View> */}
-
-  </Menu>
-  
      )
-
+        
       }
     }    
     catch(err){
@@ -382,7 +428,7 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
           placeholderStyle={[styles.placeholderStyle2,getAppFont("black"),{textAlign: "right"}]}
           selectedTextStyle={[styles.selectedTextStyle2,getAppFont("black"),{textAlign: "right"}]}
           inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
-          iconStyle={[styles.iconStyle,getAppFont("black")]}
+          iconStyle={[styles.iconStyle]}
           containerStyle ={[getAppFont("black"), {backgroundColor: global.reverseModeTranslation}]}
           data={currencyList}
           activeColor="#4DA892"
@@ -462,6 +508,7 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
     }
 
 }
+
 
 
 function updateActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, wallet_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
@@ -599,7 +646,7 @@ export class NetworkUtils {
 
             })
 
-            newBalance.forEach((b, active_address) => console.log("NB ("+active_address+"):"+JSON.stringify(b)))
+            // newBalance.forEach((b, active_address) => console.log("NB ("+active_address+"):"+JSON.stringify(b)))
 
             if(uniqueRRIs.length == 0){
               setAddressBalances(newBalance);
@@ -643,7 +690,7 @@ export class NetworkUtils {
         )
       }).then((response) => response.json()).then((json) => {
 
-        console.log("Get Balances call: "+JSON.stringify(json));
+        // console.log("Get Balances call: "+JSON.stringify(json));
         
           if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
               var newAddrBalances = new Map(addressBalances);
@@ -782,7 +829,7 @@ const Home = ({route, navigation}) => {
 
     wallets.forEach((element)=> 
     {
-    console.log("Enabled Wallet: "+JSON.stringify(element));
+    // console.log("Enabled Wallet: "+JSON.stringify(element));
     // if(walletFilter == undefined || walletFilter == '' || element.label.includes(walletFilter))
       walletDropdownVals.push(element);
     }
@@ -818,13 +865,13 @@ const Home = ({route, navigation}) => {
 
     var liquid_rdx_balance = 0;
 
-    addressBalances.forEach((balance, active_address) => {console.log("INITIAL BALANCES ("+active_address+"): "+JSON.stringify(balance))})
+    // addressBalances.forEach((balance, active_address) => {console.log("INITIAL BALANCES ("+active_address+"): "+JSON.stringify(balance))})
     console.log("Active Address ID: " + activeAddress)
     if(!(addressBalances.get(activeAddress) == undefined)){
      
     addressBalances.get(activeAddress).liquid_balances.forEach(balance =>  {
   
-   console.log("Balance: "+JSON.stringify(balance))
+  //  console.log("Balance: "+JSON.stringify(balance))
         balances.set(JSON.stringify(balance.token_identifier.rri).replace(/["']/g, ""),[
             JSON.stringify(balance.value).replace(/["']/g, ""),
              JSON.stringify(balance.token_identifier.symbol).replace(/["']/g, "").toUpperCase(),
@@ -893,7 +940,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
           selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
           inputSearchStyle={[styles.inputSearchStyle,getAppFont("white")]}
-          iconStyle={[styles.iconStyle,getAppFont("white")]}
+          iconStyle={[styles.iconStyle]}
           containerStyle ={[styles.containerStyle,getAppFont("white")]}
           data={walletDropdownVals}
           activeColor="#4DA892"
@@ -924,7 +971,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
           placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
           selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
           inputSearchStyle={[styles.inputSearchStyle,getAppFont("white")]}
-          iconStyle={[styles.iconStyle,getAppFont("white")]}
+          iconStyle={[styles.iconStyle]}
           containerStyle ={[styles.containerStyle,getAppFont("white")]}
           data={dropdownVals}
           activeColor="#4DA892"
@@ -982,7 +1029,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
         <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW
       })}>
         <View style={styles.rowStyle}>
-     <Text style={[{fontSize: 16, alignSelf:"center", alignContents:"center", textAlign:"center", justifyContent:"center"}, getAppFont("white")]}>       
+     <Text style={[{fontSize: 16, alignSelf:"center", textAlign:"center", justifyContent:"center"}, getAppFont("white")]}>       
      <IconFeather name="arrow-down-circle" size={16} color="white"/> Staking</Text>
         </View>
         </TouchableOpacity>
@@ -1104,9 +1151,6 @@ navigation.dispatch(pushAction);
   ;
 };
 
-function onSearch(text){
-  alert(text)
-}
 
 // const triggerStyles = {
 //   triggerText: {
@@ -1314,6 +1358,41 @@ containerStyle: {
     marginHorizontal: 0,
     paddingHorizontal: 10,
   },
+  backTextWhite: {
+    color: '#FFF',
+},
+rowFront: {
+    alignItems: 'center',
+    backgroundColor: '#CCC',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    justifyContent: 'center',
+    height: 50,
+},
+rowBack: {
+    alignItems: 'center',
+    backgroundColor: '#DDD',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+},
+backRightBtn: {
+    alignItems: 'center',
+    bottom: 0,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    width: 75,
+},
+backRightBtnLeft: {
+    backgroundColor: 'blue',
+    right: 75,
+},
+backRightBtnRight: {
+    backgroundColor: 'red',
+    right: 0,
+},
 });
 
 

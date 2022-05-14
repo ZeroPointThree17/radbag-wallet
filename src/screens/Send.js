@@ -284,7 +284,7 @@ style={[{padding:10, borderWidth:1, flex:1, borderRadius: 15, borderColor: globa
         placeholder='Amount'
         autoCapitalize='none'
         placeholderTextColor="#d3d3d3"
-         value={amount}
+        value={amount}
         onChangeText={value => {
           
           var cleanedVal = value.replace(/^0+/, '').replace(/,/g, '');

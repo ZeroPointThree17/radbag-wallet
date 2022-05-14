@@ -23,12 +23,17 @@ export default function HomeNav({route, navigation}) {
   return (
   
     <Tab.Navigator  
-    tabBarOptions={{
-      keyboardHidesTabBar: true,
-      activeTintColor: 'white',
-      inactiveTintColor: 'grey',
-   }} 
+
     screenOptions={{
+      tabBarHideOnKeyboard: true,
+      tabBarActiveTintColor: "white",
+      tabBarInactiveTintColor: "grey",
+      tabBarStyle: [
+        {
+          "display": "flex"
+        },
+        null
+      ],
       headerShown: false,
       alignSelf: 'center',
       headerTitleAlign: 'center',

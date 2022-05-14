@@ -66,10 +66,10 @@ String.prototype.hexEncode = function(){
   const [encryptMsgflag, setEncryptMsgflag] = useState(false)
   const [hashToDecrypt, setHashToDecrypt] = useState([])
   const [decryptedMap, setDecryptedMap] = useState(new Map())
-  global.isDarkMode = useColorScheme() === 'dark';
-  global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
-  global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
-  global.linkModeTranslation = useColorScheme() === 'dark' ? "white" : "blue";
+  // global.isDarkMode = useColorScheme() === 'dark';
+  global.modeTranslation = global.isDarkMode === true ? "white" : "black";
+  global.reverseModeTranslation = global.isDarkMode === true ? "black" : "white";
+  global.linkModeTranslation = global.isDarkMode === true ? "white" : "blue";
   const [isFocus, setIsFocus] = useState(false);
   const [currLabel, setCurrLabel] = useState();
   const [currValue, setCurrValue] = useState();

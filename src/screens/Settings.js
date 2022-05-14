@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { RefreshControl, Switch, ScrollView, Text, Image, View, StyleSheet, useColorScheme } from 'react-native';
+import { RefreshControl, Switch, ScrollView, Text, Image, View, StyleSheet, useColorScheme, Alert } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
 import LinearGradient from 'react-native-linear-gradient'; // Only if no expo
@@ -55,50 +55,62 @@ const optionalConfigObject = {
   const [refreshing, setRefreshing] = React.useState(false);
   const [refreshCount, setRefreshCount] = React.useState(11);
   const [TKUnlock, setTKUnlock] = React.useState(false);
-  var [isEnabled, setIsEnabled] = useState(true);
-  global.isDarkMode = useColorScheme() === 'dark';
-  global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
-  global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
+  var [PINisEnabled, setPINIsEnabled] = useState(true);
+  var [OSVisualOverrideIsEnabled, setOSVisualOverrideIsEnabled] = useState(false);
+  var [darkModeIsEnabled, setDarkModeIsEnabled] = useState(false);
+  var isOSdark = useColorScheme() === 'dark'
+  global.isDarkMode = OSVisualOverrideIsEnabled ? darkModeIsEnabled : isOSdark;
+  global.modeTranslation = global.isDarkMode === true ? "white" : "black";
+  global.reverseModeTranslation = global.isDarkMode === true ? "black" : "white";
 
 
   useEffect(() => {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
-      setIsEnabled(appPin != undefined);
+      setPINIsEnabled(appPin != undefined);
     })
   }, []);
 
   useInterval(() => {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
-      setIsEnabled(appPin != undefined);
+      setPINIsEnabled(appPin != undefined);
     })
   }, 3500);
 
-  const toggleSwitch = () => {
-
-    // alert(enablePINToggle)
-    if(!isEnabled){
+  const togglePINSwitch = () => {
+    if(!PINisEnabled){
       navigation.navigate('PIN')
     } else{
       AsyncStorage.removeItem('@AppPIN');
-      setIsEnabled(false);
+      setPINIsEnabled(false);
     }
-    // setIsEnabled(previousState => !previousState);
-
-    // if(!isEnabled){
-    //   navigation.navigate('PIN')
-    // }
   }
 
-  // TouchID.authenticate('to demo this react-native component')
-  // .then(success => {
-  //   // Success code
-  // })
-  // .catch(error => {
-  //   // Failure code
-  // });
+  const toggleOSVisualOverrideSwitch = () => {
+    if(!OSVisualOverrideIsEnabled){
+      // navigation.navigate('PIN')
+      setOSVisualOverrideIsEnabled(true);
+    } else{
+      AsyncStorage.removeItem('@OSVisualOverrideEnabled');
+      setOSVisualOverrideIsEnabled(false);
+    }
+  }
+
+  const toggleDarkModeSwitch = () => {
+    if(!darkModeIsEnabled){
+      global.isDarkMode = true;
+      alert("Please allow 30 seconds for all screens to refresh under new color mode")
+      setDarkModeIsEnabled(true);
+    } else{
+      alert("Please allow 30 seconds for all screens to refresh under new color mode")
+      AsyncStorage.removeItem('@darkModeEnabled');
+      setDarkModeIsEnabled(false);
+    }
+  }
+
+  
 
  return ( 
-  <View style={{flex:2, backgroundColor:globalThis.reverseModeTranslation}}>
+  <View style={{flex:2, backgroundColor:global.reverseModeTranslation}}>
 
      <ScrollView style={{flex:2}}
         refreshControl={
@@ -234,15 +246,50 @@ const optionalConfigObject = {
 <View style={{flex:0.1, alignItems:"flex-end", marginRight: 10}}>
 <Switch 
         trackColor={{ false: "#767577", true: "#81b0ff" }}
-        thumbColor={isEnabled ? "blue" : "#f4f3f4"}
+        thumbColor={PINisEnabled ? "blue" : "#f4f3f4"}
         ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleSwitch}
-        value={isEnabled}
+        onValueChange={togglePINSwitch}
+        value={PINisEnabled}
       />
       </View>
       </View>
       </View>
       <SeparatorBorder/>
+ 
+      <View style={[{backgroundColor:global.reverseModeTranslation}]}>
+<View style={[styles.rowStyle, {marginLeft: 15, marginTop: 10, marginBottom: 10, flexDirection: "row"}]}>
+<IconMaterialMain style={{alignSelf:"center"}} name="fiber-pin" size={20} color="#4F8EF7"/>
+<Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Override Sytem Light/Dark Mode?</Text>
+<View style={{flex:0.1, alignItems:"flex-end", marginRight: 10}}>
+<Switch 
+        trackColor={{ false: "#767577", true: "#81b0ff" }}
+        thumbColor={OSVisualOverrideIsEnabled ? "blue" : "#f4f3f4"}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleOSVisualOverrideSwitch}
+        value={OSVisualOverrideIsEnabled}
+      />
+      </View>
+      </View>
+      </View>
+      <SeparatorBorder/>
+
+      {OSVisualOverrideIsEnabled && <React.Fragment><View style={[{backgroundColor:global.reverseModeTranslation}]}>
+<View style={[styles.rowStyle, {marginLeft: 15, marginTop: 10, marginBottom: 10, flexDirection: "row"}]}>
+<IconMaterialMain style={{alignSelf:"center"}} name="fiber-pin" size={20} color="#4F8EF7"/>
+<Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Enable Dark Mode?</Text>
+<View style={{flex:0.1, alignItems:"flex-end", marginRight: 10}}>
+<Switch 
+        trackColor={{ false: "#767577", true: "#81b0ff" }}
+        thumbColor={darkModeIsEnabled ? "blue" : "#f4f3f4"}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleDarkModeSwitch}
+        value={darkModeIsEnabled}
+      />
+      </View>
+      </View>
+      </View>
+      <SeparatorBorder/></React.Fragment>}
+ 
  
 </ScrollView>
 

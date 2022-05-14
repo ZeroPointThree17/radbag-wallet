@@ -770,9 +770,9 @@ const Home = ({route, navigation}) => {
     const [tokenFilter, setTokenFilter] = useState("");
     const [walletFilter, setWalletFilter] = useState();
     const [addressFilter, setAddressFilter] = useState();
-    global.isDarkMode = useColorScheme() === 'dark';
-    global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
-    global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
+    // global.isDarkMode = useColorScheme() === 'dark';
+    global.modeTranslation = global.isDarkMode === true ? "white" : "black";
+    global.reverseModeTranslation = global.isDarkMode === true ? "black" : "white";
  
 
     const storeCurrData = async (json, setCurrValue, setCurrLabel) => {

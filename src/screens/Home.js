@@ -1129,7 +1129,7 @@ navigation.dispatch(pushAction);
 {/* </View> */}
 
     <TouchableOpacity onPress={() => setTokenFilter("")}>
-      <IconMaterial name="clear" size={30} color={global.modeTranslation} style={{textAlignVertical:"center", paddingLeft:10, paddingRight:10}}/>
+      <IconMaterial name="clear" size={30} color={global.modeTranslation} style={{textAlignVertical:"center", paddingLeft:10, paddingRight:0}}/>
     </TouchableOpacity>
 
 </View>

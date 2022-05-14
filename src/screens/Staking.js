@@ -28,21 +28,21 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
   Keyboard.dismiss; 
 
-  amount = amount.replace(/,/g, '');
-
-  if(destAddr == undefined || destAddr.length==0){
+  if(amount == undefined || amount.length==0){
+    alert("Amount is required")
+  }
+  else if(destAddr == undefined || destAddr.length==0){
     alert("Validator address is required")
   }
- else if(amount == undefined || amount.length==0){
-  alert("Amount is required")
- }
   else if ( isNaN(amount) ){
     alert("Amount entered must be a number")
   }
-  else if(amount==0){
+  else if(amount <= 0){
     alert("Amount must be greater than 0")
   }
   else{
+
+    amount = amount.replace(/,/g, '');
 
     showMessage({
       message: "Building Transaction...",

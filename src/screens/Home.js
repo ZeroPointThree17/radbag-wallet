@@ -12,6 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
 import { openContextMenu, getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay, currencyList, setNewGatewayIdx } from '../helpers/helpers';
@@ -1114,16 +1115,24 @@ navigation.dispatch(pushAction);
         /> */}
 
         </View>
-
+<View style={styles.rowStyleLeftCenter}>
+{/* <View style={{
+    alignItems: 'center'}}> */}
         <TextInput
       value={tokenFilter}
       autoCapitalize = "none"
       placeholder = "Filter tokens"
       placeholderTextColor="#d3d3d3"
       onChangeText={text => setTokenFilter(text)}
+      style={[{  flex: 9,width: 'auto', borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5, borderColor: global.modeTranslation}, getAppFont('black')]}
+/>
+{/* </View> */}
 
-      style={[{borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5, borderColor: global.modeTranslation}, getAppFont('black')]}
-    />
+    <TouchableOpacity onPress={() => setTokenFilter("")}>
+      <IconMaterial name="clear" size={30} color={global.modeTranslation} style={{textAlignVertical:"center", paddingLeft:10, paddingRight:10}}/>
+    </TouchableOpacity>
+
+</View>
     <Separator/>
 {renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
 
@@ -1224,7 +1233,14 @@ const styles = StyleSheet.create({
       rowStyleLeft: {
         flexDirection: 'row',
         fontSize: 4,
-        alignItems: 'left',
+        alignItems: 'flex-start',
+        marginVertical:5,
+      },
+      rowStyleLeftCenter: {
+        flexDirection: 'row',
+        fontSize: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
         marginVertical:5,
       },
       buttonText: {

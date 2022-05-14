@@ -28,13 +28,14 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
   Keyboard.dismiss; 
 
-  if(amount == undefined || amount.length==0){
-    alert("Amount is required")
-  } else{
+  if (amount != undefined){
     amount = amount.replace(/,/g, '');
   }
-
-  if(destAddr == undefined || destAddr.length==0){
+  
+  if(amount == undefined || amount.length==0){
+    alert("Amount is required")
+  } 
+  else if(destAddr == undefined || destAddr.length==0){
     alert("Validator address is required")
   }
   else if ( isNaN(amount) ){

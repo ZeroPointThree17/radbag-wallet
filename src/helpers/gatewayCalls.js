@@ -284,7 +284,7 @@ export function buildTxnFetch(gatewayIdx, usbConn, setSubmitEnabled, rri, source
 
               Alert.alert(
                 "Commit Transaction?",
-                "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for a tranfer of "+amount+" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
+                "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for a tranfer of "+ new bigDecimal(amount).getPrettyValue() +" "+symbol+" to "+shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
                 [
                   {
                     text: "Cancel",

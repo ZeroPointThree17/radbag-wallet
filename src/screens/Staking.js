@@ -28,6 +28,8 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
   Keyboard.dismiss; 
 
+  amount = amount.replace(/,/g, '');
+
   if(destAddr == undefined || destAddr.length==0){
     alert("Validator address is required")
   }
@@ -146,7 +148,7 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
             Alert.alert(
               "Commit Transaction?",
-              "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this "+actionType+" action of "+amount+" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
+              "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this "+actionType+" action of "+ new bigDecimal(amount).getPrettyValue() +" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
               [
                 {
                   text: "Cancel",

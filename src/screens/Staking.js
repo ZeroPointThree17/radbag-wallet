@@ -148,7 +148,7 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
             Alert.alert(
               "Commit Transaction?",
-              "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this "+actionType+" action of "+ new bigDecimal(amount).getPrettyValue() +" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
+              "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this " + actionType.toUpperCase() + " action of "+ new bigDecimal(amount).getPrettyValue() +" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
               [
                 {
                   text: "Cancel",

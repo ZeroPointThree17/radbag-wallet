@@ -30,8 +30,11 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
   if(amount == undefined || amount.length==0){
     alert("Amount is required")
+  } else{
+    amount = amount.replace(/,/g, '');
   }
-  else if(destAddr == undefined || destAddr.length==0){
+
+  if(destAddr == undefined || destAddr.length==0){
     alert("Validator address is required")
   }
   else if ( isNaN(amount) ){
@@ -41,8 +44,6 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
     alert("Amount must be greater than 0")
   }
   else{
-
-    amount = amount.replace(/,/g, '');
 
     showMessage({
       message: "Building Transaction...",

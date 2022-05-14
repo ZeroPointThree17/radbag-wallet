@@ -1119,8 +1119,10 @@ navigation.dispatch(pushAction);
       value={tokenFilter}
       autoCapitalize = "none"
       placeholder = "Filter tokens"
+      placeholderTextColor="#d3d3d3"
       onChangeText={text => setTokenFilter(text)}
-      style={{borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5}}
+
+      style={[{borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5, borderColor: global.modeTranslation}, getAppFont('black')]}
     />
     <Separator/>
 {renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}

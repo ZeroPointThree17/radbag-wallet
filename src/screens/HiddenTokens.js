@@ -216,6 +216,9 @@ source={{uri: balance[3]}} />
   <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
   {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
   </View> 
+  <View style={{ paddingLeft: 10, justifyContents:'center', alignItems:'center',textAlign:"right", flex:1}}>
+        <Text>Unhide</Text><IconMaterial name="visibility" size={20} color={global.modeTranslation} />
+  </View> 
   </View> 
   </TouchableOpacity>
   </View>        )
@@ -266,6 +269,9 @@ source={{uri: balance[3]}} />
       {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
       
       {/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
+      </View> 
+      <View style={{ paddingLeft: 10, justifyContents:'center', alignItems:'center',textAlign:"right", flex:1}}>
+        <Text>Unhide</Text><IconMaterial name="visibility" size={20} color={global.modeTranslation} />
       </View> 
       </View> 
       
@@ -325,56 +331,6 @@ source={{uri: balance[3]}} />
       />
     </View> )
   }
-
-  // var searchList = []
-  // searchList.push(
-  //   <SearchList 
-  //   style={{alignSelf: "center", backgroundColor:"#183A81"}}
-  //   data={[]}
-  //   renderRow={() => {}}
-  //   renderEmptyResult={() => {renderEmpty()}}
-  //   renderBackButton={() => null}
-  //   renderEmpty={() => {}}
-
-  //   rowHeight={12}
-
-  //   // colors = {toolbarBackgroundColor='#183A81'}
-  //   // toolbarWidth={'auto'}
-  //   title='Token Search'
-  //   cancelTitle='Cancel'
-  //   onClickBack={() => {}}
-
-  //   searchListBackgroundColor={'white'}
-  //   searchListStyle={{width:'auto', backgroundColor:"#183A81", color:"#183A81"}}
-
-  //   searchBarToggleDuration={300}
-  //   searchInputStyle={{width:'auto'}}
-  //   searchBarStyle={{width:'auto', backgroundColor:"#183A81", color:"#183A81"}}
-
-  //   searchInputBackgroundColor={'white'}
-  //   searchInputBackgroundColorActive={'#183A81'}
-  //   searchInputPlaceholderColor={'#183A81'}
-  //   searchInputTextColor={'#183A81'}
-  //   searchInputTextColorActive={'#183A81'}
-  //   searchInputPlaceholder='Search'
-  //   sectionIndexTextColor={'#183A81'}
-  //   searchBarBackgroundColor={'white'}
-  // />
-  // )
-
-  // var alphabet = [];
-
-  // alphabet.push(
-  //   <View style = {styles.rowStyle}>
-  //     <Text>A</Text><Text> </Text><Text>B</Text><Text> </Text>
-  //     <Text>C</Text><Text> </Text><Text>D</Text><Text> </Text>
-  //     <Text>E</Text><Text> </Text><Text>F</Text><Text> </Text>
-  //     <Text>G</Text><Text> </Text><Text>H</Text><Text> </Text>
-  //     <Text>I</Text><Text> </Text><Text>J</Text><Text> </Text>
-  //     <Text>K</Text><Text> </Text><Text>L</Text><Text> </Text>
-  //     <Text>M</Text><Text> </Text><Text>N</Text><Text> </Text>
-  //   </View>
-  // );
 
   return (headerRow.concat(xrdRow).concat(rows))
 

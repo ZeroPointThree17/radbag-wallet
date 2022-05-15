@@ -212,7 +212,7 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
           {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
         </View> 
         <View style={{ paddingLeft: 10, justifyContents:'center', alignItems:'center',textAlign:"right", flex:1}}>
-          <Text>Unhide</Text><IconMaterial name="visibility" size={20} color={global.modeTranslation} />
+          <Text style={getAppFont("black")}>Unhide</Text><IconMaterial name="visibility" size={20} color={global.modeTranslation} />
         </View> 
       </View> 
   </TouchableOpacity>
@@ -305,7 +305,7 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
       {/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
       </View> 
       <View style={{ paddingLeft: 10, justifyContents:'center', alignItems:'center',textAlign:"right", flex:1}}>
-        <Text>Unhide</Text><IconMaterial name="visibility" size={20} color={global.modeTranslation} />
+        <Text style={getAppFont("black")}>Unhide</Text><IconMaterial name="visibility" size={20} color={global.modeTranslation} />
       </View> 
       </View> 
       

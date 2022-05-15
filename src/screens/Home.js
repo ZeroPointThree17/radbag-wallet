@@ -29,7 +29,6 @@ import {
   SlideInMenu,
   ContexrMenu
 } from 'react-native-popup-menu';
-import { SwipeListView } from 'react-native-swipe-list-view';
 
 
 
@@ -143,10 +142,8 @@ function addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, set
 }
 
 
-
 function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
-  
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
         var totalWalletValue = new bigDecimal(0);
@@ -245,9 +242,6 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
     </View>        )
       } else{
 
-
-
-
         if(rri == blackListed){
           possScamToken = true;
         } else {
@@ -311,7 +305,6 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
     </Menu>
         </View>  
       
-
      )
         
       }
@@ -766,19 +759,16 @@ const Home = ({route, navigation}) => {
                 JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.name).replace(/["']/g, ""),
                JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.icon_url).replace(/["']/g, "") ])
       
-        }
-    }
-}
+          }
+      }
+  }
 
-//  alert(isHW)
 
-console.log("WALLETS: "+JSON.stringify(wallets));
+  console.log("WALLETS: "+JSON.stringify(wallets));
 
-// alert(JSON.stringify(getCurrData()));
 
 
   return (
-
     <SafeAreaView style={styles.containerMain}>
         <ScrollView style={[styles.scrollView, {backgroundColor: global.reverseModeTranslation}]} 
         refreshControl={
@@ -786,169 +776,152 @@ console.log("WALLETS: "+JSON.stringify(wallets));
               refreshing={refreshing}
               onRefresh={onRefresh}/>
             }>
-            <View  > 
-                
-                <View style={styles.rowStyle}>
+        <View >         
+        <View style={styles.rowStyle}>
+        <LinearGradient colors={[global.appBlue,global.appGreen, global.appGreen]} useAngle={true} angle={11} style={styles.surface}>
+        <View style={styles.rowStyle}>
+        <Dropdown
+            style={[getAppFont("white"), styles.dropdown, isFocus && { borderColor: 'blue' }]}
+              placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
+              selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
+              inputSearchStyle={[styles.inputSearchStyle,getAppFont("white")]}
+              iconStyle={[styles.iconStyle]}
+              containerStyle ={[styles.containerStyle,getAppFont("white")]}
+              data={walletDropdownVals}
+              activeColor="#4DA892"
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Select Wallet' : '...'}
+              searchPlaceholder="Search..."
+              label={walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)] == undefined ? "Setting up..." : walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)].label}
+              value={walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)] == undefined ? "Setting up..." : walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)].value}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                updateActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+                setLabel(item.label);
+                setValue(item.value);
+                setIsFocus(true);
+              }}
+            /> 
 
-                
-                <LinearGradient colors={[global.appBlue,global.appGreen, global.appGreen]} useAngle={true} angle={11} style={styles.surface}>
-            
-                {/* <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}> */}
-            
+            <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""))}}>
+                <IconFeather name="copy" size={20} color="white" />
+            </TouchableOpacity>
+        </View>
+        <Dropdown
+            style={[getAppFont("white"), styles.dropdown, isFocusAddr && { borderColor: 'blue' }]}
+              placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
+              selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
+              inputSearchStyle={[styles.inputSearchStyle,getAppFont("white")]}
+              iconStyle={[styles.iconStyle]}
+              containerStyle ={[styles.containerStyle,getAppFont("white")]}
+              data={dropdownVals}
+              activeColor="#4DA892"
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocusAddr ? 'Select Address' : '...'}
+              searchPlaceholder="Search..."
+              label={ dropdownVals[getDDIndex(dropdownVals,activeAddress)] == undefined ? "Setting up..." : dropdownVals[getDDIndex(dropdownVals,activeAddress)].label}
+              value={ dropdownVals[getDDIndex(dropdownVals,activeAddress)] == undefined ? "Setting up..." : dropdownVals[getDDIndex(dropdownVals,activeAddress)].value}
+              onFocus={() => setIsFocusAddr(true)}
+              onBlur={() => setIsFocusAddr(false)}
+              // onInput={(text) => { setAddressFilter(text) }}
+              onChange={item => {
+                updateActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
+                setLabelAddr(item.label);
+                setValueAddr(item.value);
+                setIsFocusAddr(true);
+              }}
+            />
+
+            <Separator/>
+            <Text style={[{fontSize: 20}, getAppFont("white")]}>Staked: {formatNumForHomeDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForHomeDisplay(liquid_rdx_balance)} XRD</Text>
+      
             <View style={styles.rowStyle}>
 
-<Dropdown
-         style={[getAppFont("white"), styles.dropdown, isFocus && { borderColor: 'blue' }]}
-          placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
-          selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
-          inputSearchStyle={[styles.inputSearchStyle,getAppFont("white")]}
-          iconStyle={[styles.iconStyle]}
-          containerStyle ={[styles.containerStyle,getAppFont("white")]}
-          data={walletDropdownVals}
-          activeColor="#4DA892"
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus ? 'Select Wallet' : '...'}
-          searchPlaceholder="Search..."
-          label={walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)] == undefined ? "Setting up..." : walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)].label}
-          value={walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)] == undefined ? "Setting up..." : walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)].value}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={item => {
-            updateActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
-            setLabel(item.label);
-            setValue(item.value);
-            setIsFocus(true);
-          }}
-        /> 
-
-        <TouchableOpacity style={styles.button} onPress={ () => {copyToClipboard(JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""))}}>
-            <IconFeather name="copy" size={20} color="white" />
-        </TouchableOpacity>
-    </View>
-    <Dropdown
-         style={[getAppFont("white"), styles.dropdown, isFocusAddr && { borderColor: 'blue' }]}
-          placeholderStyle={[styles.placeholderStyle,getAppFont("white")]}
-          selectedTextStyle={[styles.selectedTextStyle,getAppFont("white")]}
-          inputSearchStyle={[styles.inputSearchStyle,getAppFont("white")]}
-          iconStyle={[styles.iconStyle]}
-          containerStyle ={[styles.containerStyle,getAppFont("white")]}
-          data={dropdownVals}
-          activeColor="#4DA892"
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocusAddr ? 'Select Address' : '...'}
-          searchPlaceholder="Search..."
-          label={ dropdownVals[getDDIndex(dropdownVals,activeAddress)] == undefined ? "Setting up..." : dropdownVals[getDDIndex(dropdownVals,activeAddress)].label}
-          value={ dropdownVals[getDDIndex(dropdownVals,activeAddress)] == undefined ? "Setting up..." : dropdownVals[getDDIndex(dropdownVals,activeAddress)].value}
-          onFocus={() => setIsFocusAddr(true)}
-          onBlur={() => setIsFocusAddr(false)}
-          // onInput={(text) => { setAddressFilter(text) }}
-          onChange={item => {
-            updateActiveAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, item.value, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
-            setLabelAddr(item.label);
-            setValueAddr(item.value);
-            setIsFocusAddr(true);
-
-          }}
-        />
-
-       <Separator/>
-       <Text style={[{fontSize: 20}, getAppFont("white")]}>Staked: {formatNumForHomeDisplay(stakedAmount)} XRD{"\n"}Liquid: {formatNumForHomeDisplay(liquid_rdx_balance)} XRD</Text>
- 
-       <View style={styles.rowStyle}>
-
-       <View style={styles.rowStyleHome}>
-       <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() => navigation.navigate('Receive',{xrdAddress: enabledAddresses.get(activeAddress).radix_address})}>
-        <View style={styles.rowStyle}>
+            <View style={styles.rowStyleHome}>
+            <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() => navigation.navigate('Receive',{xrdAddress: enabledAddresses.get(activeAddress).radix_address})}>
+            <View style={styles.rowStyle}>
      
        
-        <Text style={[{fontSize: 16}, getAppFont("white")]}>
-        <IconMaterialCommunityIcons name="call-received" size={16} color="white" /> Receive</Text>
-        </View>
+            <Text style={[{fontSize: 16}, getAppFont("white")]}>
+            <IconMaterialCommunityIcons name="call-received" size={16} color="white" /> Receive</Text>
+            </View>
+            
+            </TouchableOpacity>
+
+            </View>
+
+            <View style={styles.rowStyleHome}>
+            <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol:"XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW})}>
+            <View style={styles.rowStyle}>
+
+            <Text style={[{fontSize: 16, alignSelf:"center" }, getAppFont("white")]}>
+            <IconFeather name="send" size={16} color="white" /> Send</Text>
+            </View>
+            </TouchableOpacity>
+            </View>
+
+            <View style={styles.rowStyleHome}>
+            <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW
+          })}>
+              <View style={styles.rowStyle}>
+                <Text style={[{fontSize: 16, alignSelf:"center", textAlign:"center", justifyContent:"center"}, getAppFont("white")]}>       
+                <IconFeather name="arrow-down-circle" size={16} color="white"/> Staking</Text>
+              </View>
+            </TouchableOpacity>
+            </View>
+            </View>
+            </LinearGradient>
+          </View>
+
+        <View style={{marginHorizontal:20}}>  
+        <View style={styles.rowStyle}>
+        <View style={styles.rowStyleHome}>  
+        <TouchableOpacity onPress={() => 
+            {
+              const pushAction = StackActions.push('Import Select', { firstTimeStr: 'false' });
+              navigation.dispatch(pushAction);
+            }
+        }>
+        <View style={styles.rowStyle}>
         
+        <Text style={[styles.buttonText, getAppFont("black")]}>
+        <IconMaterialCommunityIcons name="application-import" size={12} color={global.modeTranslation} /> Import Wallet</Text></View>
         </TouchableOpacity>
-
         </View>
-        {/* <Text style={{fontSize: 14, color:"white"}}>          </Text> */}
-  
-        <View style={styles.rowStyleHome}>
-        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol:"XRD" + " (" + shortenAddress("xrd_rr1qy5wfsfh") + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW})}>
+
+        <View style={styles.rowStyleHome}>  
+          <TouchableOpacity onPress={() => {
+              const pushAction = StackActions.push('Mnemonic', { firstTimeStr: 'false' });
+              navigation.dispatch(pushAction);
+            }
+          }>
         <View style={styles.rowStyle}>
-
-        <Text style={[{fontSize: 16, alignSelf:"center" }, getAppFont("white")]}>
-        <IconFeather name="send" size={16} color="white" /> Send</Text>
-        </View>
+      
+        <Text style={[styles.buttonText, getAppFont("black")]}>
+        <IconEntypo name="wallet" size={12} color={global.modeTranslation} /> New Wallet</Text></View>
         </TouchableOpacity>
-        </View>
-        {/* <Text style={{fontSize: 14, color:"white"}}>          </Text> */}
-
-        <View style={styles.rowStyleHome}>
-        <TouchableOpacity disabled={isNaN(stakedAmount)} style={styles.button} onPress={() =>  navigation.navigate('Staking',{currAddr: JSON.stringify(enabledAddresses.get(activeAddress).radix_address).replace(/["']/g, ""),hdpathIndex: getDDIndex(dropdownVals,activeAddress), isHWBool: isHW
-      })}>
+      </View>
+      <View style={styles.rowStyleHome}>  
+        
+        <TouchableOpacity onPress={() => addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
         <View style={styles.rowStyle}>
-     <Text style={[{fontSize: 16, alignSelf:"center", textAlign:"center", justifyContent:"center"}, getAppFont("white")]}>       
-     <IconFeather name="arrow-down-circle" size={16} color="white"/> Staking</Text>
+          <Text style={[styles.buttonText, getAppFont("black")]}>
+          <IconFeather name="hash" size={12} color={global.modeTranslation} /> Add Address</Text></View>
+          </TouchableOpacity> 
         </View>
-        </TouchableOpacity>
+        </View>
         </View>
 
-        </View>
-        </LinearGradient>
-</View>
 
-<View style={{marginHorizontal:20}}>  
-     <View style={styles.rowStyle}>
-     <View style={styles.rowStyleHome}>  
-     <TouchableOpacity onPress={() => 
-
-{
-const pushAction = StackActions.push('Import Select', { firstTimeStr: 'false' });
-
-navigation.dispatch(pushAction);
-     }
-    }>
-     <View style={styles.rowStyle}>
-    
-<Text style={[styles.buttonText, getAppFont("black")]}>
-<IconMaterialCommunityIcons name="application-import" size={12} color={global.modeTranslation} /> Import Wallet</Text></View>
-</TouchableOpacity>
-</View>
-
-<View style={styles.rowStyleHome}>  
-     <TouchableOpacity onPress={() => 
-
-{
-const pushAction = StackActions.push('Mnemonic', { firstTimeStr: 'false' });
-
-navigation.dispatch(pushAction);
-     }
-    }>
-     <View style={styles.rowStyle}>
-  
-         {/* <Icon name="add-circle-outline" size={20} color="#4F8EF7" /> */}
-<Text style={[styles.buttonText, getAppFont("black")]}>
-<IconEntypo name="wallet" size={12} color={global.modeTranslation} /> New Wallet</Text></View>
-</TouchableOpacity>
-</View>
-<View style={styles.rowStyleHome}>  
-     <TouchableOpacity onPress={() => addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, activeWallet, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)}>
-     <View style={styles.rowStyle}>
-    
-<Text style={[styles.buttonText, getAppFont("black")]}>
-<IconFeather name="hash" size={12} color={global.modeTranslation} /> Add Address</Text></View>
-</TouchableOpacity> 
-</View>
-</View>
-</View>
-
-
-<View style={{margin:10, marginTop: 6}}>
-<View style={styles.rowStyle}>
+      <View style={{margin:10, marginTop: 6}}>
+      <View style={styles.rowStyle}>
 {/* 
 <Dropdown
          style={[getAppFont("black"), styles.dropdown,  isFocus && { borderColor: 'blue' }]}
@@ -975,68 +948,46 @@ navigation.dispatch(pushAction);
           }}
         /> */}
 
+            </View>
+        <View style={styles.rowStyleLeftCenter}>
+
+          <TextInput
+          value={tokenFilter}
+          autoCapitalize = "none"
+          placeholder = "Filter tokens"
+          placeholderTextColor="#d3d3d3"
+          onChangeText={text => setTokenFilter(text)}
+          style={[{  flex: 9,width: 'auto', borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5, borderColor: global.modeTranslation}, getAppFont('black')]}
+          />
+
+        <TouchableOpacity onPress={() => setTokenFilter("")}>
+          <IconMaterial name="clear" size={30} color={global.modeTranslation} style={{textAlignVertical:"center", paddingLeft:10, paddingRight:0}}/>
+        </TouchableOpacity>
+
         </View>
-<View style={styles.rowStyleLeftCenter}>
-{/* <View style={{
-    alignItems: 'center'}}> */}
-        <TextInput
-      value={tokenFilter}
-      autoCapitalize = "none"
-      placeholder = "Filter tokens"
-      placeholderTextColor="#d3d3d3"
-      onChangeText={text => setTokenFilter(text)}
-      style={[{  flex: 9,width: 'auto', borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5, borderColor: global.modeTranslation}, getAppFont('black')]}
-/>
-{/* </View> */}
-
-    <TouchableOpacity onPress={() => setTokenFilter("")}>
-      <IconMaterial name="clear" size={30} color={global.modeTranslation} style={{textAlignVertical:"center", paddingLeft:10, paddingRight:0}}/>
-    </TouchableOpacity>
-
-</View>
-    <Separator/>
-{renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
-
-</View> 
+        <Separator/>
+        {renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
+        </View> 
         <Separator/>
 
         { isNaN(stakedAmount) &&
-<Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
-}
-<Separator/>
-<Separator/>
-<Separator/>
-{/* <Separator/>
-<Text style={[ getAppFont("black")]}>Transaction History (last 30 transactions)</Text>
-<SeparatorBorder/>
-{historyRows} */}
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-<Separator/>
-  </View> 
-  </ScrollView>
-  </SafeAreaView>
-
-  )
+          <Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />
+        }
+        <Separator/>
+        <Separator/>
+        <Separator/>
+        <Separator/>
+        <Separator/>
+        <Separator/>
+        <Separator/>
+        <Separator/>
+      </View> 
+      </ScrollView>
+      </SafeAreaView>
+    )
   ;
 };
 
-
-// const triggerStyles = {
-//   triggerText: {
-//     color: 'white',
-//   },
-//   triggerWrapper: {
-//     padding: 5,
-//     backgroundColor: 'blue',
-//   },
-//   triggerTouchable: {
-//     underlayColor: 'darkblue',
-//     activeOpacity: 70,
-//   }
-// };
 
 const styles = StyleSheet.create({
 

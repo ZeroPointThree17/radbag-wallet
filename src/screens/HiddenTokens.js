@@ -604,29 +604,6 @@ const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
 
-function unhideToken(activeWallet, rri){
-  AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenListSaved) => {
-                 
-    var hiddenList = []
-    try{
-      hiddenList = JSON.parse(hiddenListSaved);
-      hiddenList.forEach(
-
-      )
-      hiddenList.push(rri);
-    } catch(e)
-    {
-      hiddenList.push(rri);
-    }
-
-    AsyncStorage.setItem('@HiddenTokensWallet-'+activeWallet, JSON.stringify(hiddenList)).then( (value) => 
-    {
-      alert(balance[2] + " token added to hide list. Token will disappear from view shortly.")
-    }
-  )
-  }
-  )
-}
 
 const HiddenTokens = ({route, navigation}) => {
 
@@ -648,6 +625,7 @@ const HiddenTokens = ({route, navigation}) => {
     const [tokenPrices, setTokenPrices] = useState();
     const [tokenFilter, setTokenFilter] = useState("");
     const [hiddenTokens, setHiddenTokens] = useState([]);
+    const [defaultHiddenTokenMsg, setDefaultHiddenTokenMsg] = useState("");
 
     // global.isDarkMode = useColorScheme() === 'dark';
     global.modeTranslation = global.isDarkMode === true ? "white" : "black";
@@ -714,7 +692,7 @@ const HiddenTokens = ({route, navigation}) => {
     useEffect(() => {
       AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
         AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
-          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){}
+          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){setHiddenTokens([])}
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
         })  
       })
@@ -724,7 +702,8 @@ const HiddenTokens = ({route, navigation}) => {
     useInterval(() => {
       AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
         AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
-          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){}
+          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){setHiddenTokens([])}
+          setDefaultHiddenTokenMsg("This wallet does not have any hidden tokens")
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
         })    
       })
@@ -844,14 +823,13 @@ console.log("WALLETS: "+JSON.stringify(wallets));
     </View>
     <Separator/>
       {renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
-      {hiddenTokens == undefined || hiddenTokens.length == 0 ? 
-          hiddenTokens != undefined ?
-            <React.Fragment>
-              <Separator/>
-              <Separator/>
-              <Text style={[getAppFont("black"),{textAlign:'center'}]}>This wallet does not have any hidden tokens</Text>
-            </React.Fragment> : <Text></Text>
-              : <Text></Text>}
+      {!isNaN(stakedAmount) && (hiddenTokens == undefined || hiddenTokens.length == 0) ? 
+        <React.Fragment>
+        <Separator/>
+        <Separator/>
+        <Text style={[getAppFont("black"),{textAlign:'center'}]}>{defaultHiddenTokenMsg}</Text>
+        </React.Fragment> 
+        : <Text></Text>}
     </View> 
     <Separator/>
 

@@ -5,6 +5,7 @@ import { StackActions } from '@react-navigation/native';
 var SQLite = require('react-native-sqlite-storage');
 import { Separator } from '../helpers/jsxlib';
 import { getAppFont, useInterval, openCB, errorCB } from '../helpers/helpers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function updateWalletName(name, walletId){

@@ -39,16 +39,6 @@ const optionalConfigObject = {
   passcodeFallback: true, // iOS - allows the device to fall back to using the passcode, if faceid/touch is not available. this does not mean that if touchid/faceid fails the first few times it will revert to passcode, rather that if the former are not enrolled, then it will use the passcode.
 };
 
-// function _pressHandler() {
-//   TouchID.authenticate('to demo this react-native component', optionalConfigObject)
-//     .then(success => {
-//       alert('Authenticated Successfully');
-//     })
-//     .catch(error => {
-//       alert(error.message)
-//     });
-// }
-
 
  const Settings = ({route, navigation}) => {
 

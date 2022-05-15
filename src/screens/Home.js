@@ -696,7 +696,7 @@ const Home = ({route, navigation}) => {
     useEffect(() => {
       AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
         AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
-          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){}
+          try{if(hiddenList != undefined){setHiddenTokens(JSON.parse(hiddenList))}} catch(e){}
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
           })  
       })
@@ -706,7 +706,7 @@ const Home = ({route, navigation}) => {
     useInterval(() => {
       AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
         AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
-          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){}
+          try{if(hiddenList != undefined){setHiddenTokens(JSON.parse(hiddenList))}} catch(e){}
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
         })    
       })

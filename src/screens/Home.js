@@ -260,7 +260,7 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
           
             </MenuTrigger>
             <MenuOptions>
-            <MenuOption onSelect={() => {
+            <MenuOption style={{backgroundColor:global.reverseModeTranslation, borderWidth:1, borderColor:global.modeTranslation}} onSelect={() => {
 
               Alert.alert(
                 "Hide Token",
@@ -283,6 +283,7 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
                           hiddenList.push(rri);
                         } catch(e)
                         {
+                          hiddenList = []
                           hiddenList.push(rri);
                         }
 
@@ -302,7 +303,7 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
                 )
                 }}> 
             <View style={{justifyContent: 'center', alignItems:'center'}}>
-              <Text><IconMaterialCommunityIcons name="eye-off" size={20} color="black" />  Hide</Text> 
+              <Text style={getAppFont("black")}><IconMaterialCommunityIcons name="eye-off" size={20} color={global.modeTranslation} />  Hide</Text> 
               </View>
             </MenuOption>
           </MenuOptions>

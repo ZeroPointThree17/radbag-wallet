@@ -83,7 +83,6 @@ function getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCu
     
              getActiveWallet(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances, hwWallets, setIsHW);
              
-             console.log("inside get wallets");
       }, errorCB);
         });
         
@@ -142,7 +141,7 @@ function addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, set
 }
 
 
-function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
+function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
     if( balances.size > 0 && enabledAddresses.size > 0 ){
 
@@ -154,34 +153,11 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
         var possScamToken = false;
         var appendStr = ""
 
-        // balances.forEach((balance, rri) =>  {
-        //   symbolCnts.set(balance[1],0)
-        // })
-
-        // var newBalances = new Map([...balances.entries()].sort((a, b) => b[1].toString().toUpperCase() < a[1].toString().toUpperCase()));
-
-        // var balancesSorted = Array.from(balances.values());
-
-        // var ordered = []
-      
-        // // Array.from(balances.values()).forEach( (balance) => {ordered.push(balance[2].toUpperCase())})
-        // Array.from(balances.values()).forEach( (balance) => {ordered.push(balance[2].toUpperCase())})
-
-
       var balancesArry = Array.from(balances.entries())
 
       balancesArry.sort(function(a, b){
           return a[1][2].toUpperCase() > b[1][2].toUpperCase();
       });
-
-      // alert(JSON.stringify(balancesJSON))
-        // ordered.forEach( (name) => {ordered.push(balance[2].toUpperCase())})
-
-      //   balances[Symbol.iterator] = function* () {
-      //     yield* [...this.entries()].sort((a, b) => a[1][2] - b[1][2]);
-      // }
-
-      // alert(balances.keys())
 
       balancesArry.forEach((entry) =>  
    {
@@ -215,31 +191,27 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
                
             <View key={rri}>
 
-   <SeparatorBorder/>
-    <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol: balance[1] + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
+            <SeparatorBorder/>
+              <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol: balance[1] + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
 
-    <View style={styles.addrRowStyle}>
+                <View style={styles.addrRowStyle}>
+                  <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
+                  defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
+                  source={{uri: balance[3]}} />
+                  
+                  <View style={{flex:1.8}}>
+                    <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
+                    <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
+                  </View>
 
-
-
-  <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
-  defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
-  source={{uri: balance[3]}} />
-    
-    {/* </ImageBackground> */}
-
-    <View style={{flex:1.8}}>
-        <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
-        <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
-        </View>
-    {/* <Text style={{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  Warning</Text> */}
-    <View style={{flex:1.7}}>
-    <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
-    {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
-    </View> 
-    </View> 
-    </TouchableOpacity>
-    </View>        )
+                  <View style={{flex:1.7}}>
+                    <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
+                    {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
+                  </View> 
+                </View> 
+              </TouchableOpacity>
+            </View>        
+        )
       } else{
 
         if(rri == blackListed){
@@ -253,60 +225,92 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
         if(rri=="dgc_rr1qvnre767vp607yr9pqzqhlprg72q2ny5pj4agn53k0pqy6huxw"){
       
           if(tokenPrices !=undefined){
-      
             dogecubePrice = tokenPrices.dogecube[currValue]
-      
-      
-            // alert(dogecubePrice)
             totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)))
-          
           }
         }
 
-        rows.push(
-               
-          <View key={rri}>
-        <SeparatorBorder/>
 
-        <Menu>
-      <MenuTrigger triggerOnLongPress={true} disabled={isNaN(stakedAmount)} onAlternativeAction={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}} >
-        
-        <View style={styles.addrRowStyle}>
-        
+        if(hiddenTokens == undefined || !hiddenTokens.includes(rri)){
+          rows.push(
+                
+            <View key={rri}>
+              <SeparatorBorder/>
 
-        <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
-        defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
-        source={{uri: balance[3]}} />
-        {/* </ImageBackground> */}
-        
-        <View style={{flex:2}}>
-        <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
-        <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
-        </View>
-        {/* <Text style={{color:"black",flex:1,marginTop:0,fontSize:14,justifyContent:'flex-start', fontFamily:"AppleSDGothicNeo-Regular"}}>  {balance[2]}  <Text style={{fontSize:12}}>{"\n   rri: "+shortenAddress(rri) + "\n "} </Text><Image style={possScamToken?{width:12, height:12}:{width:0, height:0}} source={possScamToken?WarningIcon:null} /><Text style={possScamToken?{color:"red",marginTop:0,fontSize:12}:null}> {possScamToken?"WARNING: Possible scam token!":null}</Text></Text> */}
-        <View style={{ textAlign:"right", flex:1.5}}>
-        <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
-        {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
-        
-        {/* <Text style={[{color:"black",marginTop:0,fontSize:9, textAlign:"right"},getAppFont("black")]}>$1,213.34 USD</Text> */}
-        </View> 
-        </View> 
-        
-        </MenuTrigger>
-        {/* </TouchableOpacity> */}
-        <MenuOptions>
-        <MenuOption onSelect={() => {alert("Hide " + balance[2] + " token?")}} >
-         <View style={{justifyContent: 'center', alignItems:'center'}}>
-         <Text><IconMaterialCommunityIcons 
-            name="eye-off" size={20} color="black" />  Hide</Text> 
-          </View>
-        </MenuOption>
-      </MenuOptions>
-    </Menu>
-        </View>  
+              <Menu>
+              <MenuTrigger triggerOnLongPress={true} disabled={isNaN(stakedAmount)} onAlternativeAction={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}} >
+          
+                <View style={styles.addrRowStyle}>
+          
+                <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
+                defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
+                source={{uri: balance[3]}} />
+          
+                <View style={{flex:2}}>
+                  <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
+                  <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
+                </View>
+  
+                <View style={{ textAlign:"right", flex:1.5}}>
+                  <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
+                  {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
+                </View> 
+            </View> 
+          
+            </MenuTrigger>
+            <MenuOptions>
+            <MenuOption onSelect={() => {
+              
+              var promptFunc = ""
+      
+              promptFunc = Alert.alert; 
+
+              promptFunc(
+                "Hide Token",
+                "Hide " + balance[2] + " token?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {},
+                    style: "cancel"
+                  },
+                  {
+                    text: "OK",
+                    onPress: () => {
+            
+                      AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenListSaved) => {
+                    
+                        var hiddenList = []
+                        try{
+                          hiddenList = JSON.parse(hiddenListSaved);
+                          hiddenList.push(rri);
+                        } catch(e)
+                        {
+                          hiddenList.push(rri);
+                        }
+
+                        AsyncStorage.setItem('@HiddenTokensWallet-'+activeWallet, JSON.stringify(hiddenList)).then( (value) => 
+                        {
+                          alert(balance[2] + " token added to hide list. Token will disappear from view shortly.")
+                        }
+                      )
+                      }
+                      )
+                  }
+                  }
+                ]
+                )
+                }}> 
+            <View style={{justifyContent: 'center', alignItems:'center'}}>
+              <Text><IconMaterialCommunityIcons name="eye-off" size={20} color="black" />  Hide</Text> 
+              </View>
+            </MenuOption>
+          </MenuOptions>
+        </Menu>
+      </View>  
       
      )
-        
+          }
       }
     }    
     catch(err){
@@ -624,10 +628,12 @@ const Home = ({route, navigation}) => {
     const [tokenFilter, setTokenFilter] = useState("");
     const [walletFilter, setWalletFilter] = useState();
     const [addressFilter, setAddressFilter] = useState();
+    const [hiddenTokens, setHiddenTokens] = useState([]);
+
     // global.isDarkMode = useColorScheme() === 'dark';
     global.modeTranslation = global.isDarkMode === true ? "white" : "black";
     global.reverseModeTranslation = global.isDarkMode === true ? "black" : "white";
- 
+
 
     const storeCurrData = async (json, setCurrValue, setCurrLabel) => {
       try {
@@ -639,22 +645,22 @@ const Home = ({route, navigation}) => {
         console.log(e)
       }
     }
-  
+
     const getCurrData = async (setCurrValue, setCurrLabel) => {
-      try {
+        try {
 
-        var jsonValue = await AsyncStorage.getItem('@fiatCurrencySelected')
+          var jsonValue = await AsyncStorage.getItem('@fiatCurrencySelected')
 
-        if(jsonValue == undefined) {
-          jsonValue = '{ "label" : "Fiat Prices in: USD", "value" : "usd" }';
-          await AsyncStorage.setItem('@fiatCurrencySelected', jsonValue)
+          if(jsonValue == undefined) {
+            jsonValue = '{ "label" : "Fiat Prices in: USD", "value" : "usd" }';
+            await AsyncStorage.setItem('@fiatCurrencySelected', jsonValue)
+          }
+
+          setCurrValue(JSON.parse(jsonValue).value);
+          setCurrLabel(JSON.parse(jsonValue).label);
+        } catch(e) {
+          console.log(e)
         }
-
-        setCurrValue(JSON.parse(jsonValue).value);
-        setCurrLabel(JSON.parse(jsonValue).label);
-      } catch(e) {
-        console.log(e)
-      }
     }
 
 
@@ -665,57 +671,48 @@ const Home = ({route, navigation}) => {
       getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
       setRefreshing(true);
       wait(500).then(() => setRefreshing(false));
-  })
-     }, []);
+    })
+    }, []);
 
 
     var dropdownVals = []
     var walletDropdownVals = []  
- 
-    // walletDropdownVals[getWalletDDIndex(walletDropdownVals,activeWallet)]
+
 
     enabledAddresses.forEach((element)=> 
-        {
+      {
         console.log("Enabled Address: "+JSON.stringify(element));
-        // if(addressFilter == undefined || element.label.includes(addressFilter))
-          dropdownVals.push(element);
-        }
+        dropdownVals.push(element);
+      }
     )
 
     wallets.forEach((element)=> 
-    {
-    // console.log("Enabled Wallet: "+JSON.stringify(element));
-    // if(walletFilter == undefined || walletFilter == '' || element.label.includes(walletFilter))
-      walletDropdownVals.push(element);
-    }
-)
-        useEffect(() => {
-          AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
-            
+      {
+        walletDropdownVals.push(element);
+      }
+    )
+
+    useEffect(() => {
+      AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+        AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
+          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){}
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
-          // fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
-        })
-        }, []);
+          })  
+      })
+    }, []);
 
 
-        useInterval(() => {
-          AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
-    
+    useInterval(() => {
+      AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+        AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
+          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){}
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
-          // fetchTxnHistory(enabledAddresses.get(activeAddress).radix_address, setHistoryRows)
-        })
-        }, 20000);
-
-        // useEffect(() => {
-          
-        // }, []);
-
-        // useInterval(() => {
-        //   getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel)
-        // }, 10000);
+        })    
+      })
+    }, 15000);
         
-
-   var balances = new Map();
+    // alert(hiddenTokens)
+    var balances = new Map();
     if( addressBalances.size > 0 && activeAddress != undefined ){
 
     var liquid_rdx_balance = 0;
@@ -743,7 +740,6 @@ const Home = ({route, navigation}) => {
     );
 
    
-
     var stakedAmount = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.value).replace(/["']/g, "");
     var stakedTokenIdentifier = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
 
@@ -763,10 +759,7 @@ const Home = ({route, navigation}) => {
       }
   }
 
-
   console.log("WALLETS: "+JSON.stringify(wallets));
-
-
 
   return (
     <SafeAreaView style={styles.containerMain}>
@@ -922,8 +915,8 @@ const Home = ({route, navigation}) => {
 
       <View style={{margin:10, marginTop: 6}}>
       <View style={styles.rowStyle}>
-{/* 
-<Dropdown
+      {/* 
+      <Dropdown
          style={[getAppFont("black"), styles.dropdown,  isFocus && { borderColor: 'blue' }]}
           placeholderStyle={[styles.placeholderStyle,getAppFont("black")]}
           selectedTextStyle={[styles.selectedTextStyle,getAppFont("black")]}
@@ -966,7 +959,7 @@ const Home = ({route, navigation}) => {
 
         </View>
         <Separator/>
-        {renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
+        {renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
         </View> 
         <Separator/>
 

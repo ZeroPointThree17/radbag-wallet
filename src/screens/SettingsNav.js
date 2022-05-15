@@ -19,11 +19,8 @@ const SettingsNav = ({route, navigation}) => {
   screenOptions={{
     headerStyle: {
     backgroundColor: '#4DA892',
-    headerTitleAlign: 'center',
-    headerTintColor: 'white',
     borderWidth:0,
     shadowRadius: 0,
-    textAlign:'center',
     shadowOffset: {
         height: 0,
     },

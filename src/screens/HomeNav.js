@@ -42,7 +42,6 @@ export default function HomeNav({route, navigation}) {
         // backgroundColor: '#183A81',
         borderWidth:0,
         shadowRadius: 0,
-        textAlign:'center',
         shadowOffset: {
             height: 0,
         },

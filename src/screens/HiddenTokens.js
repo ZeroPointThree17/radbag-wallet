@@ -246,6 +246,19 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
         <SeparatorBorder/>
         <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {
         
+
+        Alert.alert(
+          "Token Unhide?",
+          "Unhide " + balance[2] + " token?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => {},
+              style: "cancel"
+            },
+            {
+              text: "OK",
+              onPress: () => {
           AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenListSaved) => {
                   
               var hiddenList = []
@@ -254,7 +267,7 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
               hiddenList = JSON.parse(hiddenListSaved);
               hiddenList.forEach((hiddenRRI) => {
                 if(hiddenRRI != rri){
-                  newList.push(rri)
+                  newList.push(hiddenRRI)
                 }
               })
               
@@ -264,8 +277,9 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
                 }
               )
             }
-          )
-
+          )  
+        }
+      }])
       }}>
       
       <View style={styles.addrRowStyle}>
@@ -683,8 +697,7 @@ const HiddenTokens = ({route, navigation}) => {
 
     enabledAddresses.forEach((element)=> 
         {
-        console.log("Enabled Address: "+JSON.stringify(element));
-        // if(addressFilter == undefined || element.label.includes(addressFilter))
+          console.log("Enabled Address: "+JSON.stringify(element));
           dropdownVals.push(element);
         }
     )
@@ -741,7 +754,6 @@ const HiddenTokens = ({route, navigation}) => {
     );
 
    
-
     var stakedAmount = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.value).replace(/["']/g, "");
     var stakedTokenIdentifier = JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "");
 
@@ -754,7 +766,6 @@ const HiddenTokens = ({route, navigation}) => {
                 JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.symbol).replace(/["']/g, "").toUpperCase(),
                 JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.name).replace(/["']/g, ""),
                 JSON.stringify(addressBalances.get(activeAddress).staked_and_unstaking_balance.token_identifier.icon_url).replace(/["']/g, "") ])
-      
         }
     }
 }
@@ -854,20 +865,6 @@ console.log("WALLETS: "+JSON.stringify(wallets));
   ;
 };
 
-
-// const triggerStyles = {
-//   triggerText: {
-//     color: 'white',
-//   },
-//   triggerWrapper: {
-//     padding: 5,
-//     backgroundColor: 'blue',
-//   },
-//   triggerTouchable: {
-//     underlayColor: 'darkblue',
-//     activeOpacity: 70,
-//   }
-// };
 
 const styles = StyleSheet.create({
 

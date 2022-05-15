@@ -6,6 +6,7 @@ import MnemonicDisplay from './MnemonicDisplay';
 import AddressOptions from './AddressOptions';
 import WalletOptions from './WalletOptions';
 import PIN from './PIN';
+import HiddenTokens from './HiddenTokens';
 import TokenCreator from './TokenCreator';
 import AdvancedOptions from './AdvancedOptions';
 
@@ -39,8 +40,9 @@ const SettingsNav = ({route, navigation}) => {
     <Stack.Screen name="Address Options" component={AddressOptions} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
     <Stack.Screen name="Wallet Options" component={WalletOptions} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
     <Stack.Screen name="PIN" component={PIN} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
+    <Stack.Screen name="Hidden Tokens" component={HiddenTokens} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
     <Stack.Screen name="Advanced Options" component={AdvancedOptions} options={{ headerTintColor: 'white', headerTitleAlign: 'center' }}/>
-   <Stack.Screen name="Token Creator" component={TokenCreator} options={{
+    <Stack.Screen name="Token Creator" component={TokenCreator} options={{
       tabBarLabel: 'Token Creator',
       headerTitleAlign: 'center',
       tabBarIcon: ({ color, size }) => (

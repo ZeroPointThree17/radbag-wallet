@@ -282,8 +282,8 @@ const optionalConfigObject = {
  
       <View style={[{backgroundColor:global.reverseModeTranslation}]}>
 <View style={[styles.rowStyle, {marginLeft: 15, marginTop: 10, marginBottom: 10, flexDirection: "row"}]}>
-<IconMaterialMain style={{alignSelf:"center"}} name="fiber-pin" size={20} color="#4F8EF7"/>
-<Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Override Phone Color Scheme?</Text>
+<IconMaterialMain style={{alignSelf:"center"}} name="invert-colors" size={20} color="#4F8EF7"/>
+<Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Override Phone Color Mode?</Text>
 <View style={{flex:0.1, alignItems:"flex-end", marginRight: 10}}>
 <Switch 
         trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -299,7 +299,7 @@ const optionalConfigObject = {
 
       {OSVisualOverrideIsEnabled && <React.Fragment><View style={[{backgroundColor:global.reverseModeTranslation}]}>
 <View style={[styles.rowStyle, {marginLeft: 15, marginTop: 10, marginBottom: 10, flexDirection: "row"}]}>
-<IconMaterialMain style={{alignSelf:"center"}} name="fiber-pin" size={20} color="#4F8EF7"/>
+<IconMaterial style={{alignSelf:"center"}} name="theme-light-dark" size={20} color="#4F8EF7"/>
 <Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Enable Dark Mode?</Text>
 <View style={{flex:0.1, alignItems:"flex-end", marginRight: 10}}>
 <Switch 

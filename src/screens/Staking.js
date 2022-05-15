@@ -62,7 +62,7 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
     if(actionType == "stake"){
 
       alertWording = "to"
-      alertWording2 = "After this STAKE action, whenever you are ready to UNSTAKE, the unstaking process will take approximately 2 WEEKS."
+      alertWording2 = "After this STAKE action, whenever you are ready to UNSTAKE, the unstaking process will take approximately 2 WEEKS"
 
       jsonBody =
       {
@@ -848,7 +848,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 
       <Separator/>
       <Separator/>
-      <Text style={[{fontSize: 18, color:"black", textAlign: "center", alignSelf:"center"}, getAppFont("red")]}>NOTE: AFTER STAKIING, ANY UNSTAKING ACTION ON RADIX TAKES APPROXIMATELY 2 WEEKS.</Text>
+      <Text style={[{fontSize: 18, color:"black", textAlign: "center", alignSelf:"center"}, getAppFont("red")]}>NOTE: AFTER STAKING, ANY UNSTAKING ACTION ON RADIX TAKES APPROXIMATELY 2 WEEKS</Text>
       <Separator/>
       <React.Fragment>
         <Text
@@ -964,7 +964,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 
       <Separator/>
       <Separator/>
-      <Text style={[{fontSize: 18, color:"black", textAlign: "center", alignSelf:"center"}, getAppFont("red")]}>REMEMBER TO PRESS "REDUCE STAKE" FROM THE CORRECT VALIDATOR IN THE LIST BELOW. LIST WILL NOT APPEAR IF YOU DO NOT HAVE ANY STAKES.{"\n\n"}NOTE: UNSTAKING ON RADIX TAKES APPROXIMATELY 2 WEEKS.</Text>
+      <Text style={[{fontSize: 18, color:"black", textAlign: "center", alignSelf:"center"}, getAppFont("red")]}>REMEMBER TO PRESS "REDUCE STAKE" FROM THE CORRECT VALIDATOR IN THE LIST BELOW. LIST WILL NOT APPEAR IF YOU DO NOT HAVE ANY STAKES.{"\n\n"}NOTE: UNSTAKING ON RADIX TAKES APPROXIMATELY 2 WEEKS</Text>
       <Separator/>
       <React.Fragment>
         <Text

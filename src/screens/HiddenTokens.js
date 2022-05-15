@@ -728,7 +728,7 @@ const HiddenTokens = ({route, navigation}) => {
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
         })    
       })
-    }, 3000);
+    }, 2000);
         
 
    var balances = new Map();

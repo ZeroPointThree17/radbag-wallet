@@ -143,7 +143,7 @@ function addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, set
 }
 
 
-function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
+function renderAddressRows(activeWallet, hiddenTokens, setHiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
 
   
   if( balances.size > 0 && enabledAddresses.size > 0 ){
@@ -277,6 +277,7 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
                     message: "Token will be unhidden shortly...",
                     type: "info",
                   });
+                  setHiddenTokens(newList)
                 }
               )
             }
@@ -692,7 +693,7 @@ const HiddenTokens = ({route, navigation}) => {
     useEffect(() => {
       AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
         AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
-          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){setHiddenTokens([])}
+          try{if(hiddenList != undefined){setHiddenTokens(JSON.parse(hiddenList))}} catch(e){}
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
         })  
       })
@@ -702,12 +703,12 @@ const HiddenTokens = ({route, navigation}) => {
     useInterval(() => {
       AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
         AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
-          try{setHiddenTokens(JSON.parse(hiddenList))} catch(e){setHiddenTokens([])}
-          setDefaultHiddenTokenMsg("This wallet does not have any hidden tokens")
+          try{if(hiddenList != undefined){setHiddenTokens(JSON.parse(hiddenList))}} catch(e){}
+             setDefaultHiddenTokenMsg("This wallet does not have any hidden tokens")
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
         })    
       })
-    }, 2000);
+    }, 3000);
         
 
    var balances = new Map();
@@ -807,14 +808,14 @@ console.log("WALLETS: "+JSON.stringify(wallets));
 <View style={{margin:10, marginTop: 6}}>
 <View style={styles.rowStyle}>
 
-        <TextInput
+    <TextInput
       value={tokenFilter}
       autoCapitalize = "none"
       placeholder = "Filter tokens"
       placeholderTextColor="#d3d3d3"
       onChangeText={text => setTokenFilter(text)}
       style={[{  flex: 9,width: 'auto', borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5, borderColor: global.modeTranslation}, getAppFont('black')]}
-/>
+    />
 
     <TouchableOpacity onPress={() => setTokenFilter("")}>
       <IconMaterial name="clear" size={30} color={global.modeTranslation} style={{textAlignVertical:"center", paddingLeft:10, paddingRight:0}}/>
@@ -822,7 +823,7 @@ console.log("WALLETS: "+JSON.stringify(wallets));
 
     </View>
     <Separator/>
-      {renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
+      {renderAddressRows(activeWallet, hiddenTokens, setHiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
       {!isNaN(stakedAmount) && (hiddenTokens == undefined || hiddenTokens.length == 0) ? 
         <React.Fragment>
         <Separator/>

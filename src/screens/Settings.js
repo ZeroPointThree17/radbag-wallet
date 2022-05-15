@@ -69,12 +69,12 @@ const optionalConfigObject = {
   useInterval(() => {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setPINIsEnabled(appPin != undefined);
-    })
-    AsyncStorage.getItem('@OSVisualOverrideEnabled').then( (OSVisualOverridePin) => {
-      setOSVisualOverrideIsEnabled(OSVisualOverridePin != undefined);
-    })
-    AsyncStorage.getItem('@darkModeEnabled').then( (darkModeEnabled) => {
-      setDarkModeIsEnabled(darkModeEnabled != undefined);
+      AsyncStorage.getItem('@OSVisualOverrideEnabled').then( (OSVisualOverridePin) => {
+        setOSVisualOverrideIsEnabled(OSVisualOverridePin != undefined);
+        AsyncStorage.getItem('@darkModeEnabled').then( (darkModeEnabled) => {
+          setDarkModeIsEnabled(darkModeEnabled != undefined);
+        })
+      })
     })
   }, 3500);
 

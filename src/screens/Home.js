@@ -702,7 +702,6 @@ const Home = ({route, navigation}) => {
       })
     }, []);
 
-
     useInterval(() => {
       AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
         AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
@@ -712,7 +711,6 @@ const Home = ({route, navigation}) => {
       })
     }, 10000);
         
-    // alert(hiddenTokens)
     var balances = new Map();
     if( addressBalances.size > 0 && activeAddress != undefined ){
 

@@ -15,10 +15,11 @@ import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommun
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import * as Progress from 'react-native-progress';
 import { Separator } from '../helpers/jsxlib';
-import { openContextMenu, getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay, currencyList, setNewGatewayIdx } from '../helpers/helpers';
+import { getAppFont, shortenAddress, useInterval, openCB, errorCB, copyToClipboard, formatNumForHomeDisplay, formatCurrencyForHomeDisplay, currencyList, setNewGatewayIdx } from '../helpers/helpers';
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
+import {hideMessage, showMessage} from "react-native-flash-message";
 var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -260,12 +261,8 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
             </MenuTrigger>
             <MenuOptions>
             <MenuOption onSelect={() => {
-              
-              var promptFunc = ""
-      
-              promptFunc = Alert.alert; 
 
-              promptFunc(
+              Alert.alert(
                 "Hide Token",
                 "Hide " + balance[2] + " token?",
                 [
@@ -291,7 +288,10 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
 
                         AsyncStorage.setItem('@HiddenTokensWallet-'+activeWallet, JSON.stringify(hiddenList)).then( (value) => 
                         {
-                          alert(balance[2] + " token added to hide list. Token will disappear from view shortly.")
+                          showMessage({
+                            message: "Token will be hidden shortly...",
+                            type: "info",
+                          });
                         }
                       )
                       }
@@ -709,7 +709,7 @@ const Home = ({route, navigation}) => {
           getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)    
         })    
       })
-    }, 15000);
+    }, 10000);
         
     // alert(hiddenTokens)
     var balances = new Map();

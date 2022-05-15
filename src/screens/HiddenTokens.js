@@ -19,6 +19,7 @@ import { openContextMenu, getAppFont, shortenAddress, useInterval, openCB, error
 import { ifError } from 'assert';
 var VerifiedIcon = require("../assets/check.png");
 var WarningIcon = require("../assets/alert.png");
+import {hideMessage, showMessage} from "react-native-flash-message";
 var bigDecimal = require('js-big-decimal');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -272,7 +273,10 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
               
               AsyncStorage.setItem('@HiddenTokensWallet-'+activeWallet, JSON.stringify(newList)).then( (value) => 
                 {
-                  alert(balance[2] + " token unhidden. Token will re-appear in the screens shortly.")
+                  showMessage({
+                    message: "Token will be unhidden shortly...",
+                    type: "info",
+                  });
                 }
               )
             }

@@ -1,23 +1,19 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { RefreshControl, Image, ImageBackground, useColorScheme, TouchableOpacity, Linking, Alert, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
+import { RefreshControl, Image, TouchableOpacity, Linking, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { decrypt } from '../helpers/encryption';
 import SelectDropdown from 'react-native-select-dropdown'
 import IconFeather from 'react-native-vector-icons/Feather';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { Separator } from '../helpers/jsxlib';
-import { getWalletPrivKey, getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
+import { getAppFont, openCB, errorCB, useInterval, shortenAddress, fetchTxnHistory, formatNumForDisplay, startScan, getUSB, setNewGatewayIdx, getAppFontNoMode } from '../helpers/helpers';
 import { buildTxn, getBalances } from '../helpers/gatewayCalls';
-import { isElementAccessExpression, validateLocaleAndSetLanguage } from 'typescript';
 var bigDecimal = require('js-big-decimal');
 var GenericToken = require("../assets/generic_token.png");
 var GenericTokenInverted = require("../assets/generic_token_inverted.png");
 import * as Progress from 'react-native-progress';
 import CheckboxBouncy from "react-native-bouncy-checkbox";
-import { log, BufferReader } from '@radixdlt/util'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { hideMessage, showMessage } from 'react-native-flash-message';
 var SQLite = require('react-native-sqlite-storage');
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 import { Dropdown } from 'react-native-element-dropdown';

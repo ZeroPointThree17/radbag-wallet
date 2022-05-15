@@ -14,7 +14,6 @@ import { SERVFAIL } from 'dns';
 
 const PIN = ({route, navigation}) => {
  
-
   const [pinSaveSpinner, setPinSaveSpinner] = useState();
 
   const customTexts = {

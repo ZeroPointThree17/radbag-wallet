@@ -2,7 +2,7 @@ import './shim';
 import 'react-native-gesture-handler'
 import React, {useRef, useState, useEffect } from 'react';
 import type {Node} from 'react';
-import { ScrollView, StyleSheet, AppState, View, LogBox, useColorScheme } from 'react-native';
+import { ScrollView, StyleSheet, AppState, View, LogBox, useColorScheme, Alert } from 'react-native';
 import { NavigationContext, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 var SQLite = require('react-native-sqlite-storage');
@@ -132,7 +132,7 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
       </MenuProvider>
 )
 
-return navContainerJSX;
+  return navContainerJSX;
 }
 
 
@@ -143,15 +143,21 @@ const App: () => Node = () => {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [correctPin, setCorrectPin] = useState(false);
+  const [firstTimer, setFirstTimer] = useState(true);
+  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(false);
+  const [OSVisualOverrideEnabled, setOSVisualOverrideEnabled] = useState(false);
 
   global.gateways = gateways
-  global.isDarkMode = useColorScheme() === 'dark';
-  global.modeTranslation = useColorScheme() === 'dark' ? "white" : "black";
-  global.reverseModeTranslation = useColorScheme() === 'dark' ? "black" : "white";
-  global.appGreen = useColorScheme() === 'dark' ? "#3D8674" : "#4DA892";
-  global.appGreenAlt = useColorScheme() === 'dark' ? "#3D8674" : "#009688";
-  global.appBlue = useColorScheme() === 'dark' ? "#132e67" : "#183A81"
- 
+  var systemDarkModeFlag = useColorScheme() === 'dark'
+  var darkModeFlag = OSVisualOverrideEnabled ? isDarkModeEnabled : systemDarkModeFlag;
+  // alert(darkModeFlag)
+  global.isDarkMode = darkModeFlag;
+  global.modeTranslation = darkModeFlag ? "white" : "black";
+  global.reverseModeTranslation = darkModeFlag ? "black" : "white";
+  global.appGreen = darkModeFlag ? "#3D8674" : "#4DA892";
+  global.appGreenAlt = darkModeFlag ? "#3D8674" : "#009688";
+  global.appBlue = darkModeFlag ? "#132e67" : "#183A81"
+
 
   useEffect(() => {
 
@@ -159,6 +165,14 @@ const App: () => Node = () => {
 
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setIsPINEnabled(appPin != undefined);
+    })
+
+    AsyncStorage.getItem('@OSVisualOverrideEnabled').then( (OSVisualOverrideEnabled) => {
+      setOSVisualOverrideEnabled(OSVisualOverrideEnabled != undefined);
+    })
+
+    AsyncStorage.getItem('@darkModeEnabled').then( (darkModeEnabled) => {
+      setIsDarkModeEnabled(darkModeEnabled != undefined);
     })
 
     const subscription = AppState.addEventListener("change", nextAppState => {
@@ -184,15 +198,21 @@ const App: () => Node = () => {
       setIsPINEnabled(appPin != undefined);
     })
 
+    AsyncStorage.getItem('@OSVisualOverrideEnabled').then( (OSVisualOverrideEnabled) => {
+      setOSVisualOverrideEnabled(OSVisualOverrideEnabled != undefined);
+    })
+
+    AsyncStorage.getItem('@darkModeEnabled').then( (darkModeEnabled) => {
+      setIsDarkModeEnabled(darkModeEnabled != undefined);
+    })
+
   }, 3500);
 
 
   const navigation = React.useContext(NavigationContext);
+  const [isPINEnabled, setIsPINEnabled] = useState(true);
 
   const Stack = createStackNavigator();
-
-  const [firstTimer, setFirstTimer] = useState(true);
-  const [isPINEnabled, setIsPINEnabled] = useState(true);
 
 db.transaction((tx) => {
   tx.executeSql("SELECT new_user_flag FROM application", [], (tx, results) => {

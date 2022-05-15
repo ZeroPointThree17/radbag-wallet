@@ -68,11 +68,23 @@ const optionalConfigObject = {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setPINIsEnabled(appPin != undefined);
     })
+    AsyncStorage.getItem('@OSVisualOverrideEnabled').then( (OSVisualOverrideEnabled) => {
+      setOSVisualOverrideIsEnabled(OSVisualOverrideEnabled != undefined);
+    })
+    AsyncStorage.getItem('@darkModeEnabled').then( (darkModeEnabled) => {
+      setDarkModeIsEnabled(darkModeEnabled != undefined);
+    })
   }, []);
 
   useInterval(() => {
     AsyncStorage.getItem('@AppPIN').then( (appPin) => {
       setPINIsEnabled(appPin != undefined);
+    })
+    AsyncStorage.getItem('@OSVisualOverrideEnabled').then( (OSVisualOverridePin) => {
+      setOSVisualOverrideIsEnabled(OSVisualOverridePin != undefined);
+    })
+    AsyncStorage.getItem('@darkModeEnabled').then( (darkModeEnabled) => {
+      setDarkModeIsEnabled(darkModeEnabled != undefined);
     })
   }, 3500);
 
@@ -85,28 +97,40 @@ const optionalConfigObject = {
     }
   }
 
-  const toggleOSVisualOverrideSwitch = () => {
+  const toggleOSVisualOverrideSwitch = (colorSchemeIsDark) => {
+
     if(!OSVisualOverrideIsEnabled){
-      // navigation.navigate('PIN')
-      setOSVisualOverrideIsEnabled(true);
+      AsyncStorage.setItem('@OSVisualOverrideEnabled', "SET").then( (value) => 
+      {
+        setOSVisualOverrideIsEnabled(true);
+      })
     } else{
       AsyncStorage.removeItem('@OSVisualOverrideEnabled');
+      AsyncStorage.removeItem('@darkModeEnabled');
+      var darkModeFlag = colorSchemeIsDark;
+      global.isDarkMode = darkModeFlag;
+      setDarkModeIsEnabled(false);
       setOSVisualOverrideIsEnabled(false);
     }
   }
 
   const toggleDarkModeSwitch = () => {
     if(!darkModeIsEnabled){
-      global.isDarkMode = true;
-      alert("Please allow 30 seconds for all screens to refresh under new color mode")
-      setDarkModeIsEnabled(true);
+      AsyncStorage.setItem('@darkModeEnabled', "SET").then( (value) => 
+      {
+        global.isDarkMode = true;
+        setDarkModeIsEnabled(true);
+        alert("Please allow up to 30 seconds for all screens to refresh under new color mode")
+      })   
     } else{
-      alert("Please allow 30 seconds for all screens to refresh under new color mode")
       AsyncStorage.removeItem('@darkModeEnabled');
       setDarkModeIsEnabled(false);
+      alert("Please allow up to 30 seconds for all screens to refresh under new color mode")
     }
   }
 
+
+  var systemIsDarkMode = useColorScheme()==='dark'
   
 
  return ( 
@@ -259,13 +283,13 @@ const optionalConfigObject = {
       <View style={[{backgroundColor:global.reverseModeTranslation}]}>
 <View style={[styles.rowStyle, {marginLeft: 15, marginTop: 10, marginBottom: 10, flexDirection: "row"}]}>
 <IconMaterialMain style={{alignSelf:"center"}} name="fiber-pin" size={20} color="#4F8EF7"/>
-<Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Override Sytem Light/Dark Mode?</Text>
+<Text style={[getAppFont("black"), {flex:1, marginLeft: 15, alignSelf:"center", fontWeight: 'bold'}]}>Override Phone Color Scheme?</Text>
 <View style={{flex:0.1, alignItems:"flex-end", marginRight: 10}}>
 <Switch 
         trackColor={{ false: "#767577", true: "#81b0ff" }}
         thumbColor={OSVisualOverrideIsEnabled ? "blue" : "#f4f3f4"}
         ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleOSVisualOverrideSwitch}
+        onValueChange={() => toggleOSVisualOverrideSwitch(systemIsDarkMode)}
         value={OSVisualOverrideIsEnabled}
       />
       </View>

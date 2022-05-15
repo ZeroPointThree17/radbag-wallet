@@ -57,10 +57,12 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
     var jsonBody = null;
     var alertWording = "";
+    var alertWording2 = "";
 
     if(actionType == "stake"){
 
       alertWording = "to"
+      alertWording2 = "After this STAKE action, whenever you are ready to UNSTAKE, the unstaking process will take approximately 2 WEEKS."
 
       jsonBody =
       {
@@ -93,6 +95,7 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
     } else if (actionType == "unstake"){
 
       alertWording = "from"
+      alertWording2 = "This unstaking process will take approximately 2 weeks due to the way Radix operates."
       
       jsonBody =
       {
@@ -150,7 +153,7 @@ function buildTxn(gatewayIdx, public_key, privKey_enc, setShow, setTxHash, sourc
 
             Alert.alert(
               "Commit Transaction?",
-              "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this " + actionType.toUpperCase() + " action of "+ new bigDecimal(amount).getPrettyValue() +" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nDo you want to commit this transaction?",
+              "Fee will be " + formatNumForDisplay(json.transaction_build.fee.value) + " XRD\n for this " + actionType.toUpperCase() + " action of "+ new bigDecimal(amount).getPrettyValue() +" XRD "+ alertWording + " " + shortenAddress(xrdAddr)+"\n\nNOTE: " + alertWording2 + "\n\nDo you want to commit this transaction?",
               [
                 {
                   text: "Cancel",
@@ -842,6 +845,20 @@ onPress={() => {setStakingScreenActive(false)}}>
         onChangeText={value => setValAddr(value)}
       />
       </View>
+
+      <Separator/>
+      <Separator/>
+      <Text style={[{fontSize: 18, color:"black", textAlign: "center", alignSelf:"center"}, getAppFont("red")]}>NOTE: AFTER STAKIING, ANY UNSTAKING ACTION ON RADIX TAKES APPROXIMATELY 2 WEEKS.</Text>
+      <Separator/>
+      <React.Fragment>
+        <Text
+        style={[{textAlign: "center", textDecorationLine:"underline"}, getAppFont("#4DA892")]}
+        onPress={() => {Linking.openURL('https://learn.radixdlt.com/article/start-here-radix-staking-introduction')}}
+        >
+        Click here for more information about how staking works on Radix
+        </Text>
+      </React.Fragment>
+      <Separator/>
       <Separator/>
 
       <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to Stake (Min 90):</Text>
@@ -923,7 +940,7 @@ onPress={() => {setStakingScreenActive(false)}}>
       <Separator/>
 
       <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Amount to Unstake:</Text>
-     <View style={styles.rowStyle}>
+      <View style={styles.rowStyle}>
  
         <TextInput ref={unstakeAmtRef}
         style={[{ padding:4, paddingLeft:10, borderWidth:1, backgroundColor:global.reverseModeTranslation, borderColor: global.modeTranslation, flex:0.5, borderRadius: 15}, getAppFont("black")]}
@@ -947,7 +964,17 @@ onPress={() => {setStakingScreenActive(false)}}>
 
       <Separator/>
       <Separator/>
-      <Text style={[{fontSize: 18, color:"black", textAlign: "center", alignSelf:"center"}, getAppFont("red")]}>REMEMBER TO PRESS "REDUCE STAKE" FROM THE CORRECT VALIDATOR IN THE LIST BELOW. LIST WILL NOT APPEAR IF YOU DO NOT HAVE ANY STAKES.</Text>
+      <Text style={[{fontSize: 18, color:"black", textAlign: "center", alignSelf:"center"}, getAppFont("red")]}>REMEMBER TO PRESS "REDUCE STAKE" FROM THE CORRECT VALIDATOR IN THE LIST BELOW. LIST WILL NOT APPEAR IF YOU DO NOT HAVE ANY STAKES.{"\n\n"}NOTE: UNSTAKING ON RADIX TAKES APPROXIMATELY 2 WEEKS.</Text>
+      <Separator/>
+      <React.Fragment>
+        <Text
+        style={[{textAlign: "center", textDecorationLine:"underline"}, getAppFont("#4DA892")]}
+        onPress={() => {Linking.openURL('https://learn.radixdlt.com/article/start-here-radix-staking-introduction')}}
+        >
+        Click here for more information about how staking works on Radix
+        </Text>
+      </React.Fragment>
+      <Separator/>
       <Separator/>
       <Separator/>
       <TouchableOpacity style={styles.button} onPress={() => {

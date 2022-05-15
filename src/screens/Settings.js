@@ -111,6 +111,7 @@ const optionalConfigObject = {
       global.isDarkMode = darkModeFlag;
       setDarkModeIsEnabled(false);
       setOSVisualOverrideIsEnabled(false);
+      alert("Please allow up to 30 seconds for all screens to refresh under new color mode")
     }
   }
 

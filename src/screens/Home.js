@@ -273,7 +273,9 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
                
           <View key={rri}>
         <SeparatorBorder/>
-        <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
+
+        <Menu>
+      <MenuTrigger triggerOnLongPress={true} disabled={isNaN(stakedAmount)} onAlternativeAction={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}} >
         
         <View style={styles.addrRowStyle}>
         
@@ -296,8 +298,17 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
         </View> 
         </View> 
         
-        </TouchableOpacity>
-        
+        </MenuTrigger>
+        {/* </TouchableOpacity> */}
+        <MenuOptions>
+        <MenuOption onSelect={() => {alert("Hide " + balance[2] + " token?")}} >
+         <View style={{justifyContent: 'center', alignItems:'center'}}>
+         <Text><IconMaterialCommunityIcons 
+            name="eye-off" size={20} color="black" />  Hide</Text> 
+          </View>
+        </MenuOption>
+      </MenuOptions>
+    </Menu>
         </View>  
       
 
@@ -353,55 +364,6 @@ function renderAddressRows(tokenFilter, isFocus, setIsFocus, storeCurrData, setC
       </View> )
     }
 
-    // var searchList = []
-    // searchList.push(
-    //   <SearchList 
-    //   style={{alignSelf: "center", backgroundColor:"#183A81"}}
-    //   data={[]}
-    //   renderRow={() => {}}
-    //   renderEmptyResult={() => {renderEmpty()}}
-    //   renderBackButton={() => null}
-    //   renderEmpty={() => {}}
-
-    //   rowHeight={12}
-
-    //   // colors = {toolbarBackgroundColor='#183A81'}
-    //   // toolbarWidth={'auto'}
-    //   title='Token Search'
-    //   cancelTitle='Cancel'
-    //   onClickBack={() => {}}
-
-    //   searchListBackgroundColor={'white'}
-    //   searchListStyle={{width:'auto', backgroundColor:"#183A81", color:"#183A81"}}
-
-    //   searchBarToggleDuration={300}
-    //   searchInputStyle={{width:'auto'}}
-    //   searchBarStyle={{width:'auto', backgroundColor:"#183A81", color:"#183A81"}}
-
-    //   searchInputBackgroundColor={'white'}
-    //   searchInputBackgroundColorActive={'#183A81'}
-    //   searchInputPlaceholderColor={'#183A81'}
-    //   searchInputTextColor={'#183A81'}
-    //   searchInputTextColorActive={'#183A81'}
-    //   searchInputPlaceholder='Search'
-    //   sectionIndexTextColor={'#183A81'}
-    //   searchBarBackgroundColor={'white'}
-    // />
-    // )
-
-    // var alphabet = [];
-
-    // alphabet.push(
-    //   <View style = {styles.rowStyle}>
-    //     <Text>A</Text><Text> </Text><Text>B</Text><Text> </Text>
-    //     <Text>C</Text><Text> </Text><Text>D</Text><Text> </Text>
-    //     <Text>E</Text><Text> </Text><Text>F</Text><Text> </Text>
-    //     <Text>G</Text><Text> </Text><Text>H</Text><Text> </Text>
-    //     <Text>I</Text><Text> </Text><Text>J</Text><Text> </Text>
-    //     <Text>K</Text><Text> </Text><Text>L</Text><Text> </Text>
-    //     <Text>M</Text><Text> </Text><Text>N</Text><Text> </Text>
-    //   </View>
-    // );
 
     return (headerRow.concat(xrdRow).concat(rows))
 

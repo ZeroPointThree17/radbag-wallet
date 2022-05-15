@@ -246,7 +246,6 @@ function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, set
         <SeparatorBorder/>
         <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {
         
-
         Alert.alert(
           "Token Unhide?",
           "Unhide " + balance[2] + " token?",
@@ -834,17 +833,23 @@ console.log("WALLETS: "+JSON.stringify(wallets));
       style={[{  flex: 9,width: 'auto', borderWidth:1, borderRadius:15, paddingLeft:10, paddingTop:5, paddingBottom:5, borderColor: global.modeTranslation}, getAppFont('black')]}
 />
 
-
     <TouchableOpacity onPress={() => setTokenFilter("")}>
       <IconMaterial name="clear" size={30} color={global.modeTranslation} style={{textAlignVertical:"center", paddingLeft:10, paddingRight:0}}/>
     </TouchableOpacity>
 
-</View>
+    </View>
     <Separator/>
-{renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
-
-</View> 
-        <Separator/>
+      {renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses,activeAddress, getDDIndex(dropdownVals,activeAddress), isHW)}
+      {hiddenTokens == undefined || hiddenTokens.length == 0 ? 
+          hiddenTokens != undefined ?
+            <React.Fragment>
+              <Separator/>
+              <Separator/>
+              <Text style={[getAppFont("black"),{textAlign:'center'}]}>This wallet does not have any hidden tokens</Text>
+            </React.Fragment> : <Text></Text>
+              : <Text></Text>}
+    </View> 
+    <Separator/>
 
         { isNaN(stakedAmount) &&
 <Progress.Circle style={{alignSelf:"center"}} size={30} indeterminate={true} />

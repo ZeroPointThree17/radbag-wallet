@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { RefreshControl, Image, TouchableOpacity, Linking, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
+import { RefreshControl, Image, TouchableOpacity, Linking, ScrollView, Text, TextInput, View, StyleSheet, Platform } from 'react-native';
 import  IconMaterial  from 'react-native-vector-icons/MaterialCommunityIcons';
 import SelectDropdown from 'react-native-select-dropdown'
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -132,7 +132,10 @@ useInterval(() => {
   symbolsDD.sort(function(a, b)
   {
    var x = a.label; var y = b.label;
-   return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+   if(Platform.OS == "ios")
+    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+   else
+    return ((x > y) ? -1 : ((x < y) ? 1 : 0));
   });
 
   if(symbolFilter == undefined || "XRD (xrd_rr1...wfsfh)".includes(symbolFilter))

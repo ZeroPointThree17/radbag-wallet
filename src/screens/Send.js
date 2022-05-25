@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 var SQLite = require('react-native-sqlite-storage');
 var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
 import { Dropdown } from 'react-native-element-dropdown';
-
+import {getWallets, getDDIndex, getCurrData} from '../helpers/tokenRetrieval'
 
 String.prototype.hexEncode = function(){
   var s = unescape(encodeURIComponent(this))
@@ -31,7 +31,12 @@ String.prototype.hexEncode = function(){
 
  const Send = ({route, navigation}) => {
  
-  var { defaultRri, defaultSymbol, sourceXrdAddr, hdpathIndex, isHWBool } = route.params;
+  var { defaultRri, defaultSymbol, sourceXrdAddr, hdpathIndex, isHWBool
+    , messageFromRequester, destinationAddr, txnMessage, encryptredFlag, amountNum, tokenSymbol
+    , tokenRRI, disableDestinationAddrTxtInput, disableEncryptionBtn, disableAmtTxtInput, disableTokenTypeDropdown
+    , returnToForwarderLocationAfterSend, returnToURLAfterSend, returnURL
+  } = route.params;
+  
   const [refreshing, setRefreshing] = React.useState(false);
   const [privKey_enc, setPrivKey_enc] = useState();
   const [wallet_password, setWallet_password] = useState();
@@ -71,6 +76,24 @@ String.prototype.hexEncode = function(){
   const [currValue, setCurrValue] = useState();
 
 
+  var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, errorCB);
+  var initialEnabledAddresses = new Map();
+  initialEnabledAddresses.set(1,{label: "Setting up...", value:""})
+  const [addressBalances, setAddressBalances] = useState(new Map())
+  const [wallets, setWallets] = useState([{label: "Setting up...", value:""}]);
+  const [label, setLabel] = useState();
+  const [value, setValue] = useState();
+  const [isFocusAddr, setIsFocusAddr] = useState(false);
+  const [labelAddr, setLabelAddr] = useState();
+  const [valueAddr, setValueAddr] = useState();
+  const [activeWallet, setActiveWallet] = useState(1);
+  const [activeAddress, setActiveAddress] = useState(1);
+  const [enabledAddresses, setEnabledAddresses] = useState(initialEnabledAddresses);
+  const [isHW, setIsHW] = useState()
+  const [tokenPrices, setTokenPrices] = useState();
+  const [tokenFilter, setTokenFilter] = useState("");
+  const [hiddenTokens, setHiddenTokens] = useState([]);
+
   // sourceXrdAddr = "rdx1qsplgax6sgeqqflwsalad3u7pds83wr892ayrxrhs7r3e2vc9m3dejq6sapew"
   // sourceXrdAddr = "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
   // sourceXrdAddr = "rdx1qspa05gfcxux87nlw7rrky86pptmwc9hsev73retl57tykgs9llwqrswl9jrg"
@@ -89,6 +112,13 @@ String.prototype.hexEncode = function(){
       getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames); 
       fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
     })
+
+    AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+      AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
+        try{if(hiddenList != undefined){setHiddenTokens(JSON.parse(hiddenList))}} catch(e){}
+        getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+        })  
+    })
   },[]);
 
 useInterval(() => {
@@ -102,6 +132,13 @@ useInterval(() => {
   AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {    
     getBalances(gatewayIdx, undefined, false, setGettingBalances,sourceXrdAddr, setSymbols, setSymbolToRRI, setBalances,setPrivKey_enc,setPublic_key, setIconURIs, setTokenNames);
     fetchTxnHistory(db, gatewayIdx, sourceXrdAddr, setHistoryRows, false, hashToDecrypt, setHashToDecrypt, setDecryptedMap, decryptedMap, isHWBool, usbConn, transport, deviceID, hdpathIndex);
+  })
+
+  AsyncStorage.getItem('@gatewayIdx').then( (gatewayIdx) => {
+    AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenList) => {
+      try{if(hiddenList != undefined){setHiddenTokens(JSON.parse(hiddenList))}} catch(e){}
+      getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances)
+      })  
   })
 }, 15000);
 
@@ -141,6 +178,17 @@ useInterval(() => {
   if(symbolFilter == undefined || "XRD (xrd_rr1...wfsfh)".includes(symbolFilter))
     symbolsDD.unshift({label: "XRD (xrd_rr1...wfsfh)", value: "XRD (xrd_rr1...wfsfh)"})
 
+
+    var dropdownVals = []
+
+    enabledAddresses.forEach((element)=> 
+      {
+        console.log("Enabled Address (Sent Screen): "+JSON.stringify(element));
+        dropdownVals.push(element);
+      }
+    )
+
+    // alert(getDDIndex(dropdownVals, activeAddress))
 
  return ( 
    <View style={[styles.container, {backgroundColor: global.reverseModeTranslation}]}>

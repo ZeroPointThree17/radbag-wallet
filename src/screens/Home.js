@@ -30,88 +30,13 @@ import {
   SlideInMenu,
   ContexrMenu
 } from 'react-native-popup-menu';
+import { getWallets, getDDIndex, getWalletDDIndex, getCurrData, storeCurrData } from '../helpers/tokenRetrieval';
 
 
+const SeparatorBorder = () => (
+  <View style={styles.separatorBorder} />
+);
 
-function getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel){
-   
-   fetch('https://raddish-node.com:8082/rad_token_prices', {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      }
-    }).then((response) => response.json()).then((json) => {
-
-      setTokenPrices(json);
-      getCurrData(setCurrValue, setCurrLabel);
-        
-    }).catch((error) => {
-      setTokenPrices(undefined);
-      getCurrData(setCurrValue, setCurrLabel);
-    })
-}
-
-
-
-    const SeparatorBorder = () => (
-    <View style={styles.separatorBorder} />
-    );
-
-function getWallets(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances) {
-
-    db.transaction((tx) => {
-
-        tx.executeSql("SELECT * FROM wallet", [], (tx, results) => {
-          var len = results.rows.length;
-          var wallets = [];
-          var hwWallets = []
-            for (let i = 0; i < len; i++) {
-                let row = results.rows.item(i);
-
-                var suffix = ""
-               
-                if(row.mnemonic_enc == "HW_WALLET"){
-                  suffix = " [HARDWARE]"
-                  hwWallets.push(row.id)
-                }
-
-                var data = {label: row.name + suffix, value: row.id}
-                 wallets.push(data);
-             }
-            
-             setWallets(wallets);
-    
-             getActiveWallet(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances, hwWallets, setIsHW);
-             
-      }, errorCB);
-        });
-        
-}
-
-function getEnabledAddresses(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, wallet_id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
-
-        var addresses = new Map();
-
-            db.transaction((tx) => {
-    
-            tx.executeSql("SELECT * FROM address WHERE wallet_id='"+wallet_id+"' AND enabled_flag='1'", [], (tx, results) => {
-
-          var len = results.rows.length;
-      
-            for (let i = 0; i < len; i++) {
-                let row = results.rows.item(i);
-                    var addrLabel = row.name + " - " + shortenAddress(row.radix_address);
-                    var data = {label: addrLabel, value: row.id, radix_address:row.radix_address}
-                    addresses.set(row.id, data);
-            }
-
-            setEnabledAddresses(addresses);
-            getActiveAddress(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveAddress, addresses, addressBalances, setAddressBalances);
-
-          }, errorCB); 
-        });
-}
 
 function addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, wallet_id,db, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
 
@@ -140,235 +65,6 @@ function addAddress(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, set
         });
 
 }
-
-
-function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
-
-    if( balances.size > 0 && enabledAddresses.size > 0 ){
-
-        var totalWalletValue = new bigDecimal(0);
-        var rows = []
-        var xrdRow = []      
-        var symbolCnts = new Map();
-        var blackListed = "rpg_rr1q0zrguwzdze0kpqfcr7lk8lfwlx6hxx7kjf46tcava4q99dj6h";
-        var possScamToken = false;
-        var appendStr = ""
-
-      var balancesArry = Array.from(balances.entries())
-
-      balancesArry.sort(function(a, b){
-          return a[1][2].toUpperCase() > b[1][2].toUpperCase();
-      });
-
-      balancesArry.forEach((entry) =>  
-   {
-
-    var balance = entry[1]
-    var rri = entry[0]
-
-    if(!balance[2].toUpperCase().includes(tokenFilter.toUpperCase()) 
-        && !balance[1].toUpperCase().includes(tokenFilter.toUpperCase())
-          // && !rri.toUpperCase().includes(tokenFilter.toUpperCase())
-          ){
-      return;
-    }
-
-    try{
-      var symbol = balance[1];
-
-      if(rri=="xrd_rr1qy5wfsfh"){
-
-        var xrdPrice = undefined;
-
-        if(tokenPrices !=undefined){
-
-          xrdPrice = tokenPrices.radix[currValue]
-
-          totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)))
-          
-        }
-
-        xrdRow.push(
-               
-            <View key={rri}>
-
-            <SeparatorBorder/>
-              <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol: balance[1] + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
-
-                <View style={styles.addrRowStyle}>
-                  <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
-                  defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
-                  source={{uri: balance[3]}} />
-                  
-                  <View style={{flex:1.8}}>
-                    <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
-                    <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
-                  </View>
-
-                  <View style={{flex:1.7}}>
-                    <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
-                    {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
-                  </View> 
-                </View> 
-              </TouchableOpacity>
-            </View>        
-        )
-      } else{
-
-        if(rri == blackListed){
-          possScamToken = true;
-        } else {
-          possScamToken = false;
-        }
-
-        var dogecubePrice = undefined;
-  
-        if(rri=="dgc_rr1qvnre767vp607yr9pqzqhlprg72q2ny5pj4agn53k0pqy6huxw"){
-      
-          if(tokenPrices !=undefined){
-            dogecubePrice = tokenPrices.dogecube[currValue]
-            totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)))
-          }
-        }
-
-
-        if(hiddenTokens == undefined || !hiddenTokens.includes(rri)){
-          rows.push(
-                
-            <View key={rri}>
-              <SeparatorBorder/>
-
-              <Menu>
-              <MenuTrigger triggerOnLongPress={true} disabled={isNaN(stakedAmount)} onAlternativeAction={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}} >
-          
-                <View style={styles.addrRowStyle}>
-          
-                <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
-                defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
-                source={{uri: balance[3]}} />
-          
-                <View style={{flex:2}}>
-                  <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
-                  <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
-                </View>
-  
-                <View style={{ textAlign:"right", flex:1.5}}>
-                  <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
-                  {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
-                </View> 
-            </View> 
-          
-            </MenuTrigger>
-            <MenuOptions>
-            <MenuOption style={{backgroundColor:global.reverseModeTranslation, borderWidth:1, borderColor:global.modeTranslation}} onSelect={() => {
-
-              Alert.alert(
-                "Hide Token",
-                "Hide " + balance[2] + " token?",
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => {},
-                    style: "cancel"
-                  },
-                  {
-                    text: "OK",
-                    onPress: () => {
-            
-                      AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenListSaved) => {
-                    
-                        var hiddenList = []
-                        try{
-                          hiddenList = JSON.parse(hiddenListSaved);
-                          hiddenList.push(rri);
-                        } catch(e)
-                        {
-                          hiddenList = []
-                          hiddenList.push(rri);
-                        }
-
-                        AsyncStorage.setItem('@HiddenTokensWallet-'+activeWallet, JSON.stringify(hiddenList)).then( (value) => 
-                        {
-                          showMessage({
-                            message: "Token will be hidden shortly...",
-                            type: "info",
-                          });
-                        }
-                      )
-                      }
-                      )
-                  }
-                  }
-                ]
-                )
-                }}> 
-            <View style={{justifyContent: 'center', alignItems:'center'}}>
-              <Text style={getAppFont("black")}><IconMaterialCommunityIcons name="eye-off" size={20} color={global.modeTranslation} />  Hide</Text> 
-              </View>
-            </MenuOption>
-          </MenuOptions>
-        </Menu>
-      </View>  
-      
-     )
-          }
-      }
-    }    
-    catch(err){
-        console.log(err)
-   }
-   })
-           
-    var headerRow = []
-
-
-    if(tokenPrices !=undefined){
-    headerRow.push(
-     <View key={9999} style={styles.rowStyleHeader}>
-<View style={{
-        borderRadius: 9,
-        justifyContent: 'center',
-        marginBottom: 0
-      }}>
-<Text style={[{fontSize: 12}, getAppFont("black")]}>Value: {formatCurrencyForHomeDisplay(totalWalletValue.getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>
-      </View>
-      <Dropdown
-         style={[getAppFont("black"), styles.dropdown2, isFocus && { borderColor: 'blue' }]}
-          placeholderStyle={[styles.placeholderStyle2,getAppFont("black"),{textAlign: "right"}]}
-          selectedTextStyle={[styles.selectedTextStyle2,getAppFont("black"),{textAlign: "right"}]}
-          inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
-          iconStyle={[styles.iconStyle]}
-          containerStyle ={[getAppFont("black"), {backgroundColor: global.reverseModeTranslation}]}
-          data={currencyList}
-          activeColor="#4DA892"
-          search
-          maxHeight={300}
-          // disable={true}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus ? 'Prices in: ' : '...'}
-          searchPlaceholder="Search..."
-          label={currLabel}
-          value={currValue}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={item => {
-            storeCurrData(item)
-            setCurrLabel(item.label);
-            setCurrValue(item.value);
-            setIsFocus(true);
-          }}
-        />
-      </View> )
-    }
-
-
-    return (headerRow.concat(xrdRow).concat(rows))
-
-    }
-
-}
-
 
 
 function updateActiveWallet(setTokenPrices, getCurrData, setCurrValue, setCurrLabel, setIsHW, wallet_id, setWallets, setActiveWallet, setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances){
@@ -407,199 +103,11 @@ export function updateActiveAddress(setTokenPrices, getCurrData, setCurrValue, s
     }); 
 }
 
-function getActiveWallet(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db,setActiveWallet,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances, hwWallets, setIsHW){
-    db.transaction((tx) => {
-        tx.executeSql("SELECT id FROM active_wallet", [], (tx, results) => {
-        
-                var len = results.rows.length;
-                      
-                var id = 0;
-                for (let i = 0; i < len; i++) {
-                    let row = results.rows.item(i);
-                    id = row.id;
-                }
-
-                setActiveWallet(id);
-
-                if( hwWallets.includes(id) ){
-                  setIsHW(true);
-                } else{
-                  setIsHW(false);
-                }
-          
-                getEnabledAddresses(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, id,db,setEnabledAddresses, setActiveAddress, addressBalances, setAddressBalances);
-
-        }, errorCB);
-    }); 
-}
-
-function getActiveAddress(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, db, setActiveAddress, addresses, addressBalances, setAddressBalances){
-
-    db.transaction((tx) => {
-        tx.executeSql("SELECT id FROM active_address", [], (tx, results) => {
-        
-                var len = results.rows.length;
-                      
-                var id = 0;
-                for (let i = 0; i < len; i++) {
-                    let row = results.rows.item(i);
-                    id = row.id;
-                }
-
-                setActiveAddress(id);
-                
-                getBalances(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, addresses, id, addressBalances, setAddressBalances)
-
-
-        }, errorCB);
-    }); 
-}
-
-export class NetworkUtils {
-    static async isNetworkAvailable() {
-      const response = await NetInfo.fetch();
-      return response.isConnected;
-  }}
-
-   function getTokenMetadata(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances){
-
-     var rri = uniqueRRIs.pop();
-
-     fetch(global.gateways[gatewayIdx] + '/token', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-      
-            {
-                "network_identifier": {
-                  "network": "mainnet"
-                },
-                "token_identifier": {
-                  "rri": rri
-                }
-              }    
-      
-        )
-      }).then((response) => response.json()).then((json) => {
-
-          if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
-            
-            var newBalance = new Map(newAddrBalances);
-            if(newBalance.get(activeAddress).staked_and_unstaking_balance.token_identifier.rri == rri){
-                newBalance.get(activeAddress).staked_and_unstaking_balance.token_identifier['symbol'] =  json.token.token_properties.symbol
-                newBalance.get(activeAddress).staked_and_unstaking_balance.token_identifier['icon_url'] = json.token.token_properties.icon_url;
-                newBalance.get(activeAddress).staked_and_unstaking_balance.token_identifier['name'] = json.token.token_properties.name;
-
-              }
-
-            newBalance.get(activeAddress).liquid_balances.forEach( balance => {
-
-                if(balance.token_identifier.rri == rri){
-                    balance.token_identifier['symbol'] = json.token.token_properties.symbol;
-                    balance.token_identifier['icon_url'] = json.token.token_properties.icon_url;
-                    balance.token_identifier['name'] = json.token.token_properties.name;
-                }
-
-
-            })
-
-            // newBalance.forEach((b, active_address) => console.log("NB ("+active_address+"):"+JSON.stringify(b)))
-
-            if(uniqueRRIs.length == 0){
-              setAddressBalances(newBalance);
-              getPrices(setTokenPrices, getCurrData, setCurrValue, setCurrLabel)
-            } else{
-              getTokenMetadata(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newBalance, setAddressBalances)
-            }
-  
-             
-          }
-      }).catch((error) => {
-        setNewGatewayIdx(gatewayIdx);
-      });
- 
-  }
-  
-  async function getBalances(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, enabledAddresses, activeAddress, addressBalances, setAddressBalances){
-   
-    const isConnected = await NetworkUtils.isNetworkAvailable();
-    // alert(gatewayIdx)
-    // alert(global.gateways[gatewayIdx])
-    if(isConnected){
-    await fetch(global.gateways[gatewayIdx] + '/account/balances', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-      
-          {
-              "network_identifier": {
-                "network": "mainnet"
-              },
-              "account_identifier": {
-                "address": enabledAddresses.get(activeAddress).radix_address
-                // "address": "rdx1qspxwq6ejym0hqvtwqz6rkmfrxgegjf6y0mz63pveks7klunlgcdswgmrj34g"
-              }
-            }      
-      
-        )
-      }).then((response) => response.json()).then((json) => {
-
-        // console.log("Get Balances call: "+JSON.stringify(json));
-        
-          if(!(json === undefined) && json.code != 400 && json.ledger_state.epoch > 0 ){
-              var newAddrBalances = new Map(addressBalances);
-              newAddrBalances.set(activeAddress,json.account_balances);
-              var rris = [];
-              rris.push(JSON.stringify(json.account_balances.staked_and_unstaking_balance.token_identifier.rri).replace(/["']/g, "")); 
-              var liquid_balances = json.account_balances.liquid_balances
-              liquid_balances.forEach( (element) => {
-                  rris.push(JSON.stringify(element.token_identifier.rri).replace(/["']/g, ""))
-               }
-              )
-      
-               var uniqueRRIs = [...new Set(rris)]
-               
-               getTokenMetadata(gatewayIdx, setTokenPrices, getCurrData, setCurrValue, setCurrLabel, uniqueRRIs, activeAddress, newAddrBalances, setAddressBalances);
-          }
-      }).catch((error) => {
-        setNewGatewayIdx(gatewayIdx);
-      });
-    } else{
-        // alert("No internet connection available. Please connect to the internet.");
-    }
-}
-
-function getDDIndex(dropdownVals,activeAddress){
-
-    for(var x = 0; x <dropdownVals.length ; x++){
-        if(dropdownVals[x].value == activeAddress){
-            return x;
-        }
-    }
-
-    return 0;
-}
-
-function getWalletDDIndex(walletDropdownVals,activeWallet){
-
-  for(var x = 0; x <walletDropdownVals.length ; x++){
-      if(walletDropdownVals[x].value == activeWallet){
-          return x;
-      }
-  }
-
-  return 0;
-}
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
+
 
 const Home = ({route, navigation}) => {
 
@@ -622,47 +130,15 @@ const Home = ({route, navigation}) => {
     const [activeWallet, setActiveWallet] = useState(1);
     const [activeAddress, setActiveAddress] = useState(1);
     const [enabledAddresses, setEnabledAddresses] = useState(initialEnabledAddresses);
-    const [addressRRIs, setAddressRRIs] = useState(new Map())
     const [isHW, setIsHW] = useState()
-    const [historyRows, setHistoryRows] = useState();
     const [tokenPrices, setTokenPrices] = useState();
     const [tokenFilter, setTokenFilter] = useState("");
-    const [walletFilter, setWalletFilter] = useState();
-    const [addressFilter, setAddressFilter] = useState();
     const [hiddenTokens, setHiddenTokens] = useState([]);
 
     // global.isDarkMode = useColorScheme() === 'dark';
     global.modeTranslation = global.isDarkMode === true ? "white" : "black";
     global.reverseModeTranslation = global.isDarkMode === true ? "black" : "white";
 
-
-    const storeCurrData = async (json, setCurrValue, setCurrLabel) => {
-      try {
-        const jsonValue = JSON.stringify(json)
-        await AsyncStorage.setItem('@fiatCurrencySelected', jsonValue)
-        setCurrValue(json.value);
-        setCurrLabel(json.label);
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
-    const getCurrData = async (setCurrValue, setCurrLabel) => {
-        try {
-
-          var jsonValue = await AsyncStorage.getItem('@fiatCurrencySelected')
-
-          if(jsonValue == undefined) {
-            jsonValue = '{ "label" : "Fiat Prices in: USD", "value" : "usd" }';
-            await AsyncStorage.setItem('@fiatCurrencySelected', jsonValue)
-          }
-
-          setCurrValue(JSON.parse(jsonValue).value);
-          setCurrLabel(JSON.parse(jsonValue).label);
-        } catch(e) {
-          console.log(e)
-        }
-    }
 
 
 
@@ -979,6 +455,234 @@ const Home = ({route, navigation}) => {
     )
   ;
 };
+
+
+function renderAddressRows(activeWallet, hiddenTokens, tokenFilter, isFocus, setIsFocus, storeCurrData, setCurrLabel, setCurrValue, currLabel, tokenPrices, currValue, balances, stakedAmount, liquid_rdx_balance, navigation, enabledAddresses, activeAddress, hdpathIndexInput, isHW){
+
+  if( balances.size > 0 && enabledAddresses.size > 0 ){
+
+      var totalWalletValue = new bigDecimal(0);
+      var rows = []
+      var xrdRow = []      
+      var symbolCnts = new Map();
+      var blackListed = "rpg_rr1q0zrguwzdze0kpqfcr7lk8lfwlx6hxx7kjf46tcava4q99dj6h";
+      var possScamToken = false;
+      var appendStr = ""
+
+    var balancesArry = Array.from(balances.entries())
+
+    balancesArry.sort(function(a, b){
+        return a[1][2].toUpperCase() > b[1][2].toUpperCase();
+    });
+
+    balancesArry.forEach((entry) =>  
+ {
+
+  var balance = entry[1]
+  var rri = entry[0]
+
+  if(!balance[2].toUpperCase().includes(tokenFilter.toUpperCase()) 
+      && !balance[1].toUpperCase().includes(tokenFilter.toUpperCase())
+        // && !rri.toUpperCase().includes(tokenFilter.toUpperCase())
+        ){
+    return;
+  }
+
+  try{
+    var symbol = balance[1];
+
+    if(rri=="xrd_rr1qy5wfsfh"){
+
+      var xrdPrice = undefined;
+
+      if(tokenPrices !=undefined){
+
+        xrdPrice = tokenPrices.radix[currValue]
+
+        totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)))
+        
+      }
+
+      xrdRow.push(
+             
+          <View key={rri}>
+
+          <SeparatorBorder/>
+            <TouchableOpacity disabled={isNaN(stakedAmount)} onPress={ () => {navigation.navigate('Send',{defaultRri: "xrd_rr1qy5wfsfh", defaultSymbol: balance[1] + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}}>
+
+              <View style={styles.addrRowStyle}>
+                <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
+                defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
+                source={{uri: balance[3]}} />
+                
+                <View style={{flex:1.8}}>
+                  <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
+                  <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
+                </View>
+
+                <View style={{flex:1.7}}>
+                  <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {balance[1]}</Text>
+                  {xrdPrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(xrdPrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
+                </View> 
+              </View> 
+            </TouchableOpacity>
+          </View>        
+      )
+    } else{
+
+      if(rri == blackListed){
+        possScamToken = true;
+      } else {
+        possScamToken = false;
+      }
+
+      var dogecubePrice = undefined;
+
+      if(rri=="dgc_rr1qvnre767vp607yr9pqzqhlprg72q2ny5pj4agn53k0pqy6huxw"){
+    
+        if(tokenPrices !=undefined){
+          dogecubePrice = tokenPrices.dogecube[currValue]
+          totalWalletValue = totalWalletValue.add(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)))
+        }
+      }
+
+
+      if(hiddenTokens == undefined || !hiddenTokens.includes(rri)){
+        rows.push(
+              
+          <View key={rri}>
+            <SeparatorBorder/>
+
+            <Menu>
+            <MenuTrigger triggerOnLongPress={true} disabled={isNaN(stakedAmount)} onAlternativeAction={ () => {navigation.navigate('Send',{defaultRri: rri, defaultSymbol: symbol  + " (" + shortenAddress(rri) + ")", sourceXrdAddr: enabledAddresses.get(activeAddress).radix_address, hdpathIndex: hdpathIndexInput, isHWBool: isHW})}} >
+        
+              <View style={styles.addrRowStyle}>
+        
+              <Image style={{width: 36, height: 36,  justifyContent: "flex-start", alignSelf:"flex-start"}}
+              defaultSource={global.isDarkMode ? GenericTokenInverted : GenericToken}
+              source={{uri: balance[3]}} />
+        
+              <View style={{flex:2}}>
+                <Text style={[{color:"black",marginTop:0,fontSize:14,justifyContent:'flex-start',paddingLeft: 10},getAppFont("black")]}>{balance[2]} ({symbol.trim()}) </Text>
+                <Text style={[{fontSize:12,paddingLeft: 10},getAppFont("black")]}>{"Token RRI: "+shortenAddress(rri)} </Text>
+              </View>
+
+              <View style={{ textAlign:"right", flex:1.5}}>
+                <Text style={[{color:"black",marginTop:0,fontSize:14, justifyContent:'flex-end', textAlign:"right"},getAppFont("black")]}>{ formatNumForHomeDisplay(balance[0]) } {symbol.trim()}</Text>
+                {dogecubePrice && <Text style={[{color:"black",marginTop:0,fontSize:12, textAlign:"right"},getAppFont("black")]}>{ formatCurrencyForHomeDisplay(new bigDecimal(balance[0]).multiply(new bigDecimal(dogecubePrice)).getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>}
+              </View> 
+          </View> 
+        
+          </MenuTrigger>
+          <MenuOptions>
+          <MenuOption style={{backgroundColor:global.reverseModeTranslation, borderWidth:1, borderColor:global.modeTranslation}} onSelect={() => {
+
+            Alert.alert(
+              "Hide Token",
+              "Hide " + balance[2] + " token?",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => {},
+                  style: "cancel"
+                },
+                {
+                  text: "OK",
+                  onPress: () => {
+          
+                    AsyncStorage.getItem('@HiddenTokensWallet-' + activeWallet).then( (hiddenListSaved) => {
+                  
+                      var hiddenList = []
+                      try{
+                        hiddenList = JSON.parse(hiddenListSaved);
+                        hiddenList.push(rri);
+                      } catch(e)
+                      {
+                        hiddenList = []
+                        hiddenList.push(rri);
+                      }
+
+                      AsyncStorage.setItem('@HiddenTokensWallet-'+activeWallet, JSON.stringify(hiddenList)).then( (value) => 
+                      {
+                        showMessage({
+                          message: "Token will be hidden shortly...",
+                          type: "info",
+                        });
+                      }
+                    )
+                    }
+                    )
+                }
+                }
+              ]
+              )
+              }}> 
+          <View style={{justifyContent: 'center', alignItems:'center'}}>
+            <Text style={getAppFont("black")}><IconMaterialCommunityIcons name="eye-off" size={20} color={global.modeTranslation} />  Hide</Text> 
+            </View>
+          </MenuOption>
+        </MenuOptions>
+      </Menu>
+    </View>  
+    
+   )
+        }
+    }
+  }    
+  catch(err){
+      console.log(err)
+ }
+ })
+         
+  var headerRow = []
+
+
+  if(tokenPrices !=undefined){
+  headerRow.push(
+   <View key={9999} style={styles.rowStyleHeader}>
+<View style={{
+      borderRadius: 9,
+      justifyContent: 'center',
+      marginBottom: 0
+    }}>
+<Text style={[{fontSize: 12}, getAppFont("black")]}>Value: {formatCurrencyForHomeDisplay(totalWalletValue.getValue(), currValue==undefined?"USD":currValue.toUpperCase())}</Text>
+    </View>
+    <Dropdown
+       style={[getAppFont("black"), styles.dropdown2, isFocus && { borderColor: 'blue' }]}
+        placeholderStyle={[styles.placeholderStyle2,getAppFont("black"),{textAlign: "right"}]}
+        selectedTextStyle={[styles.selectedTextStyle2,getAppFont("black"),{textAlign: "right"}]}
+        inputSearchStyle={[styles.inputSearchStyle,getAppFont("black")]}
+        iconStyle={[styles.iconStyle]}
+        containerStyle ={[getAppFont("black"), {backgroundColor: global.reverseModeTranslation}]}
+        data={currencyList}
+        activeColor="#4DA892"
+        search
+        maxHeight={300}
+        // disable={true}
+        labelField="label"
+        valueField="value"
+        placeholder={!isFocus ? 'Prices in: ' : '...'}
+        searchPlaceholder="Search..."
+        label={currLabel}
+        value={currValue}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
+        onChange={item => {
+          storeCurrData(item)
+          setCurrLabel(item.label);
+          setCurrValue(item.value);
+          setIsFocus(true);
+        }}
+      />
+    </View> )
+  }
+
+
+  return (headerRow.concat(xrdRow).concat(rows))
+
+  }
+
+}
 
 
 const styles = StyleSheet.create({

@@ -18,6 +18,8 @@ import Sign from './src/screens/Sign';
 import AppDataSave from './src/screens/AppDataSave';
 import MnemonicInput from './src/screens/MnemonicInput';
 import Send from './src/screens/Send';
+import RequestRouter from './src/screens/RequestRouter';
+
 import Receive from './src/screens/Receive';
 import Staking from './src/screens/Staking';
 import ImportSelect from './src/screens/ImportSelect';
@@ -36,12 +38,14 @@ var db = SQLite.openDatabase("app.db", "1.0", "App Database", 200000, openCB, er
 const linking = {
   prefixes: linkingPrefixes,
   config: {
-    initialRouteName: 'Sign',
+    initialRouteName: 'Request Router',
     screens: {
-      Sign: {
-        path: 'sign/:txn',
+      'Request Router': {
+        path: 'send/:destinationAddr/:defaultSymbolParam/:defaultRriParam',
         parse: {
-          txn: (txn) => `${txn}`,
+          destinationAddr: (destinationAddr) => `${destinationAddr}`,
+          defaultSymbolParam: (defaultSymbolParam) => `${defaultSymbolParam}`,
+          defaultRriParam: (defaultRriParam) => `${defaultRriParam}`
         },
       },
 
@@ -120,6 +124,7 @@ function navContainer(Stack, firstTimer, correctPin, isPINEnabled, setCorrectPin
       <Stack.Screen name="RadBag Wallet" component={HomeNav} options={{headerShown: false ,headerLeft: () => null, gestureEnabled: false}} />
       <Stack.Screen name="Send" component={Send} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Sign" component={Sign} options={{ headerTitleAlign: 'center' }}/>
+      <Stack.Screen name="Request Router" component={RequestRouter} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Receive" component={Receive} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Staking" component={Staking} options={{ headerTitleAlign: 'center' }}/>
       <Stack.Screen name="Import Select" component={ImportSelect} options={{ headerTitleAlign: 'center' }}/>

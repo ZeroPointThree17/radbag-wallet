@@ -463,7 +463,7 @@ function getValidatorData(gatewayIdx, currAddr, setValAddr, setUnstakeValAddr, s
         "network": "mainnet"
       },
       "validator_identifier": {
-        "address": "rv1qt7dmsekqnrel6uxf9prqwujhn4udnu9yl9yzrlrkprmq4zrwmppvxn2gqf"
+        "address": "rv1qfxktwkq9amdh678cxfynzt4zeua2tkh8nnrtcjpt7fyl0lmu8r3urllukm"
       }
     };
 
@@ -719,7 +719,7 @@ function renderStakeValidatorRows(setValAddr, setUnstakeValAddr, setStakingScree
       const [stakeValidators, setStakeValidators] = useState([]);
       const [validatorData, setValidatorData] = useState(new Map());
       const [renderedStakeValidatorRows, setRenderedStakeValidatorRows] = useState([]);
-      const [valAddr, setValAddr] = useState("rv1qt7dmsekqnrel6uxf9prqwujhn4udnu9yl9yzrlrkprmq4zrwmppvxn2gqf");
+      const [valAddr, setValAddr] = useState("rv1qfxktwkq9amdh678cxfynzt4zeua2tkh8nnrtcjpt7fyl0lmu8r3urllukm");
       const [unstakeValAddr, setUnstakeValAddr] = useState();
       const [stakingScreenActive, setStakingScreenActive] = useState(true);
       const [stakeAmt, setStakeAmt] = useState();
@@ -778,13 +778,6 @@ const stakingStats = (showStakingStats) => {
     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Pending Unstake Balance: {formatNumForDisplay(pendingUnstake)} XRD</Text>
     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12}, getAppFont("black")]}>Total Balance: {new bigDecimal(((new bigDecimal(formatNumForDisplay(currentlyLiquid).replace(/,/g, '')).add(new bigDecimal(formatNumForDisplay(currentlyStaked).replace(/,/g, '')))).getValue())).getPrettyValue()} XRD</Text>
     <Separator/>
-    <LinearGradient colors={[global.appBlue, global.appGreen, global.appGreen]} useAngle={true} angle={11} style={styles.surface}>  
-    {/* <LinearGradient colors={['#183A81','#4DA892', '#4DA892']} useAngle={true} angle={11} style={styles.surface}>     */}
-       <Image style={{margin: 0, width: 70, height: 90, marginBottom:4, alignSelf:'center'}}
-    source={Raddish}/>
-       <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:10, color:"white", textAlign:"center", alignSelf:'center'}, getAppFont("white")]}>Please consider staking with the RadBag Validator to support products like this wallet app and more to come!{"\n"}We are one of the top Radix validators with a low 1% fee!</Text>
-       </LinearGradient>
-
     </View>
   );
   }
@@ -822,7 +815,7 @@ onPress={() => {setStakingScreenActive(false)}}>
 
     <Separator/>
       <View style={[styles.rowStyle,{backgroundColor:global.reverseModeTranslation}]}>
-     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, borderRadius: 15}, getAppFont("black")]}>Validator Address{"\n"}(Default: RadBag Validator):</Text>
+     <Text style={[{textAlign:'left', marginHorizontal: 0, fontSize:12, flex:1, borderRadius: 15}, getAppFont("black")]}>Validator Address{"\n"}(Default: Florian Pieper Staking):</Text>
      <Text
        style={[{textAlign: "center" , fontSize:12, flex:0.5}, getAppFont("#4DA892")]}
        onPress={() => {Linking.openURL('https://explorer.radixdlt.com/#/validators')}}

@@ -225,32 +225,6 @@ const optionalConfigObject = {
 <SeparatorBorder/>
 
 <ListItem
- onPress={() => {navigation.navigate('Address Options')}}
-  Component={TouchableScale}
-  friction={90} //
-  tension={100} // These props are passed to the parent component (here TouchableScale)
-  activeScale={0.95} //
-  linearGradientProps={{
-    colors: [global.reverseModeTranslation, global.reverseModeTranslation],
-    start: { x: 1, y: 0 },
-    end: { x: 0.2, y: 0 },
-  }}
-  ViewComponent={LinearGradient} // Only if no expo
->
-<IconMaterial name="pound" size={20} color="#4F8EF7"/>
-  <ListItem.Content>
-    <ListItem.Title style={[{fontSize:14,  color: 'black', fontWeight: 'bold' }, getAppFont("black")]}>
-      <Text>Address Options</Text>
-    </ListItem.Title>
-    <ListItem.Subtitle style={[{fontSize:14,  color: 'black' }, getAppFont("black")]}>
-      <Text>Rename or remove the currently selected address</Text>
-    </ListItem.Subtitle>
-  </ListItem.Content>
-  <ListItem.Chevron color="black" />
-</ListItem>
-<SeparatorBorder/>
-
-<ListItem
  onPress={() => {navigation.navigate('Hidden Tokens')}}
   Component={TouchableScale}
   friction={90} //
